@@ -2,6 +2,7 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "common-utilities": "libs/common-utilities",
     "dungeon-master-v2": "apps/dungeon-master-v2",
     "dungeon-master-v2-e2e": "apps/dungeon-master-v2-e2e"
   }
