@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "common-utilities": "libs/common-utilities",
+    "dmv2-hasura": "services/dmv2-hasura",
     "dungeon-master-v2": "apps/dungeon-master-v2",
     "dungeon-master-v2-e2e": "apps/dungeon-master-v2-e2e"
   }

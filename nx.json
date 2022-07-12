@@ -37,5 +37,8 @@
       }
     }
   },
-  "defaultProject": "dungeon-master-v2"
+  "defaultProject": "dungeon-master-v2",
+  "workspaceLayout": {
+    "servicesDir": "services"
+  }
 }
