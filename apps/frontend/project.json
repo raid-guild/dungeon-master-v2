@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/dungeon-master-v2",
+  "sourceRoot": "apps/frontend",
   "projectType": "application",
   "targets": {
     "build": {
@@ -8,8 +8,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "root": "apps/dungeon-master-v2",
-        "outputPath": "dist/apps/dungeon-master-v2"
+        "root": "apps/frontend",
+        "outputPath": "dist/apps/frontend"
       },
       "configurations": {
         "development": {},
@@ -20,16 +20,16 @@
       "executor": "@nrwl/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "dungeon-master-v2:build",
+        "buildTarget": "frontend:build",
         "dev": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "dungeon-master-v2:build:development",
+          "buildTarget": "frontend:build:development",
           "dev": true
         },
         "production": {
-          "buildTarget": "dungeon-master-v2:build:production",
+          "buildTarget": "frontend:build:production",
           "dev": false
         }
       }
@@ -37,14 +37,14 @@
     "export": {
       "executor": "@nrwl/next:export",
       "options": {
-        "buildTarget": "dungeon-master-v2:build:production"
+        "buildTarget": "frontend:build:production"
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/dungeon-master-v2"],
+      "outputs": ["coverage/apps/frontend"],
       "options": {
-        "jestConfig": "apps/dungeon-master-v2/jest.config.ts",
+        "jestConfig": "apps/frontend/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -52,7 +52,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/dungeon-master-v2/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

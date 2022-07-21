@@ -1,0 +1,417 @@
+- table:
+    schema: public
+    name: applications
+  object_relationships:
+    - name: cohort_availability
+      using:
+        foreign_key_constraint_on: availability
+    - name: daoFamiliarityByDaoFamiliarity
+      using:
+        foreign_key_constraint_on: dao_familiarity
+    - name: member
+      using:
+        foreign_key_constraint_on: referred_by
+    - name: technical_skill_type
+      using:
+        foreign_key_constraint_on: skill_type
+  array_relationships:
+    - name: applications_skills
+      using:
+        foreign_key_constraint_on:
+          column: application
+          table:
+            schema: public
+            name: applications_skills
+- table:
+    schema: public
+    name: applications_skills
+  object_relationships:
+    - name: applicationByApplication
+      using:
+        foreign_key_constraint_on: application
+    - name: skillBySkill
+      using:
+        foreign_key_constraint_on: skill
+    - name: skillTypeBySkillType
+      using:
+        foreign_key_constraint_on: skill_type
+- table:
+    schema: public
+    name: available_project_specs
+  is_enum: true
+  array_relationships:
+    - name: consultations
+      using:
+        foreign_key_constraint_on:
+          column: project_specs
+          table:
+            schema: public
+            name: consultations
+- table:
+    schema: public
+    name: budget_options
+  is_enum: true
+  array_relationships:
+    - name: consultations
+      using:
+        foreign_key_constraint_on:
+          column: delivery_priorities
+          table:
+            schema: public
+            name: consultations
+- table:
+    schema: public
+    name: cohort_availabilities
+  is_enum: true
+  array_relationships:
+    - name: applications
+      using:
+        foreign_key_constraint_on:
+          column: availability
+          table:
+            schema: public
+            name: applications
+- table:
+    schema: public
+    name: comments
+- table:
+    schema: public
+    name: consultations
+  object_relationships:
+    - name: available_project_spec
+      using:
+        foreign_key_constraint_on: project_specs
+    - name: budget_option
+      using:
+        foreign_key_constraint_on: delivery_priorities
+    - name: delivery_priority
+      using:
+        foreign_key_constraint_on: additional_info
+    - name: projectTypeByProjectType
+      using:
+        foreign_key_constraint_on: project_type
+    - name: submissionTypeBySubmissionType
+      using:
+        foreign_key_constraint_on: submission_type
+  array_relationships:
+    - name: consultations_services_reqs
+      using:
+        foreign_key_constraint_on:
+          column: consultation
+          table:
+            schema: public
+            name: consultations_services_req
+    - name: raids
+      using:
+        foreign_key_constraint_on:
+          column: consultation
+          table:
+            schema: public
+            name: raids
+- table:
+    schema: public
+    name: consultations_services_req
+  object_relationships:
+    - name: consultationByConsultation
+      using:
+        foreign_key_constraint_on: consultation
+    - name: guild_service
+      using:
+        foreign_key_constraint_on: service
+- table:
+    schema: public
+    name: dao_familiarities
+  is_enum: true
+  array_relationships:
+    - name: applications
+      using:
+        foreign_key_constraint_on:
+          column: dao_familiarity
+          table:
+            schema: public
+            name: applications
+- table:
+    schema: public
+    name: delivery_priorities
+  is_enum: true
+  array_relationships:
+    - name: consultations
+      using:
+        foreign_key_constraint_on:
+          column: additional_info
+          table:
+            schema: public
+            name: consultations
+- table:
+    schema: public
+    name: guild_classes
+  is_enum: true
+  array_relationships:
+    - name: members
+      using:
+        foreign_key_constraint_on:
+          column: guild_class
+          table:
+            schema: public
+            name: members
+    - name: portfolios_roles
+      using:
+        foreign_key_constraint_on:
+          column: role
+          table:
+            schema: public
+            name: portfolios_roles
+    - name: raids_roles_requireds
+      using:
+        foreign_key_constraint_on:
+          column: role
+          table:
+            schema: public
+            name: raids_roles_required
+- table:
+    schema: public
+    name: guild_services
+  is_enum: true
+  array_relationships:
+    - name: consultations_services_reqs
+      using:
+        foreign_key_constraint_on:
+          column: service
+          table:
+            schema: public
+            name: consultations_services_req
+- table:
+    schema: public
+    name: member_types
+  is_enum: true
+  array_relationships:
+    - name: members
+      using:
+        foreign_key_constraint_on:
+          column: member_type
+          table:
+            schema: public
+            name: members
+- table:
+    schema: public
+    name: members
+  object_relationships:
+    - name: guildClassByGuildClass
+      using:
+        foreign_key_constraint_on: guild_class
+    - name: memberTypeByMemberType
+      using:
+        foreign_key_constraint_on: member_type
+  array_relationships:
+    - name: applications
+      using:
+        foreign_key_constraint_on:
+          column: referred_by
+          table:
+            schema: public
+            name: applications
+    - name: raid_parties
+      using:
+        foreign_key_constraint_on:
+          column: member
+          table:
+            schema: public
+            name: raid_parties
+    - name: raids
+      using:
+        foreign_key_constraint_on:
+          column: cleric
+          table:
+            schema: public
+            name: raids
+- table:
+    schema: public
+    name: portfolios
+  object_relationships:
+    - name: raid_category
+      using:
+        foreign_key_constraint_on: category
+  array_relationships:
+    - name: portfolios_roles
+      using:
+        foreign_key_constraint_on:
+          column: portfolio
+          table:
+            schema: public
+            name: portfolios_roles
+- table:
+    schema: public
+    name: portfolios_roles
+  object_relationships:
+    - name: guild_class
+      using:
+        foreign_key_constraint_on: role
+    - name: portfolioByPortfolio
+      using:
+        foreign_key_constraint_on: portfolio
+- table:
+    schema: public
+    name: project_types
+  is_enum: true
+  array_relationships:
+    - name: consultations
+      using:
+        foreign_key_constraint_on:
+          column: project_type
+          table:
+            schema: public
+            name: consultations
+- table:
+    schema: public
+    name: raid_categories
+  is_enum: true
+  array_relationships:
+    - name: portfolios
+      using:
+        foreign_key_constraint_on:
+          column: category
+          table:
+            schema: public
+            name: portfolios
+    - name: raids
+      using:
+        foreign_key_constraint_on:
+          column: category
+          table:
+            schema: public
+            name: raids
+- table:
+    schema: public
+    name: raid_parties
+  object_relationships:
+    - name: memberByMember
+      using:
+        foreign_key_constraint_on: member
+    - name: raidByRaid
+      using:
+        foreign_key_constraint_on: raid
+- table:
+    schema: public
+    name: raid_statuses
+  is_enum: true
+  array_relationships:
+    - name: raids
+      using:
+        foreign_key_constraint_on:
+          column: status
+          table:
+            schema: public
+            name: raids
+- table:
+    schema: public
+    name: raids
+  object_relationships:
+    - name: consultationByConsultation
+      using:
+        foreign_key_constraint_on: consultation
+    - name: member
+      using:
+        foreign_key_constraint_on: cleric
+    - name: raid_category
+      using:
+        foreign_key_constraint_on: category
+    - name: raid_status
+      using:
+        foreign_key_constraint_on: status
+  array_relationships:
+    - name: raid_parties
+      using:
+        foreign_key_constraint_on:
+          column: raid
+          table:
+            schema: public
+            name: raid_parties
+    - name: raids_roles_requireds
+      using:
+        foreign_key_constraint_on:
+          column: raid
+          table:
+            schema: public
+            name: raids_roles_required
+    - name: relatedRaidsByRelatedRaid
+      using:
+        foreign_key_constraint_on:
+          column: related_raid
+          table:
+            schema: public
+            name: related_raids
+    - name: related_raids
+      using:
+        foreign_key_constraint_on:
+          column: raid
+          table:
+            schema: public
+            name: related_raids
+- table:
+    schema: public
+    name: raids_roles_required
+  object_relationships:
+    - name: guild_class
+      using:
+        foreign_key_constraint_on: role
+    - name: raidByRaid
+      using:
+        foreign_key_constraint_on: raid
+- table:
+    schema: public
+    name: related_raids
+  object_relationships:
+    - name: raidByRaid
+      using:
+        foreign_key_constraint_on: raid
+    - name: raidByRelatedRaid
+      using:
+        foreign_key_constraint_on: related_raid
+- table:
+    schema: public
+    name: skill_types
+  is_enum: true
+  array_relationships:
+    - name: applications_skills
+      using:
+        foreign_key_constraint_on:
+          column: skill_type
+          table:
+            schema: public
+            name: applications_skills
+- table:
+    schema: public
+    name: skills
+  is_enum: true
+  array_relationships:
+    - name: applications_skills
+      using:
+        foreign_key_constraint_on:
+          column: skill
+          table:
+            schema: public
+            name: applications_skills
+- table:
+    schema: public
+    name: submission_types
+  is_enum: true
+  array_relationships:
+    - name: consultations
+      using:
+        foreign_key_constraint_on:
+          column: submission_type
+          table:
+            schema: public
+            name: consultations
+- table:
+    schema: public
+    name: technical_skill_types
+  is_enum: true
+  array_relationships:
+    - name: applications
+      using:
+        foreign_key_constraint_on:
+          column: skill_type
+          table:
+            schema: public
+            name: applications

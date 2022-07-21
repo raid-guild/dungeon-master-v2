@@ -1,0 +1,32 @@
+table:
+  schema: public
+  name: members
+object_relationships:
+  - name: guildClassByGuildClass
+    using:
+      foreign_key_constraint_on: guild_class
+  - name: memberTypeByMemberType
+    using:
+      foreign_key_constraint_on: member_type
+array_relationships:
+  - name: applications
+    using:
+      foreign_key_constraint_on:
+        column: referred_by
+        table:
+          schema: public
+          name: applications
+  - name: raid_parties
+    using:
+      foreign_key_constraint_on:
+        column: member
+        table:
+          schema: public
+          name: raid_parties
+  - name: raids
+    using:
+      foreign_key_constraint_on:
+        column: cleric
+        table:
+          schema: public
+          name: raids
