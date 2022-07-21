@@ -1,17 +1,17 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/dungeon-master-v2-e2e/src",
+  "sourceRoot": "apps/frontend-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/dungeon-master-v2-e2e/cypress.json",
-        "devServerTarget": "dungeon-master-v2:serve:development"
+        "cypressConfig": "apps/frontend-e2e/cypress.json",
+        "devServerTarget": "frontend-e2e:serve:development"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "dungeon-master-v2:serve:production"
+          "devServerTarget": "frontend-e2e:serve:production"
         }
       }
     },
@@ -19,10 +19,10 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/dungeon-master-v2-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/frontend-e2e/**/*.{js,ts}"]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["dungeon-master-v2"]
+  "implicitDependencies": ["frontend"]
 }

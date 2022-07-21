@@ -1,0 +1,10 @@
+table:
+  schema: public
+  name: related_raids
+object_relationships:
+  - name: raidByRaid
+    using:
+      foreign_key_constraint_on: raid
+  - name: raidByRelatedRaid
+    using:
+      foreign_key_constraint_on: related_raid
