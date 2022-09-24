@@ -1,0 +1,13 @@
+SET check_function_bodies = false;
+INSERT INTO public.guild_classes (guild_class) VALUES ('COMMUNITY');
+INSERT INTO public.guild_classes (guild_class) VALUES ('DESIGN');
+INSERT INTO public.guild_classes (guild_class) VALUES ('TREASURY');
+INSERT INTO public.guild_classes (guild_class) VALUES ('MARKETING');
+INSERT INTO public.guild_classes (guild_class) VALUES ('FRONTEND_DEV');
+INSERT INTO public.guild_classes (guild_class) VALUES ('OPERATIONS');
+INSERT INTO public.guild_classes (guild_class) VALUES ('BIZ_DEV');
+INSERT INTO public.guild_classes (guild_class) VALUES ('BACKEND_DEV');
+INSERT INTO public.guild_classes (guild_class) VALUES ('PROJECT_MANAGEMENT');
+INSERT INTO public.guild_classes (guild_class) VALUES ('SMART_CONTRACTS');
+INSERT INTO public.guild_classes (guild_class) VALUES ('LEGAL');
+INSERT INTO public.guild_classes (guild_class) VALUES ('ACCOUNT_MANAGER');

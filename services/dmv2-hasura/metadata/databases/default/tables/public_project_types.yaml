@@ -1,6 +1,7 @@
 table:
   schema: public
   name: project_types
+is_enum: true
 array_relationships:
   - name: consultations
     using:

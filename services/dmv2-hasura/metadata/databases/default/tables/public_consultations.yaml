@@ -8,6 +8,9 @@ object_relationships:
   - name: budget_option
     using:
       foreign_key_constraint_on: delivery_priorities
+  - name: consultationStatusByConsultationStatus
+    using:
+      foreign_key_constraint_on: consultation_status
   - name: delivery_priority
     using:
       foreign_key_constraint_on: additional_info
