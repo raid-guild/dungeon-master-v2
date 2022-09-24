@@ -1,6 +1,7 @@
 table:
   schema: public
   name: submission_types
+is_enum: true
 array_relationships:
   - name: consultations
     using:

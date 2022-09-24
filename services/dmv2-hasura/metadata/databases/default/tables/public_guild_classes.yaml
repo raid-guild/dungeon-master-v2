@@ -1,6 +1,7 @@
 table:
   schema: public
   name: guild_classes
+is_enum: true
 array_relationships:
   - name: members
     using:
