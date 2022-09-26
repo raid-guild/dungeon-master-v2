@@ -1,6 +1,7 @@
 table:
   schema: public
   name: dao_familiarities
+is_enum: true
 array_relationships:
   - name: applications
     using:

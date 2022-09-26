@@ -1,0 +1,13 @@
+SET check_function_bodies = false;
+INSERT INTO public.guild_services (guild_service) VALUES ('DAO');
+INSERT INTO public.guild_services (guild_service) VALUES ('DEVELOPMENT');
+INSERT INTO public.guild_services (guild_service) VALUES ('MARKETING');
+INSERT INTO public.guild_services (guild_service) VALUES ('MOTION_DESIGN');
+INSERT INTO public.guild_services (guild_service) VALUES ('NFTS');
+INSERT INTO public.guild_services (guild_service) VALUES ('SMART_CONTRACTS');
+INSERT INTO public.guild_services (guild_service) VALUES ('STRATEGY');
+INSERT INTO public.guild_services (guild_service) VALUES ('TOKENOMICS');
+INSERT INTO public.guild_services (guild_service) VALUES ('UX');
+INSERT INTO public.guild_services (guild_service) VALUES ('UI');
+INSERT INTO public.guild_services (guild_service) VALUES ('VISUAL_DESIGN');
+INSERT INTO public.guild_services (guild_service) VALUES ('HELP_ME');
