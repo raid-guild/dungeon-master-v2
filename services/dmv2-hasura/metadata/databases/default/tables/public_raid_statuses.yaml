@@ -1,6 +1,7 @@
 table:
   schema: public
   name: raid_statuses
+is_enum: true
 array_relationships:
   - name: raids
     using:

@@ -1,6 +1,7 @@
 table:
   schema: public
   name: raid_categories
+is_enum: true
 array_relationships:
   - name: portfolios
     using:

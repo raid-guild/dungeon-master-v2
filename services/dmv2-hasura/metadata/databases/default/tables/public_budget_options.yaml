@@ -1,6 +1,7 @@
 table:
   schema: public
   name: budget_options
+is_enum: true
 array_relationships:
   - name: consultations
     using:

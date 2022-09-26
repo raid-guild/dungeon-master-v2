@@ -1,6 +1,7 @@
 table:
   schema: public
   name: skills
+is_enum: true
 array_relationships:
   - name: applications_skills
     using:
