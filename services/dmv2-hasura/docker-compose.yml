@@ -24,7 +24,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
   graphql-engine:
     container_name: dm_hasura
-    image: hasura/graphql-engine:v2.0.1
+    image: hasura/graphql-engine:v2.1.1
     ports:
       - target: 8080
         published: ${HASURA_ENDPOINT_PORT}
