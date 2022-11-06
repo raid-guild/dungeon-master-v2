@@ -1,11 +1,3 @@
 table:
   schema: public
   name: consultation_statuses
-array_relationships:
-  - name: consultations
-    using:
-      foreign_key_constraint_on:
-        column: consultation_status
-        table:
-          schema: public
-          name: consultations
