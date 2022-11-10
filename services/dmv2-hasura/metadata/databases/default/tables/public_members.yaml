@@ -19,6 +19,13 @@ array_relationships:
         table:
           schema: public
           name: applications
+  - name: members_skills
+    using:
+      foreign_key_constraint_on:
+        column: member
+        table:
+          schema: public
+          name: members_skills
   - name: raid_parties
     using:
       foreign_key_constraint_on:

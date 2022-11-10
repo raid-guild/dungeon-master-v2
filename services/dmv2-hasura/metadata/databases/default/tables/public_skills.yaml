@@ -10,3 +10,10 @@ array_relationships:
         table:
           schema: public
           name: applications_skills
+  - name: members_skills
+    using:
+      foreign_key_constraint_on:
+        column: skill
+        table:
+          schema: public
+          name: members_skills
