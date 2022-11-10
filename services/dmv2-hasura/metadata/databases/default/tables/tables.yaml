@@ -12,6 +12,7 @@
 - "!include public_guild_services.yaml"
 - "!include public_member_types.yaml"
 - "!include public_members.yaml"
+- "!include public_members_skills.yaml"
 - "!include public_portfolios.yaml"
 - "!include public_portfolios_roles.yaml"
 - "!include public_project_types.yaml"

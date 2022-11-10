@@ -1,0 +1,2 @@
+CREATE TABLE "public"."members_skills" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "member" uuid NOT NULL, "skill" text NOT NULL, "skill_type" text NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("member") REFERENCES "public"."members"("id") ON UPDATE restrict ON DELETE restrict, FOREIGN KEY ("skill") REFERENCES "public"."skills"("skill") ON UPDATE restrict ON DELETE restrict, FOREIGN KEY ("skill_type") REFERENCES "public"."skill_types"("skill_type") ON UPDATE restrict ON DELETE restrict, UNIQUE ("id"));
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
