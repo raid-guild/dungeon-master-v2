@@ -22,3 +22,18 @@ array_relationships:
         table:
           schema: public
           name: applications_skills
+  - name: members
+    using:
+      foreign_key_constraint_on:
+        column: application
+        table:
+          schema: public
+          name: members
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - ens_name
+        - eth_address
+        - why_raidguild
+      filter: {}
