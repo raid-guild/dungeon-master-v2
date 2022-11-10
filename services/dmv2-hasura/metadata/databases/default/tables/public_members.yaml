@@ -2,6 +2,9 @@ table:
   schema: public
   name: members
 object_relationships:
+  - name: applicationByApplication
+    using:
+      foreign_key_constraint_on: application
   - name: guildClassByGuildClass
     using:
       foreign_key_constraint_on: guild_class
