@@ -5,7 +5,7 @@ object_relationships:
   - name: consultationByConsultation
     using:
       foreign_key_constraint_on: consultation
-  - name: member
+  - name: memberByCleric
     using:
       foreign_key_constraint_on: cleric
   - name: raid_category
