@@ -18,7 +18,7 @@ import { useClipboard } from '@chakra-ui/react';
 import Link from 'next/link';
 import { FaGithub, FaTwitter, FaDiscord, FaEthereum } from 'react-icons/fa';
 import { guildClassMap, IApplication } from '../utils';
-import { truncateAddress } from '../utils/helpers/general';
+import { truncateAddress } from '../utils/general';
 
 // unused props are commented out for now
 type ApplicationProps = IApplication;
