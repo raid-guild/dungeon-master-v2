@@ -29,7 +29,7 @@ const connectors = connectorsForWallets([
     groupName: 'Others',
     wallets: [
       rainbowWallet({ chains }),
-      coinbaseWallet({ chains, appName: 'Wrap Eth' }),
+      coinbaseWallet({ chains, appName: 'Dungeon Master' }),
       argentWallet({ chains }),
       braveWallet({ chains }),
     ],
