@@ -10,10 +10,15 @@ const Home: React.FC = () => {
       <NextSeo title="Dashboard" />
       <Flex>
         <SiteLayout>
-          <>
+          <Flex
+            direction="column"
+            alignItems="center"
+            justifyContent="center"
+            gap={8}
+          >
             <Heading>Dungeon Master v1.5</Heading>
             <ConnectWallet />
-          </>
+          </Flex>
         </SiteLayout>
       </Flex>
     </>
