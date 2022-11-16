@@ -16,7 +16,8 @@ import {
   ListItem,
   Link as ChakraLink,
 } from '@raidguild/design-system';
-import { Collapse, ExternalLinkIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Collapse } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 import { format } from 'date-fns';
 import { IConsultation } from '../utils';
