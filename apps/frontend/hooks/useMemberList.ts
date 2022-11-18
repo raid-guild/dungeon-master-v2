@@ -1,27 +1,28 @@
 import { useSession } from 'next-auth/react';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
-import { client, RAIDS_LIST_QUERY } from '../gql';
+import { client, MEMBER_LIST_QUERY } from '../gql';
 
-const useRaidList = () => {
+const useMemberList = () => {
   const { data: session } = useSession();
 
-  const raidQueryResult = async () => {
+  const memberQueryResult = async () => {
     // TODO handle filters
 
     const { data } = await client(_.get(session, 'token')).query({
-      query: RAIDS_LIST_QUERY,
+      query: MEMBER_LIST_QUERY,
+      variables: {},
     });
 
-    return _.get(data, 'raids');
+    return _.get(data, 'members');
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<any, Error>(
-    'raidsList',
-    raidQueryResult
+    'memberList',
+    memberQueryResult
   );
 
   return { isLoading, isFetching, isError, error, data };
 };
 
-export default useRaidList;
+export default useMemberList;
