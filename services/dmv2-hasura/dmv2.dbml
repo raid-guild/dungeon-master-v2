@@ -38,7 +38,7 @@ Table applications {
   why_raidguild text
   dao_familiarity text [ref: - dao_familiarities.dao_familiarity]
   availability text [ref: - cohort_availabilities.cohort_availability]
-  crypto_exp text
+  crypto_experience text
   comments text
   handbook_read boolean
   pledge_readiness boolean

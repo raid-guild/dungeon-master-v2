@@ -8,7 +8,7 @@ CREATE TABLE "public"."members" (
   "telegram_handle" text,
   "twitter_handle" text,
   "github_handle" text,
-  "eth_adress" text,
+  "eth_address" text,
   "ens_name" text,
   "eth_address" text,
   "guild_class" text,

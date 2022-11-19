@@ -18,7 +18,7 @@ CREATE TABLE "public"."applications" (
   "why_raidguild" text NOT NULL DEFAULT 'NA',
   "dao_familiarity" text NOT NULL DEFAULT 'NA',
   "availability" text NOT NULL DEFAULT 'NA',
-  "crypto_exp" text NOT NULL DEFAULT 'NA',
+  "crypto_experience" text NOT NULL DEFAULT 'NA',
   "comments" text,
   "handbook_read" boolean DEFAULT false,
   "pledge_readiness" boolean DEFAULT false,

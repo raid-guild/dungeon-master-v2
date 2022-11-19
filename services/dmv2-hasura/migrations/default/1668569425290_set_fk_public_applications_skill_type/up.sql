@@ -2,4 +2,4 @@ alter table "public"."applications" drop constraint "applications_skill_type_fke
   add constraint "applications_skill_type_fkey"
   foreign key ("skill_type")
   references "public"."technical_skill_types"
-  ("technical_skill_type") on update restrict on delete restrict;
+  ("skill_type") on update restrict on delete restrict;

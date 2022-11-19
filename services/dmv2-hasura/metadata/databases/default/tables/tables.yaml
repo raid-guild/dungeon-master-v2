@@ -26,4 +26,3 @@
 - "!include public_skills.yaml"
 - "!include public_submission_types.yaml"
 - "!include public_technical_skill_types.yaml"
-- "!include public_testers.yaml"
