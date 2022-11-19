@@ -1,3 +1,31 @@
 table:
   schema: public
   name: consultations
+object_relationships:
+  - name: available_project_spec
+    using:
+      foreign_key_constraint_on: project_specs
+  - name: consultationStatusByConsultationStatus
+    using:
+      foreign_key_constraint_on: consultation_status
+  - name: projectTypeByProjectType
+    using:
+      foreign_key_constraint_on: project_type
+  - name: submissionTypeBySubmissionType
+    using:
+      foreign_key_constraint_on: submission_type
+array_relationships:
+  - name: consultations_services_reqs
+    using:
+      foreign_key_constraint_on:
+        column: consultation
+        table:
+          schema: public
+          name: consultations_services_req
+  - name: raids
+    using:
+      foreign_key_constraint_on:
+        column: consultation
+        table:
+          schema: public
+          name: raids

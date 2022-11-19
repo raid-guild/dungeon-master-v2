@@ -1,3 +1,4 @@
 table:
   schema: public
   name: delivery_priorities
+is_enum: true

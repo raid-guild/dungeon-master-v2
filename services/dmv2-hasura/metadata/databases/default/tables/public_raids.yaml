@@ -1,3 +1,45 @@
 table:
   schema: public
   name: raids
+object_relationships:
+  - name: consultationByConsultation
+    using:
+      foreign_key_constraint_on: consultation
+  - name: memberByCleric
+    using:
+      foreign_key_constraint_on: cleric
+  - name: raid_category
+    using:
+      foreign_key_constraint_on: category
+  - name: raid_status
+    using:
+      foreign_key_constraint_on: status
+array_relationships:
+  - name: raid_parties
+    using:
+      foreign_key_constraint_on:
+        column: raid
+        table:
+          schema: public
+          name: raid_parties
+  - name: raids_roles_requireds
+    using:
+      foreign_key_constraint_on:
+        column: raid
+        table:
+          schema: public
+          name: raids_roles_required
+  - name: relatedRaidsByRelatedRaid
+    using:
+      foreign_key_constraint_on:
+        column: related_raid
+        table:
+          schema: public
+          name: related_raids
+  - name: related_raids
+    using:
+      foreign_key_constraint_on:
+        column: raid
+        table:
+          schema: public
+          name: related_raids
