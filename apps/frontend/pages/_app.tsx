@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
+import { SessionProvider } from 'next-auth/react';
 import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
+import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
 import { WagmiConfig } from 'wagmi';
-import {
-  QueryClient,
-  QueryClientProvider,
-  QueryCache,
-} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, QueryCache } from 'react-query';
 import '@rainbow-me/rainbowkit/styles.css';
 import SiteLayout from '../components/SiteLayout';
 
@@ -27,6 +25,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       },
     }),
   });
+
   return (
     <RGThemeProvider>
       <DefaultSeo
@@ -52,14 +51,19 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           ],
         }}
       />
+
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains} theme={darkTheme()}>
-          <QueryClientProvider client={queryClient}>
-            <SiteLayout>
-              <Component {...pageProps} />
-            </SiteLayout>
-          </QueryClientProvider>
-        </RainbowKitProvider>
+        <SessionProvider refetchInterval={0} session={pageProps.session}>
+          <RainbowKitSiweNextAuthProvider>
+            <RainbowKitProvider chains={chains} theme={darkTheme()}>
+              <QueryClientProvider client={queryClient}>
+                <SiteLayout>
+                  <Component {...pageProps} />
+                </SiteLayout>
+              </QueryClientProvider>
+            </RainbowKitProvider>
+          </RainbowKitSiweNextAuthProvider>
+        </SessionProvider>
       </WagmiConfig>
     </RGThemeProvider>
   );

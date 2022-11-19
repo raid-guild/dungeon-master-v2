@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flex } from '@chakra-ui/react';
+import Navbar from './Navbar';
 
 interface SiteLayoutProps {
   children: React.ReactChild;
@@ -20,7 +21,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
       position="relative"
       background="gray.700"
     >
-      {/* <Navbar /> */}
+      <Navbar />
       <Flex
         direction="column"
         align="center"
