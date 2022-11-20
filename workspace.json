@@ -3,7 +3,7 @@
   "version": 2,
   "projects": {
     "common-utilities": "libs/common-utilities",
-    "hasura": "services/dmv2-hasura",
+    "hasura": "services/hasura",
     "frontend": "apps/frontend",
     "frontend-e2e": "apps/frontend-e2e"
   }

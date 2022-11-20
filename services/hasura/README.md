@@ -6,8 +6,8 @@
 Requires installed Docker, Docker Compose and Hasura CLI locally.
 
 ```bash
-# cd into this directory
-docker compose up
+# cd into the root directory
+docker compose up -d
 # open new terminal
 # cd into this directory
 hasura console

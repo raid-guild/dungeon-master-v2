@@ -31,8 +31,8 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - ./migrations:/hasura-migrations
-      - ./metadata:/hasura-metadata
+      - ./services/hasura/migrations:/hasura-migrations
+      - ./services/hasura/metadata:/hasura-metadata
     depends_on:
       postgres:
         condition: service_healthy

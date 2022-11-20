@@ -5,6 +5,14 @@ import { client, RAIDS_LIST_QUERY } from '../gql';
 
 const useRaidList = () => {
   const { data: session } = useSession();
+  const limit = 15;
+  const where = {
+    _or: [
+      { status: { _eq: 'PREPARING' } },
+      { status: { _eq: 'RAIDING' } },
+      { status: { _eq: 'AWAITING' } },
+    ],
+  };
 
   const raidQueryResult = async () => {
     // TODO handle filters
