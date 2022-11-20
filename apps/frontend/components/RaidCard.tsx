@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import {
   Flex,
   Heading,
@@ -12,56 +13,44 @@ import {
   SimpleGrid,
   UnorderedList,
   ListItem,
+  Card,
 } from '@raidguild/design-system';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from 'next/link';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import RaidInfoStack from './RaidInfoStack';
+import { IRaid } from '../utils';
 
 interface RaidProps {
-  id: string;
-  name: string;
-  status: string;
-  category: string;
-  description: string;
-  budget: string;
-  createdAt: string;
-  submissionType: string;
-  projectType: string;
-  rolesRequired: string[];
-  servicesRequired: string[];
+  raid: IRaid;
 }
 
-const RaidCard: React.FC<RaidProps> = ({
-  id,
-  name = 'Dungeon Master v1.5',
-  status,
-  category,
-  createdAt,
-  description,
-  budget,
-  submissionType,
-  projectType,
-  rolesRequired = [],
-  servicesRequired,
-}: RaidProps) => {
-  const uniqueServicesRequired = new Set(
-    servicesRequired?.map((service) => service)
+const RaidCard: React.FC<RaidProps> = ({ raid }: RaidProps) => {
+  const servicesRequired = _.get(
+    raid,
+    'consultationByConsultation.consultationsServicesReqs'
   );
+  const uniqueServicesRequired = _.uniq(
+    _.map(servicesRequired, (service: { guildService: string }) =>
+      _.get(service, 'guildService')
+    )
+  );
+  const id = _.get(raid, 'id');
+  const submissionType = _.get(
+    raid,
+    'consultationByConsultation.submissionType'
+  );
+  const description = _.get(raid, 'consultationByConsultation.projectDesc');
+  const budget = _.get(raid, 'consultationByConsultation.budget');
+  const projectType = _.get(raid, 'consultationByConsultation.projectType');
+  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequireds'), 'role');
 
   return (
-    <Flex
-      direction="column"
-      width="100%"
-      minWidth="60vw"
-      justifyContent="center"
-      padding={8}
-      bg="gray.800"
-      rounded="md"
-    >
+    <Card variant="rainbowBorder">
       <Flex
         direction="row"
-        width="100%"
+        width="90%"
+        mx="auto"
         alignItems="space-apart"
         justifyContent="space-between"
       >
@@ -74,7 +63,7 @@ const RaidCard: React.FC<RaidProps> = ({
               transition="all ease-in-out .25s"
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
-              {name}
+              {_.get(raid, 'name')}
             </Heading>
           </Link>
           {submissionType === 'Paid' && (
@@ -84,7 +73,7 @@ const RaidCard: React.FC<RaidProps> = ({
               </span>
             </Tooltip>
           )}
-          <Badge colorScheme="green">{status}</Badge>
+          <Badge colorScheme="green">{_.get(raid, 'status')}</Badge>
         </HStack>
         <Link href="/raids/[id]" as={`/raids/${id}/`}>
           <Button color="raid" borderColor="raid" variant="outline">
@@ -94,7 +83,7 @@ const RaidCard: React.FC<RaidProps> = ({
       </Flex>
       <Flex
         direction="row"
-        width="80%"
+        width="90%"
         alignItems="center"
         justifyContent="space-between"
       >
@@ -106,18 +95,18 @@ const RaidCard: React.FC<RaidProps> = ({
           maxWidth="80%"
           paddingY={4}
         >
-          {createdAt && (
+          {_.get(raid, 'createdAt') && (
             <HStack>
               <Text color="gray.100" fontSize="smaller">
                 Raid Started
               </Text>
               <Text color="gray.100" fontSize="smaller">
-                {createdAt && format(new Date(+createdAt), 'Pp')}
+                {/* {createdAt && format(new Date(+createdAt), 'Pp')} */}
               </Text>
             </HStack>
           )}
           <Text color="white">
-            {description?.length > 300
+            {_.gt(_.size(description), 300)
               ? `${description?.slice(0, 300)}...`
               : description}
           </Text>
@@ -128,14 +117,17 @@ const RaidCard: React.FC<RaidProps> = ({
         width="100%"
         alignItems="flex-start"
         justifyContent="space-between"
-        maxWidth="80%"
+        maxWidth="90%"
         paddingY={4}
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
           <RaidInfoStack label="Budget" details={budget || '-'} />
-          <RaidInfoStack label="Category" details={category || '-'} />
+          <RaidInfoStack
+            label="Category"
+            details={_.get(raid, 'category', '-')}
+          />
           <RaidInfoStack label="Project Type" details={projectType || '-'} />
-          {rolesRequired.length > 0 && (
+          {rolesRequired?.length > 0 && (
             <VStack align="start">
               <Text as="span" color="gray.100" fontSize="small">
                 Roles Needed
@@ -165,7 +157,7 @@ const RaidCard: React.FC<RaidProps> = ({
           )}
         </SimpleGrid>
       </Flex>
-    </Flex>
+    </Card>
   );
 };
 

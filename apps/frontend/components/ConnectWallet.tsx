@@ -12,6 +12,7 @@ import {
   Box,
   Flex,
   Image,
+  Text,
 } from '@raidguild/design-system';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { Button } from '@raidguild/design-system';
@@ -20,6 +21,7 @@ import { truncateAddress } from '../utils/general';
 export const ConnectWallet: React.FC = () => {
   const { isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
+  const showNetwork = false; // maybe unhide, in some cases
 
   return (
     <ConnectButton.Custom>
@@ -45,8 +47,7 @@ export const ConnectWallet: React.FC = () => {
             if (!mounted || !account || !chain) {
               return (
                 <Button
-                  color="brand.primary.600"
-                  backgroundColor="brand.primary.50"
+                  variant="outline"
                   transition="all 100ms ease-in-out"
                   _hover={{
                     bgColor: 'brand.primary.100',
@@ -65,19 +66,7 @@ export const ConnectWallet: React.FC = () => {
 
             if (chain.unsupported) {
               return (
-                <Button
-                  onClick={openChainModal}
-                  color="brand.primary.600"
-                  backgroundColor="brand.primary.50"
-                  transition="all 100ms ease-in-out"
-                  border="2px"
-                  borderColor="white"
-                  _hover={{
-                    bgColor: 'brand.primary.100',
-                    borderWidth: '2px',
-                    borderColor: 'brand.primary.600',
-                  }}
-                >
+                <Button onClick={openChainModal} variant="outline">
                   Unsupported network
                 </Button>
               );
@@ -86,42 +75,34 @@ export const ConnectWallet: React.FC = () => {
             return (
               <Flex gap={3}>
                 <Menu offset={[0, 4]} placement="bottom-end" autoSelect={false}>
-                  <Button
-                    display="flex"
-                    flexDirection="row"
-                    color="brand.primary.600"
-                    backgroundColor="brand.primary.50"
-                    transition="all 100ms ease-in-out"
-                    _hover={{ bgColor: 'brand.primary.100' }}
-                    width="fit"
-                    onClick={openChainModal}
-                  >
-                    <Image
-                      alt={chain.name ?? 'Chain icon'}
-                      src={chain.iconUrl}
-                      width={25}
-                      height={25}
-                      mr={2}
-                    />
-                    {chain.name}
-                  </Button>
+                  {showNetwork && (
+                    <Button
+                      variant="outline"
+                      width="fit"
+                      onClick={openChainModal}
+                    >
+                      <Image
+                        alt={chain.name ?? 'Chain icon'}
+                        src={chain.iconUrl}
+                        width={25}
+                        height={25}
+                        mr={2}
+                      />
+                      {chain.name}
+                    </Button>
+                  )}
 
-                  <MenuButton
-                    as={Button}
-                    rightIcon={
-                      <Icon as={FiChevronDown} color="brand.primary.600" />
-                    }
-                    color="brand.primary.600"
-                    backgroundColor="brand.primary.50"
-                    transition="all 100ms ease-in-out"
-                    _hover={{ bgColor: 'brand.primary.100' }}
-                    width="fit"
-                  >
-                    {account.ensName
-                      ? account.ensName
-                      : truncateAddress(account.address)}
+                  <MenuButton as={Button} variant="outline" width="fit">
+                    <HStack spacing={3}>
+                      <Text color="white">
+                        {account.ensName
+                          ? account.ensName
+                          : truncateAddress(account.address)}
+                      </Text>
+                      <Icon as={FiChevronDown} color="primary.600" />
+                    </HStack>
                   </MenuButton>
-                  <MenuList backgroundColor="gray.800" minWidth="none">
+                  <MenuList minWidth="none">
                     <MenuItem
                       onClick={() => openAccountModal()}
                       _hover={{ backgroundColor: 'gray.600' }}
@@ -136,8 +117,8 @@ export const ConnectWallet: React.FC = () => {
                       _hover={{ backgroundColor: 'gray.600' }}
                     >
                       <HStack spacing={2}>
-                        <Icon as={FiXCircle} color="red.300" />
-                        <Box color="red.300">Sign Out</Box>
+                        <Icon as={FiXCircle} color="primary.500" />
+                        <Box color="primary.500">Sign Out</Box>
                       </HStack>
                     </MenuItem>
                   </MenuList>

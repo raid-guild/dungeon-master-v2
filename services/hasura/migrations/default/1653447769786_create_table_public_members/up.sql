@@ -10,7 +10,6 @@ CREATE TABLE "public"."members" (
   "github_handle" text,
   "eth_address" text,
   "ens_name" text,
-  "eth_address" text,
   "guild_class" text,
   "membership_date" date,
   "member_type" text,
