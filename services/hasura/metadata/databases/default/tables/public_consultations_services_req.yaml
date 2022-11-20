@@ -1,0 +1,3 @@
+table:
+  schema: public
+  name: consultations_services_req

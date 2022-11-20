@@ -1,0 +1,350 @@
+// v2.0.0
+
+Table members {
+  id uuid pk unique
+  legacy_id text
+  name text
+  email_address text
+  discord_handle text
+  telegram_handle text
+  twitter_handle text
+  github_handle text
+  eth_address text
+  ens_name text
+  guild_class text [ref: - guild_classes.guild_class]
+  membership_date timestamp
+  member_type text [ref: - member_types.member_type]
+  is_raiding boolean
+  championed_by uuid [ref: - members.id]
+  application uuid [ref: - applications.id]
+}
+
+Table applications {
+  id uuid pk unique
+  name text
+  email_address text
+  discord_handle text
+  telegram_handle text
+  twitter_handle text
+  github_handle text
+  eth_address text
+  ens_name text
+  introduction text
+  learning_goals text
+  technical_skill_type text [ref: - technical_skill_types.technical_skill_type]
+  passion text
+  favorite_media text
+  crypto_thrills text
+  why_raidguild text
+  dao_familiarity text [ref: - dao_familiarities.dao_familiarity]
+  availability text [ref: - cohort_availabilities.cohort_availability]
+  crypto_experience text
+  comments text
+  handbook_read boolean
+  pledge_readiness boolean
+  referred_by uuid [ref: - members.id]
+}
+
+Table raids {
+  id uuid pk unique
+  name text
+  status text [ref: - raid_statuses.raid_status]
+  category text [ref: - raid_categories.raid_category]
+  cleric uuid [ref: - members.id]
+  invoice_address text
+  start_date timestamp
+  end_date timestamp
+  consultation uuid [ref: - consultations.id]
+  portfolio uuid [ref: - portfolios.id]
+  airtable_id text
+  escrow_index int
+  locker_hash text
+}
+
+Table consultations {
+  id uuid pk unique
+  status text [ref: - consultation_statuses.consultation_status]
+  contact_name text
+  contact_email text
+  contact_bio text
+  contact_discord text
+  contact_telegram text
+  contact_twitter text
+  contact_github text
+  project_name text
+  project_link text
+  project_type text [ref: - project_types.project_type]
+  project_specs text [ref: - available_project_specs.available_project_spec]
+  project_desc text
+  desired_delivery timestamp
+  budget text [ref: - budget_options.budget_option]
+  delivery_priorities text [ref: - delivery_priorities.delivery_priority]
+  additional_info text
+  submission_type text [ref: - submission_types.submission_type]
+  submission_hash text
+  consultation_hash text
+}
+
+Table portfolios {
+  id uuid pk unique
+  project_name text
+  project_desc text
+  category text [ref: - raid_categories.raid_category]
+  case_study text
+  repo_link text
+  result_link text
+}
+
+Table comments {
+  id uuid pk unique
+  comment text
+  member int [ref: - members.id]
+  raid int [ref: - raids.id]
+}
+
+// MANY-TO-MANY TABLES
+
+Table raid_parties {
+  id text pk unique
+  raid text [ref: - raids.id]
+  member text [ref: - members.id]
+}
+
+Table applications_skills {
+  id uuid pk unique
+  application uuid [ref: - applications.id]
+  skill text [ref: - skills.skill]
+  skill_type text [ref: - skill_types.skill_type]
+}
+
+Table members_skills {
+  id uuid pk unique
+  member uuid [ref: - members.id]
+  skill text [ref: - skills.skill]
+  skill_type text [ref: - skill_types.skill_type]
+}
+
+Table consultations_services_req {
+  id uuid pk unique
+  consultation uuid [ref: - consultations.id]
+  service_req text [ref: - guild_services.service]
+}
+
+Table portfolio_roles {
+  id uuid pk unique
+  portfolio uuid [ref: - portfolios.id]
+  role text [ref: - guild_classes.guild_class]
+}
+
+Table raids_roles_required {
+  id uuid pk unique
+  raid uuid [ref: - raids.id]
+  role_required text [ref: - guild_classes.guild_class]
+}
+
+// ENUM TABLES
+
+Table guild_classes {
+  guild_class guild_classes
+}
+
+Table skills {
+  skill skills
+}
+
+Table guild_services {
+  service guild_services
+}
+
+Table skill_types {
+  skill_type skill_types
+}
+
+Table technical_skill_types {
+  technical_skill_type technical_skill_types
+}
+
+Table dao_familiarities {
+  dao_familiarity dao_familiarities
+}
+
+Table member_types {
+  member_type member_types
+}
+
+Table project_types {
+  project_type project_types
+}
+
+Table available_project_specs {
+  available_project_spec available_project_specs
+}
+
+Table budget_options {
+  budget_option budget_options
+}
+
+Table submission_types {
+  submission_type submission_types
+}
+
+Table delivery_priorities {
+  delivery_priority delivery_priorities
+}
+
+Table cohort_availabilities {
+  cohort_availability cohort_availabilities
+}
+
+Table raid_statuses {
+  raid_status raid_statuses
+}
+
+Table raid_categories {
+  raid_category raid_categories
+}
+
+Table consultation_statuses {
+  consultation_status consultation_statuses
+}
+
+// HASURA ENUMS ARE ALL CAPS WITH UNDERSCORES
+
+enum guild_classes {
+  COMMUNITY
+  DESIGN
+  TREASURY
+  MARKETING
+  FRONTEND_DEV
+  OPERATIONS
+  BIZ_DEV
+  BACKEND_DEV
+  PROJECT_MANAGEMENT
+  SMART_CONTRACTS
+  LEGAL
+  ACCOUNT_MANAGER
+}
+
+enum skills {
+  FRONTEND
+  BACKEND
+  SOLIDITY
+  BIZ_DEV
+  COMMUNITY
+  PROJECT_MANAGEMENT
+  FINANCE
+  PRODUCT_DESIGN
+  UX_RESEARCH
+  GAME_THEORY
+  DEVOPS
+  TOKENOMICS
+  CONTENT
+  MEMES
+  VISUAL_DESIGN
+  UI_DESIGN
+  ILLUSTRATION
+  LEGAL
+  ACCOUNTING
+}
+
+enum guild_services {
+  DAO
+  DEVELOPMENT
+  MARKETING
+  MOTION_DESIGN
+  NFTS
+  SMART_CONTRACTS
+  STRATEGY
+  TOKENOMICS
+  UX
+  UI
+  VISUAL_DESIGN
+  HELP_ME
+}
+
+enum skill_types {
+  PRIMARY
+  SECONDARY
+}
+
+enum technical_skill_types {
+  NOT_APPLICABLE
+  TECHNICAL
+  NON_TECHNICAL
+  OTHER
+}
+
+enum dao_familiarities {
+  NOT_APPLICABLE
+  EXPERT
+  FAMILIAR
+  AWARE
+  NONE
+}
+
+enum member_types {
+  MEMBER
+  APPRENTICE
+  COHORT
+}
+
+enum project_types {
+  NEW
+  EXISTING
+}
+
+enum available_project_specs {
+  YES
+  PARTIAL
+  NONE
+}
+
+enum budget_options {
+  LESS_THAN_FIVE_THOUSAND
+  FIVE_TO_TWENTY_THOUSAND
+  TWENTY_TO_FIFTY_THOUSAND
+  MORE_THAN_FIFTY_THOUSAND
+  NOT_SURE
+}
+
+enum submission_types {
+  PAID
+  UNPAID
+}
+
+enum delivery_priorities {
+  FAST_AND_POLISHED
+  FAST_AND_INEXPENSIVE
+  POLISHED_AND_INEXPENSIVE
+}
+
+enum cohort_availabilities {
+  NOT_APPLICABLE
+  LESS_THAN_FIVE_HOURS
+  SIX_TO_TWELVE_HOURS
+  THIRTEEN_TO_THIRTY_FIVE_HOURS
+  MORE_THAN_THIRTY_SIX_HOURS
+}
+
+enum raid_statuses {
+  AWAITING
+  PREPARING
+  RAIDING
+  SHIPPED
+  LOST
+}
+
+enum raid_categories {
+  DESIGN_SPRINT
+  FULL_STACK
+  SMART_CONTRACTS
+  BACKEND
+  FRONTEND
+  MARKETING
+}
+
+enum consultation_statuses {
+  PENDING
+  CANCELLED
+  ACCEPTED
+}

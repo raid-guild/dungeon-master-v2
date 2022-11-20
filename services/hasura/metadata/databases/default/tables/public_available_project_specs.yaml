@@ -1,0 +1,3 @@
+table:
+  schema: public
+  name: available_project_specs
