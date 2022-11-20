@@ -16,37 +16,35 @@ import {
   Card,
 } from '@raidguild/design-system';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
-import Link from 'next/link';
+import Link from './ChakraNextLink';
 // import { format } from 'date-fns';
 import RaidInfoStack from './RaidInfoStack';
-import { IRaid } from '../utils';
+import { IConsultation, IRaid } from '../utils';
 
 interface RaidProps {
-  raid: IRaid;
+  raid?: IRaid;
+  consultation: IConsultation;
 }
 
-const RaidCard: React.FC<RaidProps> = ({ raid }: RaidProps) => {
-  const servicesRequired = _.get(
-    raid,
-    'consultationByConsultation.consultationsServicesReqs'
-  );
+const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
+  const servicesRequired = _.get(consultation, 'consultationsServicesReqs');
   const uniqueServicesRequired = _.uniq(
     _.map(servicesRequired, (service: { guildService: string }) =>
       _.get(service, 'guildService')
     )
   );
-  const id = _.get(raid, 'id');
-  const submissionType = _.get(
-    raid,
-    'consultationByConsultation.submissionType'
-  );
-  const description = _.get(raid, 'consultationByConsultation.projectDesc');
-  const budget = _.get(raid, 'consultationByConsultation.budget');
-  const projectType = _.get(raid, 'consultationByConsultation.projectType');
-  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequireds'), 'role');
+  const id = _.get(raid || consultation, 'id');
+  const submissionType = _.get(consultation, 'submissionType');
+  const description = _.get(consultation, 'projectDesc');
+  const budget = _.get(consultation, 'budget');
+  const projectType = _.get(consultation, 'projectType');
+  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequireds', []), 'role');
+
+  // TODO handle links for consulation/raid
+  const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
 
   return (
-    <Card variant="rainbowBorder">
+    <Card variant="withHeader">
       <Flex
         direction="row"
         width="90%"
@@ -55,7 +53,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid }: RaidProps) => {
         justifyContent="space-between"
       >
         <HStack spacing={4} align="center">
-          <Link href="/raids/[id]" as={`/raids/${id}/`}>
+          <Link href={link}>
             <Heading
               color="white"
               as="h3"
@@ -63,7 +61,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid }: RaidProps) => {
               transition="all ease-in-out .25s"
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
-              {_.get(raid, 'name')}
+              {_.get(raid, 'name', _.get(consultation, 'projectName'))}
             </Heading>
           </Link>
           {submissionType === 'Paid' && (
@@ -73,9 +71,11 @@ const RaidCard: React.FC<RaidProps> = ({ raid }: RaidProps) => {
               </span>
             </Tooltip>
           )}
-          <Badge colorScheme="green">{_.get(raid, 'status')}</Badge>
+          <Badge colorScheme="green">
+            {_.get(raid, 'status', _.get(consultation, 'status'))}
+          </Badge>
         </HStack>
-        <Link href="/raids/[id]" as={`/raids/${id}/`}>
+        <Link href={link}>
           <Button color="raid" borderColor="raid" variant="outline">
             View Details
           </Button>
@@ -101,6 +101,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid }: RaidProps) => {
                 Raid Started
               </Text>
               <Text color="gray.100" fontSize="smaller">
+                {_.get(raid, 'createdAt')}
                 {/* {createdAt && format(new Date(+createdAt), 'Pp')} */}
               </Text>
             </HStack>

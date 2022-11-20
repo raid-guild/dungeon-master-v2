@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import {
   Flex,
   Heading,
@@ -13,42 +14,128 @@ import {
   LinkOverlay,
   Divider,
   Tooltip,
+  Icon,
+  RoleBadge,
 } from '@raidguild/design-system';
 import { useClipboard, AvatarBadge } from '@chakra-ui/react';
-import Link from 'next/link';
-import { FaGithub, FaTwitter, FaDiscord, FaEthereum } from 'react-icons/fa';
-import { guildClassMap } from '../utils';
-import { truncateAddress } from '../utils/general';
+import Link from './ChakraNextLink';
+import {
+  FaGithub,
+  FaTwitter,
+  FaDiscord,
+  FaEthereum,
+  FaTelegramPlane,
+} from 'react-icons/fa';
+import {
+  GUILD_CLASS_ICON,
+  IApplication,
+  IMember,
+  truncateAddress,
+  clearNonObjects,
+} from '../utils';
 
 // unused props are commented out for now
 interface MemberProps {
-  id: string;
-  name: string;
-  isRaiding: boolean;
-  guildClass: string;
-  primarySkills: string[];
-  ethAddress: string;
-  discordHandle: string;
-  twitterHandle: string;
-  githubHandle: string;
-  ensName: string;
+  application: IApplication;
+  member?: IMember;
 }
 
+const SocialButton = ({ href, icon, label, tooltip, onClick }) => (
+  <Tooltip label={tooltip} size="sm" hasArrow>
+    <Button
+      as={ChakraLink}
+      variant="ghost"
+      size="xs"
+      marginX={1}
+      marginTop={1}
+      leftIcon={icon}
+      target="_blank"
+      rel="noreferrer noopener"
+      href={href}
+      onClick={onClick}
+      color="primary.300"
+    >
+      {label}
+    </Button>
+  </Tooltip>
+);
+
 const MemberCard: React.FC<MemberProps> = ({
-  id,
-  name,
-  isRaiding,
-  guildClass,
-  primarySkills,
-  ethAddress,
-  discordHandle,
-  twitterHandle,
-  githubHandle,
-  ensName,
+  application,
+  member,
 }: MemberProps) => {
-  const copyDiscord = useClipboard(discordHandle);
+  const id = _.get(member, 'id', _.get(application, 'id'));
+  const link = member ? `/members/${id}/` : `/applications/${id}/`;
+  const ensName = _.get(member, 'ensName', _.get(application, 'ensName', null));
+  const ethAddress = _.get(
+    member,
+    'ethAddress',
+    _.get(application, 'ethAddress')
+  );
+  const isRaiding = _.get(member, 'isRaiding', false);
+
+  const github = _.get(
+    member,
+    'githubHandle',
+    _.get(application, 'githubHandle')
+  );
+  const twitter = _.get(
+    member,
+    'twitterHandle',
+    _.get(application, 'twitterHandle')
+  );
+  const discord = _.get(
+    member,
+    'discordHandle',
+    _.get(application, 'discordHandle')
+  );
+  const telegram = _.get(
+    member,
+    'telegramHandle',
+    _.get(application, 'telegramHandle')
+  );
+  const copyDiscord = useClipboard(discord);
   const copyEns = useClipboard(ensName);
   const copyEth = useClipboard(ethAddress);
+
+  const socials = [
+    telegram && {
+      href: `https://t.me/${telegram}`,
+      icon: <FaTelegramPlane />,
+      label: telegram,
+      tooltip: `Go to ${_.get(member, 'name')}'s Telegram profile`,
+    },
+    github && {
+      href: `https://github.com/${github}`,
+      icon: <FaGithub />,
+      label: github,
+      tooltip: '',
+    },
+    twitter && {
+      href: `https://twitter.com/${twitter}`,
+      icon: <FaTwitter />,
+      label: twitter,
+      tooltip: `Go to ${_.get(member, 'name')}'s Twitter profile`,
+    },
+    discord && {
+      onClick: copyDiscord.onCopy,
+      icon: <FaDiscord />,
+      label: discord,
+      tooltip: copyDiscord.hasCopied
+        ? 'Copied Discord handle'
+        : 'Copy Discord handle',
+    },
+    ethAddress !== '0x' || ensName !== null
+      ? {
+          onClick: ensName ? copyEns.onCopy : copyEth.onCopy,
+          icon: <FaEthereum />,
+          label: ensName || truncateAddress(ethAddress),
+          tooltip: copyEns.hasCopied
+            ? `Copied ${ensName ? 'ENS name' : 'eth address'}`
+            : `Copy ${ensName ? 'ENS name' : 'eth address'}`,
+        }
+      : null,
+  ];
 
   return (
     <LinkBox>
@@ -61,8 +148,9 @@ const MemberCard: React.FC<MemberProps> = ({
         style={{ backdropFilter: 'blur(7px)' }}
         align="stretch"
         justify="space-between"
+        position="relative"
       >
-        <Link href="/members/[id]" as={`/members/${id}/`} passHref>
+        <Link href={link}>
           <LinkOverlay>
             <Flex
               direction="column"
@@ -70,7 +158,7 @@ const MemberCard: React.FC<MemberProps> = ({
               justifyContent="center"
               width="100%"
               bgGradient="linear-gradient(96.18deg, #FF3864 -44.29%, #8B1DBA 53.18%, #4353DF 150.65%);"
-              minHeight="20%"
+              minHeight="70px"
               borderTopRadius="md"
             >
               <HStack
@@ -88,33 +176,17 @@ const MemberCard: React.FC<MemberProps> = ({
                   transition="all ease-in-out .25s"
                   _hover={{ cursor: 'pointer', color: 'raid' }}
                 >
-                  {name}
+                  {_.get(member, 'name', _.get(application, 'name'))}
                 </Heading>
                 <Badge background="blackAlpha" fontSize="sm">
                   {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
                 </Badge>
               </HStack>
-              <Avatar
-                marginBottom="-5"
-                size="md"
-                src={
-                  guildClassMap.find((item) => item.guildClass === guildClass)
-                    ?.image
-                }
-                bg="black"
-              >
-                <AvatarBadge
-                  boxSize="1em"
-                  bg={isRaiding ? 'green.300' : 'red.300'}
-                  borderWidth="4px"
-                  borderColor="blackAlpha.900"
-                />
-              </Avatar>
             </Flex>
           </LinkOverlay>
         </Link>
         <VStack paddingX={8} height="100%" align="stretch">
-          <Flex flexGrow={1}>
+          {/* <Flex flexGrow={1}>
             <Flex
               direction="row"
               maxWidth="100%"
@@ -135,127 +207,37 @@ const MemberCard: React.FC<MemberProps> = ({
                 </Badge>
               ))}
             </Flex>
-          </Flex>
+          </Flex> */}
           <Divider paddingTop={2} width="100%" alignSelf="center" />
-          <Text size="md">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate
-            ducimus quasi, quae beatae magni quidem laboriosam veniam sit
-            doloremque aperiam?
+          <Text size="md" maxW="900px">
+            {_.gte(_.size(_.get(application, 'introduction')), 250)
+              ? _.get(application, 'introduction').slice(0, 250) + '...'
+              : _.get(application, 'introduction')}
           </Text>
 
           <Flex wrap="wrap" width="100%" maxWidth="100%" paddingBottom={4}>
-            {githubHandle !== null && (
-              <>
-                <Tooltip
-                  label={`Go to ${name}'s GitHub profile`}
-                  size="sm"
-                  arrowShadowColor="purple.500"
-                  backgroundColor="purple.500"
-                  color="purple.100"
-                >
-                  <Button
-                    as={ChakraLink}
-                    colorScheme="blackAlpha"
-                    bgColor="black"
-                    color="white"
-                    size="xs"
-                    marginX={1}
-                    marginTop={1}
-                    leftIcon={<FaGithub />}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    href={`https://github.com/${githubHandle}`}
-                  >
-                    {githubHandle}
-                  </Button>
-                </Tooltip>
-              </>
+            {_.map(
+              clearNonObjects(socials),
+              ({ href, icon, label, tooltip, onClick }) => (
+                <SocialButton
+                  key={`${label}-${href}`}
+                  href={href}
+                  icon={icon}
+                  label={label}
+                  tooltip={tooltip}
+                  onClick={onClick}
+                />
+              )
             )}
-            {twitterHandle !== undefined && (
-              <>
-                <Tooltip
-                  label={`Go to ${name}'s Twitter profile`}
-                  size="sm"
-                  arrowShadowColor="purple.500"
-                  backgroundColor="purple.500"
-                  color="purple.100"
-                >
-                  <Button
-                    as={ChakraLink}
-                    colorScheme="twitter"
-                    size="xs"
-                    marginX={1}
-                    marginTop={1}
-                    leftIcon={<FaTwitter />}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    href={`https://twitter.com/${twitterHandle}`}
-                  >
-                    {twitterHandle}
-                  </Button>
-                </Tooltip>
-              </>
-            )}
-            {discordHandle !== undefined && (
-              <>
-                <Tooltip
-                  label={
-                    copyDiscord.hasCopied
-                      ? 'Copied Discord handle'
-                      : 'Copy Discord handle'
-                  }
-                  size="sm"
-                  arrowShadowColor="purple.500"
-                  backgroundColor="purple.500"
-                  color="purple.100"
-                >
-                  <Button
-                    bgColor="purple.800"
-                    _hover={{ bgColor: 'purple.500' }}
-                    transition="all ease-in-out .25s"
-                    color="white"
-                    size="xs"
-                    marginX={1}
-                    marginTop={1}
-                    leftIcon={<FaDiscord />}
-                    onClick={copyDiscord.onCopy}
-                  >
-                    {discordHandle}
-                  </Button>
-                </Tooltip>
-              </>
-            )}
-
-            {ethAddress !== '0x' || ensName !== null ? (
-              <>
-                <Tooltip
-                  label={
-                    copyEns.hasCopied
-                      ? `Copied ${ensName ? 'ENS name' : 'eth address'}`
-                      : `Copy ${ensName ? 'ENS name' : 'eth address'}`
-                  }
-                  size="xs"
-                  arrowShadowColor="purple.500"
-                  backgroundColor="purple.500"
-                  color="purple.100"
-                >
-                  <Button
-                    colorScheme="blackAlpha"
-                    bgColor="black"
-                    color="white"
-                    size="xs"
-                    marginX={1}
-                    marginTop={1}
-                    leftIcon={<FaEthereum />}
-                    onClick={ensName ? copyEns.onCopy : copyEth.onCopy}
-                  >
-                    {ensName || truncateAddress(ethAddress)}
-                  </Button>
-                </Tooltip>
-              </>
-            ) : null}
           </Flex>
         </VStack>
+        <Flex position="absolute" top="40px" left="47%" zIndex={2}>
+          <RoleBadge
+            roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+            width="60px"
+            height="60px"
+          />
+        </Flex>
       </Flex>
     </LinkBox>
   );

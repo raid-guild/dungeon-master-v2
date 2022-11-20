@@ -41,8 +41,10 @@ const useRaidList = () => {
     'raidsList',
     ({ pageParam = 0 }) => raidQueryResult(pageParam),
     {
-      getNextPageParam: (_z, allPages) => {
-        return _.divide(_.size(_.flatten(allPages)), limit);
+      getNextPageParam: (lastPage, allPages) => {
+        return _.isEmpty(lastPage)
+          ? undefined
+          : _.divide(_.size(_.flatten(allPages)), limit);
       },
     }
   );

@@ -30,7 +30,11 @@ const RaidList = () => {
         >
           <Stack spacing={4} maxW="70%" mx="auto">
             {_.map(raids, (raid: IRaid) => (
-              <RaidCard raid={raid} key={_.get(raid, 'id')} />
+              <RaidCard
+                raid={raid}
+                consultation={_.get(raid, 'consultationByConsultation')}
+                key={_.get(raid, 'id')}
+              />
             ))}
           </Stack>
         </InfiniteScroll>

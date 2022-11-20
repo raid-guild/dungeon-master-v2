@@ -11,7 +11,6 @@ export const RAIDS_LIST_QUERY = gql`
     name
     status
     category
-    created_at
     raids_roles_requireds {
       role
     }
@@ -24,6 +23,8 @@ export const RAIDS_LIST_QUERY = gql`
       submission_type
       project_type
     }
+    created_at
+    updated_at
   }
 `;
 
@@ -55,6 +56,8 @@ export const RAID_DETAIL_QUERY = gql`
         project_type
         submission_type
       }
+      created_at
+      updated_at
     }
   }
 `;

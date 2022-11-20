@@ -1,3 +1,11 @@
 table:
   schema: public
   name: guild_services
+array_relationships:
+  - name: consultations_services_reqs
+    using:
+      foreign_key_constraint_on:
+        column: guild_service
+        table:
+          schema: public
+          name: consultations_services_req

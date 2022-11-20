@@ -23,7 +23,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Collapse } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 import { format } from 'date-fns';
-import { IConsultation } from '../utils';
+import { IConsultation, BUDGET_DISPLAY } from '../utils';
 import RaidInfoStack from './RaidInfoStack';
 
 interface RaidProps {
@@ -124,7 +124,10 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     {
       title: 'Project Details',
       items: [
-        { label: 'Budget', details: _.get(consultation, 'budget', '-') },
+        {
+          label: 'Budget',
+          details: BUDGET_DISPLAY[_.get(consultation, 'budget', '-')],
+        },
         { label: 'Category', details: category },
         {
           label: 'Desired Delivery',
@@ -214,6 +217,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                       label={_.get(item, 'label')}
                       details={_.get(item, 'details')}
                       link={_.get(item, 'link')}
+                      key={_.get(item, 'label')}
                     />
                   ))}
                 </Grid>

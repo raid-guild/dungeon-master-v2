@@ -5,9 +5,15 @@ object_relationships:
   - name: available_project_spec
     using:
       foreign_key_constraint_on: project_specs
+  - name: budget_option
+    using:
+      foreign_key_constraint_on: budget
   - name: consultationStatusByConsultationStatus
     using:
       foreign_key_constraint_on: consultation_status
+  - name: delivery_priority
+    using:
+      foreign_key_constraint_on: delivery_priorities
   - name: projectTypeByProjectType
     using:
       foreign_key_constraint_on: project_type
