@@ -1,0 +1,4 @@
+table:
+  schema: public
+  name: skill_types
+is_enum: true

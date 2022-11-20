@@ -1,0 +1,3 @@
+table:
+  schema: public
+  name: raids_roles_required
