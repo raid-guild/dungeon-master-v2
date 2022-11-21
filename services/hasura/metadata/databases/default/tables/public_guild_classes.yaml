@@ -1,6 +1,6 @@
 table:
-  name: guild_classes
   schema: public
+  name: guild_classes
 is_enum: true
 array_relationships:
   - name: members
@@ -8,19 +8,19 @@ array_relationships:
       foreign_key_constraint_on:
         column: guild_class
         table:
-          name: members
           schema: public
+          name: members
   - name: portfolios_roles
     using:
       foreign_key_constraint_on:
         column: role
         table:
-          name: portfolios_roles
           schema: public
+          name: portfolios_roles
   - name: raids_roles_requireds
     using:
       foreign_key_constraint_on:
         column: role
         table:
-          name: raids_roles_required
           schema: public
+          name: raids_roles_required

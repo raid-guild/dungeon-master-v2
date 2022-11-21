@@ -32,6 +32,7 @@ export const ConnectWallet: React.FC = () => {
         openChainModal,
         openConnectModal,
         mounted,
+        authenticationStatus,
       }) => (
         <div
           {...(!mounted && {
@@ -44,6 +45,8 @@ export const ConnectWallet: React.FC = () => {
           })}
         >
           {(() => {
+            console.log(authenticationStatus);
+            // if (authenticationStatus)
             if (!mounted || !account || !chain) {
               return (
                 <Button

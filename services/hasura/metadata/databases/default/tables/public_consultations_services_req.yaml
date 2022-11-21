@@ -1,6 +1,6 @@
 table:
-  name: consultations_services_req
   schema: public
+  name: consultations_services_req
 object_relationships:
   - name: consultationByConsultation
     using:
@@ -8,3 +8,11 @@ object_relationships:
   - name: guildServiceByGuildService
     using:
       foreign_key_constraint_on: guild_service
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - guild_service
+        - consultation
+        - id
+      filter: {}

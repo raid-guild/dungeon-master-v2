@@ -1,6 +1,6 @@
 table:
-  name: related_raids
   schema: public
+  name: related_raids
 object_relationships:
   - name: raidByRaid
     using:
@@ -8,3 +8,11 @@ object_relationships:
   - name: raidByRelatedRaid
     using:
       foreign_key_constraint_on: related_raid
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - id
+        - raid
+        - related_raid
+      filter: {}

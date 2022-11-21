@@ -1,6 +1,6 @@
 table:
-  name: members
   schema: public
+  name: members
 object_relationships:
   - name: applicationByApplication
     using:
@@ -17,26 +17,51 @@ array_relationships:
       foreign_key_constraint_on:
         column: referred_by
         table:
-          name: applications
           schema: public
+          name: applications
   - name: members_skills
     using:
       foreign_key_constraint_on:
         column: member
         table:
-          name: members_skills
           schema: public
+          name: members_skills
   - name: raid_parties
     using:
       foreign_key_constraint_on:
         column: member
         table:
-          name: raid_parties
           schema: public
+          name: raid_parties
   - name: raids
     using:
       foreign_key_constraint_on:
         column: cleric
         table:
-          name: raids
           schema: public
+          name: raids
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - id
+        - legacy_id
+        - v1_id
+        - name
+        - email_address
+        - discord_handle
+        - telegram_handle
+        - twitter_handle
+        - github_handle
+        - eth_address
+        - ens_name
+        - guild_class
+        - membership_date
+        - member_type
+        - is_raiding
+        - championed_by
+        - application
+        - application_v1
+        - created_at
+        - updated_at
+      filter: {}

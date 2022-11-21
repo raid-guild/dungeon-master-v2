@@ -1,6 +1,6 @@
 table:
-  name: dao_familiarities
   schema: public
+  name: dao_familiarities
 is_enum: true
 array_relationships:
   - name: applications
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: dao_familiarity
         table:
-          name: applications
           schema: public
+          name: applications

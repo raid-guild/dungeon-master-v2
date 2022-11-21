@@ -1,6 +1,6 @@
 table:
-  name: raids
   schema: public
+  name: raids
 object_relationships:
   - name: consultationByConsultation
     using:
@@ -20,26 +20,47 @@ array_relationships:
       foreign_key_constraint_on:
         column: raid
         table:
-          name: raid_parties
           schema: public
+          name: raid_parties
   - name: raids_roles_requireds
     using:
       foreign_key_constraint_on:
         column: raid
         table:
-          name: raids_roles_required
           schema: public
+          name: raids_roles_required
   - name: relatedRaidsByRelatedRaid
     using:
       foreign_key_constraint_on:
         column: related_raid
         table:
-          name: related_raids
           schema: public
+          name: related_raids
   - name: related_raids
     using:
       foreign_key_constraint_on:
         column: raid
         table:
-          name: related_raids
           schema: public
+          name: related_raids
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - escrow_index
+        - airtable_id
+        - category
+        - invoice_address
+        - locker_hash
+        - name
+        - status
+        - v1_id
+        - created_at
+        - end_date
+        - start_date
+        - updated_at
+        - cleric
+        - consultation
+        - id
+        - portfolio
+      filter: {}

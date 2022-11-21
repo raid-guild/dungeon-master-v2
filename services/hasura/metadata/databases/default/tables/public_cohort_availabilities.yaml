@@ -1,6 +1,6 @@
 table:
-  name: cohort_availabilities
   schema: public
+  name: cohort_availabilities
 is_enum: true
 array_relationships:
   - name: applications
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: availability
         table:
-          name: applications
           schema: public
+          name: applications

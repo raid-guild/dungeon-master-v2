@@ -1,6 +1,6 @@
 table:
-  name: portfolios_roles
   schema: public
+  name: portfolios_roles
 object_relationships:
   - name: guild_class
     using:
@@ -8,3 +8,11 @@ object_relationships:
   - name: portfolioByPortfolio
     using:
       foreign_key_constraint_on: portfolio
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - role
+        - id
+        - portfolio
+      filter: {}

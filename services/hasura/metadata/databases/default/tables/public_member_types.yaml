@@ -1,6 +1,6 @@
 table:
-  name: member_types
   schema: public
+  name: member_types
 is_enum: true
 array_relationships:
   - name: members
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: member_type
         table:
-          name: members
           schema: public
+          name: members
