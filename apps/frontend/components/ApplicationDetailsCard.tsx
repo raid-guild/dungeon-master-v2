@@ -14,7 +14,7 @@ import {
 } from '@raidguild/design-system';
 import { useClipboard } from '@chakra-ui/react';
 import { FaGithub, FaTwitter, FaDiscord, FaEthereum } from 'react-icons/fa';
-import { guildClassMap, IApplication } from '../utils';
+import { IApplication } from '../utils';
 
 import { truncateAddress } from '../utils/general';
 
@@ -64,14 +64,7 @@ const ApplicationDetailsCard: React.FC<ApplicationProps> = ({
           paddingTop={4}
         >
           <HStack spacing={10}>
-            <Avatar
-              size="lg"
-              src={
-                guildClassMap.find((item) => item.guildClass === guildClass)
-                  ?.image
-              }
-              bg="black"
-            />
+            {/* <RoleBadge roleName={GUILD_CLASS_ICON[_.get(application, 'guildClass'))]} /> */}
             <VStack align="flex-start">
               <Heading
                 color="white"
