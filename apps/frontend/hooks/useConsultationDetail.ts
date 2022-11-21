@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { useQuery } from 'react-query';
 import { client, CONSULTATION_DETAIL_QUERY } from '../gql';
 import { useRouter } from 'next/router';
+import { camelize } from '../utils';
 
 const useConsultationDetail = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const useConsultationDetail = () => {
       },
     });
 
-    return _.get(data, 'consultations_by_pk');
+    return camelize(_.get(data, 'consultations_by_pk'));
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<any, Error>(

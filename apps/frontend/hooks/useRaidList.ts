@@ -1,7 +1,8 @@
 import { useSession } from 'next-auth/react';
 import _ from 'lodash';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery } from 'react-query';
 import { client, RAIDS_LIST_QUERY } from '../gql';
+import { camelize } from '../utils';
 
 const useRaidList = () => {
   const { data: session } = useSession();
@@ -14,22 +15,48 @@ const useRaidList = () => {
     ],
   };
 
-  const raidQueryResult = async () => {
+  const raidQueryResult = async (pageParam: number) => {
     // TODO handle filters
 
     const { data } = await client(_.get(session, 'token')).query({
       query: RAIDS_LIST_QUERY,
+      variables: {
+        where,
+        limit,
+        offset: pageParam * limit,
+      },
     });
 
-    return _.get(data, 'raids');
+    return camelize(_.get(data, 'raids'));
   };
 
-  const { isLoading, isFetching, isError, error, data } = useQuery<any, Error>(
+  const {
+    status,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
     'raidsList',
-    raidQueryResult
+    ({ pageParam = 0 }) => raidQueryResult(pageParam),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return _.isEmpty(lastPage)
+          ? undefined
+          : _.divide(_.size(_.flatten(allPages)), limit);
+      },
+    }
   );
 
-  return { isLoading, isFetching, isError, error, data };
+  return {
+    status,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage: hasNextPage || false,
+    isFetchingNextPage,
+  };
 };
 
 export default useRaidList;

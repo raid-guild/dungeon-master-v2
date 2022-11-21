@@ -5,6 +5,7 @@ import { SessionProvider } from 'next-auth/react';
 import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
 import { WagmiConfig } from 'wagmi';
@@ -60,6 +61,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
                 <SiteLayout>
                   <Component {...pageProps} />
                 </SiteLayout>
+                <ReactQueryDevtools initialIsOpen />
               </QueryClientProvider>
             </RainbowKitProvider>
           </RainbowKitSiweNextAuthProvider>

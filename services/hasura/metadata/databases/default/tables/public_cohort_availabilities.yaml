@@ -1,3 +1,11 @@
 table:
   schema: public
   name: cohort_availabilities
+array_relationships:
+  - name: applications
+    using:
+      foreign_key_constraint_on:
+        column: availability
+        table:
+          schema: public
+          name: applications

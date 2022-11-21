@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import Link from './ChakraNextLink';
 import { Flex, Text, Link as ChakraLink } from '@raidguild/design-system';
 
 interface RaidInfoStackProps {

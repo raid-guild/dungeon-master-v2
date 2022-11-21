@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '../gql';
+import { camelize } from '../utils';
 
 const useMemberDetail = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const useMemberDetail = () => {
       },
     });
 
-    return _.first(_.get(data, 'members'));
+    return camelize(_.first(_.get(data, 'members')));
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<any, Error>(
