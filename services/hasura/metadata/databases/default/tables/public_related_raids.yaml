@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: related_raids
+  schema: public
 object_relationships:
   - name: raidByRaid
     using:

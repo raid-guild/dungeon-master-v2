@@ -1,11 +1,11 @@
 table:
-  schema: public
   name: raids
+  schema: public
 object_relationships:
   - name: consultationByConsultation
     using:
       foreign_key_constraint_on: consultation
-  - name: memberByCleric
+  - name: member
     using:
       foreign_key_constraint_on: cleric
   - name: raid_category
@@ -20,26 +20,26 @@ array_relationships:
       foreign_key_constraint_on:
         column: raid
         table:
-          schema: public
           name: raid_parties
+          schema: public
   - name: raids_roles_requireds
     using:
       foreign_key_constraint_on:
         column: raid
         table:
-          schema: public
           name: raids_roles_required
+          schema: public
   - name: relatedRaidsByRelatedRaid
     using:
       foreign_key_constraint_on:
         column: related_raid
         table:
-          schema: public
           name: related_raids
+          schema: public
   - name: related_raids
     using:
       foreign_key_constraint_on:
         column: raid
         table:
-          schema: public
           name: related_raids
+          schema: public

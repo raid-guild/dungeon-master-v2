@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: members_skills
+  schema: public
 object_relationships:
   - name: memberByMember
     using:

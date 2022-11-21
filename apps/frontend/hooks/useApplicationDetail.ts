@@ -9,6 +9,7 @@ const useApplicationDetail = () => {
   const router = useRouter();
   const applicationId = _.get(router, 'query.application');
   const { data: session } = useSession();
+  console.log('session', session);
 
   const applicationQueryResult = async () => {
     if (!applicationId) return;

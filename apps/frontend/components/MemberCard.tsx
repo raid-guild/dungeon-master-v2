@@ -231,13 +231,15 @@ const MemberCard: React.FC<MemberProps> = ({
             )}
           </Flex>
         </VStack>
-        <Flex position="absolute" top="40px" left="47%" zIndex={2}>
-          <RoleBadge
-            roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
-            width="60px"
-            height="60px"
-          />
-        </Flex>
+        {member && (
+          <Flex position="absolute" top="40px" left="47%" zIndex={2}>
+            <RoleBadge
+              roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+              width="60px"
+              height="60px"
+            />
+          </Flex>
+        )}
       </Flex>
     </LinkBox>
   );

@@ -16,7 +16,9 @@ const useRaidList = () => {
   };
 
   const raidQueryResult = async (pageParam: number) => {
+    if (!session) return;
     // TODO handle filters
+    console.log(session);
 
     const { data } = await client(_.get(session, 'token')).query({
       query: RAIDS_LIST_QUERY,

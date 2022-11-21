@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "nixpacks",
+    "buildCommand": "yarn build"
+  },
+  "deploy": {
+    "startCommand": "yarn start:production"
+  }
+}

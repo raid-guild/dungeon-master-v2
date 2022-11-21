@@ -7,10 +7,12 @@ import { camelize } from '../utils';
 const useApplicationList = () => {
   const { data: session } = useSession();
   const limit = 15;
+  console.log(session);
 
   const applicationQueryResult = async (pageParam: number) => {
+    if (!session) return;
     // TODO handle filters
-
+    console.log(session);
     const { data } = await client(_.get(session, 'token')).query({
       query: APPLICATION_LIST_QUERY,
       variables: {

@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: members
+  schema: public
 object_relationships:
   - name: applicationByApplication
     using:
@@ -17,26 +17,26 @@ array_relationships:
       foreign_key_constraint_on:
         column: referred_by
         table:
-          schema: public
           name: applications
+          schema: public
   - name: members_skills
     using:
       foreign_key_constraint_on:
         column: member
         table:
-          schema: public
           name: members_skills
+          schema: public
   - name: raid_parties
     using:
       foreign_key_constraint_on:
         column: member
         table:
-          schema: public
           name: raid_parties
+          schema: public
   - name: raids
     using:
       foreign_key_constraint_on:
         column: cleric
         table:
-          schema: public
           name: raids
+          schema: public
