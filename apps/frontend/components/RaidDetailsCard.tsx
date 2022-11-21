@@ -19,9 +19,9 @@ import {
   Link as ChakraLink,
   Heading,
 } from '@raidguild/design-system';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Collapse } from '@chakra-ui/react';
-import { FiPlus } from 'react-icons/fi';
+// import { FiPlus } from 'react-icons/fi';
+// import { FaExternalLinkAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { IConsultation, BUDGET_DISPLAY } from '../utils';
 import RaidInfoStack from './RaidInfoStack';
@@ -264,7 +264,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                       transition="all ease-in-out .25s"
                       _hover={{ color: 'red.100' }}
                     >
-                      {link.name} <ExternalLinkIcon mx="2px" />
+                      {link.name} <FaExternalLinkAlt mx="2px" />
                     </ChakraLink>
                   </Flex>
                 ))}
