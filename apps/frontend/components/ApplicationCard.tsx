@@ -7,17 +7,18 @@ import {
   HStack,
   VStack,
   Badge,
-  Avatar,
+  // Avatar,
   Link as ChakraLink,
   LinkBox,
   LinkOverlay,
   Divider,
   Tooltip,
+  // RoleBadge,
 } from '@raidguild/design-system';
 import { useClipboard } from '@chakra-ui/react';
 import Link from 'next/link';
 import { FaGithub, FaTwitter, FaDiscord, FaEthereum } from 'react-icons/fa';
-import { guildClassMap, IApplication } from '../utils';
+import { IApplication } from '../utils';
 import { truncateAddress } from '../utils/general';
 
 // unused props are commented out for now
@@ -108,15 +109,6 @@ const ApplicationCard: React.FC<ApplicationProps> = ({
                   )}
                 </VStack>
               </HStack>
-              <Avatar
-                marginBottom="-5"
-                size="md"
-                src={
-                  guildClassMap.find((item) => item.guildClass === guildClass)
-                    ?.image
-                }
-                bg="black"
-              />
             </Flex>
           </LinkOverlay>
         </Link>
