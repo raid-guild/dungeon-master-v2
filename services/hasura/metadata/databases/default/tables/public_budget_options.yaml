@@ -2,3 +2,11 @@ table:
   schema: public
   name: budget_options
 is_enum: true
+array_relationships:
+  - name: consultations
+    using:
+      foreign_key_constraint_on:
+        column: budget
+        table:
+          schema: public
+          name: consultations

@@ -1,11 +1,20 @@
 export const RAID_CATEGORY = [
-  'Design Sprint',
-  'Full Stack',
-  'Wizarding',
-  'Backend',
-  'Frontend',
-  'Marketing',
+  'DESIGN_SPRINT',
+  'FULL_STACK',
+  'SMART_CONTRACTS',
+  'BACKEND',
+  'FRONTEND',
+  'MARKETING',
 ];
+
+export const RAID_CATEGORY_DISPLAY = {
+  DESIGN_SPRINT: 'Design Sprint',
+  FULL_STACK: 'Full Stack',
+  SMART_CONTRACTS: 'Wizarding',
+  BACKEND: 'Backend',
+  FRONTEND: 'Frontend',
+  MARKETING: 'Marketing',
+};
 
 export const RAID_STATUS = [
   'Awaiting',
@@ -37,12 +46,20 @@ export const PROJECT_TYPE = ['New', 'Existing'];
 export const AVAILABLE_PROJECT_SPECS = ['Yes', 'Partial', 'None'];
 
 export const BUDGET = [
-  '< $5k',
-  '$5k - $20k',
-  '$20k - $50k',
-  '$50k +',
-  'Not Sure',
+  'LESS_THAN_FIVE_THOUSAND',
+  'FIVE_TO_TWENTY_THOUSAND',
+  'TWENTY_TO_FIFTY_THOUSAND',
+  'MORE_THAN_FIFTY_THOUSAND',
+  'NOT_SURE',
 ];
+
+export const BUDGET_DISPLAY = {
+  LESS_THAN_FIVE_THOUSAND: '< $5k',
+  FIVE_TO_TWENTY_THOUSAND: '$5k - $20k',
+  TWENTY_TO_FIFTY_THOUSAND: '$20k - $50k',
+  MORE_THAN_FIFTY_THOUSAND: '$50k +',
+  NOT_SURE: 'Not Sure',
+};
 
 export const DELIVERY_PRIORITIES = [
   'Fast & Polished',
@@ -86,32 +103,32 @@ export const COHORT_AVAILABILITY = [
   '36+ hours',
 ];
 
-export const GUILD_CLASS = [
-  'Tavern Keeper (Community)',
-  'Archer (Design)',
-  'Angry Dwarf (Treasury)',
-  'Bard (Marketing)',
-  'Warrior (FrontEnd Dev)',
-  'Healer (Ops)',
-  'Hunter (BizDev)',
-  'Paladin (Backend Dev)',
-  'Monk (PM)',
-  'Wizard (Smart Contracts)',
-  'Rogue (Legal)',
-];
+export const GUILD_CLASS_ICON = {
+  COMMUNITY: 'tavernkeeper',
+  DESIGN: 'archer',
+  TREASURY: 'dwarf',
+  MARKETING: 'healer',
+  FRONTEND_DEV: 'warrior',
+  OPERATIONS: 'healer',
+  BIZ_DEV: 'hunter',
+  BACKEND_DEV: 'paladin',
+  PROJECT_MANAGEMENT: 'monk',
+  SMART_CONTRACTS: 'wizard',
+  LEGAL: 'rogue',
+  ACCOUNT_MANAGER: 'cleric',
+};
 
-export const guildClassMap = [
-  { guildClass: 'Tavern Keeper (Community)', image: '/tavern.png' },
-  { guildClass: 'Archer (Design)', image: '/archer.png' },
-  { guildClass: 'Angry Dwarf (Treasury)', image: '/dwarf.png' },
-  { guildClass: 'Bard (Marketing)', image: '/healer.png' },
-  { guildClass: 'Warrior (FrontEnd Dev)', image: '/warrior.png' },
-  { guildClass: 'Healer (Ops)', image: '/healer.png' },
-  { guildClass: 'Hunter (BizDev)', image: '/healer.png' },
-  { guildClass: 'Paladin (Backend Dev)', image: '/paladin.png' },
-  { guildClass: 'Monk (PM)', image: '/monk.png' },
-  { guildClass: 'Wizard (Smart Contracts)', image: '/wizard.png' },
-  { guildClass: 'Rogue (Legal)', image: '/rogue.png' },
-  { guildClass: 'Cleric (Client Manager)', image: '/cleric.png' },
-  { guildClass: 'Applicant', image: '/raidguild-learning.png' },
-];
+export const GUILD_CLASS_DISPLAY = {
+  COMMUNITY: 'Tavern Keeper (Community)',
+  DESIGN: 'Archer (Design)',
+  TREASURY: 'Angry Dwarf (Treasury)',
+  MARKETING: 'Bard (Marketing)',
+  FRONTEND_DEV: 'Warrior (FrontEnd Dev)',
+  OPERATIONS: 'Healer (Ops)',
+  BIZ_DEV: 'Hunter (BizDev)',
+  BACKEND_DEV: 'Paladin (Backend Dev)',
+  PROJECT_MANAGEMENT: 'Monk (PM)',
+  SMART_CONTRACTS: 'Wizard (Smart Contracts)',
+  LEGAL: 'Rogue (Legal)',
+  ACCOUNT_MANAGER: 'Cleric (Client Manager)',
+};

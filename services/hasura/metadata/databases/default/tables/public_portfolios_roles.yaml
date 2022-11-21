@@ -1,3 +1,10 @@
 table:
   schema: public
   name: portfolios_roles
+object_relationships:
+  - name: guild_class
+    using:
+      foreign_key_constraint_on: role
+  - name: portfolioByPortfolio
+    using:
+      foreign_key_constraint_on: portfolio

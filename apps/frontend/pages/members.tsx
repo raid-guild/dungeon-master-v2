@@ -1,13 +1,15 @@
 import _ from 'lodash';
-import { Stack, Heading } from '@raidguild/design-system';
+import { Stack, Heading, Flex, Spinner } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import InfiniteScroll from 'react-infinite-scroller';
 import useMemberList from '../hooks/useMemberList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
-import Link from '../components/ChakraNextLink';
+import MemberCard from '../components/MemberCard';
 
 const MemberList = () => {
   const title = useDefaultTitle();
-  const { data: members } = useMemberList();
+  const { data, fetchNextPage, hasNextPage } = useMemberList();
+  const members = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
@@ -15,16 +17,27 @@ const MemberList = () => {
 
       <Stack spacing={8} align="center">
         <Heading>{title} List</Heading>
-        <Stack spacing={4}>
-          {_.map(members, (member) => (
-            <Link
-              href={`/members/${_.get(member, 'eth_address')}`}
-              key={_.get(member, 'id')}
-            >
-              <Heading size="md">{_.get(member, 'name')}</Heading>
-            </Link>
-          ))}
-        </Stack>
+
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={
+            <Flex my={25} w="100%" justify="center">
+              <Spinner size="xl" />
+            </Flex>
+          }
+        >
+          <Stack spacing={4}>
+            {_.map(members, (member) => (
+              <MemberCard
+                member={member}
+                application={_.get(member, 'applicationByApplication')}
+                key={_.get(member, 'id')}
+              />
+            ))}
+          </Stack>
+        </InfiniteScroll>
       </Stack>
     </>
   );
