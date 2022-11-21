@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: consultations
+  schema: public
 object_relationships:
   - name: available_project_spec
     using:
@@ -26,12 +26,12 @@ array_relationships:
       foreign_key_constraint_on:
         column: consultation
         table:
-          schema: public
           name: consultations_services_req
+          schema: public
   - name: raids
     using:
       foreign_key_constraint_on:
         column: consultation
         table:
-          schema: public
           name: raids
+          schema: public

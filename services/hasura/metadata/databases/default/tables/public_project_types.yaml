@@ -1,11 +1,12 @@
 table:
-  schema: public
   name: project_types
+  schema: public
+is_enum: true
 array_relationships:
   - name: consultations
     using:
       foreign_key_constraint_on:
         column: project_type
         table:
-          schema: public
           name: consultations
+          schema: public

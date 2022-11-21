@@ -71,8 +71,8 @@ export default async function auth(req: any, res: any) {
         if (token.id) return jwt.sign(token, secret, { algorithm: 'HS256' });
         let userId = '';
         let username = '';
-        let roles = [];
-        let isCommunity = false;
+        // let roles = [];
+        // let isCommunity = false;
 
         // TODO handle these asyncs better
         try {
@@ -88,10 +88,10 @@ export default async function auth(req: any, res: any) {
           if (!_.isEmpty(_.get(result, 'data.users'))) {
             userId = _.get(_.first(_.get(result, 'data.users')), 'id');
             username = _.get(_.first(_.get(result, 'data.users')), 'username');
-            roles = _.map(
-              _.get(_.first(_.get(result, 'data.users')), 'user_roles'),
-              'roleByRole.role'
-            );
+            // roles = _.map(
+            //   _.get(_.first(_.get(result, 'data.users')), 'user_roles'),
+            //   'roleByRole.role'
+            // );
           } else {
             // const createUserResult = await client().mutate({
             //   mutation: addUserMutation,
@@ -107,8 +107,8 @@ export default async function auth(req: any, res: any) {
           }
 
           // add default roles for logged in and anonymous
-          roles = [...roles, 'user', 'public'];
-          isCommunity = _.includes(roles, 'community');
+          // roles = [...roles, 'user', 'public'];
+          // isCommunity = _.includes(roles, 'community');
         } catch (error) {
           console.log(error);
         }
@@ -118,14 +118,14 @@ export default async function auth(req: any, res: any) {
           id: userId,
           name: username,
           address: _.get(token, 'sub'),
-          roles,
+          // roles,
 
           iat: Date.now() / 1000,
           exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
           'https://hasura.io/jwt/claims': {
-            'x-hasura-allowed-roles': roles,
-            'x-hasura-default-role': isCommunity ? 'community' : 'user',
-            'x-hasura-role': isCommunity ? 'community' : 'user',
+            'x-hasura-allowed-roles': ['member'],
+            'x-hasura-default-role': 'member',
+            'x-hasura-role': 'member',
             'x-hasura-user-id': userId,
           },
         };

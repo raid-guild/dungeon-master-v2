@@ -1,25 +1,26 @@
 table:
-  schema: public
   name: guild_classes
+  schema: public
+is_enum: true
 array_relationships:
   - name: members
     using:
       foreign_key_constraint_on:
         column: guild_class
         table:
-          schema: public
           name: members
+          schema: public
   - name: portfolios_roles
     using:
       foreign_key_constraint_on:
         column: role
         table:
-          schema: public
           name: portfolios_roles
+          schema: public
   - name: raids_roles_requireds
     using:
       foreign_key_constraint_on:
         column: role
         table:
-          schema: public
           name: raids_roles_required
+          schema: public

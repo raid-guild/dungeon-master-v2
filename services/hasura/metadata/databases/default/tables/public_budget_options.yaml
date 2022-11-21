@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: budget_options
+  schema: public
 is_enum: true
 array_relationships:
   - name: consultations
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: budget
         table:
-          schema: public
           name: consultations
+          schema: public

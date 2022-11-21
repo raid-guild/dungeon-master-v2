@@ -1,18 +1,19 @@
 table:
-  schema: public
   name: raid_categories
+  schema: public
+is_enum: true
 array_relationships:
   - name: portfolios
     using:
       foreign_key_constraint_on:
         column: category
         table:
-          schema: public
           name: portfolios
+          schema: public
   - name: raids
     using:
       foreign_key_constraint_on:
         column: category
         table:
-          schema: public
           name: raids
+          schema: public

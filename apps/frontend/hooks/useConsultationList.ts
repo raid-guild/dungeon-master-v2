@@ -9,6 +9,7 @@ const useConsultationList = () => {
   const limit = 15;
 
   const consultationQueryResult = async (pageParam: number) => {
+    if (!session) return;
     // TODO handle filters
 
     const { data } = await client(_.get(session, 'token')).query({
