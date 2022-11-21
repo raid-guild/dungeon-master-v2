@@ -1,6 +1,6 @@
 table:
-  name: raid_categories
   schema: public
+  name: raid_categories
 is_enum: true
 array_relationships:
   - name: portfolios
@@ -8,12 +8,12 @@ array_relationships:
       foreign_key_constraint_on:
         column: category
         table:
-          name: portfolios
           schema: public
+          name: portfolios
   - name: raids
     using:
       foreign_key_constraint_on:
         column: category
         table:
-          name: raids
           schema: public
+          name: raids

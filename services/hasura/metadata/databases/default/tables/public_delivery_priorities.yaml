@@ -1,6 +1,6 @@
 table:
-  name: delivery_priorities
   schema: public
+  name: delivery_priorities
 is_enum: true
 array_relationships:
   - name: consultations
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: delivery_priorities
         table:
-          name: consultations
           schema: public
+          name: consultations

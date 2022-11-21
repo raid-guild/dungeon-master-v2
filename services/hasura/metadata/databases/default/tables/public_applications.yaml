@@ -1,6 +1,6 @@
 table:
-  name: applications
   schema: public
+  name: applications
 object_relationships:
   - name: cohort_availability
     using:
@@ -20,12 +20,43 @@ array_relationships:
       foreign_key_constraint_on:
         column: application
         table:
-          name: applications_skills
           schema: public
+          name: applications_skills
   - name: members
     using:
       foreign_key_constraint_on:
         column: application
         table:
-          name: members
           schema: public
+          name: members
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - handbook_read
+        - pledge_readiness
+        - availability
+        - comments
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity
+        - discord_handle
+        - email_address
+        - ens_name
+        - eth_address
+        - favorite_media
+        - github_handle
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - skill_type
+        - telegram_handle
+        - twitter_handle
+        - v1_id
+        - why_raidguild
+        - created_at
+        - updated_at
+        - id
+        - referred_by
+      filter: {}

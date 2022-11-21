@@ -1,6 +1,6 @@
 table:
-  name: project_types
   schema: public
+  name: project_types
 is_enum: true
 array_relationships:
   - name: consultations
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: project_type
         table:
-          name: consultations
           schema: public
+          name: consultations

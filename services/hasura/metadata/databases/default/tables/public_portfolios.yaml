@@ -1,6 +1,6 @@
 table:
-  name: portfolios
   schema: public
+  name: portfolios
 object_relationships:
   - name: raid_category
     using:
@@ -11,5 +11,17 @@ array_relationships:
       foreign_key_constraint_on:
         column: portfolio
         table:
-          name: portfolios_roles
           schema: public
+          name: portfolios_roles
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - case_study
+        - category
+        - project_desc
+        - project_name
+        - repo_link
+        - result_link
+        - id
+      filter: {}

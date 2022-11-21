@@ -1,6 +1,6 @@
 table:
-  name: raid_statuses
   schema: public
+  name: raid_statuses
 is_enum: true
 array_relationships:
   - name: raids
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: status
         table:
-          name: raids
           schema: public
+          name: raids

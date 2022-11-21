@@ -1,6 +1,6 @@
 table:
-  name: skill_types
   schema: public
+  name: skill_types
 is_enum: true
 array_relationships:
   - name: applications_skills
@@ -8,12 +8,12 @@ array_relationships:
       foreign_key_constraint_on:
         column: skill_type
         table:
-          name: applications_skills
           schema: public
+          name: applications_skills
   - name: members_skills
     using:
       foreign_key_constraint_on:
         column: skill_type
         table:
-          name: members_skills
           schema: public
+          name: members_skills
