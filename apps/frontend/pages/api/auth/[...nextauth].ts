@@ -7,7 +7,11 @@ import { SiweMessage } from 'siwe';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
-import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '../../../gql';
+import {
+  client,
+  MEMBER_ADDRESS_LOOKUP_QUERY,
+  MEMBER_CREATE_MUTATION,
+} from '../../../gql';
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -99,17 +103,17 @@ export default async function auth(req: any, res: any) {
             //   'roleByRole.role'
             // );
           } else {
+            // ! Don't create new users yet, until we can get the cohort auth/action figured out
             // const createUserResult = await client().mutate({
-            //   mutation: addUserMutation,
+            //   mutation: MEMBER_CREATE_MUTATION,
             //   variables: {
             //     address,
             //   },
             // });
-            const createUserResult = {};
-            userId = _.get(
-              _.first(_.get(createUserResult, 'data.insert_members.returning')),
-              'id'
-            );
+            // userId = _.get(
+            //   _.first(_.get(createUserResult, 'data.insert_members.returning')),
+            //   'id'
+            // );
           }
 
           // add default roles for logged in and anonymous

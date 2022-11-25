@@ -1,20 +1,18 @@
-import { useSession } from 'next-auth/react';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
 import { client, RAID_DETAIL_QUERY } from '../gql';
 import { useRouter } from 'next/router';
-import { camelize } from '../utils';
+import { camelize, IRaid } from '../utils';
 
-const useRaidDetail = () => {
+const useRaidDetail = ({ token }) => {
   const router = useRouter();
   const raidId = _.get(router, 'query.raid');
-  const { data: session } = useSession();
 
   const raidQueryResult = async () => {
-    if (!raidId) return;
+    if (!raidId || !token) return;
     // TODO handle filters
 
-    const { data } = await client(_.get(session, 'token')).query({
+    const { data } = await client(token).query({
       query: RAID_DETAIL_QUERY,
       variables: {
         id: raidId,
@@ -24,10 +22,10 @@ const useRaidDetail = () => {
     return camelize(_.get(data, 'raids_by_pk'));
   };
 
-  const { isLoading, isFetching, isError, error, data } = useQuery<any, Error>(
-    ['raidDetail', raidId],
-    raidQueryResult
-  );
+  const { isLoading, isFetching, isError, error, data } = useQuery<
+    IRaid,
+    Error
+  >(['raidDetail', raidId], raidQueryResult, { enabled: Boolean(token) });
 
   return { isLoading, isFetching, isError, error, data };
 };
