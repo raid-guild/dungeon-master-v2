@@ -7,7 +7,7 @@ import { SiweMessage } from 'siwe';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
-import { client } from '../../../gql';
+import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '../../../gql';
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -71,27 +71,33 @@ export default async function auth(req: any, res: any) {
         if (token.id) return jwt.sign(token, secret, { algorithm: 'HS256' });
         let userId = '';
         let username = '';
-        let roles = [];
-        let isCommunity = false;
+        let address = null;
+        // let roles = [];
+        // let isCommunity = false;
 
         // TODO handle these asyncs better
         try {
-          const address = _.toLower(token.sub);
-          const result = {};
-          // const result = await client().query({
-          //   query: userLookupQuery,
-          //   variables: {
-          //     address,
-          //   },
-          // });
+          address = token.sub; // _.toLower(token.sub);
+          const result = await client().query({
+            query: MEMBER_ADDRESS_LOOKUP_QUERY,
+            variables: {
+              address,
+            },
+          });
+          console.log(result);
 
-          if (!_.isEmpty(_.get(result, 'data.users'))) {
-            userId = _.get(_.first(_.get(result, 'data.users')), 'id');
-            username = _.get(_.first(_.get(result, 'data.users')), 'username');
-            roles = _.map(
-              _.get(_.first(_.get(result, 'data.users')), 'user_roles'),
-              'roleByRole.role'
+          if (!_.isEmpty(_.get(result, 'data.members'))) {
+            console.log('user found', _.first(_.get(result, 'data.members')));
+            userId = _.get(_.first(_.get(result, 'data.members')), 'id');
+            console.log(userId);
+            username = _.get(
+              _.first(_.get(result, 'data.members')),
+              'username'
             );
+            // roles = _.map(
+            //   _.get(_.first(_.get(result, 'data.users')), 'user_roles'),
+            //   'roleByRole.role'
+            // );
           } else {
             // const createUserResult = await client().mutate({
             //   mutation: addUserMutation,
@@ -101,31 +107,31 @@ export default async function auth(req: any, res: any) {
             // });
             const createUserResult = {};
             userId = _.get(
-              _.first(_.get(createUserResult, 'data.insert_users.returning')),
+              _.first(_.get(createUserResult, 'data.insert_members.returning')),
               'id'
             );
           }
 
           // add default roles for logged in and anonymous
-          roles = [...roles, 'user', 'public'];
-          isCommunity = _.includes(roles, 'community');
+          // roles = [...roles, 'user', 'public'];
+          // isCommunity = _.includes(roles, 'community');
         } catch (error) {
           console.log(error);
         }
 
         const jwtClaims = {
-          sub: _.get(token, 'sub'),
+          sub: address,
           id: userId,
           name: username,
-          address: _.get(token, 'sub'),
-          roles,
+          address,
+          // roles,
 
           iat: Date.now() / 1000,
           exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
           'https://hasura.io/jwt/claims': {
-            'x-hasura-allowed-roles': roles,
-            'x-hasura-default-role': isCommunity ? 'community' : 'user',
-            'x-hasura-role': isCommunity ? 'community' : 'user',
+            'x-hasura-allowed-roles': ['member'],
+            'x-hasura-default-role': 'member',
+            'x-hasura-role': 'member',
             'x-hasura-user-id': userId,
           },
         };

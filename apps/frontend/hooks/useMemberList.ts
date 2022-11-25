@@ -1,28 +1,56 @@
 import { useSession } from 'next-auth/react';
 import _ from 'lodash';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery } from 'react-query';
 import { client, MEMBER_LIST_QUERY } from '../gql';
+import { camelize } from '../utils';
 
 const useMemberList = () => {
   const { data: session } = useSession();
+  const limit = 15;
 
-  const memberQueryResult = async () => {
+  const memberQueryResult = async (pageParam: number) => {
+    if (!session) return;
     // TODO handle filters
 
     const { data } = await client(_.get(session, 'token')).query({
       query: MEMBER_LIST_QUERY,
-      variables: {},
+      variables: {
+        limit,
+        offset: pageParam * limit,
+        where: {},
+      },
     });
 
-    return _.get(data, 'members');
+    return camelize(_.get(data, 'members'));
   };
 
-  const { isLoading, isFetching, isError, error, data } = useQuery<any, Error>(
+  const {
+    status,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<any, Error>(
     'memberList',
-    memberQueryResult
+    ({ pageParam = 0 }) => memberQueryResult(pageParam),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return _.isEmpty(lastPage)
+          ? undefined
+          : _.divide(_.size(_.flatten(allPages)), limit);
+      },
+    }
   );
 
-  return { isLoading, isFetching, isError, error, data };
+  return {
+    status,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
 };
 
 export default useMemberList;

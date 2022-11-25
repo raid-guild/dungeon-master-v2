@@ -1,0 +1,22 @@
+table:
+  schema: public
+  name: applications_skills
+object_relationships:
+  - name: applicationByApplication
+    using:
+      foreign_key_constraint_on: application
+  - name: skillBySkill
+    using:
+      foreign_key_constraint_on: skill
+  - name: skillTypeBySkillType
+    using:
+      foreign_key_constraint_on: skill_type
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - skill
+        - skill_type
+        - application
+        - id
+      filter: {}

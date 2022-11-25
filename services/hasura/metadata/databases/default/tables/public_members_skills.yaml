@@ -1,0 +1,22 @@
+table:
+  schema: public
+  name: members_skills
+object_relationships:
+  - name: memberByMember
+    using:
+      foreign_key_constraint_on: member
+  - name: skillBySkill
+    using:
+      foreign_key_constraint_on: skill
+  - name: skillTypeBySkillType
+    using:
+      foreign_key_constraint_on: skill_type
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - skill
+        - skill_type
+        - id
+        - member
+      filter: {}

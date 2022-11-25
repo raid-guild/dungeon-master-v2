@@ -1,11 +1,10 @@
 import _ from 'lodash';
-import { Stack, Heading } from '@raidguild/design-system';
+import { Stack, Heading, HStack } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
-import useDefaultTitle from '../../hooks/useDefaultTitle';
 import useRaidDetail from '../../hooks/useRaidDetail';
+import RaidDetailsCard from '../../components/RaidDetailsCard';
 
 const Raid = () => {
-  const title = useDefaultTitle();
   const { data: raid } = useRaidDetail();
   console.log(raid);
 
@@ -13,9 +12,15 @@ const Raid = () => {
     <>
       <NextSeo title="Raid" />
 
-      <Stack spacing={8} align="center">
-        <Heading>{title} Detail</Heading>
-        <Heading size="md">{_.get(raid, 'name')}</Heading>
+      <Stack w="60%" mx="auto">
+        <Heading>{_.get(raid, 'name')}</Heading>
+        <HStack>
+          <RaidDetailsCard
+            id={_.get(raid, 'id')}
+            category={_.get(raid, 'category')}
+            consultation={_.get(raid, 'consultationByConsultation')}
+          />
+        </HStack>
       </Stack>
     </>
   );

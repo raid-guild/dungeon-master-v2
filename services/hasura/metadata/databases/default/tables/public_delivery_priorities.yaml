@@ -1,0 +1,12 @@
+table:
+  schema: public
+  name: delivery_priorities
+is_enum: true
+array_relationships:
+  - name: consultations
+    using:
+      foreign_key_constraint_on:
+        column: delivery_priorities
+        table:
+          schema: public
+          name: consultations

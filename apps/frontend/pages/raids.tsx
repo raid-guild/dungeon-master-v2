@@ -1,13 +1,16 @@
 import _ from 'lodash';
-import { Stack, Heading } from '@raidguild/design-system';
+import { Stack, Heading, Spinner, Flex } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import InfiniteScroll from 'react-infinite-scroller';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import useRaidList from '../hooks/useRaidList';
-import Link from '../components/ChakraNextLink';
+import RaidCard from '../components/RaidCard';
+import { IRaid } from '../utils';
 
 const RaidList = () => {
   const title = useDefaultTitle();
-  const { data: raids } = useRaidList();
+  const { data, fetchNextPage, hasNextPage } = useRaidList();
+  const raids = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
@@ -15,13 +18,26 @@ const RaidList = () => {
 
       <Stack spacing={8} align="center">
         <Heading>{title}</Heading>
-        <Stack spacing={4}>
-          {_.map(raids, (raid) => (
-            <Link href={`/raids/${_.get(raid, 'id')}`} key={_.get(raid, 'id')}>
-              <Heading size="md">{_.get(raid, 'name')}</Heading>
-            </Link>
-          ))}
-        </Stack>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={
+            <Flex my={25} w="100%" justify="center">
+              <Spinner size="xl" />
+            </Flex>
+          }
+        >
+          <Stack spacing={4} maxW="70%" mx="auto">
+            {_.map(raids, (raid: IRaid) => (
+              <RaidCard
+                raid={raid}
+                consultation={_.get(raid, 'consultationByConsultation')}
+                key={_.get(raid, 'id')}
+              />
+            ))}
+          </Stack>
+        </InfiniteScroll>
       </Stack>
     </>
   );

@@ -1,0 +1,18 @@
+table:
+  schema: public
+  name: raids_roles_required
+object_relationships:
+  - name: guild_class
+    using:
+      foreign_key_constraint_on: role
+  - name: raidByRaid
+    using:
+      foreign_key_constraint_on: raid
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - role
+        - id
+        - raid
+      filter: {}

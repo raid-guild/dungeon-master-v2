@@ -1,12 +1,21 @@
 import { gql } from '@apollo/client';
 
 export const MEMBER_LIST_QUERY = gql`
-  query MemberList {
-    members {
+  query MemberList($offset: Int!, $limit: Int!, $where: members_bool_exp) {
+    members(limit: $limit, offset: $offset, where: $where) {
       id
       name
       email_address
       eth_address
+      ens_name
+      discord_handle
+      twitter_handle
+      github_handle
+      telegram_handle
+      guild_class
+      applicationByApplication {
+        introduction
+      }
     }
   }
 `;

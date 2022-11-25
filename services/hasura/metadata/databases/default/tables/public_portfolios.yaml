@@ -1,0 +1,27 @@
+table:
+  schema: public
+  name: portfolios
+object_relationships:
+  - name: raid_category
+    using:
+      foreign_key_constraint_on: category
+array_relationships:
+  - name: portfolios_roles
+    using:
+      foreign_key_constraint_on:
+        column: portfolio
+        table:
+          schema: public
+          name: portfolios_roles
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - case_study
+        - category
+        - project_desc
+        - project_name
+        - repo_link
+        - result_link
+        - id
+      filter: {}

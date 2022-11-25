@@ -1,0 +1,18 @@
+table:
+  schema: public
+  name: portfolios_roles
+object_relationships:
+  - name: guild_class
+    using:
+      foreign_key_constraint_on: role
+  - name: portfolioByPortfolio
+    using:
+      foreign_key_constraint_on: portfolio
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - role
+        - id
+        - portfolio
+      filter: {}
