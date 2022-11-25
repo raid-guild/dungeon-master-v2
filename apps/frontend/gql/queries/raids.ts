@@ -11,7 +11,7 @@ export const RAIDS_LIST_QUERY = gql`
     name
     status
     category
-    raids_roles_requireds {
+    roles_required {
       role
     }
     consultationByConsultation {
@@ -36,7 +36,7 @@ export const RAID_DETAIL_QUERY = gql`
       status
       category
       created_at
-      raids_roles_requireds {
+      roles_required {
         role
       }
       consultationByConsultation {
@@ -56,7 +56,12 @@ export const RAID_DETAIL_QUERY = gql`
         project_type
         submission_type
       }
-      raid_parties {
+      locker_hash
+      invoice_address
+      escrow_index
+      airtable_id
+      v1_id
+      raid_party {
         memberByMember {
           ens_name
           eth_address

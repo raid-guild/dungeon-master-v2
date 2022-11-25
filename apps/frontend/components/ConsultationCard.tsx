@@ -16,7 +16,7 @@ import {
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import RaidInfoStack from './RaidInfoStack';
+import InfoStack from './InfoStack';
 
 interface ConsultationProps {
   id: string;
@@ -120,8 +120,8 @@ const ConsultationCard: React.FC<ConsultationProps> = ({
         paddingY={4}
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
-          <RaidInfoStack label="Budget" details={budget || '-'} />
-          <RaidInfoStack label="Project Type" details={projectType || '-'} />
+          <InfoStack label="Budget" details={budget || '-'} />
+          <InfoStack label="Project Type" details={projectType || '-'} />
         </SimpleGrid>
       </Flex>
       {servicesRequired?.length > 0 && (

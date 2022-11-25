@@ -10,10 +10,14 @@ export const clearNonObjects = (array: any[]): object[] => {
   return _.filter(noFalse, (x: any) => x !== undefined);
 };
 
-export const memberDisplayName = (member: Partial<IMember>) => {
+export const memberDisplayName = (
+  member: Partial<IMember>,
+  ensName?: string
+) => {
   return (
     _.get(member, 'name') ||
-    _.get(member, 'ensName') ||
+    ensName || // ens record from chain/wagmi
+    _.get(member, 'ensName') || // ens record from db
     _.get(member, 'telegramHandle') ||
     truncateAddress(_.get(member, 'address'))
   );

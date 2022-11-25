@@ -31,12 +31,12 @@ const RaidList = () => {
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
-            <Flex my={25} w="100%" justify="center">
+            <Flex my={25} w="100%" justify="center" key={1}>
               <Spinner size="xl" my={50} />
             </Flex>
           }
         >
-          <Stack spacing={4} maxW="70%" mx="auto">
+          <Stack spacing={4} maxW="70%" mx="auto" key={2}>
             {_.map(raids, (raid: IRaid) => (
               <RaidCard
                 raid={raid}

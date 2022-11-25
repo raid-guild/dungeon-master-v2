@@ -31,8 +31,7 @@ const Raid = () => {
         >
           <Box w="60%">
             <RaidDetailsCard
-              id={_.get(raid, 'id')}
-              category={_.get(raid, 'category')}
+              raid={raid}
               consultation={_.get(raid, 'consultationByConsultation')}
             />
           </Box>

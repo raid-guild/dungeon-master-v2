@@ -15,20 +15,13 @@ object_relationships:
     using:
       foreign_key_constraint_on: status
 array_relationships:
-  - name: raid_parties
+  - name: raid_party
     using:
       foreign_key_constraint_on:
         column: raid
         table:
           schema: public
           name: raid_parties
-  - name: raids_roles_requireds
-    using:
-      foreign_key_constraint_on:
-        column: raid
-        table:
-          schema: public
-          name: raids_roles_required
   - name: relatedRaidsByRelatedRaid
     using:
       foreign_key_constraint_on:
@@ -43,6 +36,13 @@ array_relationships:
         table:
           schema: public
           name: related_raids
+  - name: roles_required
+    using:
+      foreign_key_constraint_on:
+        column: raid
+        table:
+          schema: public
+          name: raids_roles_required
 select_permissions:
   - role: member
     permission:

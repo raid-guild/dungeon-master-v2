@@ -16,15 +16,16 @@ import {
 } from '@raidguild/design-system';
 import { Collapse } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { IConsultation, BUDGET_DISPLAY, truncateAddress } from '../utils';
-import RaidInfoStack from './RaidInfoStack';
+import {
+  IConsultation,
+  IRaid,
+  BUDGET_DISPLAY,
+  truncateAddress,
+} from '../utils';
+import InfoStack from './InfoStack';
 
 interface RaidProps {
-  id: string;
-  category?: string;
-  airtableId?: string;
-  escrowIndex?: string;
-  lockerHash?: string;
+  raid?: IRaid;
   consultation?: IConsultation;
 }
 
@@ -90,11 +91,7 @@ const Bio = ({ bio }: { bio: string }) => {
 };
 
 const RaidDetailsCard: React.FC<RaidProps> = ({
-  id,
-  category,
-  airtableId,
-  escrowIndex,
-  lockerHash,
+  raid,
   consultation,
 }: RaidProps) => {
   const keyLinkItems = [
@@ -120,7 +117,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Budget',
           details: BUDGET_DISPLAY[_.get(consultation, 'budget', '-')],
         },
-        { label: 'Category', details: category },
+        { label: 'Category', details: _.get(raid, 'category') },
         {
           label: 'Desired Delivery',
           details:
@@ -170,9 +167,23 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     {
       title: 'Additional Info',
       items: [
-        airtableId && { label: 'Raid ID', details: airtableId || id },
-        escrowIndex && { label: 'Escrow Index', details: escrowIndex },
-        lockerHash && { label: 'Locker Hash', details: lockerHash },
+        (_.get(raid, 'airtableId') ||
+          _.get(raid, 'v1Id') ||
+          _.get(raid, 'id')) && {
+          label: 'Raid ID',
+          details:
+            _.get(raid, 'airtableId') ||
+            _.get(raid, 'v1Id') ||
+            _.get(raid, 'id'),
+        },
+        _.get(raid, 'escrowIndex') && {
+          label: 'Escrow Index',
+          details: _.get(raid, 'escrowIndex'),
+        },
+        _.get(raid, 'lockerHash') && {
+          label: 'Locker Hash',
+          details: _.get(raid, 'lockerHash'),
+        },
       ].filter((x) => x),
     },
   ];
@@ -210,7 +221,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                     autoFlow="wrap"
                   >
                     {_.map(_.get(panel, 'items'), (item) => (
-                      <RaidInfoStack
+                      <InfoStack
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
                         link={_.get(item, 'link')}

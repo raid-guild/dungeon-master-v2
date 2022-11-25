@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Avatar, Tooltip } from '@raidguild/design-system';
 import { useEnsAvatar, useEnsName } from 'wagmi';
-import { IMember } from '../utils';
+import { IMember, memberDisplayName } from '../utils';
 
 type MemberAvatarProps = {
   member: IMember;
@@ -13,7 +13,11 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
   const { data: ensAvatar } = useEnsAvatar({ address });
 
   return (
-    <Tooltip label={ensName} placement="left">
+    <Tooltip
+      label={memberDisplayName(member, ensName)}
+      placement="left"
+      hasArrow
+    >
       <Avatar src={ensAvatar} />
     </Tooltip>
   );

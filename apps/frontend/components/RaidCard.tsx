@@ -18,7 +18,7 @@ import {
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
 // import { format } from 'date-fns';
-import RaidInfoStack from './RaidInfoStack';
+import InfoStack from './InfoStack';
 import { IConsultation, IRaid } from '../utils';
 
 interface RaidProps {
@@ -122,12 +122,9 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         paddingY={4}
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
-          <RaidInfoStack label="Budget" details={budget || '-'} />
-          <RaidInfoStack
-            label="Category"
-            details={_.get(raid, 'category', '-')}
-          />
-          <RaidInfoStack label="Project Type" details={projectType || '-'} />
+          <InfoStack label="Budget" details={budget || '-'} />
+          <InfoStack label="Category" details={_.get(raid, 'category', '-')} />
+          <InfoStack label="Project Type" details={projectType || '-'} />
           {rolesRequired?.length > 0 && (
             <VStack align="start">
               <Text as="span" color="gray.100" fontSize="small">

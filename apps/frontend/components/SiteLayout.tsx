@@ -27,7 +27,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   children,
   minHeight = '100vh',
 }: SiteLayoutProps) => {
-  const session = useSession();
+  const { data: session } = useSession();
 
   const GeneralLayout = ({ children }: GeneralLayoutProps) => (
     <Flex
@@ -57,7 +57,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     </Flex>
   );
 
-  if (!session) {
+  if (!_.get(session, 'token')) {
     return (
       <GeneralLayout>
         <Flex justify="center" align="center" minH="50vh">
