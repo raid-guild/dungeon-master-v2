@@ -117,7 +117,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Budget',
           details: BUDGET_DISPLAY[_.get(consultation, 'budget', '-')],
         },
-        { label: 'Category', details: _.get(raid, 'category') },
+        { label: 'Category', details: _.get(raid, 'category', '-') },
         {
           label: 'Desired Delivery',
           details:

@@ -36,7 +36,7 @@ const RaidList = () => {
             </Flex>
           }
         >
-          <Stack spacing={4} maxW="70%" mx="auto" key={2}>
+          <Stack spacing={4} mx="auto" key={2}>
             {_.map(raids, (raid: IRaid) => (
               <RaidCard
                 raid={raid}

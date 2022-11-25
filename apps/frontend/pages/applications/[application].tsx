@@ -1,8 +1,10 @@
 import _ from 'lodash';
-import { Stack, Heading } from '@raidguild/design-system';
+import { Heading, Flex, Spacer, Button } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
-import useApplicationDetail from '../../hooks/useApplicationDetail';
 import { useSession } from 'next-auth/react';
+import useApplicationDetail from '../../hooks/useApplicationDetail';
+import SiteLayout from '../../components/SiteLayout';
+import MemberDetailsCard from '../../components/MemberDetailsCard';
 
 const Application = () => {
   const { data: session } = useSession();
@@ -14,10 +16,19 @@ const Application = () => {
     <>
       <NextSeo title="Application" />
 
-      <Stack spacing={8} align="center">
-        <Heading>Application Detail</Heading>
-        <Heading size="md">{_.get(application, 'name')}</Heading>
-      </Stack>
+      <SiteLayout
+        subheader={
+          <Flex justify="space-between" align="center" w="100%">
+            <Spacer />
+            <Spacer />
+            <Heading>{_.get(application, 'name')}</Heading>
+            <Spacer />
+            <Button variant="outline">Create Member</Button>
+          </Flex>
+        }
+      >
+        <MemberDetailsCard application={application} />
+      </SiteLayout>
     </>
   );
 };

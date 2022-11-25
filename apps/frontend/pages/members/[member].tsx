@@ -1,26 +1,75 @@
 import _ from 'lodash';
-import { Stack, Heading } from '@raidguild/design-system';
+import {
+  Flex,
+  Avatar,
+  RoleBadge,
+  Badge,
+  Heading,
+  Button,
+  HStack,
+  Text,
+} from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
+import { useEnsAvatar } from 'wagmi';
 import useMemberDetail from '../../hooks/useMemberDetail';
-import useDefaultTitle from '../../hooks/useDefaultTitle';
 import SiteLayout from '../../components/SiteLayout';
+import { memberDisplayName, GUILD_CLASS_ICON } from '../../utils';
+import MemberDetailsCard from '../../components/MemberDetailsCard';
 
 const Member = () => {
-  const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: member } = useMemberDetail({ token });
+  const { data: ensAvatar } = useEnsAvatar({
+    address: _.get(member, 'ethAddress'),
+    chainId: 1,
+    enabled: _.get(member, 'ethAddress') !== '0x',
+  });
   console.log(member);
 
   return (
     <>
       <NextSeo title="Member" />
 
-      <SiteLayout subheader={<Heading>{title} Detail</Heading>}>
-        <Stack spacing={8} align="center">
-          <Heading size="md">{_.get(member, 'name')}</Heading>
-        </Stack>
+      <SiteLayout
+        subheader={
+          <Flex justify="space-between" align="center" w="100%">
+            {ensAvatar ? (
+              <Avatar size="lg" bg="black" src={ensAvatar} />
+            ) : (
+              _.get(member, 'guildClass') && (
+                <Avatar
+                  size="lg"
+                  bg="black"
+                  icon={
+                    <RoleBadge
+                      roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+                      height="64px"
+                      width="64px"
+                    />
+                  }
+                />
+              )
+            )}
+            <Heading>{memberDisplayName(member)}</Heading>
+            <HStack>
+              <Badge background="blackAlpha" fontSize="sm">
+                {_.get(member, 'isRaiding') === true ? (
+                  <Text>⚔️ Raiding</Text>
+                ) : (
+                  <Text>⛺️ Not Raiding</Text>
+                )}
+              </Badge>
+              <Button variant="outline">Edit</Button>
+            </HStack>
+          </Flex>
+        }
+      >
+        <MemberDetailsCard
+          member={member}
+          application={_.get(member, 'applicationByApplication')}
+        />
       </SiteLayout>
     </>
   );

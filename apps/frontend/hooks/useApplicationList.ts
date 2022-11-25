@@ -15,7 +15,7 @@ const useApplicationList = ({ token }) => {
       variables: {
         limit,
         offset: pageParam * limit,
-        where: { _not: { members: {} } },
+        where: { _not: { member: {} } },
       },
     });
 

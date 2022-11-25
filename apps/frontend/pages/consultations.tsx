@@ -38,7 +38,7 @@ const ConsultationList = () => {
             </Flex>
           }
         >
-          <Stack spacing={4} maxW="70%" mx="auto">
+          <Stack spacing={4} mx="auto">
             {_.map(consultations, (consultation: IConsultation) => (
               <RaidCard
                 consultation={consultation}

@@ -25,6 +25,7 @@ export const MEMBER_SLIM_LIST_QUERY = gql`
     members {
       id
       name
+      eth_address
       ens_name
       telegram_handle
       guild_class
@@ -36,12 +37,27 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
   query MemberAddressLookup($address: String!) {
     members(where: { eth_address: { _eq: $address } }) {
       id
-      eth_address
       name
+      email_address
+      eth_address
+      ens_name
+      discord_handle
+      twitter_handle
+      github_handle
+      telegram_handle
+      guild_class
+      applicationByApplication {
+        introduction
+      }
+      skills {
+        skill
+        skill_type
+      }
     }
   }
 `;
 
+// ! use MEMBER_ADDRESS_LOOKUP_QUERY so we can use `address` as the slug
 export const MEMBER_DETAIL_QUERY = gql`
   query MemberDetail($id: uuid!) {
     members_by_pk(id: $id) {

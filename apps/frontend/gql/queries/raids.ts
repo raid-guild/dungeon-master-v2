@@ -17,7 +17,7 @@ export const RAIDS_LIST_QUERY = gql`
     consultationByConsultation {
       project_desc
       budget
-      consultations_services_reqs {
+      services_required {
         guild_service
       }
       submission_type
@@ -39,10 +39,17 @@ export const RAID_DETAIL_QUERY = gql`
       roles_required {
         role
       }
+      memberByCleric {
+        ens_name
+        eth_address
+        name
+        id
+        guild_class
+      }
       consultationByConsultation {
         budget
         consultation_hash
-        consultations_services_reqs {
+        services_required {
           guild_service
         }
         contact_name

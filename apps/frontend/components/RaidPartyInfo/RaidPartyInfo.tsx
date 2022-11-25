@@ -49,7 +49,7 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
   const token = _.get(session, 'token');
   const { data: members } = useSlimMemberList({ token });
 
-  const cleric = _.get(raid, 'membersByCleric');
+  const cleric = _.get(raid, 'memberByCleric');
   const raidParty = _.map(_.get(raid, 'raidParty'), 'memberByMember');
 
   const removeLocalRole = (role) => {
@@ -94,79 +94,7 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
             <Flex direction="column" py={2}>
               <Stack>
                 <Heading size="sm">Cleric</Heading>
-
-                <RaidPartyCard member={cleric} isCleric />
-
-                {/* {cleric ? (
-                  <HStack>
-                    <Link href="/members/[id]" as={`/members/${cleric.id}/`}>
-                      <HStack
-                        spacing={4}
-                        width="60%"
-                        _hover={{ cursor: 'pointer', color: 'red.100' }}
-                      >
-                        <MemberAvatar member={cleric} />
-                        <Avatar
-                          backgroundColor="gray.500"
-                          size="md"
-                          icon={
-                            <Icon
-                              as={FiUser}
-                              fontSize="1.5rem"
-                              color="whiteAlpha.800"
-                            />
-                          }
-                        />
-                        <Text
-                          color="white"
-                          fontSize="md"
-                          transition="all ease-in-out 0.25"
-                        >
-                          {cleric.name}
-                        </Text>
-                      </HStack>
-                    </Link>
-                    <Button variant="outline" onClick={submitClearCleric}>
-                      Change Cleric
-                    </Button>
-                  </HStack>
-                ) : (
-                  <Flex>
-                    {updateCleric ? (
-                      <HStack w="100%">
-                        <IconButton
-                          variant="outline"
-                          icon={<Icon as={FiX} color="primary.300" />}
-                          aria-label="Clear Set Raider for Raid"
-                          onClick={() => setUpdateCleric(false)}
-                        />
-                        {!_.isEmpty(members) && (
-                          <ChakraSelect
-                            onChange={(e) => setClericToAdd(e.target.value)}
-                          >
-                            {_.map(members, (c) => (
-                              <option value={c.id} key={c.id}>
-                                {c.ensName || c.name}
-                              </option>
-                            ))}
-                          </ChakraSelect>
-                        )}
-
-                        <Button onClick={submitUpdatedCleric}>Add</Button>
-                      </HStack>
-                    ) : (
-                      <Flex justify="space-between" w="100%" align="center">
-                        <Text px={2}>Unclaimed</Text>
-                        <Button
-                          variant="outline"
-                          onClick={() => setUpdateCleric(true)}
-                        >
-                          Claim
-                        </Button>
-                      </Flex>
-                    )}
-                  </Flex>
-                )} */}
+                <RaidPartyCard member={cleric} members={members} isCleric />
               </Stack>
             </Flex>
             {!_.isEmpty(raidParty) && (
@@ -183,24 +111,6 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
                 <Divider />
                 <Heading size="sm">Recruiting</Heading>
                 <RaidPartyCard roles={localRoles} isRole />
-                {/* <HStack>
-                    <IconButton
-                      variant="outline"
-                      icon={<Icon as={FiX} color="raid" fontSize="1.5rem" />}
-                      aria-label="Clear Roles Required"
-                      onClick={clearRoleClick}
-                    />
-                    {clearRoles && (
-                      <IconButton
-                        variant="solid"
-                        icon={
-                          <Icon as={FiCheck} color="raid" fontSize="1.5rem" />
-                        }
-                        aria-label="Save updated roles"
-                        onClick={submitUpdatedRoles}
-                      />
-                    )}
-                  </HStack> */}
               </Stack>
             )}
           </Stack>

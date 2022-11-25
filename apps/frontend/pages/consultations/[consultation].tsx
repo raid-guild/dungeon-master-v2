@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import { Stack, Heading } from '@raidguild/design-system';
+import { HStack, Heading, Button } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import useConsultationDetail from '../../hooks/useConsultationDetail';
 import SiteLayout from '../../components/SiteLayout';
+import RaidDetailsCard from '../../components/RaidDetailsCard';
 
 const Consultation = () => {
   const { data: session } = useSession();
@@ -16,12 +17,13 @@ const Consultation = () => {
       <NextSeo title="Consultation" />
 
       <SiteLayout
-        subheader={<Heading>Consultation Detail</Heading>}
+        subheader={<Heading>{_.get(consultation, 'projectName')}</Heading>}
         isLoading={false}
       >
-        <Stack spacing={8} align="center">
-          <Heading size="md">{_.get(consultation, 'project_name')}</Heading>
-        </Stack>
+        <HStack align="flex-start">
+          <RaidDetailsCard consultation={consultation} />
+          <Button>Create Raid</Button>
+        </HStack>
       </SiteLayout>
     </>
   );
