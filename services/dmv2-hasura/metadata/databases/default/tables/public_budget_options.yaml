@@ -1,4 +1,3 @@
 table:
   schema: public
   name: budget_options
-is_enum: true
