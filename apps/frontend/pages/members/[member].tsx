@@ -4,6 +4,7 @@ import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import useMemberDetail from '../../hooks/useMemberDetail';
 import useDefaultTitle from '../../hooks/useDefaultTitle';
+import SiteLayout from 'apps/frontend/components/SiteLayout';
 
 const Member = () => {
   const title = useDefaultTitle();
@@ -16,10 +17,11 @@ const Member = () => {
     <>
       <NextSeo title="Member" />
 
-      <Stack spacing={8} align="center">
-        <Heading>{title} Detail</Heading>
-        <Heading size="md">{_.get(member, 'name')}</Heading>
-      </Stack>
+      <SiteLayout subheader={<Heading>{title} Detail</Heading>}>
+        <Stack spacing={8} align="center">
+          <Heading size="md">{_.get(member, 'name')}</Heading>
+        </Stack>
+      </SiteLayout>
     </>
   );
 };

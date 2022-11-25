@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { useInfiniteQuery } from 'react-query';
-import { client, MEMBER_LIST_QUERY } from '../gql';
+import { useInfiniteQuery, useQuery } from 'react-query';
+import { client, MEMBER_LIST_QUERY, MEMBER_SLIM_LIST_QUERY } from '../gql';
 import { camelize, IMember } from '../utils';
 
 const useMemberList = ({ token }) => {
@@ -53,3 +53,29 @@ const useMemberList = ({ token }) => {
 };
 
 export default useMemberList;
+
+export const useSlimMemberList = ({ token }) => {
+  const memberSlimListQueryResult = async () => {
+    if (!token) return;
+
+    const result = await client(token).query({
+      query: MEMBER_SLIM_LIST_QUERY,
+    });
+
+    return camelize(_.get(result, 'data.members'));
+  };
+
+  const { status, error, data, isLoading } = useQuery<
+    Array<Partial<IMember>>,
+    Error
+  >('memberList', memberSlimListQueryResult, {
+    enabled: Boolean(token),
+  });
+
+  return {
+    status,
+    error,
+    data,
+    isLoading,
+  };
+};

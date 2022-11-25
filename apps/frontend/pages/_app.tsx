@@ -13,6 +13,7 @@ import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
 
 import '@rainbow-me/rainbowkit/styles.css';
+import { OverlayContextProvider } from '../contexts/OverlayContext';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
@@ -59,8 +60,10 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>
-                <Component {...pageProps} />
-                <ReactQueryDevtools initialIsOpen />
+                <OverlayContextProvider>
+                  <Component {...pageProps} />
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </OverlayContextProvider>
               </QueryClientProvider>
             </RainbowKitProvider>
           </RainbowKitSiweNextAuthProvider>

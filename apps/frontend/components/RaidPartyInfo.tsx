@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import {
   Flex,
@@ -13,38 +15,42 @@ import {
   IconButton,
   Icon,
   Tooltip,
-  Select,
-  useToast,
-} from '@chakra-ui/react';
+  ChakraSelect,
+  Heading,
+  RoleBadge,
+} from '@raidguild/design-system';
 import { FiUser, FiX, FiCheck } from 'react-icons/fi';
-import { IMember, GUILD_CLASS_ICON, camelize } from '../utils';
-// import { MEMBERS } from 'graphql/queries/members';
-// import { initializeApollo } from '../graphql/apollo-client';
+import {
+  IMember,
+  GUILD_CLASS_ICON,
+  camelize,
+  IRaid,
+  IConsultation,
+} from '../utils';
+import { useSlimMemberList } from '../hooks/useMemberList';
+import ChakraNextLink from './ChakraNextLink';
 
-interface ClericInfoProps {
-  raidId?: string; // optional for now until the cleric is attached to raid and id can be known
-  cleric: Partial<IMember>;
-  raidParty?: Partial<IMember>[];
-  rolesRequired: string[];
-  updateRaid: (key, value) => void;
+interface RaidInfoProps {
+  raid?: Partial<IRaid>;
+  consultation?: IConsultation;
 }
 
-// adding a placeholder for an avatar -- perhaps this comes from 3box?
-
-const RaidPartyInfo: React.FC<ClericInfoProps> = ({
-  raidId,
-  cleric,
-  raidParty,
-  rolesRequired,
-  updateRaid,
-}: ClericInfoProps) => {
+const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
   const [clearRoles, setClearRoles] = useState(false);
-  const [localRoles, setLocalRoles] = useState<string[]>(rolesRequired);
+  const [localRoles, setLocalRoles] = useState<string[]>(
+    _.get(raid, 'rolesRequired')
+  );
   const [updateCleric, setUpdateCleric] = useState(false);
   const [raiders, setRaiders] = useState<any[]>();
-  const [loadingRaidersMsg, setLoadingRaidersMsg] = useState<string>('');
   const [clericToAdd, setClericToAdd] = useState<string>();
-  const toast = useToast();
+
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { data } = useSlimMemberList({ token });
+
+  const cleric = _.get(raid, 'membersByCleric');
+  const raidParty = _.map(_.get(raid, 'raidParties'), 'memberByMember');
+  const relatedRaids = _.get(raid, 'raidByRelatedRaids');
 
   const removeLocalRole = (role) => {
     setLocalRoles(localRoles.filter((r) => r !== role));
@@ -53,7 +59,7 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
   const clearRoleClick = () => {
     if (clearRoles) {
       setClearRoles(false);
-      setLocalRoles(rolesRequired);
+      setLocalRoles(_.get(raid, 'rolesRequired'));
     } else {
       setClearRoles(true);
     }
@@ -119,12 +125,11 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
   return (
     <Stack p={4}>
       <Flex direction="column" py={2}>
-        <Text color="raid" fontSize="sm" paddingLeft={1} paddingBottom={1}>
-          Cleric
-        </Text>
+        <Stack></Stack>
+        <Heading size="sm">Cleric</Heading>
 
         {cleric ? (
-          <HStack justifyContent="space-between">
+          <HStack>
             <Link href="/members/[id]" as={`/members/${cleric.id}/`}>
               <HStack
                 spacing={4}
@@ -151,11 +156,7 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
                 </Text>
               </HStack>
             </Link>
-            <Button
-              variant="outline"
-              colorScheme="red"
-              onClick={submitClearCleric}
-            >
+            <Button variant="outline" onClick={submitClearCleric}>
               Change Cleric
             </Button>
           </HStack>
@@ -169,16 +170,16 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
                   aria-label="Clear Set Raider for Raid"
                   onClick={() => setUpdateCleric(false)}
                 />
-                {raiders?.length > 0 ? (
-                  <Select onChange={(e) => setClericToAdd(e.target.value)}>
-                    {raiders?.map((c) => (
+                {_.isEmpty(raiders) && (
+                  <ChakraSelect
+                    onChange={(e) => setClericToAdd(e.target.value)}
+                  >
+                    {_.map(raiders, (c) => (
                       <option value={c.id} key={c.id}>
                         {c.ensName || c.name}
                       </option>
                     ))}
-                  </Select>
-                ) : (
-                  <Box>{loadingRaidersMsg}</Box>
+                  </ChakraSelect>
                 )}
 
                 <Button onClick={submitUpdatedCleric}>Add</Button>
@@ -199,7 +200,7 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
           </HStack>
         )}
       </Flex>
-      {raidParty?.length > 0 && (
+      {!_.isEmpty(raidParty) && (
         <Stack spacing={4}>
           <Box>
             <Box
@@ -212,36 +213,32 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
               Raiders
             </Text>
           </Box>
-          {raidParty.map((member: Partial<IMember>) => (
+          {_.map(raidParty, (member: Partial<IMember>) => (
             <Flex key={member.id} justify="space-between" align="center">
-              <Link href="/members/[id]" as={`/members/${member.id}/`}>
+              <ChakraNextLink href={`/members/${member.ethAddress}/`}>
                 <HStack
                   spacing={4}
-                  width="60%"
                   _hover={{ cursor: 'pointer', color: 'red.100' }}
                   transition="all ease-in-out 0.25"
                 >
-                  {/* <Avatar
-                    backgroundColor="gray.500"
-                    size="md"
-                    src={
-                      guildClassMap.find(
-                        (item) => item.guildClass === member.guildClass
-                      )?.image
-                    }
-                  /> */}
+                  <RoleBadge
+                    width="40px"
+                    height="40px"
+                    border="2px solid"
+                    roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+                  />
                   <Flex direction="column">
-                    <Text color="white" fontSize="md">
-                      {member.name}
+                    <Text as="span" color="white" fontSize="md">
+                      {_.get(member, 'name')}
                     </Text>
-                    <Text color="raid" fontSize="sm">
-                      {member.guildClass}
+                    <Text color="primary.500" fontSize="sm">
+                      {_.get(member, 'guildClass')}
                     </Text>
                   </Flex>
                 </HStack>
-              </Link>
+              </ChakraNextLink>
               <IconButton
-                icon={<Icon as={FiX} color="raid" fontSize="1.5rem" />}
+                icon={<Icon as={FiX} color="primary.500" fontSize="1.5rem" />}
                 aria-label="Remove Raider"
                 variant="outline"
                 isDisabled
@@ -250,7 +247,7 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
           ))}
         </Stack>
       )}
-      {rolesRequired?.length > 0 && (
+      {!_.isEmpty(localRoles) && (
         <Stack spacing={2}>
           <Box
             borderBottomColor="whiteAlpha.400"
@@ -262,7 +259,7 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
           </Text>
           <Flex justify="space-between">
             <Wrap>
-              {localRoles.map((role) => (
+              {_.map(localRoles, (role) => (
                 <WrapItem mx={4} key={role}>
                   <Tooltip label={role}>
                     {/* <Avatar
@@ -312,6 +309,9 @@ const RaidPartyInfo: React.FC<ClericInfoProps> = ({
           </Flex>
         </Stack>
       )}
+      {_.map(relatedRaids, (raid: IRaid) => (
+        <Text>Related Raid 1</Text>
+      ))}
     </Stack>
   );
 };

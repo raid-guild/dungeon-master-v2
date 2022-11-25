@@ -25,7 +25,7 @@ export const MEMBER_SLIM_LIST_QUERY = gql`
     members {
       id
       name
-      ens_address
+      ens_name
       telegram_handle
       guild_class
     }

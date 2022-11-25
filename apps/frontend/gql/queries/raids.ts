@@ -56,6 +56,15 @@ export const RAID_DETAIL_QUERY = gql`
         project_type
         submission_type
       }
+      raid_parties {
+        memberByMember {
+          ens_name
+          eth_address
+          name
+          id
+          guild_class
+        }
+      }
       created_at
       updated_at
     }

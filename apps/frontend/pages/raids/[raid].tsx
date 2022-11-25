@@ -1,10 +1,11 @@
 import _ from 'lodash';
-import { Heading, HStack } from '@raidguild/design-system';
+import { Heading, HStack, Flex, Box } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
 import { useSession } from 'next-auth/react';
+import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
 
 const Raid = () => {
   const { data: session } = useSession();
@@ -21,12 +22,24 @@ const Raid = () => {
         isLoading={!raid}
         data={raid}
       >
-        <HStack maxW="60%" mx="auto">
-          <RaidDetailsCard
-            id={_.get(raid, 'id')}
-            category={_.get(raid, 'category')}
-            consultation={_.get(raid, 'consultationByConsultation')}
-          />
+        <HStack
+          w="90%"
+          minW={['1200px']}
+          mx="auto"
+          spacing={10}
+          align="flex-start"
+        >
+          <Box w="60%">
+            <RaidDetailsCard
+              id={_.get(raid, 'id')}
+              category={_.get(raid, 'category')}
+              consultation={_.get(raid, 'consultationByConsultation')}
+            />
+          </Box>
+
+          <Box w="35%">
+            <RaidDetailsSidebar raid={raid} />
+          </Box>
         </HStack>
       </SiteLayout>
     </>

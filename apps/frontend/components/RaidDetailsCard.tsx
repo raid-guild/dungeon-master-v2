@@ -97,8 +97,6 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   lockerHash,
   consultation,
 }: RaidProps) => {
-  console.log(consultation);
-
   const keyLinkItems = [
     consultation?.specsLink && {
       label: 'Project Specs',
@@ -113,7 +111,6 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
       )}`,
     },
   ].filter((x) => x);
-  console.log(keyLinkItems);
 
   const panels = [
     {
@@ -179,13 +176,11 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
       ].filter((x) => x),
     },
   ];
-  console.log(panels);
 
   return (
     <VStack
       direction="column"
       width="100%"
-      minWidth="60vw"
       justifyContent="center"
       padding={8}
       bg="gray.800"
