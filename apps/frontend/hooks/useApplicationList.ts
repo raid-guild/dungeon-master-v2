@@ -1,24 +1,21 @@
-import { useSession } from 'next-auth/react';
 import _ from 'lodash';
 import { useInfiniteQuery } from 'react-query';
 import { client, APPLICATION_LIST_QUERY } from '../gql';
-import { camelize } from '../utils';
+import { camelize, IApplication } from '../utils';
 
-const useApplicationList = () => {
-  const { data: session } = useSession();
+const useApplicationList = ({ token }) => {
   const limit = 15;
-  console.log(session);
 
   const applicationQueryResult = async (pageParam: number) => {
-    if (!session) return;
+    if (!token) return;
     // TODO handle filters
-    console.log(session);
-    const { data } = await client(_.get(session, 'token')).query({
+
+    const { data } = await client(token).query({
       query: APPLICATION_LIST_QUERY,
       variables: {
         limit,
         offset: pageParam * limit,
-        where: { _not: { member: {} } },
+        where: { _not: { members: {} } },
       },
     });
 
@@ -30,9 +27,10 @@ const useApplicationList = () => {
     error,
     data,
     fetchNextPage,
+    isLoading,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<any, Error>(
+  } = useInfiniteQuery<Array<Array<IApplication>>, Error>(
     'applicationList',
     ({ pageParam = 0 }) => applicationQueryResult(pageParam),
     {
@@ -41,6 +39,7 @@ const useApplicationList = () => {
           ? undefined
           : _.divide(_.size(_.flatten(allPages)), limit);
       },
+      enabled: Boolean(token),
     }
   );
 
@@ -49,6 +48,7 @@ const useApplicationList = () => {
     error,
     data,
     fetchNextPage,
+    isLoading,
     hasNextPage,
     isFetchingNextPage,
   };

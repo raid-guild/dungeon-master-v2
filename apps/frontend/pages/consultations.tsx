@@ -6,18 +6,28 @@ import useConsultationList from '../hooks/useConsultationList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import RaidCard from '../components/RaidCard';
 import { IConsultation } from '../utils';
+import SiteLayout from '../components/SiteLayout';
+import { useSession } from 'next-auth/react';
 
 const ConsultationList = () => {
   const title = useDefaultTitle();
-  const { data, hasNextPage, fetchNextPage } = useConsultationList();
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { data, error, hasNextPage, fetchNextPage } = useConsultationList({
+    token,
+  });
   const consultations = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
       <NextSeo title="Consultations" />
 
-      <Stack spacing={8} align="center">
-        <Heading>{title} List</Heading>
+      <SiteLayout
+        isLoading={!data}
+        data={consultations}
+        subheader={<Heading>{title} List</Heading>}
+        error={error}
+      >
         <InfiniteScroll
           pageStart={0}
           loadMore={fetchNextPage}
@@ -37,7 +47,7 @@ const ConsultationList = () => {
             ))}
           </Stack>
         </InfiniteScroll>
-      </Stack>
+      </SiteLayout>
     </>
   );
 };

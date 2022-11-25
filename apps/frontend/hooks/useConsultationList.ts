@@ -1,18 +1,16 @@
-import { useSession } from 'next-auth/react';
 import _ from 'lodash';
 import { useInfiniteQuery } from 'react-query';
 import { client, CONSULTATION_LIST_QUERY } from '../gql';
-import { camelize } from '../utils';
+import { camelize, IConsultation } from '../utils';
 
-const useConsultationList = () => {
-  const { data: session } = useSession();
+const useConsultationList = ({ token }) => {
   const limit = 15;
 
   const consultationQueryResult = async (pageParam: number) => {
-    if (!session) return;
+    if (!token) return;
     // TODO handle filters
 
-    const { data } = await client(_.get(session, 'token')).query({
+    const { data } = await client(token).query({
       query: CONSULTATION_LIST_QUERY,
       variables: {
         limit,
@@ -31,7 +29,7 @@ const useConsultationList = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<any, Error>(
+  } = useInfiniteQuery<Array<Array<IConsultation>>, Error>(
     'consultationList',
     ({ pageParam = 0 }) => consultationQueryResult(pageParam),
     {
@@ -40,6 +38,7 @@ const useConsultationList = () => {
           ? undefined
           : _.divide(_.size(_.flatten(allPages)), limit);
       },
+      enabled: Boolean(token),
     }
   );
 

@@ -1,17 +1,35 @@
-import React from 'react';
-import { Flex } from '@chakra-ui/react';
+import React, { ReactNode } from 'react';
+import _ from 'lodash';
+import { Flex, Heading, Spinner, Stack } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 interface SiteLayoutProps {
-  children: React.ReactChild;
+  children: ReactNode;
+  data?: any;
+  subheader: ReactNode;
+  error?: Error;
+  isLoading?: boolean;
   minHeight?: string;
 }
 
+type GeneralLayoutProps = {
+  other?: ReactNode;
+  children?: ReactNode;
+};
+
 const SiteLayout: React.FC<SiteLayoutProps> = ({
+  isLoading,
+  data,
+  error,
+  subheader,
   children,
   minHeight = '100vh',
 }: SiteLayoutProps) => {
-  return (
+  const session = useSession();
+
+  const GeneralLayout = ({ children }: GeneralLayoutProps) => (
     <Flex
       direction="column"
       overflowX="hidden"
@@ -24,15 +42,59 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
       <Navbar />
       <Flex
         direction="column"
-        align="center"
-        justify={['flex-start', 'flex-start', 'center', 'center']}
+        justify="flex-start"
         flex="1"
+        align="center"
         minHeight={['100vh', '100vh', '0', '0']}
       >
-        {children}
+        <Stack spacing={8} align="center">
+          {subheader}
+
+          {children}
+        </Stack>
       </Flex>
-      {/* <Footer /> // can add a Footer if you have one */}
+      <Footer />
     </Flex>
+  );
+
+  if (!session) {
+    return (
+      <GeneralLayout>
+        <Flex justify="center" align="center" minH="50vh">
+          <Heading size="md">Connect your wallet & Sign in</Heading>
+        </Flex>
+      </GeneralLayout>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <GeneralLayout>
+        <Flex w="100%" justify="center" py={60}>
+          <Spinner color="govrn.300" size="xl" />
+        </Flex>
+      </GeneralLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <GeneralLayout>
+        <Flex w="100%" justify="center" pt={40}>
+          <Heading size="md">Error loading [data type]</Heading>
+        </Flex>
+      </GeneralLayout>
+    );
+  }
+
+  return data && _.isEmpty(data) ? (
+    <GeneralLayout>
+      <Flex justify="center" align="center" minH="50vh">
+        <Heading size="md">No projects found!</Heading>
+      </Flex>
+    </GeneralLayout>
+  ) : (
+    <GeneralLayout>{children}</GeneralLayout>
   );
 };
 

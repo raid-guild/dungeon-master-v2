@@ -6,25 +6,33 @@ import useDefaultTitle from '../hooks/useDefaultTitle';
 import useRaidList from '../hooks/useRaidList';
 import RaidCard from '../components/RaidCard';
 import { IRaid } from '../utils';
+import SiteLayout from '../components/SiteLayout';
+import { useSession } from 'next-auth/react';
 
 const RaidList = () => {
   const title = useDefaultTitle();
-  const { data, fetchNextPage, hasNextPage } = useRaidList();
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { data, error, fetchNextPage, hasNextPage } = useRaidList({ token });
   const raids = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
       <NextSeo title="Raids List" />
 
-      <Stack spacing={8} align="center">
-        <Heading>{title}</Heading>
+      <SiteLayout
+        isLoading={!data}
+        data={raids}
+        subheader={<Heading>{title}</Heading>}
+        error={error}
+      >
         <InfiniteScroll
           pageStart={0}
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
             <Flex my={25} w="100%" justify="center">
-              <Spinner size="xl" />
+              <Spinner size="xl" my={50} />
             </Flex>
           }
         >
@@ -38,7 +46,7 @@ const RaidList = () => {
             ))}
           </Stack>
         </InfiniteScroll>
-      </Stack>
+      </SiteLayout>
     </>
   );
 };
