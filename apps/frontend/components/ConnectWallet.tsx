@@ -45,7 +45,7 @@ export const ConnectWallet: React.FC = () => {
           })}
         >
           {(() => {
-            console.log(authenticationStatus);
+            // console.log(authenticationStatus);
             // if (authenticationStatus)
             if (!mounted || !account || !chain) {
               return (

@@ -2,16 +2,18 @@ import * as React from 'react';
 import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import { SessionProvider } from 'next-auth/react';
+import { WagmiConfig } from 'wagmi';
+import { QueryClient, QueryClientProvider, QueryCache } from 'react-query';
 import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from 'react-query/devtools';
+
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
-import { WagmiConfig } from 'wagmi';
-import { QueryClient, QueryClientProvider, QueryCache } from 'react-query';
+
 import '@rainbow-me/rainbowkit/styles.css';
-import SiteLayout from '../components/SiteLayout';
+import { OverlayContextProvider } from '../contexts/OverlayContext';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
@@ -58,10 +60,10 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>
-                <SiteLayout>
+                <OverlayContextProvider>
                   <Component {...pageProps} />
-                </SiteLayout>
-                <ReactQueryDevtools initialIsOpen />
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </OverlayContextProvider>
               </QueryClientProvider>
             </RainbowKitProvider>
           </RainbowKitSiweNextAuthProvider>

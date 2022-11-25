@@ -5,19 +5,26 @@ import InfiniteScroll from 'react-infinite-scroller';
 import useMemberList from '../hooks/useMemberList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import MemberCard from '../components/MemberCard';
+import SiteLayout from '../components/SiteLayout';
+import { useSession } from 'next-auth/react';
 
 const MemberList = () => {
   const title = useDefaultTitle();
-  const { data, fetchNextPage, hasNextPage } = useMemberList();
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { data, error, fetchNextPage, hasNextPage } = useMemberList({ token });
   const members = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
       <NextSeo title="Members List" />
 
-      <Stack spacing={8} align="center">
-        <Heading>{title} List</Heading>
-
+      <SiteLayout
+        isLoading={!data}
+        data={members}
+        subheader={<Heading>{title} List</Heading>}
+        error={error}
+      >
         <InfiniteScroll
           pageStart={0}
           loadMore={fetchNextPage}
@@ -38,7 +45,7 @@ const MemberList = () => {
             ))}
           </Stack>
         </InfiniteScroll>
-      </Stack>
+      </SiteLayout>
     </>
   );
 };

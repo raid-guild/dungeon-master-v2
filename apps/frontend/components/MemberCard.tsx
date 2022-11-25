@@ -65,7 +65,8 @@ const MemberCard: React.FC<MemberProps> = ({
   member,
 }: MemberProps) => {
   const id = _.get(member, 'id', _.get(application, 'id'));
-  const link = member ? `/members/${id}/` : `/applications/${id}/`;
+  const address = _.get(member, 'ethAddress', _.get(application, 'ethAddress'));
+  const link = member ? `/members/${address}/` : `/applications/${id}/`;
   const ensName = _.get(member, 'ensName', _.get(application, 'ensName', null));
   const ethAddress = _.get(
     member,
