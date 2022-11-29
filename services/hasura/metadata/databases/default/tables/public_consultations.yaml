@@ -21,13 +21,6 @@ object_relationships:
     using:
       foreign_key_constraint_on: submission_type
 array_relationships:
-  - name: consultations_services_reqs
-    using:
-      foreign_key_constraint_on:
-        column: consultation
-        table:
-          schema: public
-          name: consultations_services_req
   - name: raids
     using:
       foreign_key_constraint_on:
@@ -35,6 +28,13 @@ array_relationships:
         table:
           schema: public
           name: raids
+  - name: services_required
+    using:
+      foreign_key_constraint_on:
+        column: consultation
+        table:
+          schema: public
+          name: consultations_services_req
 select_permissions:
   - role: member
     permission:

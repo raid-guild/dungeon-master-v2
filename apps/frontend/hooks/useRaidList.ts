@@ -1,11 +1,9 @@
-import { useSession } from 'next-auth/react';
 import _ from 'lodash';
 import { useInfiniteQuery } from 'react-query';
 import { client, RAIDS_LIST_QUERY } from '../gql';
-import { camelize } from '../utils';
+import { camelize, IRaid } from '../utils';
 
-const useRaidList = () => {
-  const { data: session } = useSession();
+const useRaidList = ({ token }) => {
   const limit = 15;
   const where = {
     _or: [
@@ -16,11 +14,10 @@ const useRaidList = () => {
   };
 
   const raidQueryResult = async (pageParam: number) => {
-    console.log(session);
-    if (!session) return;
+    if (!token) return;
     // TODO handle filters
 
-    const { data } = await client(_.get(session, 'token')).query({
+    const { data } = await client(token).query({
       query: RAIDS_LIST_QUERY,
       variables: {
         where,
@@ -39,7 +36,7 @@ const useRaidList = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery(
+  } = useInfiniteQuery<Array<Array<IRaid>>, Error>(
     'raidsList',
     ({ pageParam = 0 }) => raidQueryResult(pageParam),
     {
@@ -48,6 +45,7 @@ const useRaidList = () => {
           ? undefined
           : _.divide(_.size(_.flatten(allPages)), limit);
       },
+      enabled: Boolean(token),
     }
   );
 

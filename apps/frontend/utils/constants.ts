@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const RAID_CATEGORY = [
   'DESIGN_SPRINT',
   'FULL_STACK',
@@ -69,27 +71,33 @@ export const DELIVERY_PRIORITIES = [
 
 export const SUBMISSION_TYPE = ['Paid', 'Unpaid'];
 
-export const SKILLS = [
-  'Frontend Dev',
-  'Backend Dev',
-  'Solidity',
-  'BizDev',
-  'Community',
-  'Project Management',
-  'Finance',
-  'Product Design',
-  'UX Research',
-  'Game Theory',
-  'DevOps',
-  'Tokenomics',
-  'Content',
-  'Memes',
-  'Visual Design',
-  'UI Design',
-  'Illustration',
-  'Legal',
-  'Accounting',
-];
+export const SKILLS_DISPLAY = (skill: string) => {
+  const skillsMap = {
+    FRONTEND: 'Frontend Dev',
+    BACKEND: 'Backend Dev',
+    SOLIDITY: 'Solidity',
+    BIZ_DEV: 'BizDev',
+    COMMUNITY: 'Community',
+    PROJECT_MANAGEMENT: 'Project Management',
+    FINANCE: 'Finance',
+    PRODUCT_DESIGN: 'Product Design',
+    UX_RESEARCH: 'UX Research',
+    GAME_THEORY: 'Game Theory',
+    DEVOPS: 'DevOps',
+    TOKENOMICS: 'Tokenomics',
+    CONTENT: 'Content',
+    MEMES: 'Memes',
+    VISUAL_DESIGN: 'Visual Design',
+    UI_DESIGN: 'UI Design',
+    ILLUSTRATION: 'Illustration',
+    LEGAL: 'Legal',
+    ACCOUNTING: 'Accounting',
+  };
+
+  if (!_.includes(_.keys(skillsMap), skill)) return;
+
+  return skillsMap[skill];
+};
 
 export const SKILL_TYPE = ['NA', 'Technical', 'Non - Technical', 'Other'];
 

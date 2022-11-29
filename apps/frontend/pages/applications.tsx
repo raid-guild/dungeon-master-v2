@@ -5,18 +5,27 @@ import InfiniteScroll from 'react-infinite-scroller';
 import useApplicationList from '../hooks/useApplicationList';
 import MemberCard from '../components/MemberCard';
 import { IApplication } from '../utils';
+import SiteLayout from '../components/SiteLayout';
+import { useSession } from 'next-auth/react';
 
 const ApplicationList = () => {
-  const { data, hasNextPage, fetchNextPage } = useApplicationList();
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { data, error, hasNextPage, fetchNextPage } = useApplicationList({
+    token,
+  });
   const applications = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
       <NextSeo title="Applications" />
 
-      <Stack spacing={8} align="center">
-        <Heading>Application List</Heading>
-
+      <SiteLayout
+        isLoading={!data}
+        data={applications}
+        subheader={<Heading>Application List</Heading>}
+        error={error}
+      >
         <InfiniteScroll
           pageStart={0}
           loadMore={fetchNextPage}
@@ -33,7 +42,7 @@ const ApplicationList = () => {
             ))}
           </Stack>
         </InfiniteScroll>
-      </Stack>
+      </SiteLayout>
     </>
   );
 };

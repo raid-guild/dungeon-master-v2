@@ -8,30 +8,24 @@ import {
   AccordionIcon,
   Flex,
   Grid,
-  Box,
   Button,
   Text,
   VStack,
-  SimpleGrid,
-  UnorderedList,
-  ListItem,
   Stack,
-  Link as ChakraLink,
   Heading,
 } from '@raidguild/design-system';
 import { Collapse } from '@chakra-ui/react';
-// import { FiPlus } from 'react-icons/fi';
-// import { FaExternalLinkAlt } from 'react-icons/fa';
 import { format } from 'date-fns';
-import { IConsultation, BUDGET_DISPLAY } from '../utils';
-import RaidInfoStack from './RaidInfoStack';
+import {
+  IConsultation,
+  IRaid,
+  BUDGET_DISPLAY,
+  truncateAddress,
+} from '../utils';
+import InfoStack from './InfoStack';
 
 interface RaidProps {
-  id: string;
-  category?: string;
-  airtableId?: string;
-  escrowIndex?: string;
-  lockerHash?: string;
+  raid?: IRaid;
   consultation?: IConsultation;
 }
 
@@ -97,23 +91,18 @@ const Bio = ({ bio }: { bio: string }) => {
 };
 
 const RaidDetailsCard: React.FC<RaidProps> = ({
-  id,
-  category,
-  airtableId,
-  escrowIndex,
-  lockerHash,
+  raid,
   consultation,
 }: RaidProps) => {
-  console.log(consultation);
-
   const keyLinkItems = [
     consultation?.specsLink && {
-      name: 'Project Specs',
-      href: consultation?.specsLink,
+      label: 'Project Specs',
+      link: consultation?.specsLink,
     },
     _.get(consultation, 'consultationHash') && {
-      name: 'Consultation Hash',
-      href: `https://etherscan.io/tx/${_.get(
+      label: 'Consultation Hash',
+      details: truncateAddress(_.get(consultation, 'consultationHash')),
+      link: `https://etherscan.io/tx/${_.get(
         consultation,
         'consultationHash'
       )}`,
@@ -128,7 +117,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Budget',
           details: BUDGET_DISPLAY[_.get(consultation, 'budget', '-')],
         },
-        { label: 'Category', details: category },
+        { label: 'Category', details: _.get(raid, 'category', '-') },
         {
           label: 'Desired Delivery',
           details:
@@ -147,37 +136,55 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Delivery Priority',
           details: _.get(consultation, 'deliveryPriorities', '-'),
         },
-      ],
+      ].filter((x) => x),
       extra: <Description description={_.get(consultation, 'projectDesc')} />,
     },
     {
       title: 'Key Links',
-      items: [],
+      items: keyLinkItems,
     },
     {
       title: 'Client Point of Contact',
       items: [
         { label: 'Name', details: _.get(consultation, 'contactName', '-') },
-        { label: 'Email', details: _.get(consultation, 'contactEmail', '-') },
-        {
-          label: 'Discord',
-          details: _.get(consultation, 'contactDiscord', '-'),
+        _.get(consultation, 'contactEmail') && {
+          label: 'Email',
+          details: _.get(consultation, 'contactEmail'),
+          link: `mailto:${_.get(consultation, 'contactEmail')}`,
         },
-        {
+        _.get(consultation, 'contactDiscord') && {
+          label: 'Discord',
+          details: _.get(consultation, 'contactDiscord'),
+        },
+        _.get(consultation, 'contactTelegram') && {
           label: 'Telegram',
-          details: _.get(consultation, 'contactTelegram', '-'),
+          details: _.get(consultation, 'contactTelegram'),
           link: `https://t.me/${_.get(consultation, 'contactTelegram')}`,
         },
-      ],
+      ].filter((x) => x),
       extra: <Bio bio={_.get(consultation, 'contactBio')} />,
     },
     {
       title: 'Additional Info',
       items: [
-        { label: 'Raid ID', details: airtableId || id },
-        { label: 'Escrow Index', details: escrowIndex },
-        { label: 'Locker Hash', details: lockerHash },
-      ],
+        (_.get(raid, 'airtableId') ||
+          _.get(raid, 'v1Id') ||
+          _.get(raid, 'id')) && {
+          label: 'Raid ID',
+          details:
+            _.get(raid, 'airtableId') ||
+            _.get(raid, 'v1Id') ||
+            _.get(raid, 'id'),
+        },
+        _.get(raid, 'escrowIndex') && {
+          label: 'Escrow Index',
+          details: _.get(raid, 'escrowIndex'),
+        },
+        _.get(raid, 'lockerHash') && {
+          label: 'Locker Hash',
+          details: _.get(raid, 'lockerHash'),
+        },
+      ].filter((x) => x),
     },
   ];
 
@@ -185,47 +192,49 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     <VStack
       direction="column"
       width="100%"
-      minWidth="60vw"
       justifyContent="center"
       padding={8}
       bg="gray.800"
       rounded="md"
     >
       <Accordion defaultIndex={[0]} allowMultiple w="100%">
-        {_.map(panels, (panel, index) => (
-          <AccordionItem key={index}>
-            <AccordionButton color="raid">
-              <Flex justify="space-between" w="100%">
-                <Heading size="sm" as="h2">
-                  {_.get(panel, 'title')}
-                </Heading>
-                <AccordionIcon />
-              </Flex>
-            </AccordionButton>
-            <AccordionPanel paddingBottom={4}>
-              <Stack spacing={5}>
-                <Grid
-                  templateColumns="repeat(3, 1fr)"
-                  gap={6}
-                  alignItems="center"
-                  justifyContent="space-between"
-                  width="90%"
-                  autoFlow="wrap"
-                >
-                  {_.map(_.get(panel, 'items'), (item) => (
-                    <RaidInfoStack
-                      label={_.get(item, 'label')}
-                      details={_.get(item, 'details')}
-                      link={_.get(item, 'link')}
-                      key={_.get(item, 'label')}
-                    />
-                  ))}
-                </Grid>
-                {_.get(panel, 'extra')}
-              </Stack>
-            </AccordionPanel>
-          </AccordionItem>
-        ))}
+        {_.map(panels, (panel, index) => {
+          if (_.isEmpty(_.get(panel, 'items'))) return null;
+          return (
+            <AccordionItem key={index}>
+              <AccordionButton color="raid">
+                <Flex justify="space-between" w="100%">
+                  <Heading size="sm" as="h2">
+                    {_.get(panel, 'title')}
+                  </Heading>
+                  <AccordionIcon />
+                </Flex>
+              </AccordionButton>
+              <AccordionPanel paddingBottom={4}>
+                <Stack spacing={5}>
+                  <Grid
+                    templateColumns="repeat(3, 1fr)"
+                    gap={6}
+                    alignItems="center"
+                    justifyContent="space-between"
+                    width="90%"
+                    autoFlow="wrap"
+                  >
+                    {_.map(_.get(panel, 'items'), (item) => (
+                      <InfoStack
+                        label={_.get(item, 'label')}
+                        details={_.get(item, 'details')}
+                        link={_.get(item, 'link')}
+                        key={_.get(item, 'label')}
+                      />
+                    ))}
+                  </Grid>
+                  {_.get(panel, 'extra')}
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          );
+        })}
 
         {/* {consultation?.servicesReq?.length > 0 && (
                 <VStack align="flex-start">
@@ -241,43 +250,6 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                   </UnorderedList>
                 </VStack>
               )} */}
-
-        {/* {((legacy?.airtableId && legacy?.escrowIndex) ||
-          consultation?.specsLink ||
-          consultation?.consultationHash) && (
-          <AccordionItem key={1}>
-            <h2>
-              <AccordionButton color="raid">
-                <Box flex="1" textAlign="left" color="raid">
-                  Key Links
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <SimpleGrid columns={3} spacing={3}>
-                {keyLinkItems.map((link) => (
-                  <Flex direction="row" key={link.name}>
-                    <ChakraLink
-                      href={link.href}
-                      isExternal
-                      transition="all ease-in-out .25s"
-                      _hover={{ color: 'red.100' }}
-                    >
-                      {link.name} <FaExternalLinkAlt mx="2px" />
-                    </ChakraLink>
-                  </Flex>
-                ))}
-
-                <Flex>
-                  <Button variant="link" leftIcon={<FiPlus />} disabled>
-                    Add Link
-                  </Button>
-                </Flex>
-              </SimpleGrid>
-            </AccordionPanel>
-          </AccordionItem>
-        )} */}
       </Accordion>
     </VStack>
   );

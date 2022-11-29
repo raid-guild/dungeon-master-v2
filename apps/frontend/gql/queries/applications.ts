@@ -26,8 +26,38 @@ export const APPLICATION_LIST_QUERY = gql`
 export const APPLICATION_DETAIL_QUERY = gql`
   query ApplicationDetail($id: uuid!) {
     applications_by_pk(id: $id) {
+      comments
+      availability
+      crypto_experience
+      cohort_availability {
+        cohort_availability
+      }
+      crypto_thrills
+      dao_familiarity
+      discord_handle
+      email_address
+      ens_name
+      eth_address
+      favorite_media
+      github_handle
+      handbook_read
       id
+      introduction
+      learning_goals
       name
+      passion
+      pledge_readiness
+      referred_by
+      skill_type
+      telegram_handle
+      twitter_handle
+      updated_at
+      v1_id
+      why_raidguild
+      skills {
+        skill
+        skill_type
+      }
     }
   }
 `;
