@@ -1,3 +1,12 @@
 table:
   schema: public
   name: available_project_specs
+is_enum: true
+array_relationships:
+  - name: consultations
+    using:
+      foreign_key_constraint_on:
+        column: project_specs
+        table:
+          schema: public
+          name: consultations

@@ -1,1 +1,1 @@
-DROP TABLE "public"."technical_skill_types";
+DROP TABLE "public"."skill_types";
