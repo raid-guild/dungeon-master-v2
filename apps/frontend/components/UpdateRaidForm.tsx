@@ -10,10 +10,11 @@ import {
   Select,
   Flex,
 } from '@raidguild/design-system';
+import { forwardRef, ComponentWithAs } from '@chakra-ui/react';
 import { add } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { useForm, Controller } from 'react-hook-form';
-import { updateRecord, IRaid } from '../utils';
+import { IRaid } from '../utils';
 import { useRouter } from 'next/router';
 import { RAID_CATEGORY } from '../utils/constants';
 
@@ -46,26 +47,27 @@ const UpdateRaidForm: React.FC<UpdateRaidFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
+    console.log('values', values);
 
-    const result = await updateRecord('raid', id, {
-      raid_name: values.raidName,
-      invoice_address: values.invoiceAddress,
-      start_date: values.startDate,
-      end_date: values.endDate,
-      category: values.raidCategory,
-    });
-    if (result) {
-      toast({
-        title: 'Raid Updated',
-        description: 'Your updates have been made.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      setSending(false);
-      onClose();
-      router.replace(router.asPath);
-    }
+    //   const result = await updateRecord('raid', id, {
+    //     raid_name: values.raidName,
+    //     invoice_address: values.invoiceAddress,
+    //     start_date: values.startDate,
+    //     end_date: values.endDate,
+    //     category: values.raidCategory,
+    //   });
+    //   if (result) {
+    //     toast({
+    //       title: 'Raid Updated',
+    //       description: 'Your updates have been made.',
+    //       status: 'success',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //     setSending(false);
+    //     onClose();
+    //     router.replace(router.asPath);
+    //   }
   }
 
   const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
