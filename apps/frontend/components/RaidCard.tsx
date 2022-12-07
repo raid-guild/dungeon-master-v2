@@ -20,6 +20,7 @@ import Link from './ChakraNextLink';
 // import { format } from 'date-fns';
 import InfoStack from './InfoStack';
 import { IConsultation, IRaid } from '../utils';
+import { PROJECT_TYPE_DISPLAY, RAID_CATEGORY_DISPLAY, BUDGET_DISPLAY } from '../utils/constants';
 
 interface RaidProps {
   raid?: IRaid;
@@ -36,8 +37,9 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const id = _.get(raid || consultation, 'id');
   const submissionType = _.get(consultation, 'submissionType');
   const description = _.get(consultation, 'projectDesc');
-  const budget = _.get(consultation, 'budget');
-  const projectType = _.get(consultation, 'projectType');
+  const budget = BUDGET_DISPLAY[_.get(consultation, 'budget')];
+  const projectType = PROJECT_TYPE_DISPLAY[_.get(consultation, 'projectType')];
+  const raidCategory = RAID_CATEGORY_DISPLAY[_.get(raid, 'category', '-')];
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequireds', []), 'role');
 
   // TODO handle links for consulation/raid
@@ -123,7 +125,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
-          <InfoStack label="Category" details={_.get(raid, 'category', '-')} />
+          <InfoStack label="Category" details={raidCategory} />
           <InfoStack label="Project Type" details={projectType || '-'} />
           {rolesRequired?.length > 0 && (
             <VStack align="start">
