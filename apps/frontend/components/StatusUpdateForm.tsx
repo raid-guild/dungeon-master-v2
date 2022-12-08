@@ -27,19 +27,7 @@ StatusUpdateProps) => {
   const handleSetStatus = async (e: any) => {
     const result = await updateRaidStatus();
     console.log('result', result);
-    // const result = await updateRecord('raid', raidId, {
-    //   status: e.target.textContent,
-    // });
-    // if (result?.status) {
-    //   closeModal();
-    //   toast({
-    //     title: 'Status Updated',
-    //     status: 'success',
-    //     duration: 3000,
-    //     isClosable: true,
-    //   });
-    //   updateRaid('status', e.target.textContent);
-    // }
+    closeModal();
   };
 
   // better way to display current selected status?

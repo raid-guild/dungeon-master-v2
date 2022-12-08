@@ -1,12 +1,14 @@
 import _ from 'lodash';
+import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, RAID_UPDATE_MUTATION } from '../gql';
-import { useRouter } from 'next/router';
+import { useToast } from '@raidguild/design-system';
 
 const useRaidUpdate = ({ token }) => {
   const router = useRouter();
   const raidId = _.get(router, 'query.raid');
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const { mutate, isLoading, isError, isSuccess } = useMutation(
     async () => {
@@ -26,6 +28,21 @@ const useRaidUpdate = ({ token }) => {
     {
       onSuccess: (data) => {
         console.log('update success', data);
+        toast({
+          title: 'Status Updated',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      },
+      onError: (error) => {
+        console.log('update error', error);
+        toast({
+          title: 'Unable to Update Status',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       },
     }
   );
