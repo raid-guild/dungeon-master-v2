@@ -3,11 +3,15 @@ import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import { SessionProvider } from 'next-auth/react';
 import { WagmiConfig } from 'wagmi';
-import { QueryClient, QueryClientProvider, QueryCache } from 'react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+} from '@tanstack/react-query';
 import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';

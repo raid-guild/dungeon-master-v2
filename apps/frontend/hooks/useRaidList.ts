@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, RAIDS_LIST_QUERY } from '../gql';
 import { camelize, IRaid } from '../utils';
 
@@ -37,7 +37,7 @@ const useRaidList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IRaid>>, Error>(
-    'raidsList',
+    ['raidsList'],
     ({ pageParam = 0 }) => raidQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {

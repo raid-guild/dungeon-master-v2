@@ -24,13 +24,19 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
     setModals({ raidStatus: true });
   };
 
+  const handleShowRaidUpdatFormModal = () => {
+    setModals({ raidForm: true });
+  };
+
   return (
     <Stack spacing={5}>
       <HStack>
         <Button onClick={handleShowStatusModal} w="75%">
           {_.get(raid, 'status')}
         </Button>
-        <Button variant="outline">Edit</Button>
+        <Button variant="outline" onClick={handleShowRaidUpdatFormModal}>
+          Edit
+        </Button>
       </HStack>
 
       <ModalWrapper
@@ -46,6 +52,19 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
           />
         }
       />
+      {/* <ModalWrapper
+        name="raidForm"
+        size="sm"
+        title="Update Raid"
+        localOverlay={localOverlay}
+        content={
+          <UpdateRaidForm
+            raidId={_.get(raid, 'id')}
+            currentStatus={_.get(raid, 'status')}
+            closeModal={closeModals}
+          />
+        }
+      /> */}
 
       <RaidPartyInfo raid={raid} />
       <RaidTags raid={raid} />
