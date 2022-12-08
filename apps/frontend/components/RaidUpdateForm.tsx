@@ -10,7 +10,7 @@ import {
   Select,
   Flex,
 } from '@raidguild/design-system';
-import { forwardRef, ComponentWithAs } from '@chakra-ui/react';
+import { forwardRef } from '@chakra-ui/react';
 import { add } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import { useForm, Controller } from 'react-hook-form';
@@ -18,21 +18,23 @@ import { IRaid } from '../utils';
 import { useRouter } from 'next/router';
 import { RAID_CATEGORY } from '../utils/constants';
 
-interface UpdateRaidFormProps {
-  id?: string;
+interface RaidUpdateFormProps {
+  raidId?: string;
   onClose?: () => void;
-  raid: IRaid;
+  raid: Partial<IRaid>;
 }
-const UpdateRaidForm: React.FC<UpdateRaidFormProps> = ({
-  id,
+const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
+  raidId,
   onClose,
   raid,
-}: UpdateRaidFormProps) => {
+}: RaidUpdateFormProps) => {
   const [sending, setSending] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(add(new Date(), { weeks: 1 }));
   const toast = useToast();
   const router = useRouter();
+
+  console.log('raid', raid);
 
   const localForm = useForm({
     mode: 'all',
@@ -76,6 +78,8 @@ const UpdateRaidForm: React.FC<UpdateRaidFormProps> = ({
     </Button>
   ));
 
+  console.log('raid in update form', raid);
+
   return (
     <Box as="section">
       <Box
@@ -89,7 +93,8 @@ const UpdateRaidForm: React.FC<UpdateRaidFormProps> = ({
       >
         <Box maxW="md" marginX="auto">
           <Box marginY="6">
-            <form onSubmit={handleSubmit(onSubmit)}>
+            hi
+            {/* <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
                   id="raidName"
@@ -177,7 +182,7 @@ const UpdateRaidForm: React.FC<UpdateRaidFormProps> = ({
                   Update Raid
                 </Button>
               </Stack>
-            </form>
+            </form> */}
           </Box>
         </Box>
       </Box>
@@ -185,4 +190,4 @@ const UpdateRaidForm: React.FC<UpdateRaidFormProps> = ({
   );
 };
 
-export default UpdateRaidForm;
+export default RaidUpdateForm;

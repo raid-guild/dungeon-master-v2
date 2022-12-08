@@ -1,9 +1,9 @@
 import React from 'react';
 import _ from 'lodash';
-import { HStack, Button, Heading, Text, Stack } from '@chakra-ui/react';
-
+import { HStack, Button, Text, Stack } from '@chakra-ui/react';
 import { IRaid } from '../utils';
 import StatusUpdateForm from './StatusUpdateForm';
+import RaidUpdateForm from './RaidUpdateForm';
 import ModalWrapper from './ModalWrapper';
 import RaidPartyInfo from './RaidPartyInfo';
 import RaidTags from './RaidTags';
@@ -20,6 +20,7 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
   const { setModals, closeModals } = localOverlay;
   const relatedRaids = _.get(raid, 'raidByRelatedRaids');
 
+  console.log('raid in sidebar', raid);
   const handleShowStatusModal = () => {
     setModals({ raidStatus: true });
   };
@@ -52,19 +53,20 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
           />
         }
       />
-      {/* <ModalWrapper
+      <ModalWrapper
         name="raidForm"
         size="sm"
         title="Update Raid"
         localOverlay={localOverlay}
         content={
-          <UpdateRaidForm
+          <RaidUpdateForm
             raidId={_.get(raid, 'id')}
-            currentStatus={_.get(raid, 'status')}
+            raid={raid}
+            // currentStatus={_.get(raid, 'status')}
             closeModal={closeModals}
           />
         }
-      /> */}
+      />
 
       <RaidPartyInfo raid={raid} />
       <RaidTags raid={raid} />
