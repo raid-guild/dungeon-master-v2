@@ -24,6 +24,8 @@ export interface IRaid {
   createdAt: string;
 }
 
+export type RaidUpdateType = Pick<IRaid, 'status'>;
+
 export enum RaidStatus {
   PENDING = 'PENDING',
   AWAITING = 'AWAITING',
