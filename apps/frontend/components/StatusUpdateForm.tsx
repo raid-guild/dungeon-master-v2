@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { Stack, Button } from '@raidguild/design-system';
 import useRaidUpdate from '../hooks/useRaidUpdate';
 import { useSession } from 'next-auth/react';
-// import { updateRecord } from '../utils';
 
 const statusOptions = ['AWAITING', 'PREPARING', 'RAIDING', 'LOST', 'SHIPPED'];
 
@@ -22,10 +21,11 @@ const StatusUpdateForm: React.FC<StatusUpdateProps> = ({
 StatusUpdateProps) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { mutate: updateRaidStatus, isLoading: updateRaidStatusIsLoading } =
-    useRaidUpdate({ token });
-  const handleSetStatus = async (e: any) => {
-    const result = await updateRaidStatus();
+  const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
+
+  const handleSetStatus = async (selectedStatus) => {
+    console.log('selectedStatus', selectedStatus);
+    const result = await updateRaidStatus({ status: selectedStatus });
     console.log('result', result);
     closeModal();
   };
@@ -39,7 +39,7 @@ StatusUpdateProps) => {
           <Button
             variant={selectedStatus ? 'solid' : 'outline'}
             isDisabled={selectedStatus}
-            onClick={handleSetStatus}
+            onClick={() => handleSetStatus(o)}
             key={o}
           >
             {o}

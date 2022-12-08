@@ -24,6 +24,15 @@ export interface IRaid {
   createdAt: string;
 }
 
+export enum RaidStatus {
+  PENDING = 'PENDING',
+  AWAITING = 'AWAITING',
+  LOST = 'LOST',
+  PREPARING = 'PREPARING',
+  RAIDING = 'RAIDING',
+  SHIPPED = 'SHIPPED',
+}
+
 export interface IMember {
   id: string;
   name: string;

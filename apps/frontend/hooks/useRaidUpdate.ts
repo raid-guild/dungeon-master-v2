@@ -1,33 +1,36 @@
-import _ from 'lodash';
-import { useRouter } from 'next/router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, RAID_UPDATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
 
-const useRaidUpdate = ({ token }) => {
-  const router = useRouter();
-  const raidId = _.get(router, 'query.raid');
+interface UpdateRaidProps {
+  status: string;
+}
+
+const useRaidUpdate = ({ token, raidId }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutate, isLoading, isError, isSuccess } = useMutation(
-    async () => {
-      console.log('firing update', raidId);
-      console.log('token', token);
+  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
+    async ({ status }: UpdateRaidProps) => {
       if (!raidId || !token) return;
       const { data } = await client(token).mutate({
         mutation: RAID_UPDATE_MUTATION,
         variables: {
           id: raidId,
-          status: 'PREPARING',
+          status: status,
         },
       });
-      console.log('data', data);
+
       return { data };
     },
     {
       onSuccess: (data) => {
-        console.log('update success', data);
+        queryClient.invalidateQueries([
+          'raidDetail',
+          data?.data.update_raids_by_pk?.id,
+        ]); // invalidate raidDetail with id from the successful mutation response
+        queryClient.invalidateQueries(['raidList']); // invalidate the raidList
+
         toast({
           title: 'Status Updated',
           status: 'success',
@@ -36,7 +39,6 @@ const useRaidUpdate = ({ token }) => {
         });
       },
       onError: (error) => {
-        console.log('update error', error);
         toast({
           title: 'Unable to Update Status',
           status: 'error',
@@ -46,7 +48,7 @@ const useRaidUpdate = ({ token }) => {
       },
     }
   );
-  return { mutate, isLoading, isError, isSuccess };
+  return { mutateAsync, isLoading, isError, isSuccess };
 };
 
 export default useRaidUpdate;
