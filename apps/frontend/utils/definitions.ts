@@ -24,7 +24,9 @@ export interface IRaid {
   createdAt: string;
 }
 
-export type RaidUpdateType = Pick<IRaid, 'status'>;
+export type RaidUpdateType = Partial<IRaid> & {
+  name: string; // name is used in the GraphQL schema
+};
 
 export enum RaidStatus {
   PENDING = 'PENDING',

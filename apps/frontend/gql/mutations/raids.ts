@@ -1,8 +1,15 @@
 import { gql } from '@apollo/client';
 
 export const RAID_UPDATE_MUTATION = gql`
-  mutation RaidUpdateMutation($id: uuid!, $status: raid_statuses_enum) {
-    update_raids_by_pk(pk_columns: { id: $id }, _set: { status: $status }) {
+  mutation RaidUpdateMutation(
+    $id: uuid!
+    $name: String
+    $status: raid_statuses_enum
+  ) {
+    update_raids_by_pk(
+      pk_columns: { id: $id }
+      _set: { status: $status, name: $name }
+    ) {
       ...RaidDetail
     }
   }

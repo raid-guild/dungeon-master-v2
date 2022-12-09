@@ -13,10 +13,13 @@ import {
 import { forwardRef } from '@chakra-ui/react';
 import { add } from 'date-fns';
 import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
 import { useRouter } from 'next/router';
 import { RAID_CATEGORY } from '../utils/constants';
+import useRaidUpdate from '../hooks/useRaidUpdate';
+import { useSession } from 'next-auth/react';
 
 interface RaidUpdateFormProps {
   raidId?: string;
@@ -33,6 +36,9 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   const [endDate, setEndDate] = useState(add(new Date(), { weeks: 1 }));
   const toast = useToast();
   const router = useRouter();
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
   console.log('raid', raid);
 
@@ -48,8 +54,14 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   } = localForm;
 
   async function onSubmit(values) {
-    setSending(true);
+    // setSending(true);
     console.log('values', values);
+    const result = await updateRaidStatus({
+      name: values.raidName,
+      status: raid.status ?? raid.status,
+    });
+
+    console.log('result', result);
 
     //   const result = await updateRecord('raid', id, {
     //     raid_name: values.raidName,
@@ -70,6 +82,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     //     onClose();
     //     router.replace(router.asPath);
     //   }
+    // setSending(false);
   }
 
   const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
@@ -156,6 +169,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 </Flex>
                 <Input
                   id="invoiceAddress"
+                  isReadOnly
                   defaultValue={
                     raid?.invoiceAddress ? raid?.invoiceAddress : ''
                   }

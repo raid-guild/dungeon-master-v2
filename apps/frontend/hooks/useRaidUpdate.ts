@@ -38,7 +38,7 @@ const useRaidUpdate = ({ token, raidId }) => {
       },
       onError: (error) => {
         toast({
-          title: 'Unable to Update Status',
+          title: 'Unable to Update Raid',
           status: 'error',
           duration: 3000,
           isClosable: true,

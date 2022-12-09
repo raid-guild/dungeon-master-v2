@@ -24,9 +24,7 @@ StatusUpdateProps) => {
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
   const handleSetStatus = async (selectedStatus) => {
-    console.log('selectedStatus', selectedStatus);
-    const result = await updateRaidStatus({ status: selectedStatus });
-    console.log('result', result);
+    await updateRaidStatus({ status: selectedStatus });
     closeModal();
   };
 

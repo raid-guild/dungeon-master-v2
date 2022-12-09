@@ -53,27 +53,9 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
           />
         }
       />
-      {/* <Modal
-        // name="raidForm"
-        size="sm"
-        heading="Update Raid"
-        isOpen={true}
-        onClose={closeModals}
-        // localOverlay={localOverlay}
-        buttons={[
-          { label: 'hi', onClick: () => console.log('hi'), isPrimary: true },
-        ]}
-      >
-        <RaidUpdateForm
-          raidId={_.get(raid, 'id')}
-          raid={raid}
-          // currentStatus={_.get(raid, 'status')}
-          onClose={closeModals}
-        />
-      </Modal> */}
       <ModalWrapper
         name="raidForm"
-        size="sm"
+        size="xl"
         title="Update Raid"
         localOverlay={localOverlay}
         content={
