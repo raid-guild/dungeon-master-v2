@@ -93,8 +93,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       >
         <Box maxW="md" marginX="auto">
           <Box marginY="6">
-            hi
-            {/* <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
                   id="raidName"
@@ -106,7 +105,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   localForm={localForm}
                   {...register('raidName')}
                 />
-                <FormControl>
+                {/* <FormControl>
                   <FormLabel color="raid">Raid Category</FormLabel>
                   <Controller
                     name="raidCategory"
@@ -120,7 +119,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                       </Select>
                     )}
                   />
-                </FormControl>
+                </FormControl> */}
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   alignItems="center"
@@ -182,7 +181,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   Update Raid
                 </Button>
               </Stack>
-            </form> */}
+            </form>
           </Box>
         </Box>
       </Box>

@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { HStack, Button, Text, Stack } from '@chakra-ui/react';
+import { HStack, Button, Text, Stack, Modal } from '@raidguild/design-system';
 import { IRaid } from '../utils';
 import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
@@ -53,6 +53,24 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
           />
         }
       />
+      {/* <Modal
+        // name="raidForm"
+        size="sm"
+        heading="Update Raid"
+        isOpen={true}
+        onClose={closeModals}
+        // localOverlay={localOverlay}
+        buttons={[
+          { label: 'hi', onClick: () => console.log('hi'), isPrimary: true },
+        ]}
+      >
+        <RaidUpdateForm
+          raidId={_.get(raid, 'id')}
+          raid={raid}
+          // currentStatus={_.get(raid, 'status')}
+          onClose={closeModals}
+        />
+      </Modal> */}
       <ModalWrapper
         name="raidForm"
         size="sm"
@@ -63,7 +81,7 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
             raidId={_.get(raid, 'id')}
             raid={raid}
             // currentStatus={_.get(raid, 'status')}
-            closeModal={closeModals}
+            onClose={closeModals}
           />
         }
       />
