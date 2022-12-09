@@ -20,7 +20,6 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
   const { setModals, closeModals } = localOverlay;
   const relatedRaids = _.get(raid, 'raidByRelatedRaids');
 
-  console.log('raid in sidebar', raid);
   const handleShowStatusModal = () => {
     setModals({ raidStatus: true });
   };
@@ -63,8 +62,7 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
           <RaidUpdateForm
             raidId={_.get(raid, 'id')}
             raid={raid}
-            // currentStatus={_.get(raid, 'status')}
-            onClose={closeModals}
+            closeModal={closeModals}
           />
         }
       />

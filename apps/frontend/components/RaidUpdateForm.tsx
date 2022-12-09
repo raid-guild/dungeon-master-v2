@@ -24,12 +24,12 @@ import { useSession } from 'next-auth/react';
 
 interface RaidUpdateFormProps {
   raidId?: string;
-  onClose?: () => void;
+  closeModal?: () => void;
   raid: Partial<IRaid>;
 }
 const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   raidId,
-  onClose,
+  closeModal,
   raid,
 }: RaidUpdateFormProps) => {
   const [sending, setSending] = useState(false);
@@ -40,8 +40,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
-
-  console.log('raid', raid);
 
   const localForm = useForm({
     mode: 'all',
@@ -60,7 +58,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   }));
 
   async function onSubmit(values) {
-    // setSending(true);
+    setSending(true);
     console.log('form values', values);
     const raidWithoutUpdateValues = _.omit(raid, 'status', 'name', 'category');
     const result = await updateRaidStatus({
@@ -69,6 +67,8 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       status: raid.status ?? raid.status,
       ...raidWithoutUpdateValues,
     });
+    closeModal();
+    setSending(false);
 
     console.log('result', result);
 
