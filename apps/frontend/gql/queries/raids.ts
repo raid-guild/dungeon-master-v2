@@ -25,6 +25,8 @@ export const RAIDS_LIST_QUERY = gql`
     }
     created_at
     updated_at
+    start_date
+    end_date
   }
 `;
 

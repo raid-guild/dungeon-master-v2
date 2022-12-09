@@ -46,6 +46,8 @@ export enum RaidCategory {
 export type RaidUpdateType = Partial<IRaid> & {
   name: string; // name is used in the GraphQL schema
   category: RaidCategory;
+  startDate: string;
+  endDate: string;
 };
 
 export interface IMember {

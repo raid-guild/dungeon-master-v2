@@ -6,10 +6,18 @@ export const RAID_UPDATE_MUTATION = gql`
     $name: String
     $status: raid_statuses_enum
     $category: raid_categories_enum
+    $start_date: timestamptz
+    $end_date: timestamptz
   ) {
     update_raids_by_pk(
       pk_columns: { id: $id }
-      _set: { status: $status, name: $name, category: $category }
+      _set: {
+        status: $status
+        name: $name
+        category: $category
+        start_date: $start_date
+        end_date: $end_date
+      }
     ) {
       ...RaidDetail
     }
@@ -33,5 +41,7 @@ export const RAID_UPDATE_MUTATION = gql`
     }
     created_at
     updated_at
+    start_date
+    end_date
   }
 `;

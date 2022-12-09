@@ -57,14 +57,24 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     value: category,
   }));
 
+  console.log('raid', raid);
   async function onSubmit(values) {
     setSending(true);
     console.log('form values', values);
-    const raidWithoutUpdateValues = _.omit(raid, 'status', 'name', 'category');
+    const raidWithoutUpdateValues = _.omit(
+      raid,
+      'status',
+      'name',
+      'category',
+      'startDate',
+      'endDate'
+    );
     const result = await updateRaidStatus({
       name: values.raidName ?? raid.name,
       category: values.raidCategory,
       status: raid.status ?? raid.status,
+      start_date: values.startDate ?? raid.startDate,
+      end_date: values.endDate ?? raid.endDate,
       ...raidWithoutUpdateValues,
     });
     closeModal();
@@ -180,19 +190,21 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     />
                   </FormControl>
                 </Flex>
-                <Input
-                  id="invoiceAddress"
-                  isReadOnly
-                  defaultValue={
-                    raid?.invoiceAddress ? raid?.invoiceAddress : ''
-                  }
-                  aria-label="Enter the Invoice address"
-                  placeholder="Enter the Invoice address"
-                  rounded="base"
-                  label="Invoice Address"
-                  localForm={localForm}
-                  {...register('invoiceAddress')}
-                />
+                {raid?.invoiceAddress !== null && (
+                  <Input
+                    id="invoiceAddress"
+                    isReadOnly
+                    defaultValue={
+                      raid?.invoiceAddress ? raid?.invoiceAddress : ''
+                    }
+                    aria-label="Enter the Invoice address"
+                    placeholder="Enter the Invoice address"
+                    rounded="base"
+                    label="Invoice Address"
+                    localForm={localForm}
+                    {...register('invoiceAddress')}
+                  />
+                )}
                 <Button
                   isLoading={isSubmitting || sending}
                   type="submit"
