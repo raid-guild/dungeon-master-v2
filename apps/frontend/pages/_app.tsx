@@ -36,7 +36,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <RGThemeProvider>
       <DefaultSeo
-        titleTemplate="%s | Dungeon Master v1"
+        titleTemplate="%s | Dungeon Master v1.5"
         title="Dungeon Master"
         defaultTitle="Raid Guild | Dungeon Master v1.5"
         description="Adventurers, come and gather around the campfire."
