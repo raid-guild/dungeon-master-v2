@@ -10,7 +10,7 @@ export interface IRaid {
   };
   cleric: IMember;
   rolesRequired: string[];
-  category: string;
+  category: string | RaidCategory;
   startDate: Date;
   endDate: Date;
   invoiceAddress: string;
@@ -25,10 +25,6 @@ export interface IRaid {
   createdAt: string;
 }
 
-export type RaidUpdateType = Partial<IRaid> & {
-  name: string; // name is used in the GraphQL schema
-};
-
 export enum RaidStatus {
   PENDING = 'PENDING',
   AWAITING = 'AWAITING',
@@ -37,6 +33,20 @@ export enum RaidStatus {
   RAIDING = 'RAIDING',
   SHIPPED = 'SHIPPED',
 }
+
+export enum RaidCategory {
+  'DESIGN_SPRINT',
+  'FULL_STACK',
+  'SMART_CONTRACTS',
+  'BACKEND',
+  'FRONTEND',
+  'MARKETING',
+}
+
+export type RaidUpdateType = Partial<IRaid> & {
+  name: string; // name is used in the GraphQL schema
+  category: RaidCategory;
+};
 
 export interface IMember {
   id: string;

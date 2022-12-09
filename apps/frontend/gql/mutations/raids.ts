@@ -5,10 +5,11 @@ export const RAID_UPDATE_MUTATION = gql`
     $id: uuid!
     $name: String
     $status: raid_statuses_enum
+    $category: raid_categories_enum
   ) {
     update_raids_by_pk(
       pk_columns: { id: $id }
-      _set: { status: $status, name: $name }
+      _set: { status: $status, name: $name, category: $category }
     ) {
       ...RaidDetail
     }

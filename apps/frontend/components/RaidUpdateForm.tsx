@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import _ from 'lodash';
 import {
   Box,
   Button,
@@ -53,12 +54,20 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     formState: { errors, isSubmitting },
   } = localForm;
 
+  const raidCategoryMapped = RAID_CATEGORY.map((category) => ({
+    label: category,
+    value: category,
+  }));
+
   async function onSubmit(values) {
     // setSending(true);
-    console.log('values', values);
+    console.log('form values', values);
+    const raidWithoutUpdateValues = _.omit(raid, 'status', 'name', 'category');
     const result = await updateRaidStatus({
-      name: values.raidName,
+      name: values.raidName ?? raid.name,
+      category: values.raidCategory,
       status: raid.status ?? raid.status,
+      ...raidWithoutUpdateValues,
     });
 
     console.log('result', result);
@@ -92,8 +101,8 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   ));
 
   useEffect(() => {
-    console.log('incoming values', raid);
     setValue('raidName', raid?.name);
+    setValue('raidCategory', raid?.category);
   }, [raid]);
 
   return (
@@ -121,21 +130,22 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   localForm={localForm}
                   {...register('raidName')}
                 />
-                {/* <FormControl>
+                <FormControl>
                   <FormLabel color="raid">Raid Category</FormLabel>
                   <Controller
                     name="raidCategory"
                     defaultValue={raid?.category ? raid?.category : ''}
                     control={control}
                     render={({ field }) => (
-                      <Select {...field}>
-                        {RAID_CATEGORY.map((category) => (
-                          <option value={category}>{category}</option>
-                        ))}
-                      </Select>
+                      <Select
+                        {...field}
+                        name="raidCategory"
+                        options={raidCategoryMapped}
+                        localForm={localForm}
+                      />
                     )}
                   />
-                </FormControl> */}
+                </FormControl>
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   alignItems="center"
