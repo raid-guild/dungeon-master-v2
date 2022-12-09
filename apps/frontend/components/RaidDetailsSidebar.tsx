@@ -48,6 +48,7 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
         content={
           <StatusUpdateForm
             raidId={_.get(raid, 'id')}
+            raid={raid}
             currentStatus={_.get(raid, 'status')}
             closeModal={closeModals}
           />

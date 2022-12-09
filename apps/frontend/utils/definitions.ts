@@ -2,6 +2,7 @@
 export interface IRaid {
   id: string;
   raidName: string;
+  name: string;
   status: string;
   raidParty: {
     id: string;

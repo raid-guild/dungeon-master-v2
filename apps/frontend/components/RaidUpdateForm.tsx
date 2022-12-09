@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -91,7 +91,10 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     </Button>
   ));
 
-  console.log('raid in update form', raid);
+  useEffect(() => {
+    console.log('incoming values', raid);
+    setValue('raidName', raid?.name);
+  }, [raid]);
 
   return (
     <Box as="section">
@@ -110,7 +113,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
               <Stack spacing={4}>
                 <Input
                   id="raidName"
-                  defaultValue={raid?.raidName ? raid?.raidName : ''}
+                  defaultValue={raid?.name ? raid?.name : ''}
                   aria-label="Enter the Raid name"
                   placeholder="Enter the Raid name"
                   rounded="base"
