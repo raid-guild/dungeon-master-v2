@@ -88,12 +88,9 @@ export default async function auth(req: any, res: any) {
               address,
             },
           });
-          console.log(result);
 
           if (!_.isEmpty(_.get(result, 'data.members'))) {
-            console.log('user found', _.first(_.get(result, 'data.members')));
             userId = _.get(_.first(_.get(result, 'data.members')), 'id');
-            console.log(userId);
             username = _.get(
               _.first(_.get(result, 'data.members')),
               'username'
