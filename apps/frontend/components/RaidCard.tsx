@@ -14,13 +14,16 @@ import {
   UnorderedList,
   ListItem,
   Card,
+  AvatarGroup,
+  RoleBadge,
+  Avatar
 } from '@raidguild/design-system';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
 // import { format } from 'date-fns';
 import InfoStack from './InfoStack';
 import { IConsultation, IRaid } from '../utils';
-import { PROJECT_TYPE_DISPLAY, RAID_CATEGORY_DISPLAY, BUDGET_DISPLAY } from '../utils/constants';
+import { PROJECT_TYPE_DISPLAY, RAID_CATEGORY_DISPLAY, BUDGET_DISPLAY, GUILD_CLASS_ICON, SKILLS_DISPLAY } from '../utils/constants';
 
 interface RaidProps {
   raid?: IRaid;
@@ -40,10 +43,19 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const budget = BUDGET_DISPLAY[_.get(consultation, 'budget')];
   const projectType = PROJECT_TYPE_DISPLAY[_.get(consultation, 'projectType')];
   const raidCategory = RAID_CATEGORY_DISPLAY[_.get(raid, 'category', '-')];
-  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequireds', []), 'role');
+  const rolesRequired = _.map(_.get(raid, 'rolesRequired', []), 'role');
 
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
+  console.log(`raid: ${JSON.stringify(raid)}`)
+  const raidParty = _.map(_.get(raid, 'raidParty', []), 'memberByMember.guildClass');
+  const raidCleric = _.get(raid, 'memberByCleric.name', 'na');
+
+  // roles required
+  console.log(`rolesRequired: ${rolesRequired.length} ${JSON.stringify(rolesRequired)}`);
+
+  console.log(`memberByCleric: ${JSON.stringify(raidCleric)}`);
+  
 
   return (
     <Card variant="withHeader">
@@ -77,6 +89,29 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             {_.get(raid, 'status', _.get(consultation, 'status'))}
           </Badge>
         </HStack>
+        <HStack>
+          <VStack>
+            <Text>Cleric</Text>
+            <Text>{raidCleric}</Text>
+          </VStack>
+          <Text>Roles Required</Text>
+          <AvatarGroup>
+            {_.map(rolesRequired, (role: string) => (
+              <Avatar
+                key={role}
+                icon={
+                  <RoleBadge
+                    roleName={GUILD_CLASS_ICON[role]}
+                    width="44px"
+                    height="44px"
+                    border="2px solid"
+                  />
+                }
+              />
+            ))}
+          </AvatarGroup>
+        </HStack>
+          {/* display cleric */}
         <Link href={link}>
           <Button color="raid" borderColor="raid" variant="outline">
             View Details
@@ -99,6 +134,14 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         >
           {_.get(raid, 'createdAt') && (
             <HStack>
+              {/* todo: 
+              - Raid Created Date
+                  - if status = Awaiting | Preparing
+              - Raid Started Date
+                  - if status = Raiding
+              - Raid Ended Date
+                  - if status = Shipped | Lost
+              */}
               <Text color="gray.100" fontSize="smaller">
                 Raid Started
               </Text>
@@ -114,6 +157,27 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               : description}
           </Text>
         </Flex>
+        <Flex direction="column">
+          <Text color="gray.100" fontSize="smaller">
+            Raid Party
+          </Text>
+
+          <AvatarGroup>
+            {_.map(raidParty, (role: string) => (
+              <Avatar
+                key={role}
+                icon={
+                  <RoleBadge
+                    roleName={GUILD_CLASS_ICON[role]}
+                    width="44px"
+                    height="44px"
+                    border="2px solid"
+                  />
+                }
+              />
+            ))}
+          </AvatarGroup>
+        </Flex>
       </Flex>
       <Flex
         direction="column"
@@ -127,6 +191,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           <InfoStack label="Budget" details={budget || '-'} />
           <InfoStack label="Category" details={raidCategory} />
           <InfoStack label="Project Type" details={projectType || '-'} />
+        </SimpleGrid>
           {rolesRequired?.length > 0 && (
             <VStack align="start">
               <Text as="span" color="gray.100" fontSize="small">
@@ -135,27 +200,16 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               <HStack>
                 {rolesRequired?.map((role) => (
                   <Text color="gray.100" key={role}>
-                    {role}
+                    {SKILLS_DISPLAY(role)}
                   </Text>
                 ))}
               </HStack>
             </VStack>
           )}
-          {servicesRequired?.length > 0 && (
-            <VStack align="flex-start">
-              <Text color="white" fontSize="sm">
-                Services Required
-              </Text>
-              <UnorderedList paddingLeft={4}>
-                {[...uniqueServicesRequired].map((service) => (
-                  <ListItem color="gray.100" key={service}>
-                    {service}
-                  </ListItem>
-                ))}
-              </UnorderedList>
-            </VStack>
-          )}
-        </SimpleGrid>
+          {/* display comment  */}
+          <Flex direction="column">
+                {/* todo: display first comment, truncated, with careted date. Display full text inside tooltip */}
+          </Flex>
       </Flex>
     </Card>
   );

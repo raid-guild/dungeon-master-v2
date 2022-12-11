@@ -14,6 +14,20 @@ export const RAIDS_LIST_QUERY = gql`
     roles_required {
       role
     }
+    memberByCleric {
+      name
+    }
+    raid_party {
+      memberByMember {
+        name
+        id
+        guild_class
+      }
+    }
+    commentByComment {
+      comment
+      createdAt
+    }
     consultationByConsultation {
       project_desc
       budget

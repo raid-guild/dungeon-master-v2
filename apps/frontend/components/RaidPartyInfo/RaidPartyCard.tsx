@@ -175,6 +175,7 @@ const RaidPartyCard = ({
           />
         }
       >
+        Avatar Group
         <AvatarGroup>
           {_.map(roles, (role: string) => (
             <Avatar
