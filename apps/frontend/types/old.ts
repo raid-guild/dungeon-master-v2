@@ -107,7 +107,6 @@ export interface IComment {
   modifiedAt: string;
 }
 
-/* eslint-disable camelcase */
 export interface Chain {
   name: string;
   short_name: string;
