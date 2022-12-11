@@ -1,5 +1,28 @@
 import { gql } from '@apollo/client';
 
+const RAID_DETAIL_FRAGMENT = gql`
+  fragment RaidDetail on raids {
+    id
+    name
+    status
+    category
+    roles_required {
+      role
+    }
+    consultationByConsultation {
+      project_desc
+      budget
+      services_required {
+        guild_service
+      }
+      submission_type
+      project_type
+    }
+    created_at
+    updated_at
+  }
+`;
+
 export const RAIDS_LIST_QUERY = gql`
   query RaidsListQuery($offset: Int!, $limit: Int!, $where: raids_bool_exp) {
     raids(limit: $limit, offset: $offset, where: $where) {

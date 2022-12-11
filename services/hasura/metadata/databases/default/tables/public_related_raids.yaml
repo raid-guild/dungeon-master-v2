@@ -2,17 +2,9 @@ table:
   schema: public
   name: related_raids
 object_relationships:
-  - name: raidByRaid
+  - name: raid
     using:
-      foreign_key_constraint_on: raid
-  - name: raidByRelatedRaid
+      foreign_key_constraint_on: raid_id
+  - name: related_raid
     using:
-      foreign_key_constraint_on: related_raid
-select_permissions:
-  - role: member
-    permission:
-      columns:
-        - id
-        - raid
-        - related_raid
-      filter: {}
+      foreign_key_constraint_on: related_raid_id

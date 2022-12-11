@@ -1,0 +1,10 @@
+table:
+  schema: public
+  name: clients_contacts
+object_relationships:
+  - name: client
+    using:
+      foreign_key_constraint_on: client_id
+  - name: contact
+    using:
+      foreign_key_constraint_on: contact_id

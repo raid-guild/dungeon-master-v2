@@ -1,0 +1,10 @@
+table:
+  schema: public
+  name: updates
+object_relationships:
+  - name: member
+    using:
+      foreign_key_constraint_on: member_id
+  - name: raid
+    using:
+      foreign_key_constraint_on: raid_id

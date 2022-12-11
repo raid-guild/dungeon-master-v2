@@ -6,7 +6,7 @@ array_relationships:
   - name: consultations
     using:
       foreign_key_constraint_on:
-        column: project_specs
+        column: specs_key
         table:
           schema: public
           name: consultations

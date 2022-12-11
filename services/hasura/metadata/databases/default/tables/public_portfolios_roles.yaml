@@ -5,14 +5,9 @@ object_relationships:
   - name: guild_class
     using:
       foreign_key_constraint_on: role
-  - name: portfolioByPortfolio
+  - name: member
     using:
-      foreign_key_constraint_on: portfolio
-select_permissions:
-  - role: member
-    permission:
-      columns:
-        - role
-        - id
-        - portfolio
-      filter: {}
+      foreign_key_constraint_on: member_id
+  - name: portfolio
+    using:
+      foreign_key_constraint_on: portfolio_id

@@ -6,14 +6,14 @@ array_relationships:
   - name: applications_skills
     using:
       foreign_key_constraint_on:
-        column: skill_type
+        column: skill_type_key
         table:
           schema: public
           name: applications_skills
   - name: members_skills
     using:
       foreign_key_constraint_on:
-        column: skill_type
+        column: skill_type_key
         table:
           schema: public
           name: members_skills

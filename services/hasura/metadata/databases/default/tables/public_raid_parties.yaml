@@ -2,20 +2,9 @@ table:
   schema: public
   name: raid_parties
 object_relationships:
-  - name: memberByMember
+  - name: member
     using:
-      foreign_key_constraint_on: member
-  - name: raidByRaid
+      foreign_key_constraint_on: member_id
+  - name: raid
     using:
-      foreign_key_constraint_on: raid
-select_permissions:
-  - role: member
-    permission:
-      columns:
-        - created_at
-        - updated_at
-        - v1_id
-        - id
-        - member
-        - raid
-      filter: {}
+      foreign_key_constraint_on: raid_id

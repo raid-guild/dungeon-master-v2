@@ -1,0 +1,10 @@
+table:
+  schema: public
+  name: consultations_services_required
+object_relationships:
+  - name: consultation
+    using:
+      foreign_key_constraint_on: consultation_id
+  - name: guild_service
+    using:
+      foreign_key_constraint_on: guild_service_key

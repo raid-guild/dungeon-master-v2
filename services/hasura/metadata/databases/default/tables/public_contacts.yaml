@@ -1,0 +1,18 @@
+table:
+  schema: public
+  name: contacts
+array_relationships:
+  - name: clients_contacts
+    using:
+      foreign_key_constraint_on:
+        column: contact_id
+        table:
+          schema: public
+          name: clients_contacts
+  - name: consultations_contacts
+    using:
+      foreign_key_constraint_on:
+        column: contact_id
+        table:
+          schema: public
+          name: consultations_contacts
