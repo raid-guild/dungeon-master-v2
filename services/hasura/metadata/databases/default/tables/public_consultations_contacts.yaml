@@ -1,0 +1,10 @@
+table:
+  schema: public
+  name: consultations_contacts
+object_relationships:
+  - name: consultation
+    using:
+      foreign_key_constraint_on: consultation_id
+  - name: contact
+    using:
+      foreign_key_constraint_on: contact_id

@@ -1,0 +1,13 @@
+table:
+  schema: public
+  name: contact_infos
+object_relationships:
+  - name: application
+    using:
+      foreign_key_constraint_on: application_id
+  - name: client
+    using:
+      foreign_key_constraint_on: client_id
+  - name: member
+    using:
+      foreign_key_constraint_on: member_id

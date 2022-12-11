@@ -26,12 +26,20 @@ export interface IRaid {
   escrowIndex: number;
   lockerHash: string;
 
-  // TIMELINE
-  startDate: Date;
-  endDate: Date;
-  createdAt: string; // ? ISO string
-  updatedAt: string; // ? ISO string
+  // TIMELINE - ISO STRINGS
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
+type ContactInfo = {
+  email?: string;
+  discordHandle?: string;
+  githubHandle?: string;
+  twitterHandle?: string;
+  telegramHandle?: string;
+};
 
 export interface IMember {
   id: string;
@@ -41,10 +49,13 @@ export interface IMember {
   skills: Skills[];
 
   // CONTACT
+  email?: string;
   discordHandle?: string;
   githubHandle?: string;
   twitterHandle?: string;
   telegramHandle?: string;
+
+  contactInfo: ContactInfo;
 
   // ETH
   ensName?: string;
@@ -53,9 +64,9 @@ export interface IMember {
   // RELATIONSHIPS
   application: IApplication;
 
-  // TIMELINE
-  createdAt: string; // ? ISO string
-  updatedAt: string; // ? ISO string
+  // TIMELINE - ISO STRINGS
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IConsultation {
@@ -90,8 +101,10 @@ export interface IConsultation {
   heardRaidguild: string;
   feedback: string;
   rating: string;
-  createdAt: string; // ? ISO string
-  updatedAt: string; // ? ISO string
+
+  // TIMELINE - ISO STRINGS
+  createdAt: string;
+  updatedAt: string;
 }
 
 // SKILLS M2M ENUM
@@ -140,9 +153,9 @@ export interface IApplication {
   availability?: string;
   comments?: string;
 
-  // TIMELINE
-  createdAt?: string; // ? ISO string
-  updatedAt?: string; // ? ISO string
+  // TIMELINE - ISO STRINGS
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IComment {

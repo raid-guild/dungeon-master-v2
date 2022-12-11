@@ -3,10 +3,10 @@ table:
   name: guild_services
 is_enum: true
 array_relationships:
-  - name: consultations_services_reqs
+  - name: consultations_services_requireds
     using:
       foreign_key_constraint_on:
-        column: guild_service
+        column: guild_service_key
         table:
           schema: public
-          name: consultations_services_req
+          name: consultations_services_required

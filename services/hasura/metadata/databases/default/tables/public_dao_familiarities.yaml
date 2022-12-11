@@ -6,7 +6,7 @@ array_relationships:
   - name: applications
     using:
       foreign_key_constraint_on:
-        column: dao_familiarity
+        column: dao_familiarity_key
         table:
           schema: public
           name: applications

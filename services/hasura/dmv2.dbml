@@ -4,141 +4,190 @@ Table members {
   id uuid pk unique
   legacy_id text
   name text
-  email_address text
-  discord_handle text
-  telegram_handle text
-  twitter_handle text
-  github_handle text
   eth_address text
-  ens_name text
-  guild_class text [ref: - guild_classes.guild_class]
-  membership_date timestamp
-  member_type text [ref: - member_types.member_type]
   is_raiding boolean
-  championed_by uuid [ref: - members.id]
-  application uuid [ref: - applications.id]
+  primary_class_key text [ref: - guild_classes.guild_class]
+  member_type_key text [ref: - member_types.member_type]
+  championed_by_id uuid [ref: - members.id]
+  application_id uuid [ref: - applications.id]
+  membership_date datetime
+  created_at datetime
+  updated_at datetime
 }
 
 Table applications {
   id uuid pk unique
   name text
-  email_address text
-  discord_handle text
-  telegram_handle text
-  twitter_handle text
-  github_handle text
   eth_address text
-  ens_name text
   introduction text
   learning_goals text
-  technical_skill_type text [ref: - technical_skill_types.technical_skill_type]
   passion text
   favorite_media text
   crypto_thrills text
   why_raidguild text
-  dao_familiarity text [ref: - dao_familiarities.dao_familiarity]
-  availability text [ref: - cohort_availabilities.cohort_availability]
   crypto_experience text
   comments text
+  technical_skill_type_key text [ref: - technical_skill_types.technical_skill_type]
+  dao_familiarity_key text [ref: - dao_familiarities.dao_familiarity]
+  availability_key text [ref: - cohort_availabilities.cohort_availability]
   handbook_read boolean
   pledge_readiness boolean
-  referred_by uuid [ref: - members.id]
+  referred_by_id uuid [ref: - members.id]
+  created_at datetime
 }
 
 Table raids {
   id uuid pk unique
   name text
-  status text [ref: - raid_statuses.raid_status]
-  category text [ref: - raid_categories.raid_category]
-  cleric uuid [ref: - members.id]
+  status_key text [ref: - raid_statuses.raid_status]
+  category_key text [ref: - raid_categories.raid_category]
+  cleric_id uuid [ref: - members.id]
+  consultation_id uuid [ref: - consultations.id]
+  portfolio_id uuid [ref: - portfolios.id]
   invoice_address text
-  start_date timestamp
-  end_date timestamp
-  consultation uuid [ref: - consultations.id]
-  portfolio uuid [ref: - portfolios.id]
   airtable_id text
   escrow_index int
   locker_hash text
+  start_date datetime
+  end_date datetime
+  created_at datetime
+  updated_at datetime
+}
+
+Table contact_infos {
+  id uuid pk unique
+  member_id uuid [ref: - members.id]
+  application_id uuid [ref: - applications.id]
+  client_id uuid [ref: - clients.id]
+  email text UNIQUE
+  discord text UNIQUE
+  telegram text UNIQUE
+  twitter text UNIQUE
+  github text UNIQUE
+}
+
+Table clients {
+  id uuid pk unique
+  name text
+  website text
+}
+
+Table contacts {
+  id uuid pk unique
+  name text
+  bio text
+  eth_address text
 }
 
 Table consultations {
   id uuid pk unique
-  status text [ref: - consultation_statuses.consultation_status]
-  contact_name text
-  contact_email text
-  contact_bio text
-  contact_discord text
-  contact_telegram text
-  contact_twitter text
-  contact_github text
-  project_name text
-  project_link text
-  project_type text [ref: - project_types.project_type]
-  project_specs text [ref: - available_project_specs.available_project_spec]
-  project_desc text
-  desired_delivery timestamp
-  budget text [ref: - budget_options.budget_option]
-  delivery_priorities text [ref: - delivery_priorities.delivery_priority]
+  status_key text [ref: - consultation_statuses.consultation_status]
+  client_id uuid [ref: - clients.id]
+  name text
+  link text
+  description text
+  type_key text [ref: - project_types.project_type]
+  specs_key text [ref: - available_project_specs.available_project_spec]
+  budget_key text [ref: - budget_options.budget_option]
+  delivery_priorities_key text [ref: - delivery_priorities.delivery_priority]
+  submission_type_key text [ref: - submission_types.submission_type]
   additional_info text
-  submission_type text [ref: - submission_types.submission_type]
   submission_hash text
   consultation_hash text
+  desired_delivery_date datetime
+  created_at datetime
+  updated_at datetime
 }
 
 Table portfolios {
   id uuid pk unique
-  project_name text
-  project_desc text
+  name text
+  description text
+  challenge text
+  approach text
+  result text
   category text [ref: - raid_categories.raid_category]
-  case_study text
+  case_study boolean
   repo_link text
   result_link text
+  raid_id uuid [ref: - raids.id]
+  created_at datetime
+  updated_at datetime
 }
 
 Table comments {
   id uuid pk unique
   comment text
-  member int [ref: - members.id]
-  raid int [ref: - raids.id]
+  member_id uuid [ref: - members.id]
+  raid_id uuid [ref: - raids.id]
+  reply_to_id uuid [ref: - comments.id]
+  created_at datetime
+  updated_at datetime
+}
+
+Table blogs {
+  id uuid pk unique
+  title text
+  slug text
+  author text
+  image text
+  description text
+  content text
+  tags jsonb
+  created_at datetime
+  updated_at datetime
 }
 
 // MANY-TO-MANY TABLES
 
 Table raid_parties {
   id text pk unique
-  raid text [ref: - raids.id]
-  member text [ref: - members.id]
+  raid_id text [ref: - raids.id]
+  member_id text [ref: - members.id]
 }
 
 Table applications_skills {
   id uuid pk unique
-  application uuid [ref: - applications.id]
+  application_id uuid [ref: - applications.id]
   skill text [ref: - skills.skill]
   skill_type text [ref: - skill_types.skill_type]
 }
 
 Table members_skills {
   id uuid pk unique
-  member uuid [ref: - members.id]
+  member_id uuid [ref: - members.id]
   skill text [ref: - skills.skill]
   skill_type text [ref: - skill_types.skill_type]
 }
 
-Table consultations_services_req {
+Table consultations_services_required {
+  id uuid pk unique 
+  consultation_id uuid [ref: - consultations.id]
+  guild_service_key text [ref: - guild_services.guild_service]
+}
+
+Table clients_contacts {
   id uuid pk unique
-  consultation uuid [ref: - consultations.id]
-  service_req text [ref: - guild_services.service]
+  client_id uuid [ref: - clients.id]
+  contact_id uuid [ref: - contacts.id]
+}
+
+Table consultations_contacts {
+  id uuid pk unique
+  consultation_id uuid [ref: - consultations.id]
+  contact_id uuid [ref: - contacts.id]
 }
 
 Table portfolio_roles {
   id uuid pk unique
-  portfolio uuid [ref: - portfolios.id]
+  portfolio_id uuid [ref: - portfolios.id]
+  member_id uuid [ref: - members.id]
   role text [ref: - guild_classes.guild_class]
 }
 
 Table raids_roles_required {
   id uuid pk unique
-  raid uuid [ref: - raids.id]
+  raid_id uuid [ref: - raids.id]
   role_required text [ref: - guild_classes.guild_class]
 }
 
@@ -153,7 +202,7 @@ Table skills {
 }
 
 Table guild_services {
-  service guild_services
+  guild_service guild_services
 }
 
 Table skill_types {
@@ -205,7 +254,7 @@ Table raid_categories {
 }
 
 Table consultation_statuses {
-  consultation_status consultation_statuses
+  consultation_status consultation_statuses 
 }
 
 // HASURA ENUMS ARE ALL CAPS WITH UNDERSCORES

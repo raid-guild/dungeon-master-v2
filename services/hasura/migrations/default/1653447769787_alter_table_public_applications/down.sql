@@ -1,0 +1,1 @@
+alter table "public"."applications" drop constraint "applications_referred_by_id_fkey";

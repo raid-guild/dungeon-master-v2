@@ -6,7 +6,7 @@ array_relationships:
   - name: raids
     using:
       foreign_key_constraint_on:
-        column: status
+        column: status_key
         table:
           schema: public
           name: raids

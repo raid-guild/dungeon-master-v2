@@ -13,7 +13,7 @@ array_relationships:
   - name: raids
     using:
       foreign_key_constraint_on:
-        column: category
+        column: category_key
         table:
           schema: public
           name: raids

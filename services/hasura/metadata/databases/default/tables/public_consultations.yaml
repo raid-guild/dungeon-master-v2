@@ -4,63 +4,41 @@ table:
 object_relationships:
   - name: available_project_spec
     using:
-      foreign_key_constraint_on: project_specs
+      foreign_key_constraint_on: specs_key
   - name: budget_option
     using:
-      foreign_key_constraint_on: budget
-  - name: consultationStatusByConsultationStatus
+      foreign_key_constraint_on: budget_key
+  - name: consultation_status
     using:
-      foreign_key_constraint_on: consultation_status
+      foreign_key_constraint_on: consultation_status_key
   - name: delivery_priority
     using:
-      foreign_key_constraint_on: delivery_priorities
-  - name: projectTypeByProjectType
+      foreign_key_constraint_on: delivery_priorities_key
+  - name: project_type
     using:
-      foreign_key_constraint_on: project_type
-  - name: submissionTypeBySubmissionType
+      foreign_key_constraint_on: type_key
+  - name: submission_type
     using:
-      foreign_key_constraint_on: submission_type
+      foreign_key_constraint_on: submission_type_key
 array_relationships:
+  - name: consultations_contacts
+    using:
+      foreign_key_constraint_on:
+        column: consultation_id
+        table:
+          schema: public
+          name: consultations_contacts
+  - name: consultations_services_requireds
+    using:
+      foreign_key_constraint_on:
+        column: consultation_id
+        table:
+          schema: public
+          name: consultations_services_required
   - name: raids
     using:
       foreign_key_constraint_on:
-        column: consultation
+        column: consultation_id
         table:
           schema: public
           name: raids
-  - name: services_required
-    using:
-      foreign_key_constraint_on:
-        column: consultation
-        table:
-          schema: public
-          name: consultations_services_req
-select_permissions:
-  - role: member
-    permission:
-      columns:
-        - desired_delivery
-        - additional_info
-        - budget
-        - consultation_hash
-        - consultation_status
-        - contact_bio
-        - contact_discord
-        - contact_email
-        - contact_github
-        - contact_name
-        - contact_telegram
-        - contact_twitter
-        - delivery_priorities
-        - project_desc
-        - project_link
-        - project_name
-        - project_specs
-        - project_type
-        - submission_hash
-        - submission_type
-        - v1_id
-        - created_at
-        - updated_at
-        - id
-      filter: {}

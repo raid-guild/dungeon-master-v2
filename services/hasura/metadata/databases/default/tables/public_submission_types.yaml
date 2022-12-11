@@ -6,7 +6,7 @@ array_relationships:
   - name: consultations
     using:
       foreign_key_constraint_on:
-        column: submission_type
+        column: submission_type_key
         table:
           schema: public
           name: consultations
