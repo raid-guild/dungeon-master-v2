@@ -126,7 +126,7 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   return (
     <Flex
       direction="column"
-      w="100%"
+      w="70%"
       bg="gray.800"
       rounded="md"
       style={{ backdropFilter: 'blur(7px)' }}

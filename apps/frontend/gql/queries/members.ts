@@ -65,6 +65,15 @@ export const MEMBER_DETAIL_QUERY = gql`
       name
       email_address
       eth_address
+      raid_party {
+        raidByRaid {
+          name
+          created_at
+          start_date
+          end_date
+          status
+        }
+      }
     }
   }
 `;

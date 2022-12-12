@@ -26,7 +26,7 @@ const Member = () => {
     chainId: 1,
     enabled: _.get(member, 'ethAddress') !== '0x',
   });
-  console.log(member);
+  console.log('member details: ', member);
 
   return (
     <>
@@ -66,10 +66,26 @@ const Member = () => {
           </Flex>
         }
       >
-        <MemberDetailsCard
-          member={member}
-          application={_.get(member, 'applicationByApplication')}
-        />
+        <Flex>
+          <MemberDetailsCard
+            member={member}
+            application={_.get(member, 'applicationByApplication')}
+          />
+          {/* <RaidsFeed /> */}
+          <Flex 
+            direction="column"
+            w="30%"
+            ml="4"
+            bg="gray.800"
+            rounded="md"
+            style={{ backdropFilter: 'blur(7px)' }}
+            p={8}
+          >
+            <Heading size="sm">Active Raids</Heading>
+            <Heading size="sm">Past Raids</Heading>
+          </Flex>
+
+        </Flex>
       </SiteLayout>
     </>
   );
