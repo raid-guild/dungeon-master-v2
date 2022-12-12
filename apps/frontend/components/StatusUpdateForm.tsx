@@ -12,7 +12,6 @@ interface StatusUpdateProps {
   currentStatus: string;
   closeModal?: () => void;
   raid: Partial<IRaid>;
-  // updateRaid: (key, value) => void;
 }
 
 const StatusUpdateForm: React.FC<StatusUpdateProps> = ({

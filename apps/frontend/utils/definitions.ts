@@ -50,6 +50,10 @@ export type RaidUpdateType = Partial<IRaid> & {
   endDate: string;
 };
 
+export type MemberUpdatetype = Partial<IMember> & {
+  name: string; // name is used in the GraphQL schema
+};
+
 export interface IMember {
   id: string;
   name: string;

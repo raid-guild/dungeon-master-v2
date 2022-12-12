@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import {
   Box,
   Button,
   Stack,
-  useToast,
   FormControl,
   FormLabel,
   Input,
@@ -17,7 +16,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
-import { useRouter } from 'next/router';
 import { RAID_CATEGORY } from '../utils/constants';
 import useRaidUpdate from '../hooks/useRaidUpdate';
 import { useSession } from 'next-auth/react';
@@ -35,8 +33,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   const [sending, setSending] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(add(new Date(), { weeks: 1 }));
-  const toast = useToast();
-  const router = useRouter();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
@@ -49,7 +45,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
   const raidCategoryMapped = RAID_CATEGORY.map((category) => ({
@@ -57,7 +53,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     value: category,
   }));
 
-  console.log('raid', raid);
   async function onSubmit(values) {
     setSending(true);
     console.log('form values', values);
@@ -69,7 +64,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       'startDate',
       'endDate'
     );
-    const result = await updateRaidStatus({
+    await updateRaidStatus({
       name: values.raidName ?? raid.name,
       category: values.raidCategory,
       status: raid.status ?? raid.status,
@@ -79,29 +74,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     });
     closeModal();
     setSending(false);
-
-    console.log('result', result);
-
-    //   const result = await updateRecord('raid', id, {
-    //     raid_name: values.raidName,
-    //     invoice_address: values.invoiceAddress,
-    //     start_date: values.startDate,
-    //     end_date: values.endDate,
-    //     category: values.raidCategory,
-    //   });
-    //   if (result) {
-    //     toast({
-    //       title: 'Raid Updated',
-    //       description: 'Your updates have been made.',
-    //       status: 'success',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //     setSending(false);
-    //     onClose();
-    //     router.replace(router.asPath);
-    //   }
-    // setSending(false);
   }
 
   const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
@@ -109,11 +81,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       {value}
     </Button>
   ));
-
-  useEffect(() => {
-    setValue('raidName', raid?.name);
-    setValue('raidCategory', raid?.category);
-  }, [raid]);
 
   return (
     <Box as="section">

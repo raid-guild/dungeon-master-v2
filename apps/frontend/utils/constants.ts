@@ -126,6 +126,21 @@ export const GUILD_CLASS_ICON = {
   ACCOUNT_MANAGER: 'cleric',
 };
 
+export const GUILD_CLASS = [
+  'Tavern Keeper (Community)',
+  'Archer (Design)',
+  'Angry Dwarf (Treasury)',
+  'Bard (Marketing)',
+  'Warrior (FrontEnd Dev)',
+  'Healer (Ops)',
+  'Hunter (BizDev)',
+  'Paladin (Backend Dev)',
+  'Monk (PM)',
+  'Wizard (Smart Contracts)',
+  'Rogue (Legal)',
+  'Cleric (Client Manager)',
+];
+
 export const GUILD_CLASS_DISPLAY = {
   COMMUNITY: 'Tavern Keeper (Community)',
   DESIGN: 'Archer (Design)',
