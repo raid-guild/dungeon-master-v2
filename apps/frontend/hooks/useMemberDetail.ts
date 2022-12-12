@@ -22,6 +22,8 @@ const useMemberDetail = ({ token }) => {
     return camelize(_.first(_.get(data, 'members')));
   };
 
+  console.log('memberAddress', memberAddress);
+
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IMember,
     Error

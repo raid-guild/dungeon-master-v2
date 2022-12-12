@@ -13,8 +13,8 @@ import { useSession } from 'next-auth/react';
 import useMemberUpdate from '../hooks/useMemberUpdate';
 import { useForm, Controller } from 'react-hook-form';
 import { IMember } from '../utils';
-import { HiOutlineLink } from 'react-icons/hi';
-import { GUILD_CLASS } from '../utils/constants';
+
+import { GUILD_CLASS_OPTIONS } from '../utils/constants';
 
 interface UpdateMemberFormProps {
   memberId?: string;
@@ -45,29 +45,19 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     formState: { errors, isSubmitting },
   } = localForm;
 
-  const guildClassMapped = GUILD_CLASS.map((guildClass) => ({
-    label: guildClass,
-    value: guildClass,
-  }));
-
   async function onSubmit(values) {
+    console.log('values', values);
     setSending(true);
-    console.log('form values', values);
-    // const raidWithoutUpdateValues = _.omit(
-    //   raid,
-    //   'status',
-    //   'name',
-    //   'category',
-    //   'startDate',
-    //   'endDate'
-    // );
+    const memberWithoutUpdateValues = _.omit(member, 'name', 'ensName');
     await updateMemberStatus({
       name: values.memberName ?? member.name,
+      ens_name: values.ensName ?? member.ensName,
+      guild_class: values.guildClass ?? member.guildClass,
       // category: values.raidCategory,
       // status: raid.status ?? raid.status,
       // start_date: values.startDate ?? raid.startDate,
       // end_date: values.endDate ?? raid.endDate,
-      // ...raidWithoutUpdateValues,
+      ...memberWithoutUpdateValues,
     });
     closeModal();
     setSending(false);
@@ -89,7 +79,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
-                  id="raidName"
+                  id="memberName"
                   defaultValue={member?.name ? member?.name : ''}
                   aria-label="Enter your name"
                   placeholder="What is your name?"
@@ -117,7 +107,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     render={({ field }) => (
                       <Select
                         {...field}
-                        options={guildClassMapped}
+                        options={GUILD_CLASS_OPTIONS}
                         localForm={localForm}
                       />
                     )}

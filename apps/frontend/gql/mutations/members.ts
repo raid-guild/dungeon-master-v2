@@ -1,8 +1,16 @@
 import { gql } from '@apollo/client';
 
 export const MEMBER_UPDATE_MUTATION = gql`
-  mutation MemberUpdateMutation($id: uuid!, $name: String) {
-    update_members_by_pk(pk_columns: { id: $id }, _set: { name: $name }) {
+  mutation MemberUpdateMutation(
+    $id: uuid!
+    $name: String
+    $ens_name: String
+    $guild_class: guild_classes_enum
+  ) {
+    update_members_by_pk(
+      pk_columns: { id: $id }
+      _set: { name: $name, ens_name: $ens_name, guild_class: $guild_class }
+    ) {
       ...MemberDetail
     }
   }

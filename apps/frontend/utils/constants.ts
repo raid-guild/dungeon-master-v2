@@ -126,19 +126,19 @@ export const GUILD_CLASS_ICON = {
   ACCOUNT_MANAGER: 'cleric',
 };
 
-export const GUILD_CLASS = [
-  'Tavern Keeper (Community)',
-  'Archer (Design)',
-  'Angry Dwarf (Treasury)',
-  'Bard (Marketing)',
-  'Warrior (FrontEnd Dev)',
-  'Healer (Ops)',
-  'Hunter (BizDev)',
-  'Paladin (Backend Dev)',
-  'Monk (PM)',
-  'Wizard (Smart Contracts)',
-  'Rogue (Legal)',
-  'Cleric (Client Manager)',
+export const GUILD_CLASS_OPTIONS = [
+  { label: 'Tavern Keeper (Community)', value: 'COMMUNITY' },
+  { label: 'Archer (Design)', value: 'DESIGN' },
+  { label: 'Angry Dwarf (Treasury)', value: 'TREASURY' },
+  { label: 'Bard (Marketing)', value: 'MARKETING' },
+  { label: 'Warrior (FrontEnd Dev)', value: 'FRONTEND_DEV' },
+  { label: 'Healer (Ops)', value: 'OPERATIONS' },
+  { label: 'Hunter (BizDev)', value: 'BIZ_DEV' },
+  { label: 'Paladin (Backend Dev)', value: 'BACKEND_DEV' },
+  { label: 'Monk (PM)', value: 'PROJECT_MANAGEMENT' },
+  { label: 'Wizard (Smart Contracts)', value: 'SMART_CONTRACTS' },
+  { label: 'Rogue (Legal)', value: 'LEGAL' },
+  { label: 'Cleric (Client Manager)', value: 'ACCOUNT_MANAGER' },
 ];
 
 export const GUILD_CLASS_DISPLAY = {

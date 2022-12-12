@@ -28,7 +28,6 @@ const useMemberUpdate = ({ token, memberId }) => {
           'memberDetail',
           data?.data.update_members_by_pk?.eth_address,
         ]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
-        // queryClient.invalidateQueries(['raidDetail']);
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
 
         toast({
