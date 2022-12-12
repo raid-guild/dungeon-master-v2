@@ -1,10 +1,13 @@
 table:
-  schema: public
   name: applications
+  schema: public
 object_relationships:
   - name: cohort_availability
     using:
       foreign_key_constraint_on: availability_key
+  - name: contact_info
+    using:
+      foreign_key_constraint_on: contact_info_id
   - name: dao_familiarity
     using:
       foreign_key_constraint_on: dao_familiarity_key
@@ -20,19 +23,12 @@ array_relationships:
       foreign_key_constraint_on:
         column: application_id
         table:
-          schema: public
           name: applications_skills
-  - name: contact_infos
-    using:
-      foreign_key_constraint_on:
-        column: application_id
-        table:
           schema: public
-          name: contact_infos
   - name: members
     using:
       foreign_key_constraint_on:
         column: application_id
         table:
-          schema: public
           name: members
+          schema: public

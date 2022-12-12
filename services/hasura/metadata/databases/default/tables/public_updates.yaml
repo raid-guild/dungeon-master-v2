@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: updates
+  schema: public
 object_relationships:
   - name: member
     using:

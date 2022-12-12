@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: raid_parties
+  schema: public
 object_relationships:
   - name: member
     using:

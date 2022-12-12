@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: portfolios_roles
+  schema: public
 object_relationships:
   - name: guild_class
     using:

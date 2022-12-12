@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: guild_services
+  schema: public
 is_enum: true
 array_relationships:
   - name: consultations_services_requireds
@@ -8,5 +8,5 @@ array_relationships:
       foreign_key_constraint_on:
         column: guild_service_key
         table:
-          schema: public
           name: consultations_services_required
+          schema: public

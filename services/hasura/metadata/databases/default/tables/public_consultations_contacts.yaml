@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: consultations_contacts
+  schema: public
 object_relationships:
   - name: consultation
     using:

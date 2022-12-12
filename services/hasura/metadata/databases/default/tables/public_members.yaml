@@ -1,10 +1,13 @@
 table:
-  schema: public
   name: members
+  schema: public
 object_relationships:
   - name: application
     using:
       foreign_key_constraint_on: application_id
+  - name: contact_info
+    using:
+      foreign_key_constraint_on: contact_info_id
   - name: guild_class
     using:
       foreign_key_constraint_on: primary_class_key
@@ -20,54 +23,47 @@ array_relationships:
       foreign_key_constraint_on:
         column: referred_by_id
         table:
-          schema: public
           name: applications
-  - name: contact_infos
-    using:
-      foreign_key_constraint_on:
-        column: member_id
-        table:
           schema: public
-          name: contact_infos
   - name: members
     using:
       foreign_key_constraint_on:
         column: championed_by_id
         table:
-          schema: public
           name: members
+          schema: public
   - name: members_skills
     using:
       foreign_key_constraint_on:
         column: member_id
         table:
-          schema: public
           name: members_skills
+          schema: public
   - name: portfolios_roles
     using:
       foreign_key_constraint_on:
         column: member_id
         table:
-          schema: public
           name: portfolios_roles
+          schema: public
   - name: raid_parties
     using:
       foreign_key_constraint_on:
         column: member_id
         table:
-          schema: public
           name: raid_parties
+          schema: public
   - name: raids
     using:
       foreign_key_constraint_on:
         column: cleric_id
         table:
-          schema: public
           name: raids
+          schema: public
   - name: updates
     using:
       foreign_key_constraint_on:
         column: member_id
         table:
-          schema: public
           name: updates
+          schema: public
