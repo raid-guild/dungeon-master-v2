@@ -6,10 +6,18 @@ export const MEMBER_UPDATE_MUTATION = gql`
     $name: String
     $ens_name: String
     $guild_class: guild_classes_enum
+    $github_handle: String
+    $discord_handle: String
   ) {
     update_members_by_pk(
       pk_columns: { id: $id }
-      _set: { name: $name, ens_name: $ens_name, guild_class: $guild_class }
+      _set: {
+        name: $name
+        ens_name: $ens_name
+        guild_class: $guild_class
+        github_handle: $github_handle
+        discord_handle: $discord_handle
+      }
     ) {
       ...MemberDetail
     }

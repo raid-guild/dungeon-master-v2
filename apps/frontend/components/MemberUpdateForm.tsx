@@ -48,11 +48,19 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   async function onSubmit(values) {
     console.log('values', values);
     setSending(true);
-    const memberWithoutUpdateValues = _.omit(member, 'name', 'ensName');
+    const memberWithoutUpdateValues = _.omit(
+      member,
+      'name',
+      'ensName',
+      'githubHandle',
+      'discordHandle'
+    );
     await updateMemberStatus({
       name: values.memberName ?? member.name,
       ens_name: values.ensName ?? member.ensName,
       guild_class: values.guildClass ?? member.guildClass,
+      github_handle: values.githubHandle ?? member.githubHandle,
+      discord_handle: values.discordHandle ?? member.discordHandle,
       // category: values.raidCategory,
       // status: raid.status ?? raid.status,
       // start_date: values.startDate ?? raid.startDate,
@@ -97,6 +105,30 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   label="ENS Name"
                   localForm={localForm}
                   {...register('ensName')}
+                />
+                <Input
+                  id="githubHandle"
+                  defaultValue={
+                    member?.githubHandle ? member?.githubHandle : null
+                  }
+                  aria-label="Enter your GitHub handle"
+                  placeholder="What is your GitHub handle?"
+                  rounded="base"
+                  label="GitHub Handle"
+                  localForm={localForm}
+                  {...register('githubHandle')}
+                />
+                <Input
+                  id="discordHandle"
+                  defaultValue={
+                    member?.discordHandle ? member?.discordHandle : null
+                  }
+                  aria-label="Enter your Discord handle"
+                  placeholder="What is your Discord handle?"
+                  rounded="base"
+                  label="Discord Handle"
+                  localForm={localForm}
+                  {...register('discordHandle')}
                 />
                 <FormControl>
                   <FormLabel color="raid">Guild Class</FormLabel>
