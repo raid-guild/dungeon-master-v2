@@ -71,7 +71,6 @@ const RaidPartyCard = ({
           <ChakraNextLink href={`/members/${member.ethAddress}/`}>
             {children}
           </ChakraNextLink>
-
           {button}
         </>
       )}
@@ -175,7 +174,6 @@ const RaidPartyCard = ({
           />
         }
       >
-        Avatar Group
         <AvatarGroup>
           {_.map(roles, (role: string) => (
             <Avatar

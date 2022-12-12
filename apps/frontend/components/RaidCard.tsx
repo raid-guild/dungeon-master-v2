@@ -18,12 +18,13 @@ import {
   RoleBadge,
   Avatar
 } from '@raidguild/design-system';
+import MemberAvatar from './MemberAvatar';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
-// import { format } from 'date-fns';
 import InfoStack from './InfoStack';
 import { IConsultation, IRaid } from '../utils';
 import { PROJECT_TYPE_DISPLAY, RAID_CATEGORY_DISPLAY, BUDGET_DISPLAY, GUILD_CLASS_ICON, SKILLS_DISPLAY } from '../utils/constants';
+import { displayDate } from '../utils/general';
 
 interface RaidProps {
   raid?: IRaid;
@@ -31,12 +32,6 @@ interface RaidProps {
 }
 
 const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
-  const servicesRequired = _.get(consultation, 'consultationsServicesReqs');
-  const uniqueServicesRequired = _.uniq(
-    _.map(servicesRequired, (service: { guildService: string }) =>
-      _.get(service, 'guildService')
-    )
-  );
   const id = _.get(raid || consultation, 'id');
   const submissionType = _.get(consultation, 'submissionType');
   const description = _.get(consultation, 'projectDesc');
@@ -47,16 +42,21 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
 
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
-  console.log(`raid: ${JSON.stringify(raid)}`)
   const raidParty = _.map(_.get(raid, 'raidParty', []), 'memberByMember.guildClass');
-  const raidCleric = _.get(raid, 'memberByCleric.name', 'na');
+  const raidCleric = _.get(raid, 'memberByCleric');
+  const raidStatus = _.get(raid, 'status');
 
-  // roles required
-  console.log(`rolesRequired: ${rolesRequired.length} ${JSON.stringify(rolesRequired)}`);
-
-  console.log(`memberByCleric: ${JSON.stringify(raidCleric)}`);
+  let raidDate = _.get(raid, 'createdAt');
+  let raidDateLabel = 'Created on: ';
+  if (raidStatus === 'RAIDING') {
+    raidDate = _.get(raid, 'startDate');
+    raidDateLabel = 'Started on: ';
+    
+  } else if (raidStatus === 'SHIPPED' || raidStatus === 'LOST') {
+    raidDate = _.get(raid, 'endDate');
+    raidDateLabel = 'Ended on: ';
+  }
   
-
   return (
     <Card variant="withHeader">
       <Flex
@@ -89,29 +89,31 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             {_.get(raid, 'status', _.get(consultation, 'status'))}
           </Badge>
         </HStack>
-        <HStack>
-          <VStack>
-            <Text>Cleric</Text>
-            <Text>{raidCleric}</Text>
+        <HStack alignItems={'start'}>
+          <VStack mr={'3'}>
+
+            <Heading size="sm">Cleric</Heading>
+            <MemberAvatar member={raidCleric} />
           </VStack>
-          <Text>Roles Required</Text>
-          <AvatarGroup>
-            {_.map(rolesRequired, (role: string) => (
-              <Avatar
-                key={role}
-                icon={
-                  <RoleBadge
-                    roleName={GUILD_CLASS_ICON[role]}
-                    width="44px"
-                    height="44px"
-                    border="2px solid"
-                  />
-                }
-              />
-            ))}
-          </AvatarGroup>
+          <VStack>
+            <Heading size="sm">Roles Required</Heading>
+            <AvatarGroup>
+              {_.map(rolesRequired, (role: string) => (
+                <Avatar
+                  key={role}
+                  icon={
+                    <RoleBadge
+                      roleName={GUILD_CLASS_ICON[role]}
+                      width="44px"
+                      height="44px"
+                      border="2px solid"
+                    />
+                  }
+                />
+              ))}
+            </AvatarGroup>
+          </VStack>
         </HStack>
-          {/* display cleric */}
         <Link href={link}>
           <Button color="raid" borderColor="raid" variant="outline">
             View Details
@@ -134,20 +136,11 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         >
           {_.get(raid, 'createdAt') && (
             <HStack>
-              {/* todo: 
-              - Raid Created Date
-                  - if status = Awaiting | Preparing
-              - Raid Started Date
-                  - if status = Raiding
-              - Raid Ended Date
-                  - if status = Shipped | Lost
-              */}
               <Text color="gray.100" fontSize="smaller">
-                Raid Started
+                {raidDateLabel}
               </Text>
               <Text color="gray.100" fontSize="smaller">
-                {_.get(raid, 'createdAt')}
-                {/* {createdAt && format(new Date(+createdAt), 'Pp')} */}
+                {displayDate(raidDate)}
               </Text>
             </HStack>
           )}

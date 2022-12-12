@@ -16,3 +16,14 @@ export const memberDisplayName = (member: Partial<IMember>, ensName?: string) =>
   _.get(member, 'ensName') || // ens record from db
   _.get(member, 'telegramHandle') ||
   truncateAddress(_.get(member, 'address'));
+
+
+export const displayDate = (date: string) => {
+  const options = { year: 'numeric', month: 'short', day: '2-digit' } as const;
+  const today  = new Date(date);
+  let formattedDate = today.toLocaleDateString("en-US", options);
+  if (formattedDate.slice(-4) === '1970') {
+    formattedDate = 'N/A';
+  }
+  return formattedDate;
+}

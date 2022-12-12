@@ -15,7 +15,11 @@ export const RAIDS_LIST_QUERY = gql`
       role
     }
     memberByCleric {
+      ens_name
+      eth_address
       name
+      id
+      guild_class
     }
     raid_party {
       memberByMember {
@@ -23,10 +27,6 @@ export const RAIDS_LIST_QUERY = gql`
         id
         guild_class
       }
-    }
-    commentByComment {
-      comment
-      createdAt
     }
     consultationByConsultation {
       project_desc
@@ -39,6 +39,8 @@ export const RAIDS_LIST_QUERY = gql`
     }
     created_at
     updated_at
+    start_date
+    end_date
   }
 `;
 
