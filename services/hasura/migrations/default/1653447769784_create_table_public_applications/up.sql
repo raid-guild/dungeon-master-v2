@@ -17,12 +17,15 @@ CREATE TABLE "public"."applications" (
   "handbook_read" boolean DEFAULT false,
   "pledge_readiness" boolean DEFAULT false,
   "referred_by_id" uuid,
+  "contact_info_id" uuid,
   "created_at" timestamptz NOT NULL DEFAULT NOW(),
   "updated_at" timestamptz NOT NULL DEFAULT NOW(),
   PRIMARY KEY ("id"),
   FOREIGN KEY ("technical_skill_type_key") REFERENCES "public"."technical_skill_types"("skill_type") ON UPDATE restrict ON DELETE restrict,
   FOREIGN KEY ("dao_familiarity_key") REFERENCES "public"."dao_familiarities"("dao_familiarity") ON UPDATE restrict ON DELETE restrict,
   FOREIGN KEY ("availability_key") REFERENCES "public"."cohort_availabilities"("cohort_availability") ON UPDATE restrict ON DELETE restrict,
+  FOREIGN KEY ("contact_info_id") REFERENCES "public"."contact_infos"("id") ON UPDATE restrict ON DELETE restrict,
+  -- REFERRED_BY_ID IS HANDLED AFTER MEMBER TABLE CREATED, RECURSIVE REFERRENCES APPLICATIONS <> MEMBERS
   UNIQUE ("id")
 );
 CREATE EXTENSION IF NOT EXISTS pgcrypto;

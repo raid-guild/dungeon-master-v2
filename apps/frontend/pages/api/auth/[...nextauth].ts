@@ -10,7 +10,7 @@ import _ from 'lodash';
 import {
   client,
   MEMBER_ADDRESS_LOOKUP_QUERY,
-  MEMBER_CREATE_MUTATION,
+  // MEMBER_CREATE_MUTATION,
 } from '../../../gql';
 
 // For more information on each option (and a full list of options) go to
@@ -95,6 +95,7 @@ export default async function auth(req: any, res: any) {
               _.first(_.get(result, 'data.members')),
               'username'
             );
+            // TODO handle role based on member_type
             // roles = _.map(
             //   _.get(_.first(_.get(result, 'data.users')), 'user_roles'),
             //   'roleByRole.role'

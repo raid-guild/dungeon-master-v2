@@ -1,6 +1,6 @@
 table:
-  schema: public
   name: applications_skills
+  schema: public
 object_relationships:
   - name: application
     using:

@@ -1,13 +1,25 @@
 table:
-  schema: public
   name: contact_infos
-object_relationships:
-  - name: application
+  schema: public
+array_relationships:
+  - name: applications
     using:
-      foreign_key_constraint_on: application_id
-  - name: client
+      foreign_key_constraint_on:
+        column: contact_info_id
+        table:
+          name: applications
+          schema: public
+  - name: contacts
     using:
-      foreign_key_constraint_on: client_id
-  - name: member
+      foreign_key_constraint_on:
+        column: contact_info_id
+        table:
+          name: contacts
+          schema: public
+  - name: members
     using:
-      foreign_key_constraint_on: member_id
+      foreign_key_constraint_on:
+        column: contact_info_id
+        table:
+          name: members
+          schema: public

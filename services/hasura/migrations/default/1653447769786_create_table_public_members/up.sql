@@ -10,6 +10,7 @@ CREATE TABLE "public"."members" (
   "is_raiding" boolean,
   "championed_by_id" uuid,
   "application_id" uuid NOT NULL,
+  "contact_info_id" uuid,
   "application_v1" text,
   "created_at" timestamptz NOT NULL DEFAULT NOW(),
   "updated_at" timestamptz NOT NULL DEFAULT NOW(),
@@ -18,6 +19,7 @@ CREATE TABLE "public"."members" (
   FOREIGN KEY ("member_type_key") REFERENCES "public"."member_types"("member_type") ON UPDATE restrict ON DELETE restrict,
   FOREIGN KEY ("application_id") REFERENCES "public"."applications"("id") ON UPDATE restrict ON DELETE restrict,
   FOREIGN KEY ("championed_by_id") REFERENCES "public"."members"("id") ON UPDATE restrict ON DELETE restrict,
+  FOREIGN KEY ("contact_info_id") REFERENCES "public"."contact_infos"("id") ON UPDATE restrict ON DELETE restrict,
   UNIQUE ("id")
 );
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
