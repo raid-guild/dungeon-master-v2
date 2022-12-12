@@ -52,15 +52,21 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
       member,
       'name',
       'ensName',
+      'emailAddress',
       'githubHandle',
-      'discordHandle'
+      'discordHandle',
+      'telegramHandle',
+      'twitterHandle'
     );
     await updateMemberStatus({
       name: values.memberName ?? member.name,
       ens_name: values.ensName ?? member.ensName,
+      email_address: values.emailAddress ?? member.emailAddress,
       guild_class: values.guildClass ?? member.guildClass,
       github_handle: values.githubHandle ?? member.githubHandle,
       discord_handle: values.discordHandle ?? member.discordHandle,
+      telegram_handle: values.telegramHandle ?? member.telegramHandle,
+      twitter_handle: values.twitterHandle ?? member.twitterHandle,
       // category: values.raidCategory,
       // status: raid.status ?? raid.status,
       // start_date: values.startDate ?? raid.startDate,
@@ -107,6 +113,18 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   {...register('ensName')}
                 />
                 <Input
+                  id="emailAddress"
+                  defaultValue={
+                    member?.emailAddress ? member?.emailAddress : null
+                  }
+                  aria-label="Enter your email address"
+                  placeholder="What is your email address?"
+                  rounded="base"
+                  label="Email Address"
+                  localForm={localForm}
+                  {...register('emailAddress')}
+                />
+                <Input
                   id="githubHandle"
                   defaultValue={
                     member?.githubHandle ? member?.githubHandle : null
@@ -129,6 +147,30 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   label="Discord Handle"
                   localForm={localForm}
                   {...register('discordHandle')}
+                />
+                <Input
+                  id="telegramHandle"
+                  defaultValue={
+                    member?.telegramHandle ? member?.telegramHandle : null
+                  }
+                  aria-label="Enter your Telegram handle"
+                  placeholder="What is your Telegram handle?"
+                  rounded="base"
+                  label="Telegram Handle"
+                  localForm={localForm}
+                  {...register('telegramHandle')}
+                />
+                <Input
+                  id="twitterHandle"
+                  defaultValue={
+                    member?.twitterHandle ? member?.twitterHandle : null
+                  }
+                  aria-label="Enter your Twitter handle"
+                  placeholder="What is your Twitter handle?"
+                  rounded="base"
+                  label="Twitter Handle"
+                  localForm={localForm}
+                  {...register('twitterHandle')}
                 />
                 <FormControl>
                   <FormLabel color="raid">Guild Class</FormLabel>

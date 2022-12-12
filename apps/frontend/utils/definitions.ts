@@ -64,6 +64,8 @@ export interface IMember {
   discordHandle?: string;
   githubHandle?: string;
   twitterHandle?: string;
+  telegramHandle?: string;
+  emailAddress?: string;
   ensName?: string;
   ethAddress?: string;
   application: IApplication;
