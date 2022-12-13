@@ -4,34 +4,6 @@ const RAID_DETAIL_FRAGMENT = gql`
   fragment RaidDetail on raids {
     id
     name
-    status
-    category
-    roles_required {
-      role
-    }
-    consultation {
-      project_desc
-      budget
-      services_required {
-        guild_service
-      }
-      submission_type
-      project_type
-    }
-    created_at
-    updated_at
-  }
-`;
-
-export const RAIDS_LIST_QUERY = gql`
-  query RaidsListQuery($offset: Int!, $limit: Int!, $where: raids_bool_exp) {
-    raids(limit: $limit, offset: $offset, where: $where) {
-      ...RaidDetail
-    }
-  }
-  fragment RaidDetail on raids {
-    id
-    name
     raid_status {
       raid_status
     }
@@ -63,53 +35,87 @@ export const RAIDS_LIST_QUERY = gql`
   }
 `;
 
+export const RAIDS_LIST_QUERY = gql`
+  query RaidsListQuery($offset: Int!, $limit: Int!, $where: raids_bool_exp) {
+    raids(limit: $limit, offset: $offset, where: $where) {
+      ...RaidDetail
+    }
+  }
+  ${RAID_DETAIL_FRAGMENT}
+`;
+
 export const RAID_DETAIL_QUERY = gql`
   query RaidDetailQuery($id: uuid!) {
     raids_by_pk(id: $id) {
       id
       name
-      status
-      category
+      raid_status {
+        raid_status
+      }
+      raid_category {
+        raid_category
+      }
       created_at
-      roles_required {
+      raids_roles_required {
         role
       }
-      memberByCleric {
-        ens_name
+      cleric {
         eth_address
         name
         id
-        guild_class
-      }
-      consultationByConsultation {
-        budget
-        consultation_hash
-        services_required {
-          guild_service
+        guild_class {
+          guild_class
         }
-        contact_name
-        contact_bio
-        contact_email
-        desired_delivery
-        delivery_priorities
-        project_desc
-        project_link
-        project_specs
-        project_type
-        submission_type
+      }
+      consultation {
+        budget_option {
+          budget_option
+        }
+        consultation_hash
+        consultations_services_required {
+          guild_service {
+            guild_service
+          }
+        }
+        consultations_contacts {
+          contact {
+            name
+            bio
+            contact_info {
+              email
+              twitter
+              telegram
+              discord
+            }
+          }
+        }
+        desired_delivery_date
+        delivery_priority {
+          delivery_priority
+        }
+        description
+        link
+        specs_key
+        project_type {
+          project_type
+        }
+        submission_type {
+          submission_type
+        }
       }
       locker_hash
       invoice_address
       escrow_index
       airtable_id
       v1_id
-      raid_party {
-        memberByMember {
-          ens_name
+      raid_parties {
+        member {
           eth_address
           name
           id
-          guild_class
+          guild_class {
+            guild_class
+          }
         }
       }
       created_at

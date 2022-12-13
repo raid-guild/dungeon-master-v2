@@ -94,18 +94,22 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   raid,
   consultation,
 }: RaidProps) => {
+  console.log(consultation);
   const keyLinkItems = [
-    consultation?.specsLink && {
+    consultation?.link && {
       label: 'Project Specs',
-      link: consultation?.specsLink,
+      details: _.get(consultation, 'availableProjectSpec.availableProjectSpec'),
+      link: consultation?.link,
     },
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
-      details: truncateAddress(_.get(consultation, 'consultationHash')),
-      link: `https://etherscan.io/tx/${_.get(
-        consultation,
-        'consultationHash'
-      )}`,
+      details:
+        _.get(consultation, 'consultationHash') === 'cancelled'
+          ? _.get(consultation, 'consultationHash')
+          : truncateAddress(_.get(consultation, 'consultationHash')),
+      link:
+        _.get(consultation, 'consultationHash') !== 'cancelled' &&
+        `https://etherscan.io/tx/${_.get(consultation, 'consultationHash')}`,
     },
   ].filter((x) => x);
 
@@ -115,29 +119,43 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
       items: [
         {
           label: 'Budget',
-          details: BUDGET_DISPLAY[_.get(consultation, 'budget', '-')],
+          details:
+            BUDGET_DISPLAY[
+              _.get(consultation, 'budgetOption.budgetOption', '-')
+            ],
         },
         { label: 'Category', details: _.get(raid, 'category', '-') },
         {
           label: 'Desired Delivery',
           details:
-            _.get(consultation, 'desiredDelivery') &&
+            _.get(consultation, 'desiredDeliveryDate') &&
             format(
-              new Date(_.get(consultation, 'desiredDelivery')),
+              new Date(_.get(consultation, 'desiredDeliveryDate')),
               'MMM d, yyyy'
             ),
         },
         {
           label: 'Project Type',
-          details: _.get(consultation, 'projectType', '-'),
+          details: _.get(consultation, 'projectType.projectType', '-'),
         },
-        { label: 'Specs', details: _.get(consultation, 'projectSpecs', '-') },
+        {
+          label: 'Specs',
+          details: _.get(
+            consultation,
+            'availableProjectSpec.availableProjectSpec',
+            '-'
+          ),
+        },
         {
           label: 'Delivery Priority',
-          details: _.get(consultation, 'deliveryPriorities', '-'),
+          details: _.get(
+            consultation,
+            'deliveryPriority.deliveryPriority',
+            '-'
+          ),
         },
       ].filter((x) => x),
-      extra: <Description description={_.get(consultation, 'projectDesc')} />,
+      extra: <Description description={_.get(consultation, 'description')} />,
     },
     {
       title: 'Key Links',
@@ -146,23 +164,58 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     {
       title: 'Client Point of Contact',
       items: [
-        { label: 'Name', details: _.get(consultation, 'contactName', '-') },
-        _.get(consultation, 'contactEmail') && {
+        {
+          label: 'Name',
+          details: _.get(
+            consultation,
+            'consultationsContacts[0].contact.name',
+            '-'
+          ),
+        },
+        _.get(
+          consultation,
+          'consultationsContacts[0].contact.contactInfo.email'
+        ) && {
           label: 'Email',
-          details: _.get(consultation, 'contactEmail'),
-          link: `mailto:${_.get(consultation, 'contactEmail')}`,
+          details: _.get(
+            consultation,
+            'consultationsContacts[0].contact.contactInfo.email'
+          ),
+          link: `mailto:${_.get(
+            consultation,
+            'consultationsContacts[0].contact.contactInfo.email'
+          )}`,
         },
-        _.get(consultation, 'contactDiscord') && {
+        _.get(
+          consultation,
+          'consultationsContacts[0].contact.contactInfo.discord'
+        ) && {
           label: 'Discord',
-          details: _.get(consultation, 'contactDiscord'),
+          details: _.get(
+            consultation,
+            'consultationsContacts[0].contact.contactInfo.discord'
+          ),
         },
-        _.get(consultation, 'contactTelegram') && {
+        _.get(
+          consultation,
+          'consultationsContacts[0].contact.contactInfo.telegram'
+        ) && {
           label: 'Telegram',
-          details: _.get(consultation, 'contactTelegram'),
-          link: `https://t.me/${_.get(consultation, 'contactTelegram')}`,
+          details: _.get(
+            consultation,
+            'consultationsContacts[0].contact.contactInfo.telegram'
+          ),
+          link: `https://t.me/${_.get(
+            consultation,
+            'consultationsContacts[0].contact.contactInfo.telegram'
+          )}`,
         },
       ].filter((x) => x),
-      extra: <Bio bio={_.get(consultation, 'contactBio')} />,
+      extra: (
+        <Bio
+          bio={_.get(consultation, 'consultationsContacts[0].contact.bio')}
+        />
+      ),
     },
     {
       title: 'Additional Info',

@@ -33,12 +33,18 @@ export interface IRaid {
   updatedAt: string;
 }
 
-type ContactInfo = {
+type IContactInfo = {
   email?: string;
   discordHandle?: string;
   githubHandle?: string;
   twitterHandle?: string;
   telegramHandle?: string;
+};
+
+type IContact = {
+  name: string;
+  bio: string;
+  contactInfo: IContactInfo;
 };
 
 export interface IMember {
@@ -55,7 +61,7 @@ export interface IMember {
   twitterHandle?: string;
   telegramHandle?: string;
 
-  contactInfo: ContactInfo;
+  contactInfo: IContactInfo;
 
   // ETH
   ensName?: string;
@@ -71,31 +77,39 @@ export interface IMember {
 
 export interface IConsultation {
   id: string;
-  projectName: string;
-  projectType: string;
-  projectSpecs: string;
-  projectDesc: string;
-  projectLink: string;
+  name: string;
+  projectType: {
+    projectType: string;
+  };
+  availableProjectSpec: {
+    availableProjectSpec: string;
+  };
+  description: string;
+  link: string;
   servicesRequired: {
-    guildService: string; // ENUM
+    guildService: {
+      guildService: string; // ENUM
+    };
   }[];
-  desiredDelivery: string;
-  budget: string;
+  desiredDeliveryDate: string;
+  budgetOption: {
+    budgetOption: string;
+  };
   additionalInfo: string;
-  deliveryPriorities: string;
-  submissionType: string;
+  deliveryPriority: {
+    deliveryPriority: string;
+  };
+  submissionType: {
+    submissionType: string;
+  };
 
   // RAID OPS
   consultationHash: string;
 
   // CONTACT INFO
-  contactName: string;
-  contactEmail: string;
-  contactBio: string;
-  contactTelegram: string;
-  contactDiscord: string;
-  contactTwitter: string;
-  preferredContact: string;
+  consultationContacts: {
+    contact: IContact;
+  };
 
   // ETC
   heardRaidguild: string;
@@ -116,18 +130,15 @@ type Skills = {
 export interface IApplication {
   id: string;
   name: string;
-  guildClass: string;
+  guildClass: {
+    guildClass: string;
+  };
   skills: Skills[];
 
   // CONTACT
-  discordHandle?: string;
-  githubHandle?: string;
-  telegramHandle?: string;
-  emailAddress?: string;
-  twitterHandle?: string;
+  contactInfo: IContactInfo;
 
   // ETH
-  ensName: string;
   ethAddress: string;
   pledgeReadiness?: string;
 
@@ -135,13 +146,17 @@ export interface IApplication {
   introduction?: string;
   status?: string;
   learningGoals?: string;
-  skillType: string;
+  skillType: {
+    skillType: string;
+  };
   passion?: string;
   favoriteMedia?: string;
 
   // CRYPTO
   cryptoExp?: string;
-  daoFamiliarity?: string;
+  daoFamiliarity?: {
+    daoFamiliarity: string;
+  };
   cryptoThrills?: string;
   whyRaidguild?: string;
   handbookRead?: boolean;
