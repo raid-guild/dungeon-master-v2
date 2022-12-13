@@ -32,3 +32,29 @@ array_relationships:
         table:
           name: members
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - handbook_read
+        - pledge_readiness
+        - availability_key
+        - comments
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity_key
+        - eth_address
+        - favorite_media
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - technical_skill_type_key
+        - v1_id
+        - why_raidguild
+        - created_at
+        - updated_at
+        - contact_info_id
+        - id
+        - referred_by_id
+      filter: {}

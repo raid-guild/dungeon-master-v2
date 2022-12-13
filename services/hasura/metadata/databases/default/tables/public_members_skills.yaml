@@ -11,3 +11,12 @@ object_relationships:
   - name: skill_type
     using:
       foreign_key_constraint_on: skill_type_key
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - skill_key
+        - skill_type_key
+        - id
+        - member_id
+      filter: {}

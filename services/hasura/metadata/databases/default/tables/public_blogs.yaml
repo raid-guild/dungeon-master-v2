@@ -1,3 +1,18 @@
 table:
   name: blogs
   schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - tags
+        - author
+        - content
+        - description
+        - image
+        - slug
+        - title
+        - created_at
+        - updated_at
+        - id
+      filter: {}

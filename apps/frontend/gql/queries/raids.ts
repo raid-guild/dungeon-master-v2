@@ -9,7 +9,7 @@ const RAID_DETAIL_FRAGMENT = gql`
     roles_required {
       role
     }
-    consultationByConsultation {
+    consultation {
       project_desc
       budget
       services_required {
@@ -32,19 +32,31 @@ export const RAIDS_LIST_QUERY = gql`
   fragment RaidDetail on raids {
     id
     name
-    status
-    category
-    roles_required {
+    raid_status {
+      raid_status
+    }
+    raid_category {
+      raid_category
+    }
+    raids_roles_required {
       role
     }
-    consultationByConsultation {
-      project_desc
-      budget
-      services_required {
-        guild_service
+    consultation {
+      description
+      budget_option {
+        budget_option
       }
-      submission_type
-      project_type
+      consultations_services_required {
+        guild_service {
+          guild_service
+        }
+      }
+      submission_type {
+        submission_type
+      }
+      project_type {
+        project_type
+      }
     }
     created_at
     updated_at

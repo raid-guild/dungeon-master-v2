@@ -7,9 +7,9 @@ const useRaidList = ({ token }) => {
   const limit = 15;
   const where = {
     _or: [
-      { status: { _eq: 'PREPARING' } },
-      { status: { _eq: 'RAIDING' } },
-      { status: { _eq: 'AWAITING' } },
+      { status_key: { _eq: 'PREPARING' } },
+      { status_key: { _eq: 'RAIDING' } },
+      { status_key: { _eq: 'AWAITING' } },
     ],
   };
 

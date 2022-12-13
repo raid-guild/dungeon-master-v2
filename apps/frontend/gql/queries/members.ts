@@ -5,15 +5,16 @@ export const MEMBER_LIST_QUERY = gql`
     members(limit: $limit, offset: $offset, where: $where) {
       id
       name
-      email_address
       eth_address
-      ens_name
-      discord_handle
-      twitter_handle
-      github_handle
-      telegram_handle
+      contact_info {
+        email
+        discord
+        telegram
+        twitter
+        github
+      }
       guild_class
-      applicationByApplication {
+      application {
         introduction
       }
     }
@@ -26,8 +27,9 @@ export const MEMBER_SLIM_LIST_QUERY = gql`
       id
       name
       eth_address
-      ens_name
-      telegram_handle
+      contact_info {
+        telegram
+      }
       guild_class
     }
   }
@@ -38,15 +40,16 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
     members(where: { eth_address: { _eq: $address } }) {
       id
       name
-      email_address
       eth_address
-      ens_name
-      discord_handle
-      twitter_handle
-      github_handle
-      telegram_handle
+      contact_info {
+        email
+        discord
+        twitter
+        github
+        telegram
+      }
       guild_class
-      applicationByApplication {
+      application {
         introduction
       }
       skills {

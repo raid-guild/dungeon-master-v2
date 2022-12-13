@@ -8,6 +8,7 @@
 - "!include public_cohort_availabilities.yaml"
 - "!include public_consultation_statuses.yaml"
 - "!include public_consultations.yaml"
+- "!include public_consultations_clients.yaml"
 - "!include public_consultations_contacts.yaml"
 - "!include public_consultations_services_required.yaml"
 - "!include public_contact_infos.yaml"

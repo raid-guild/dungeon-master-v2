@@ -21,6 +21,13 @@ object_relationships:
     using:
       foreign_key_constraint_on: submission_type_key
 array_relationships:
+  - name: consultations_clients
+    using:
+      foreign_key_constraint_on:
+        column: consultation_id
+        table:
+          name: consultations_clients
+          schema: public
   - name: consultations_contacts
     using:
       foreign_key_constraint_on:
@@ -42,3 +49,25 @@ array_relationships:
         table:
           name: raids
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - desired_delivery_date
+        - additional_info
+        - budget_key
+        - consultation_hash
+        - consultation_status_key
+        - delivery_priorities_key
+        - description
+        - link
+        - name
+        - specs_key
+        - submission_hash
+        - submission_type_key
+        - type_key
+        - v1_id
+        - created_at
+        - updated_at
+        - id
+      filter: {}

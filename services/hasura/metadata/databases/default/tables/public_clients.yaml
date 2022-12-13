@@ -9,3 +9,18 @@ array_relationships:
         table:
           name: clients_contacts
           schema: public
+  - name: consultations_clients
+    using:
+      foreign_key_constraint_on:
+        column: client_id
+        table:
+          name: consultations_clients
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - name
+        - website
+        - id
+      filter: {}

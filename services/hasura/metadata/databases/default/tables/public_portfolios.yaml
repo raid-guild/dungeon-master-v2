@@ -16,3 +16,16 @@ array_relationships:
         table:
           name: portfolios_roles
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - case_study
+        - category
+        - description
+        - name
+        - repo_link
+        - result_link
+        - id
+        - raid_id
+      filter: {}
