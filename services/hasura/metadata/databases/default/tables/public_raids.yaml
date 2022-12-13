@@ -57,3 +57,23 @@ array_relationships:
         table:
           name: updates
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - escrow_index
+        - airtable_id
+        - category_key
+        - invoice_address
+        - locker_hash
+        - name
+        - status_key
+        - v1_id
+        - created_at
+        - end_date
+        - start_date
+        - updated_at
+        - cleric_id
+        - consultation_id
+        - id
+      filter: {}

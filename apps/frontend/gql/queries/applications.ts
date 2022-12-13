@@ -9,13 +9,16 @@ export const APPLICATION_LIST_QUERY = gql`
     applications(limit: $limit, offset: $offset, where: $where) {
       id
       name
+      contact_info {
+        email
+        discord
+        telegram
+        twitter
+        github
+      }
       eth_address
-      ens_name
-      discord_handle
       introduction
       passion
-      telegram_handle
-      twitter_handle
       why_raidguild
       created_at
       updated_at
@@ -29,9 +32,7 @@ export const APPLICATION_DETAIL_QUERY = gql`
       comments
       availability
       crypto_experience
-      cohort_availability {
-        cohort_availability
-      }
+      cohort_availability
       crypto_thrills
       dao_familiarity
       discord_handle

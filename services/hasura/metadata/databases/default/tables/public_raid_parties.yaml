@@ -8,3 +8,14 @@ object_relationships:
   - name: raid
     using:
       foreign_key_constraint_on: raid_id
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - created_at
+        - updated_at
+        - v1_id
+        - id
+        - member_id
+        - raid_id
+      filter: {}

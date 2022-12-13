@@ -8,3 +8,11 @@ object_relationships:
   - name: guild_service
     using:
       foreign_key_constraint_on: guild_service_key
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - guild_service_key
+        - consultation_id
+        - id
+      filter: {}

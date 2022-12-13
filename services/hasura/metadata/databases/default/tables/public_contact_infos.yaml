@@ -23,3 +23,14 @@ array_relationships:
         table:
           name: members
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
+      filter: {}

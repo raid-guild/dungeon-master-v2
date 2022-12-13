@@ -24,3 +24,9 @@ array_relationships:
         table:
           name: raids_roles_required
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - guild_class
+      filter: {}

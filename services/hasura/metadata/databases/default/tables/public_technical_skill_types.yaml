@@ -10,3 +10,9 @@ array_relationships:
         table:
           name: applications
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - skill_type
+      filter: {}

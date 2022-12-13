@@ -20,3 +20,13 @@ array_relationships:
         table:
           name: consultations_contacts
           schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - bio
+        - eth_address
+        - name
+        - contact_info_id
+        - id
+      filter: {}
