@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, RAID_UPDATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
-import { RaidUpdateType } from '../utils';
+import { IRaid } from '../utils';
 
 const useRaidUpdate = ({ token, raidId }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: RaidUpdateType) => {
+    async ({ ...args }: IRaid) => {
       console.log('args', args);
       if (!raidId || !token) return;
       const { data } = await client(token).mutate({
@@ -23,6 +23,7 @@ const useRaidUpdate = ({ token, raidId }) => {
     },
     {
       onSuccess: (data) => {
+        console.log('data', data);
         queryClient.invalidateQueries([
           'raidDetail',
           data?.data.update_raids_by_pk?.id,

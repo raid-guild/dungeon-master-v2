@@ -48,68 +48,68 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
+  console.log('raid', raid);
+
   const raidCategoryMapped = RAID_CATEGORY.map((category) => ({
     label: category,
     value: category,
   }));
 
-  const camelToSnakeCase = (str) =>
-    str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  // const camelToSnakeCase = (str) =>
+  //   str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 
-  const isObject = function (obj) {
-    return (
-      obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function'
-    );
-  };
+  // const isObject = function (obj) {
+  //   return (
+  //     obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function'
+  //   );
+  // };
 
-  const keysToSnake = function (obj) {
-    if (isObject(obj)) {
-      const n = {};
+  // const keysToSnake = function (obj) {
+  //   if (isObject(obj)) {
+  //     const n = {};
 
-      Object.keys(obj).forEach((k) => {
-        n[camelToSnakeCase(k)] = keysToSnake(obj[k]);
-      });
+  //     Object.keys(obj).forEach((k) => {
+  //       n[camelToSnakeCase(k)] = keysToSnake(obj[k]);
+  //     });
 
-      return n;
-    } else if (Array.isArray(obj)) {
-      return obj.map((i) => {
-        return keysToSnake(i);
-      });
-    }
+  //     return n;
+  //   } else if (Array.isArray(obj)) {
+  //     return obj.map((i) => {
+  //       return keysToSnake(i);
+  //     });
+  //   }
 
-    return obj;
-  };
+  //   return obj;
+  // };
 
   async function onSubmit(values) {
     setSending(true);
-    console.log('form values', values);
+
     const raidWithoutUpdateValues = _.omit(
       raid,
       'status',
-      'name',
-      'category',
-      'startDate',
-      'endDate',
-      'raidParty',
-      'rolesRequired',
+      'airtableId',
+      'v1Id',
+      'lockerHash',
+      'invoiceAddress',
+      'raidParties',
+      'consultation',
       'typename',
-      'member_by_cleric'
-      // 'v1Id',
-      // 'airtableId',
-      // 'lockerHash',
-      // 'consultationByConsultation',
-      // 'invoiceAddress',
-      // 'memberByCleric',
-      // 'raidParty'
+      'raidStatus',
+      'cleric',
+      'raidsRolesRequired',
+      'createdAt',
+      'updatedAt',
+      'escrowIndex',
+      'raidCategory'
     );
-    console.log('keys to snake', keysToSnake(raidWithoutUpdateValues));
     await updateRaidStatus({
-      name: values.raidName ?? raid.name,
-      category: values.raidCategory,
-      status: raid.status ?? raid.status,
+      name: values.raidName ?? raid.raidName,
+      category_key: values.raidCategory ?? raid.raidCategory.raidCategory,
+      status_key: raid.status ?? raid.status,
       start_date: values.startDate ?? raid.startDate,
       end_date: values.endDate ?? raid.endDate,
-      ...keysToSnake(raidWithoutUpdateValues),
+      ...raidWithoutUpdateValues,
     });
     closeModal();
     setSending(false);
@@ -150,7 +150,11 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   <FormLabel color="raid">Raid Category</FormLabel>
                   <Controller
                     name="raidCategory"
-                    defaultValue={raid?.category ? raid?.category : ''}
+                    defaultValue={
+                      raid?.raidCategory.raidCategory
+                        ? raid?.raidCategory.raidCategory
+                        : ''
+                    }
                     control={control}
                     render={({ field }) => (
                       <Select

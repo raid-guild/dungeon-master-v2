@@ -13,6 +13,9 @@ export interface IRaid {
   rolesRequired: {
     role: string; // ENUM
   }[];
+  raidCategory: {
+    raidCategory: string; // ENUM
+  };
   raidParty: {
     memberbyMember: IMember;
   }[];

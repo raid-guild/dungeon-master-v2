@@ -25,11 +25,45 @@ StatusUpdateProps) => {
   const token = _.get(session, 'token');
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
-  const raidWithoutUpdatedStatus = _.omit(raid, 'status');
+  // airtable_id: String
+  // category: raid_categories_enum
+  // cleric: uuid
+  // consultation: uuid
+  // created_at: timestamptz
+  // end_date: timestamptz
+  // escrow_index: Int
+  // id: uuid
+  // invoice_address: String
+  // locker_hash: String
+  // name: String
+  // portfolio: uuid
+  // start_date: timestamptz
+  // status: raid_statuses_enum
+  // updated_at: timestamptz
+  // v1_id: String
+
+  const raidWithoutUpdatedStatus = _.omit(
+    raid,
+    'status',
+    'airtableId',
+    'v1Id',
+    'lockerHash',
+    'invoiceAddress',
+    'raidCategory',
+    'raidParties',
+    'consultation',
+    'typename',
+    'raidStatus',
+    'cleric',
+    'raidsRolesRequired',
+    'createdAt',
+    'updatedAt',
+    'escrowIndex'
+  );
 
   const handleSetStatus = async (selectedStatus) => {
     await updateRaidStatus({
-      status: selectedStatus,
+      status_key: selectedStatus,
       ...raidWithoutUpdatedStatus,
     });
     closeModal();
