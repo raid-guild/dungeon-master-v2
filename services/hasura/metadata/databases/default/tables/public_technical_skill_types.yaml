@@ -1,12 +1,18 @@
 table:
-  schema: public
   name: technical_skill_types
+  schema: public
 is_enum: true
 array_relationships:
   - name: applications
     using:
       foreign_key_constraint_on:
-        column: skill_type
+        column: technical_skill_type_key
         table:
-          schema: public
           name: applications
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - skill_type
+      filter: {}

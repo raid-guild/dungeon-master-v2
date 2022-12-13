@@ -1,12 +1,18 @@
 table:
-  schema: public
   name: member_types
+  schema: public
 is_enum: true
 array_relationships:
   - name: members
     using:
       foreign_key_constraint_on:
-        column: member_type
+        column: member_type_key
         table:
-          schema: public
           name: members
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - member_type
+      filter: {}

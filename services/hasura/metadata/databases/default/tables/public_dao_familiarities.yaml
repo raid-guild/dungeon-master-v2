@@ -1,12 +1,18 @@
 table:
-  schema: public
   name: dao_familiarities
+  schema: public
 is_enum: true
 array_relationships:
   - name: applications
     using:
       foreign_key_constraint_on:
-        column: dao_familiarity
+        column: dao_familiarity_key
         table:
-          schema: public
           name: applications
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - dao_familiarity
+      filter: {}

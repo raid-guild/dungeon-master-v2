@@ -1,12 +1,18 @@
 table:
-  schema: public
   name: raid_statuses
+  schema: public
 is_enum: true
 array_relationships:
   - name: raids
     using:
       foreign_key_constraint_on:
-        column: status
+        column: status_key
         table:
-          schema: public
           name: raids
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - raid_status
+      filter: {}

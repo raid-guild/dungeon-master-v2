@@ -1,12 +1,18 @@
 table:
-  schema: public
   name: delivery_priorities
+  schema: public
 is_enum: true
 array_relationships:
   - name: consultations
     using:
       foreign_key_constraint_on:
-        column: delivery_priorities
+        column: delivery_priorities_key
         table:
-          schema: public
           name: consultations
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - delivery_priority
+      filter: {}

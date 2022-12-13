@@ -1,66 +1,79 @@
 table:
-  schema: public
   name: raids
+  schema: public
 object_relationships:
-  - name: consultationByConsultation
+  - name: cleric
     using:
-      foreign_key_constraint_on: consultation
-  - name: memberByCleric
+      foreign_key_constraint_on: cleric_id
+  - name: consultation
     using:
-      foreign_key_constraint_on: cleric
+      foreign_key_constraint_on: consultation_id
   - name: raid_category
     using:
-      foreign_key_constraint_on: category
+      foreign_key_constraint_on: category_key
   - name: raid_status
     using:
-      foreign_key_constraint_on: status
+      foreign_key_constraint_on: status_key
 array_relationships:
-  - name: raid_party
+  - name: portfolios
     using:
       foreign_key_constraint_on:
-        column: raid
+        column: raid_id
         table:
+          name: portfolios
           schema: public
+  - name: raid_parties
+    using:
+      foreign_key_constraint_on:
+        column: raid_id
+        table:
           name: raid_parties
-  - name: relatedRaidsByRelatedRaid
+          schema: public
+  - name: raids_roles_required
     using:
       foreign_key_constraint_on:
-        column: related_raid
+        column: raid_id
         table:
+          name: raids_roles_required
           schema: public
-          name: related_raids
   - name: related_raids
     using:
       foreign_key_constraint_on:
-        column: raid
+        column: related_raid_id
         table:
-          schema: public
           name: related_raids
-  - name: roles_required
+          schema: public
+  - name: related_raids_primary
     using:
       foreign_key_constraint_on:
-        column: raid
+        column: raid_id
         table:
+          name: related_raids
           schema: public
-          name: raids_roles_required
+  - name: updates
+    using:
+      foreign_key_constraint_on:
+        column: raid_id
+        table:
+          name: updates
+          schema: public
 select_permissions:
   - role: member
     permission:
       columns:
         - escrow_index
         - airtable_id
-        - category
+        - category_key
         - invoice_address
         - locker_hash
         - name
-        - status
+        - status_key
         - v1_id
         - created_at
         - end_date
         - start_date
         - updated_at
-        - cleric
-        - consultation
+        - cleric_id
+        - consultation_id
         - id
-        - portfolio
       filter: {}

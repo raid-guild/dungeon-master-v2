@@ -5,15 +5,18 @@ export const MEMBER_LIST_QUERY = gql`
     members(limit: $limit, offset: $offset, where: $where) {
       id
       name
-      email_address
       eth_address
-      ens_name
-      discord_handle
-      twitter_handle
-      github_handle
-      telegram_handle
-      guild_class
-      applicationByApplication {
+      contact_info {
+        email
+        discord
+        telegram
+        twitter
+        github
+      }
+      guild_class {
+        guild_class
+      }
+      application {
         introduction
       }
     }
@@ -26,9 +29,12 @@ export const MEMBER_SLIM_LIST_QUERY = gql`
       id
       name
       eth_address
-      ens_name
-      telegram_handle
-      guild_class
+      contact_info {
+        telegram
+      }
+      guild_class {
+        guild_class
+      }
     }
   }
 `;
@@ -38,20 +44,27 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
     members(where: { eth_address: { _eq: $address } }) {
       id
       name
-      email_address
       eth_address
-      ens_name
-      discord_handle
-      twitter_handle
-      github_handle
-      telegram_handle
-      guild_class
-      applicationByApplication {
+      contact_info {
+        email
+        discord
+        twitter
+        github
+        telegram
+      }
+      guild_class {
+        guild_class
+      }
+      application {
         introduction
       }
-      skills {
-        skill
-        skill_type
+      members_skills {
+        skill {
+          skill
+        }
+        skill_type {
+          skill_type
+        }
       }
     }
   }
@@ -63,7 +76,9 @@ export const MEMBER_DETAIL_QUERY = gql`
     members_by_pk(id: $id) {
       id
       name
-      email_address
+      contact_info {
+        email
+      }
       eth_address
     }
   }

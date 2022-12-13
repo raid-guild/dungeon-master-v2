@@ -1,5 +1,5 @@
 import _ from 'lodash';
-export * from './definitions';
+export * from '../types';
 export * from './constants';
 export * from './general';
 export * from './raids';

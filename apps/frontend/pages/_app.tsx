@@ -60,7 +60,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       />
 
       <WagmiConfig client={wagmiClient}>
-        <SessionProvider refetchInterval={0} session={pageProps.session}>
+        <SessionProvider refetchInterval={120} session={pageProps.session}>
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>

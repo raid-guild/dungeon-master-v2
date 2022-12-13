@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { IMember } from './definitions';
+import { IMember } from '../types';
 
 export const membersExceptRaidParty = (
   members: Partial<IMember>[],

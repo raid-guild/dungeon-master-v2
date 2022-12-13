@@ -1,0 +1,18 @@
+table:
+  name: clients_contacts
+  schema: public
+object_relationships:
+  - name: client
+    using:
+      foreign_key_constraint_on: client_id
+  - name: contact
+    using:
+      foreign_key_constraint_on: contact_id
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - client_id
+        - contact_id
+        - id
+      filter: {}

@@ -1,0 +1,36 @@
+table:
+  name: contact_infos
+  schema: public
+array_relationships:
+  - name: applications
+    using:
+      foreign_key_constraint_on:
+        column: contact_info_id
+        table:
+          name: applications
+          schema: public
+  - name: contacts
+    using:
+      foreign_key_constraint_on:
+        column: contact_info_id
+        table:
+          name: contacts
+          schema: public
+  - name: members
+    using:
+      foreign_key_constraint_on:
+        column: contact_info_id
+        table:
+          name: members
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
+      filter: {}

@@ -40,7 +40,7 @@ const RaidList = () => {
             {_.map(raids, (raid: IRaid) => (
               <RaidCard
                 raid={raid}
-                consultation={_.get(raid, 'consultationByConsultation')}
+                consultation={_.get(raid, 'consultation')}
                 key={_.get(raid, 'id')}
               />
             ))}
