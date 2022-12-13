@@ -44,6 +44,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
 
+  console.log('raid', raid);
   return (
     <Card variant="withHeader">
       <Flex
@@ -128,7 +129,10 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
-          <InfoStack label="Category" details={_.get(raid, 'category', '-')} />
+          <InfoStack
+            label="Category"
+            details={_.get(raid, 'raidCategory.raidCategory', '-')}
+          />
           <InfoStack label="Project Type" details={projectType || '-'} />
           {rolesRequired?.length > 0 && (
             <VStack align="start">
