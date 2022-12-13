@@ -67,7 +67,7 @@ const MemberCard: React.FC<MemberProps> = ({
   const id = _.get(member, 'id', _.get(application, 'id'));
   const address = _.get(member, 'ethAddress', _.get(application, 'ethAddress'));
   const link = member ? `/members/${address}/` : `/applications/${id}/`;
-  const ensName = _.get(member, 'ensName', _.get(application, 'ensName', null));
+  // const ensName = _.get(member, 'ensName', _.get(application, 'ensName', null));
   const ethAddress = _.get(
     member,
     'ethAddress',
@@ -77,26 +77,26 @@ const MemberCard: React.FC<MemberProps> = ({
 
   const github = _.get(
     member,
-    'githubHandle',
-    _.get(application, 'githubHandle')
+    'contactInfo.github',
+    _.get(application, 'contactInfo.github')
   );
   const twitter = _.get(
     member,
-    'twitterHandle',
-    _.get(application, 'twitterHandle')
+    'contactInfo.twitter',
+    _.get(application, 'contactInfo.twitter')
   );
   const discord = _.get(
     member,
-    'discordHandle',
-    _.get(application, 'discordHandle')
+    'contactInfo.discord',
+    _.get(application, 'contactInfo.discord')
   );
   const telegram = _.get(
     member,
-    'telegramHandle',
-    _.get(application, 'telegramHandle')
+    'contactInfo.telegram',
+    _.get(application, 'contactInfo.telegram')
   );
   const copyDiscord = useClipboard(discord);
-  const copyEns = useClipboard(ensName);
+  // const copyEns = useClipboard(ensName);
   const copyEth = useClipboard(ethAddress);
 
   const socials = [
@@ -126,14 +126,14 @@ const MemberCard: React.FC<MemberProps> = ({
         ? 'Copied Discord handle'
         : 'Copy Discord handle',
     },
-    ethAddress !== '0x' || ensName !== null
+    ethAddress !== '0x'
       ? {
-          onClick: ensName ? copyEns.onCopy : copyEth.onCopy,
+          onClick: copyEth.onCopy,
           icon: <FaEthereum />,
-          label: ensName || truncateAddress(ethAddress),
-          tooltip: copyEns.hasCopied
-            ? `Copied ${ensName ? 'ENS name' : 'eth address'}`
-            : `Copy ${ensName ? 'ENS name' : 'eth address'}`,
+          label: truncateAddress(ethAddress),
+          tooltip: copyEth.hasCopied
+            ? 'Copied eth address'
+            : 'Copy eth address',
         }
       : null,
   ];
@@ -235,7 +235,9 @@ const MemberCard: React.FC<MemberProps> = ({
         {member && (
           <Flex position="absolute" top="40px" left="47%" zIndex={2}>
             <RoleBadge
-              roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+              roleName={
+                GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
+              }
               width="60px"
               height="60px"
             />

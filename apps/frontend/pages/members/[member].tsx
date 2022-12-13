@@ -44,7 +44,9 @@ const Member = () => {
                   bg="black"
                   icon={
                     <RoleBadge
-                      roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+                      roleName={
+                        GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
+                      }
                       height="64px"
                       width="64px"
                     />
@@ -68,7 +70,7 @@ const Member = () => {
       >
         <MemberDetailsCard
           member={member}
-          application={_.get(member, 'applicationByApplication')}
+          application={_.get(member, 'application')}
         />
       </SiteLayout>
     </>

@@ -27,18 +27,19 @@ interface RaidProps {
 }
 
 const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
-  const servicesRequired = _.get(consultation, 'consultationsServicesReqs');
+  const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
   const uniqueServicesRequired = _.uniq(
     _.map(servicesRequired, (service: { guildService: string }) =>
-      _.get(service, 'guildService')
+      _.get(service, 'guildService.guildService')
     )
   );
   const id = _.get(raid || consultation, 'id');
-  const submissionType = _.get(consultation, 'submissionType');
-  const description = _.get(consultation, 'projectDesc');
-  const budget = _.get(consultation, 'budget');
-  const projectType = _.get(consultation, 'projectType');
-  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequireds', []), 'role');
+  const submissionType = _.get(consultation, 'submissionType.submissionType');
+  const description = _.get(consultation, 'description');
+  const budget = _.get(consultation, 'budgetOption.budgetOption');
+  const projectType = _.get(consultation, 'projectType.projectType');
+  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
+  console.log(consultation);
 
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
@@ -61,10 +62,10 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               transition="all ease-in-out .25s"
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
-              {_.get(raid, 'name', _.get(consultation, 'projectName'))}
+              {_.get(raid, 'name', _.get(consultation, 'name'))}
             </Heading>
           </Link>
-          {submissionType === 'Paid' && (
+          {submissionType === 'PAID' && (
             <Tooltip label="Paid Submission" placement="right" hasArrow>
               <span>
                 <Icon as={AiOutlineDollarCircle} w={6} h={6} color="raid" />
@@ -72,7 +73,11 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             </Tooltip>
           )}
           <Badge colorScheme="green">
-            {_.get(raid, 'status', _.get(consultation, 'status'))}
+            {_.get(
+              raid,
+              'raidStatus.raidStatus',
+              _.get(consultation, 'consultationStatus.consultationStatus')
+            )}
           </Badge>
         </HStack>
         <Link href={link}>
