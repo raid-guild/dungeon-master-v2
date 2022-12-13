@@ -15,7 +15,7 @@ const useRaidUpdate = ({ token, raidId }) => {
         mutation: RAID_UPDATE_MUTATION,
         variables: {
           id: raidId,
-          ...args,
+          raid_updates: args,
         },
       });
 
