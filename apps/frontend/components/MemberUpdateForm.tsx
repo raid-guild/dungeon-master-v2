@@ -34,38 +34,19 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     memberId,
   });
 
-  console.log('member', member);
-
   const localForm = useForm({
     mode: 'all',
   });
   const {
     register,
     handleSubmit,
-    setValue,
     control,
     formState: { errors, isSubmitting },
   } = localForm;
 
   async function onSubmit(values) {
-    console.log('values', values);
     setSending(true);
-    const memberWithoutUpdateValues = _.omit(
-      member,
-      'application',
-      'name',
-      'ensName',
-      'ethAddress',
-      'emailAddress',
-      'githubHandle',
-      'discordHandle',
-      'telegramHandle',
-      'twitterHandle',
-      'guildClass',
-      'typename',
-      'membersSkills',
-      'contactInfo'
-    );
+
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
@@ -79,7 +60,6 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
         twitter: values.twitterHandle ?? member.contactInfo.twitter,
         telegram: values.telegramHandle ?? member.contactInfo.telegram,
       },
-      ...memberWithoutUpdateValues,
     });
     closeModal();
     setSending(false);
@@ -123,7 +103,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="emailAddress"
                   defaultValue={
-                    member?.emailAddress ? member?.emailAddress : null
+                    member?.contactInfo.email ? member?.contactInfo.email : null
                   }
                   aria-label="Enter your email address"
                   placeholder="What is your email address?"
@@ -135,7 +115,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="githubHandle"
                   defaultValue={
-                    member?.githubHandle ? member?.githubHandle : null
+                    member?.contactInfo.github
+                      ? member?.contactInfo.github
+                      : null
                   }
                   aria-label="Enter your GitHub handle"
                   placeholder="What is your GitHub handle?"
@@ -147,7 +129,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="discordHandle"
                   defaultValue={
-                    member?.discordHandle ? member?.discordHandle : null
+                    member?.contactInfo.discord
+                      ? member?.contactInfo.discord
+                      : null
                   }
                   aria-label="Enter your Discord handle"
                   placeholder="What is your Discord handle?"
@@ -159,7 +143,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="telegramHandle"
                   defaultValue={
-                    member?.telegramHandle ? member?.telegramHandle : null
+                    member?.contactInfo.telegram
+                      ? member?.contactInfo.telegram
+                      : null
                   }
                   aria-label="Enter your Telegram handle"
                   placeholder="What is your Telegram handle?"
@@ -171,7 +157,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="twitterHandle"
                   defaultValue={
-                    member?.twitterHandle ? member?.twitterHandle : null
+                    member?.contactInfo.twitter
+                      ? member?.contactInfo.twitter
+                      : null
                   }
                   aria-label="Enter your Twitter handle"
                   placeholder="What is your Twitter handle?"

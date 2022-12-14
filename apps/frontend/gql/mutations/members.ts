@@ -34,24 +34,4 @@ export const MEMBER_UPDATE_MUTATION = gql`
       email
     }
   }
-  #   fragment MemberDetail on members {
-  #     id
-  #     name
-  #     email_address
-  #     eth_address
-  #     ens_name
-  #     discord_handle
-  #     twitter_handle
-  #     github_handledodocke
-  #     telegram_handle
-  #     guild_class
-  #     applicationByApplication {
-  #       introduction
-  #     }
-  #     skills {
-  #       skill
-  #       skill_type
-  #     }
-  #   }
-  #
 `;
