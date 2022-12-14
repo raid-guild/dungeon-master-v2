@@ -4,6 +4,7 @@ import { Flex, Heading, Spinner, Stack } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import CommandPalette from './CommandPalette';
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -40,6 +41,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
       background="gray.700"
     >
       <Navbar />
+      <CommandPalette />
       <Flex
         direction="column"
         justify="flex-start"
