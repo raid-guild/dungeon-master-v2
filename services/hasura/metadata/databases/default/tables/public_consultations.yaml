@@ -49,6 +49,28 @@ array_relationships:
         table:
           name: raids
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - desired_delivery_date
+        - additional_info
+        - budget_key
+        - consultation_hash
+        - consultation_status_key
+        - delivery_priorities_key
+        - description
+        - link
+        - name
+        - specs_key
+        - submission_hash
+        - submission_type_key
+        - type_key
+        - v1_id
+        - created_at
+        - updated_at
+        - id
 select_permissions:
   - role: member
     permission:
@@ -71,3 +93,26 @@ select_permissions:
         - updated_at
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - desired_delivery_date
+        - additional_info
+        - budget_key
+        - consultation_hash
+        - consultation_status_key
+        - delivery_priorities_key
+        - description
+        - link
+        - name
+        - specs_key
+        - submission_hash
+        - submission_type_key
+        - type_key
+        - v1_id
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+      check: null

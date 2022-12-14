@@ -32,6 +32,8 @@ const RAID_DETAIL_FRAGMENT = gql`
     }
     created_at
     updated_at
+    start_date
+    end_date
   }
 `;
 

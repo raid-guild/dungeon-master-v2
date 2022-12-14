@@ -19,7 +19,8 @@ import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
 // import { format } from 'date-fns';
 import InfoStack from './InfoStack';
-import { IConsultation, IRaid } from '../utils';
+import { IConsultation, IRaid, BUDGET_DISPLAY } from '../utils';
+import { RAID_CATEGORY, RAID_CATEGORY_DISPLAY } from '../utils/constants';
 
 interface RaidProps {
   raid?: IRaid;
@@ -36,7 +37,8 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const id = _.get(raid || consultation, 'id');
   const submissionType = _.get(consultation, 'submissionType.submissionType');
   const description = _.get(consultation, 'description');
-  const budget = _.get(consultation, 'budgetOption.budgetOption');
+  const budget =
+    BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
   const projectType = _.get(consultation, 'projectType.projectType');
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
   console.log(consultation);
@@ -128,7 +130,14 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
-          <InfoStack label="Category" details={_.get(raid, 'category', '-')} />
+          <InfoStack
+            label="Category"
+            details={
+              RAID_CATEGORY_DISPLAY[
+                _.get(raid, 'raidCategory.raidCategory', '-')
+              ]
+            }
+          />
           <InfoStack label="Project Type" details={projectType || '-'} />
           {rolesRequired?.length > 0 && (
             <VStack align="start">

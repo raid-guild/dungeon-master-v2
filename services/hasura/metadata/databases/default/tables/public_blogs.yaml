@@ -1,6 +1,21 @@
 table:
   name: blogs
   schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - tags
+        - author
+        - content
+        - description
+        - image
+        - slug
+        - title
+        - created_at
+        - updated_at
+        - id
 select_permissions:
   - role: member
     permission:
@@ -16,3 +31,19 @@ select_permissions:
         - updated_at
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - tags
+        - author
+        - content
+        - description
+        - image
+        - slug
+        - title
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+      check: null

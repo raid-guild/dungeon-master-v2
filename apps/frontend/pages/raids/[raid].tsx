@@ -11,7 +11,6 @@ const Raid = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: raid } = useRaidDetail({ token });
-  console.log(raid);
 
   return (
     <>

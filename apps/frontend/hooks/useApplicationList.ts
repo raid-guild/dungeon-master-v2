@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, APPLICATION_LIST_QUERY } from '../gql';
 import { camelize, IApplication } from '../utils';
 
@@ -31,7 +31,7 @@ const useApplicationList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IApplication>>, Error>(
-    'applicationList',
+    ['applicationList'],
     ({ pageParam = 0 }) => applicationQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
