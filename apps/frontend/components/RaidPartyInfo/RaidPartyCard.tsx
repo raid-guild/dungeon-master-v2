@@ -71,7 +71,6 @@ const RaidPartyCard = ({
           <ChakraNextLink href={`/members/${member.ethAddress}/`}>
             {children}
           </ChakraNextLink>
-
           {button}
         </>
       )}

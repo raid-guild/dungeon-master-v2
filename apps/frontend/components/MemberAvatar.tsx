@@ -1,16 +1,37 @@
 import _ from 'lodash';
 import { Avatar, Tooltip } from '@raidguild/design-system';
-import { useEnsAvatar, useEnsName } from 'wagmi';
+import { useEnsAvatar, useEnsName, chain } from 'wagmi';
 import { IMember, memberDisplayName } from '../utils';
+import * as blockies from 'blockies-ts';
 
 type MemberAvatarProps = {
   member: IMember;
 };
 
 const MemberAvatar = ({ member }: MemberAvatarProps) => {
-  const address = _.get(member, 'address');
-  const { data: ensName } = useEnsName({ address });
-  const { data: ensAvatar } = useEnsAvatar({ address });
+  const address = _.get(member, 'ethAddress');
+  const { data: ensName } = useEnsName({
+    address,
+    chainId: chain.mainnet.id,
+    enabled: !!address,
+  });
+  let { data: avatarSrc } = useEnsAvatar({
+    address,
+    chainId: chain.mainnet.id,
+    enabled: !!address,
+    cacheTime: 360_000,
+  });
+  if (!avatarSrc) {
+    avatarSrc = blockies.create({ seed: address }).toDataURL();
+  }
+
+  if (!address) {
+    return (
+      <Tooltip label={memberDisplayName(member)}>
+        <Avatar />
+      </Tooltip>
+    );
+  }
 
   return (
     <Tooltip
@@ -18,7 +39,7 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
       placement="left"
       hasArrow
     >
-      <Avatar src={ensAvatar} />
+      <Avatar src={avatarSrc} />
     </Tooltip>
   );
 };
