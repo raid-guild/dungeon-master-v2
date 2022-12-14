@@ -49,8 +49,8 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
   const token = _.get(session, 'token');
   const { data: members } = useSlimMemberList({ token });
 
-  const cleric = _.get(raid, 'memberByCleric');
-  const raidParty = _.map(_.get(raid, 'raidParty'), 'memberByMember');
+  const cleric = _.get(raid, 'cleric');
+  const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
 
   const removeLocalRole = (role) => {
     setLocalRoles(localRoles.filter((r) => r !== role));

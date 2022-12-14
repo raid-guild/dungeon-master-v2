@@ -1,20 +1,22 @@
 import _ from 'lodash';
-import { Heading, HStack, Flex, Box } from '@raidguild/design-system';
+import { Heading, HStack, Stack, Box } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
 import { useSession } from 'next-auth/react';
 import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
+import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
 
 const Raid = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: raid } = useRaidDetail({ token });
+  console.log(raid);
 
   return (
     <>
-      <NextSeo title="Raid" />
+      <NextSeo title={_.get(raid, 'name')} />
 
       <SiteLayout
         subheader={<Heading>{_.get(raid, 'name')}</Heading>}
@@ -28,12 +30,13 @@ const Raid = () => {
           spacing={10}
           align="flex-start"
         >
-          <Box w="60%">
+          <Stack w="60%" spacing={8}>
             <RaidDetailsCard
               raid={raid}
               consultation={_.get(raid, 'consultation')}
             />
-          </Box>
+            <RaidUpdatesFeed raid={raid} />
+          </Stack>
 
           <Box w="35%">
             <RaidDetailsSidebar raid={raid} />

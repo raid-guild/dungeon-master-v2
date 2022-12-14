@@ -136,6 +136,16 @@ export const RAID_DETAIL_QUERY = gql`
           }
         }
       }
+      updates {
+        id
+        update
+        member {
+          name
+          eth_address
+          id
+        }
+        created_at
+      }
       created_at
       updated_at
     }

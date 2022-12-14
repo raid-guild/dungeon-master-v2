@@ -2,25 +2,22 @@ import React from 'react';
 import { Flex, HStack, Text, Divider } from '@raidguild/design-system';
 import { format } from 'date-fns';
 
-interface RaidCommentProps {
+interface RaidUpdateProps {
   // id?: string;
-  comment: string;
-  commentedBy: {
+  update: string;
+  member: {
     name: string;
   };
-  // commentedRaid?: string;
   createdAt: string;
   // modifiedAt?: string;
 }
 
-const RaidComment: React.FC<RaidCommentProps> = ({
+const RaidUpdate: React.FC<RaidUpdateProps> = ({
   // id,
-  comment,
-  commentedBy,
-  // commentedRaid = 'Dungeon Master v1',
+  update,
+  member,
   createdAt,
-}: // modifiedAt,
-RaidCommentProps) => {
+}) => {
   return (
     <>
       <Flex
@@ -37,12 +34,12 @@ RaidCommentProps) => {
           width="100%"
         >
           <Text color="white" as="p" fontSize="md" maxWidth="60%">
-            {comment}
+            {update}
           </Text>
           <HStack spacing={1} color="gray.100">
-            <Text fontSize="smaller">{commentedBy.name} @</Text>
+            <Text fontSize="smaller">{member.name} @</Text>
             <Text fontSize="smaller">
-              {createdAt && format(new Date(+createdAt), 'Pp')}
+              {createdAt && format(new Date(createdAt), 'Pp')}
             </Text>
           </HStack>
         </HStack>
@@ -52,4 +49,4 @@ RaidCommentProps) => {
   );
 };
 
-export default RaidComment;
+export default RaidUpdate;

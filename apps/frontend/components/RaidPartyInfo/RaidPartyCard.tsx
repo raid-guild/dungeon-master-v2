@@ -22,6 +22,7 @@ import {
   IMember,
   memberDisplayName,
 } from '../../utils';
+import MemberAvatar from '../MemberAvatar';
 
 type RaidPartyCardProps = {
   /*
@@ -99,21 +100,14 @@ const RaidPartyCard = ({
           _hover={{ cursor: 'pointer', color: 'red.100' }}
           transition="all ease-in-out 0.25"
         >
-          {_.get(member, 'guildClass') && (
-            <RoleBadge
-              width="40px"
-              height="40px"
-              border="2px solid"
-              roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
-            />
-          )}
+          {member && <MemberAvatar member={member} />}
 
           <Flex direction="column">
             <Text as="span" color="white" fontSize="md">
               {_.get(member, 'name')}
             </Text>
             <Text color="primary.500" fontSize="sm">
-              {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass')]}
+              {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
             </Text>
           </Flex>
         </HStack>
@@ -224,21 +218,14 @@ const RaidPartyCard = ({
         _hover={{ cursor: 'pointer', color: 'red.100' }}
         transition="all ease-in-out 0.25"
       >
-        {_.get(member, 'guildClass') && (
-          <RoleBadge
-            width="40px"
-            height="40px"
-            border="2px solid"
-            roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
-          />
-        )}
+        {member && <MemberAvatar member={member} />}
 
         <Flex direction="column">
           <Text as="span" color="white" fontSize="md">
             {_.get(member, 'name')}
           </Text>
           <Text color="primary.500" fontSize="sm">
-            {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass')]}
+            {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
           </Text>
         </Flex>
       </HStack>

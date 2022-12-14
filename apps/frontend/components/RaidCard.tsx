@@ -6,7 +6,7 @@ import {
   Button,
   Text,
   HStack,
-  VStack,
+  Box,
   Badge,
   Icon,
   Tooltip,
@@ -70,11 +70,11 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   }
 
   return (
-    <Card variant="withHeader">
+    <Box bg="gray.800" rounded="md" p={8} w="100%">
       <Flex
         direction="row"
-        width="90%"
-        mx="auto"
+        // width="90%"
+        // mx="auto"
         alignItems="space-apart"
         justifyContent="space-between"
       >
@@ -109,21 +109,8 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           </HStack>
         </Stack>
         <HStack spacing={4} align="flex-start">
-          {!raidCleric ? (
-            <Heading size="sm" color="white">
-              Needs Cleric!
-            </Heading>
-          ) : (
-            <Stack>
-              <Heading size="sm" color="white">
-                Cleric
-              </Heading>
-              <MemberAvatar member={raidCleric} />
-            </Stack>
-          )}
-
           {!_.isEmpty(rolesRequired) && (
-            <Stack>
+            <HStack>
               <Heading size="sm" color="white">
                 Roles Required
               </Heading>
@@ -142,7 +129,20 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
                   />
                 ))}
               </AvatarGroup>
-            </Stack>
+            </HStack>
+          )}
+
+          {!raidCleric ? (
+            <Heading size="sm" color="white">
+              Needs Cleric!
+            </Heading>
+          ) : (
+            <HStack>
+              <Heading size="sm" color="white">
+                Cleric
+              </Heading>
+              <MemberAvatar member={raidCleric} />
+            </HStack>
           )}
 
           <Link href={link}>
@@ -154,7 +154,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       </Flex>
       <Flex
         direction="row"
-        width="90%"
+        // width="90%"
         alignItems="center"
         justifyContent="space-between"
       >
@@ -212,12 +212,12 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           />
           <InfoStack label="Project Type" details={projectType || '-'} />
         </SimpleGrid>
-        {/* display comment  */}
+        {/* display update  */}
         <Flex direction="column">
-          {/* todo: display first comment, truncated, with careted date. Display full text inside tooltip */}
+          {/* todo: display first update, truncated, with careted date. Display full text inside tooltip */}
         </Flex>
       </Flex>
-    </Card>
+    </Box>
   );
 };
 

@@ -13,7 +13,7 @@ const Application = () => {
 
   return (
     <>
-      <NextSeo title="Application" />
+      <NextSeo title={_.get(application, 'name')} />
 
       <SiteLayout
         subheader={
