@@ -37,9 +37,7 @@ const CommandPalette = () => {
   });
 
   useEffect(() => {
-    console.log(searchData);
     if (serverSearch && searchData) {
-      console.log(searchData);
       setLocalResults(searchData);
     } else {
       setLocalResults(null);
@@ -68,8 +66,7 @@ const CommandPalette = () => {
   };
 
   useHandleOpenCommandPalette(setOpen);
-  // TODO add sections for each result group
-  // TODO use `filterItems`
+
   const searchResults: JsonStructure = filterItems(
     [
       {
@@ -111,43 +108,30 @@ const CommandPalette = () => {
           {
             id: 'raids',
             children: 'Raids',
-            icon: 'CogIcon',
+            icon: 'StarIcon',
             href: '/raids',
           },
           {
             id: 'members',
             children: 'Members',
-            icon: 'HomeIcon',
+            icon: 'UserGroupIcon',
             href: '/members',
           },
-        ],
-      },
-      {
-        heading: 'Other',
-        id: 'advanced',
-        items: [
           {
-            id: 'developer-settings',
-            children: 'Developer settings',
-            icon: 'HomeIcon',
-            href: '#',
+            id: 'consultations',
+            children: 'Consultations',
+            icon: 'QueueListIcon',
+            href: '/consultations',
           },
           {
-            id: 'privacy-policy',
-            children: 'Privacy policy',
-            icon: 'HomeIcon',
-            href: '#',
-          },
-          {
-            id: 'disconnect',
-            children: 'Disconnect',
-            icon: 'HomeIcon',
-            onClick: () => {
-              alert('Logging out...');
-            },
+            id: 'applications',
+            children: 'Applications',
+            icon: 'UserPlusIcon',
+            href: '/applications',
           },
         ],
       },
+      // TODO other options? update raid status etc -> v2
     ],
     search
   );
@@ -178,13 +162,10 @@ const CommandPalette = () => {
               ))}
             </CmdkCommandPalette.List>
           ))
-        ) : (
-          <CmdkCommandPalette.List
-            key={searchResults[0]?.id}
-            heading={searchResults[0]?.heading}
-          >
-            {_.get(searchResults, '[0].items') ? (
-              searchResults[0]?.items?.map(({ id, ...rest }) => (
+        ) : localResults ? (
+          _.map(searchResults, (group) => (
+            <CmdkCommandPalette.List key={group.id} heading={group.heading}>
+              {_.map(_.get(group, 'items'), ({ id, ...rest }) => (
                 <CmdkCommandPalette.ListItem
                   key={id}
                   index={getItemIndex(searchResults, id)}
@@ -195,13 +176,13 @@ const CommandPalette = () => {
                   )}
                   {...rest}
                 />
-              ))
-            ) : (
-              <Flex justify="center" p={4}>
-                <Spinner />
-              </Flex>
-            )}
-          </CmdkCommandPalette.List>
+              ))}
+            </CmdkCommandPalette.List>
+          ))
+        ) : (
+          <Flex justify="center" p={4}>
+            <Spinner />
+          </Flex>
         )}
       </CmdkCommandPalette.Page>
 

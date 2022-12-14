@@ -18,6 +18,12 @@ import { OverlayContextProvider } from '../contexts/OverlayContext';
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
   const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: 120 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
     queryCache: new QueryCache({
       onError: (error) => {
         toast({
