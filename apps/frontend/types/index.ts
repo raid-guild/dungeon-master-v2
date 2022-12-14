@@ -22,7 +22,7 @@ export interface IRaid {
   }[];
   memberByCleric: IMember;
   consultationByConsultation: IConsultation;
-  comments: IComment[];
+  updates: IUpdate[];
 
   // LEGACY
   v1Id?: string;
@@ -180,13 +180,13 @@ export interface IApplication {
   updatedAt?: string;
 }
 
-export interface IComment {
+export interface IUpdate {
   id: string;
-  comment: string;
-  commentedBy: IMember;
-  commentedRaid: IRaid;
+  update: string;
+  member: IMember;
+  raid: IRaid;
   createdAt: string;
-  modifiedAt: string;
+  updatedAt: string;
 }
 
 export interface Chain {
@@ -231,7 +231,7 @@ export interface IRaidUpdate {
   // }[];
   // memberByCleric: IMember;
   // consultationByConsultation: IConsultation;
-  // comments: IComment[];
+  // updates: IUpdate[];
 
   // // LEGACY
   // v1Id?: string;

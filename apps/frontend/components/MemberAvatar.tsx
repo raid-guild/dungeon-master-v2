@@ -5,7 +5,7 @@ import { IMember, memberDisplayName } from '../utils';
 import * as blockies from 'blockies-ts';
 
 type MemberAvatarProps = {
-  member: IMember;
+  member: Partial<IMember>;
 };
 
 const MemberAvatar = ({ member }: MemberAvatarProps) => {

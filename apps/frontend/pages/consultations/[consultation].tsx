@@ -13,10 +13,10 @@ const Consultation = () => {
 
   return (
     <>
-      <NextSeo title="Consultation" />
+      <NextSeo title={_.get(consultation, 'name')} />
 
       <SiteLayout
-        subheader={<Heading>{_.get(consultation, 'projectName')}</Heading>}
+        subheader={<Heading>{_.get(consultation, 'name')}</Heading>}
         isLoading={false}
       >
         <HStack align="flex-start">

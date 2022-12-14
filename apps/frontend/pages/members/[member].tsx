@@ -54,7 +54,7 @@ const Member = () => {
 
   return (
     <>
-      <NextSeo title="Member" />
+      <NextSeo title={_.get(member, 'name')} />
 
       <SiteLayout
         subheader={

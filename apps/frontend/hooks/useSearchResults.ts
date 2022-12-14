@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { client } from '../gql';
@@ -37,9 +38,7 @@ const useSearchResults = ({ token, search }) => {
     });
 
     return _.mapValues(_.get(result, 'data'), (o: any, k: string) => {
-      return _.map(_.get(result, `data.${k}`), (r: any) =>
-        processForCommandPalette(k, r)
-      );
+      return _.map(o, (r: any) => processForCommandPalette(k, r));
     });
   };
 
