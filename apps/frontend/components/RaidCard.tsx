@@ -55,7 +55,6 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
     )
   );
 
-  // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
   const raidParty = _.map(_.get(raid, 'raidParties', []), 'member');
   const raidCleric = _.get(raid, 'cleric');

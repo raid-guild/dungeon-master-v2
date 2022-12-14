@@ -8,6 +8,7 @@ import {
   Button,
   HStack,
   Text,
+  Stack,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
@@ -16,6 +17,11 @@ import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
 import { memberDisplayName, GUILD_CLASS_ICON } from '../../utils';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
+import MiniRaidCard from '../../components/MiniRaidCard';
+
+const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
+
+// TODO remove hardcoded limits on past and active raids
 
 const Member = () => {
   const { data: session } = useSession();
@@ -26,7 +32,16 @@ const Member = () => {
     chainId: 1,
     enabled: _.get(member, 'ethAddress') !== '0x',
   });
-  console.log('member details: ', member);
+  const pastAndActiveRaids = {
+    active: _.filter(_.map(_.get(member, 'raidParties'), 'raid'), (r) =>
+      _.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
+    ),
+    past: _.filter(
+      _.map(_.get(member, 'raidParties'), 'raid'),
+      (r) => !_.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
+    ),
+  };
+  console.log('member details: ', pastAndActiveRaids);
 
   return (
     <>
@@ -68,7 +83,7 @@ const Member = () => {
           </Flex>
         }
       >
-        <Flex>
+        <Flex w="100%">
           <MemberDetailsCard
             member={member}
             application={_.get(member, 'application')}
@@ -83,8 +98,42 @@ const Member = () => {
             style={{ backdropFilter: 'blur(7px)' }}
             p={8}
           >
-            <Heading size="sm">Active Raids</Heading>
-            <Heading size="sm">Past Raids</Heading>
+            {!_.isEmpty(_.get(pastAndActiveRaids, 'active')) && (
+              <Stack>
+                <Heading size="sm">Active Raids</Heading>
+                <Stack>
+                  {_.map(
+                    _.get(pastAndActiveRaids, 'active').slice(0, 2),
+                    (raid) => (
+                      <MiniRaidCard
+                        key={_.get(raid, 'id')}
+                        raid={raid}
+                        noAvatar
+                        smallHeader
+                      />
+                    )
+                  )}
+                </Stack>
+              </Stack>
+            )}
+            {!_.isEmpty(_.get(pastAndActiveRaids, 'past')) && (
+              <Stack>
+                <Heading size="sm">Past Raids</Heading>
+                <Stack>
+                  {_.map(
+                    _.get(pastAndActiveRaids, 'past').slice(0, 3),
+                    (raid) => (
+                      <MiniRaidCard
+                        key={_.get(raid, 'id')}
+                        raid={raid}
+                        noAvatar
+                        smallHeader
+                      />
+                    )
+                  )}
+                </Stack>
+              </Stack>
+            )}
           </Flex>
         </Flex>
       </SiteLayout>

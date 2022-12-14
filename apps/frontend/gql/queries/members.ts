@@ -66,6 +66,15 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
           skill_type
         }
       }
+      raid_parties {
+        raid {
+          name
+          id
+          raid_status {
+            raid_status
+          }
+        }
+      }
     }
   }
 `;
