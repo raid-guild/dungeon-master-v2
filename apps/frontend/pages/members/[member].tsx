@@ -26,7 +26,6 @@ const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 
 // TODO remove hardcoded limits on past and active raids
 
-
 const Member = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -45,7 +44,7 @@ const Member = () => {
       (r) => !_.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
     ),
   };
-  console.log('member details: ', pastAndActiveRaids);
+  // console.log('member details: ', pastAndActiveRaids);
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
 
