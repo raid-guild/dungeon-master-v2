@@ -12,18 +12,22 @@ import {
 import { useSession } from 'next-auth/react';
 import useMemberUpdate from '../hooks/useMemberUpdate';
 import { useForm, Controller } from 'react-hook-form';
-import { IMember } from '../utils';
-
-import { GUILD_CLASS_OPTIONS } from '../utils/constants';
+import { IMember, IApplication } from '../utils';
+import {
+  GUILD_CLASS_OPTIONS,
+  SKILLS_DISPLAY_OPTIONS,
+} from '../utils/constants';
 
 interface UpdateMemberFormProps {
   memberId?: string;
   closeModal?: () => void;
   member: IMember;
+  application?: IApplication;
 }
 const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   memberId,
   member,
+  application,
   closeModal,
 }: UpdateMemberFormProps) => {
   const [sending, setSending] = useState(false);
@@ -89,16 +93,6 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   label="Member Name"
                   localForm={localForm}
                   {...register('memberName')}
-                />
-                <Input
-                  id="ensName"
-                  defaultValue={member?.ensName ? member?.ensName : null}
-                  aria-label="Enter your ENS name"
-                  placeholder="What is your ENS name?"
-                  rounded="base"
-                  label="ENS Name"
-                  localForm={localForm}
-                  {...register('ensName')}
                 />
                 <Input
                   id="emailAddress"
@@ -187,26 +181,36 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     )}
                   />
                 </FormControl>
-                {/* <FormControl>
+                <FormControl>
                   <FormLabel color="raid">Primary Skills</FormLabel>
                   <Controller
                     name="primarySkills"
-                    defaultValue={
-                      member?.primarySkills ? member?.primarySkills : ''
-                    }
                     control={control}
                     render={({ field }) => (
                       <Select
+                        isDisabled
                         {...field}
-                        isMulti
-                        options={SKILLS.map((skill) => ({
-                          value: skill,
-                          label: skill,
-                        }))}
+                        options={SKILLS_DISPLAY_OPTIONS}
+                        localForm={localForm}
                       />
                     )}
                   />
-                </FormControl> */}
+                </FormControl>
+                <FormControl>
+                  <FormLabel color="raid">Secondary Skills</FormLabel>
+                  <Controller
+                    name="secondarySkil"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        isDisabled
+                        {...field}
+                        options={SKILLS_DISPLAY_OPTIONS}
+                        localForm={localForm}
+                      />
+                    )}
+                  />
+                </FormControl>
                 <Button
                   isLoading={isSubmitting || sending}
                   type="submit"

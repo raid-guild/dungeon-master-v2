@@ -48,13 +48,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
-  console.log('raid', raid);
-
-  const raidCategoryMapped = RAID_CATEGORY.map((category) => ({
-    label: category,
-    value: category,
-  }));
-
   async function onSubmit(values) {
     setSending(true);
 

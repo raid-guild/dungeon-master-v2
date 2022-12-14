@@ -80,6 +80,43 @@ export const DELIVERY_PRIORITIES = [
 
 export const SUBMISSION_TYPE = ['Paid', 'Unpaid'];
 
+export const SKILLS_DISPLAY_OPTIONS = [
+  {
+    label: 'Frontend Dev',
+    value: 'FRONTEND',
+  },
+  {
+    label: 'Backend Dev',
+    value: 'BACKEND',
+  },
+  {
+    label: 'Solidity',
+    value: 'SOLIDITY',
+  },
+  {
+    label: 'BizDev',
+    value: 'BIZ_DEV',
+  },
+  {
+    label: 'Community',
+    value: 'COMMUNITY',
+  },
+  // {PROJECT_MANAGEMENT: 'Project Management',}
+  // {FINANCE: 'Finance'},
+  // {PRODUCT_DESIGN: 'Product Design'},
+  // UX_RESEARCH: 'UX Research',
+  // GAME_THEORY: 'Game Theory',
+  // DEVOPS: 'DevOps',
+  // TOKENOMICS: 'Tokenomics',
+  // CONTENT: 'Content',
+  // MEMES: 'Memes',
+  // VISUAL_DESIGN: 'Visual Design',
+  // UI_DESIGN: 'UI Design',
+  // ILLUSTRATION: 'Illustration',
+  // LEGAL: 'Legal',
+  // ACCOUNTING: 'Accounting',
+];
+
 export const SKILLS_DISPLAY = (skill: string) => {
   const skillsMap = {
     FRONTEND: 'Frontend Dev',

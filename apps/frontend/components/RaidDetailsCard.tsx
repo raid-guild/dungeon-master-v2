@@ -94,8 +94,6 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   raid,
   consultation,
 }: RaidProps) => {
-  console.log('raid', raid);
-  console.log('consultation', consultation);
   const keyLinkItems = [
     consultation?.link && {
       label: 'Project Specs',

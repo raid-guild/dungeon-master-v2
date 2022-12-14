@@ -36,7 +36,6 @@ const Member = () => {
     setModals({ memberForm: true });
   };
 
-  console.log('member top level', member);
   return (
     <>
       <NextSeo title="Member" />
@@ -93,6 +92,7 @@ const Member = () => {
           <UpdateMemberForm
             memberId={_.get(member, 'id')}
             member={member}
+            application={_.get(member, 'application')}
             closeModal={closeModals}
           />
         }

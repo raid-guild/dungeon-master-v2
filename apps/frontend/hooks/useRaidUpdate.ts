@@ -26,7 +26,6 @@ const useRaidUpdate = ({ token, raidId }) => {
           'raidDetail',
           data?.data.update_raids_by_pk?.id,
         ]); // invalidate raidDetail with id from the successful mutation response
-        // queryClient.invalidateQueries(['raidDetail']);
         queryClient.invalidateQueries(['raidList']); // invalidate the raidList
 
         toast({

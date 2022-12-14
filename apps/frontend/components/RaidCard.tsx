@@ -46,7 +46,6 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
 
-  console.log('raid', raid);
   return (
     <Card variant="withHeader">
       <Flex
