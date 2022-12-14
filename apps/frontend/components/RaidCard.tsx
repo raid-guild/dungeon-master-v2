@@ -41,7 +41,6 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
     BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
   const projectType = _.get(consultation, 'projectType.projectType');
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
-  console.log(consultation);
 
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
