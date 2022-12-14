@@ -1,21 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, MEMBER_UPDATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
-import { MemberUpdateType } from '../utils';
+import { IMember } from '../utils';
 
 const useMemberUpdate = ({ token, memberId }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: MemberUpdateType) => {
+    async ({ ...args }: IMember) => {
       console.log('args', args);
       if (!memberId || !token) return;
       const { data } = await client(token).mutate({
         mutation: MEMBER_UPDATE_MUTATION,
         variables: {
           id: memberId,
-          ...args,
+          member_updates: args,
         },
       });
 

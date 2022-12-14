@@ -3,28 +3,9 @@ import { gql } from '@apollo/client';
 export const MEMBER_UPDATE_MUTATION = gql`
   mutation MemberUpdateMutation(
     $id: uuid!
-    $name: String
-    $ens_name: String
-    $email_address: String
-    $guild_class: guild_classes_enum
-    $github_handle: String
-    $discord_handle: String
-    $telegram_handle: String
-    $twitter_handle: String
+    $member_updates: members_set_input!
   ) {
-    update_members_by_pk(
-      pk_columns: { id: $id }
-      _set: {
-        name: $name
-        ens_name: $ens_name
-        email_address: $email_address
-        guild_class: $guild_class
-        github_handle: $github_handle
-        discord_handle: $discord_handle
-        telegram_handle: $telegram_handle
-        twitter_handle: $twitter_handle
-      }
-    ) {
+    update_members_by_pk(pk_columns: { id: $id }, _set: $member_updates) {
       ...MemberDetail
     }
   }
@@ -36,7 +17,7 @@ export const MEMBER_UPDATE_MUTATION = gql`
     ens_name
     discord_handle
     twitter_handle
-    github_handle
+    github_handledodocke
     telegram_handle
     guild_class
     applicationByApplication {

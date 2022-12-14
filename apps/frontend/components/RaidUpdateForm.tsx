@@ -84,6 +84,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
+    // these aren't on the raid_set_input but are on the raid object
 
     const raidWithoutUpdateValues = _.omit(
       raid,
@@ -103,6 +104,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       'escrowIndex',
       'raidCategory'
     );
+
     await updateRaidStatus({
       name: values.raidName ?? raid.raidName,
       category_key: values.raidCategory ?? raid.raidCategory.raidCategory,

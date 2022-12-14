@@ -34,6 +34,8 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     memberId,
   });
 
+  console.log('member', memberId);
+
   const localForm = useForm({
     mode: 'all',
   });
@@ -50,6 +52,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     setSending(true);
     const memberWithoutUpdateValues = _.omit(
       member,
+      'application',
       'name',
       'ensName',
       'emailAddress',
@@ -60,13 +63,13 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     );
     await updateMemberStatus({
       name: values.memberName ?? member.name,
-      ens_name: values.ensName ?? member.ensName,
-      email_address: values.emailAddress ?? member.emailAddress,
-      guild_class: values.guildClass ?? member.guildClass,
-      github_handle: values.githubHandle ?? member.githubHandle,
-      discord_handle: values.discordHandle ?? member.discordHandle,
-      telegram_handle: values.telegramHandle ?? member.telegramHandle,
-      twitter_handle: values.twitterHandle ?? member.twitterHandle,
+      // ens_name: values.ensName ?? member.ensName,
+      // email_address: values.emailAddress ?? member.email,
+      guild_class: { guild_class: values.guildClass ?? member.guildClass },
+      // github_handle: values.githubHandle ?? member.githubHandle,
+      // discord_handle: values.discordHandle ?? member.discordHandle,
+      // telegram_handle: values.telegramHandle ?? member.telegramHandle,
+      // twitter_handle: values.twitterHandle ?? member.twitterHandle,
       // category: values.raidCategory,
       // status: raid.status ?? raid.status,
       // start_date: values.startDate ?? raid.startDate,
