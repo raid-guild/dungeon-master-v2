@@ -7,6 +7,7 @@ export const MEMBER_LIST_QUERY = gql`
       name
       eth_address
       contact_info {
+        id
         email
         discord
         telegram
@@ -46,6 +47,7 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
       name
       eth_address
       contact_info {
+        id
         email
         discord
         twitter

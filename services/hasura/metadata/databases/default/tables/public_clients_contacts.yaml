@@ -8,6 +8,14 @@ object_relationships:
   - name: contact
     using:
       foreign_key_constraint_on: contact_id
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - client_id
+        - contact_id
+        - id
 select_permissions:
   - role: member
     permission:
@@ -16,3 +24,12 @@ select_permissions:
         - contact_id
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - client_id
+        - contact_id
+        - id
+      filter: {}
+      check: null

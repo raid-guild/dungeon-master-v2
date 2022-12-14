@@ -15,13 +15,17 @@ import { useSession } from 'next-auth/react';
 import { useEnsAvatar } from 'wagmi';
 import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
+import ModalWrapper from '../../components/ModalWrapper';
 import { memberDisplayName, GUILD_CLASS_ICON } from '../../utils';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
 import MiniRaidCard from '../../components/MiniRaidCard';
+import { useOverlay } from '../../contexts/OverlayContext';
+import UpdateMemberForm from '../../components/MemberUpdateForm';
 
 const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 
 // TODO remove hardcoded limits on past and active raids
+
 
 const Member = () => {
   const { data: session } = useSession();
@@ -42,6 +46,12 @@ const Member = () => {
     ),
   };
   console.log('member details: ', pastAndActiveRaids);
+  const localOverlay = useOverlay();
+  const { setModals, closeModals } = localOverlay;
+
+  const handleShowUpdateModal = () => {
+    setModals({ memberForm: true });
+  };
 
   return (
     <>
@@ -78,7 +88,9 @@ const Member = () => {
                   <Text>⛺️ Not Raiding</Text>
                 )}
               </Badge>
-              <Button variant="outline">Edit</Button>
+              <Button variant="outline" onClick={handleShowUpdateModal}>
+                Edit
+              </Button>
             </HStack>
           </Flex>
         }
@@ -137,6 +149,20 @@ const Member = () => {
           </Flex>
         </Flex>
       </SiteLayout>
+      <ModalWrapper
+        name="memberForm"
+        size="xl"
+        title="Update Member Details"
+        localOverlay={localOverlay}
+        content={
+          <UpdateMemberForm
+            memberId={_.get(member, 'id')}
+            member={member}
+            application={_.get(member, 'application')}
+            closeModal={closeModals}
+          />
+        }
+      />
     </>
   );
 };

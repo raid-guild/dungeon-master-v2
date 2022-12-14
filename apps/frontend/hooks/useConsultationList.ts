@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, CONSULTATION_LIST_QUERY } from '../gql';
 import { camelize, IConsultation } from '../utils';
 
@@ -30,7 +30,7 @@ const useConsultationList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IConsultation>>, Error>(
-    'consultationList',
+    ['consultationList'],
     ({ pageParam = 0 }) => consultationQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {

@@ -23,7 +23,6 @@ import MemberAvatar from './MemberAvatar';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
-import { IConsultation, IRaid } from '../utils';
 import {
   PROJECT_TYPE_DISPLAY,
   RAID_CATEGORY_DISPLAY,
@@ -33,6 +32,7 @@ import {
 } from '../utils/constants';
 import { displayDate } from '../utils/general';
 import MemberAvatarStack from './MemberAvatarStack';
+import { IConsultation, IRaid } from '../utils';
 
 interface RaidProps {
   raid?: IRaid;
@@ -40,20 +40,19 @@ interface RaidProps {
 }
 
 const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
-  const id = _.get(raid || consultation, 'id');
-  const submissionType = _.get(consultation, 'submissionType.submissionType');
-  const description = _.get(consultation, 'description');
-  const budget =
-    BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
-  const projectType = PROJECT_TYPE_DISPLAY[_.get(consultation, 'projectType')];
-  const raidCategory = RAID_CATEGORY_DISPLAY[_.get(raid, 'category', '-')];
-  const rolesRequired = _.map(_.get(raid, 'rolesRequired', []), 'role');
   const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
   const uniqueServicesRequired = _.uniq(
     _.map(servicesRequired, (service: { guildService: string }) =>
       _.get(service, 'guildService.guildService')
     )
   );
+  const id = _.get(raid || consultation, 'id');
+  const submissionType = _.get(consultation, 'submissionType.submissionType');
+  const description = _.get(consultation, 'description');
+  const budget =
+    BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
+  const projectType = _.get(consultation, 'projectType.projectType');
+  const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
 
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
   const raidParty = _.map(_.get(raid, 'raidParties', []), 'member');
@@ -203,7 +202,14 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
-          <InfoStack label="Category" details={raidCategory} />
+          <InfoStack
+            label="Category"
+            details={
+              RAID_CATEGORY_DISPLAY[
+                _.get(raid, 'raidCategory.raidCategory', '-')
+              ]
+            }
+          />
           <InfoStack label="Project Type" details={projectType || '-'} />
         </SimpleGrid>
         {/* display comment  */}

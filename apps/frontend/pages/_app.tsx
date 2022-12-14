@@ -3,11 +3,15 @@ import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import { SessionProvider } from 'next-auth/react';
 import { WagmiConfig } from 'wagmi';
-import { QueryClient, QueryClientProvider, QueryCache } from 'react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+} from '@tanstack/react-query';
 import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
@@ -18,6 +22,12 @@ import { OverlayContextProvider } from '../contexts/OverlayContext';
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
   const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: 120 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
     queryCache: new QueryCache({
       onError: (error) => {
         toast({
@@ -32,7 +42,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <RGThemeProvider>
       <DefaultSeo
-        titleTemplate="%s | Dungeon Master v1"
+        titleTemplate="%s | Dungeon Master v1.5"
         title="Dungeon Master"
         defaultTitle="Raid Guild | Dungeon Master v1.5"
         description="Adventurers, come and gather around the campfire."

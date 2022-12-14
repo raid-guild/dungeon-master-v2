@@ -7,6 +7,7 @@ import {
   ModalCloseButton,
   BoxProps,
 } from '@chakra-ui/react';
+import { Heading } from '@raidguild/design-system';
 import { OverlayContextType, IModals } from '../contexts/OverlayContext';
 import React from 'react';
 
@@ -42,8 +43,8 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
         minWidth="20vw"
         paddingY={8}
       >
-        <ModalHeader color={props.color ? props.color : 'whiteAlpha.900'}>
-          {title}
+        <ModalHeader>
+          <Heading>{title}</Heading>
         </ModalHeader>
         <ModalCloseButton color="whiteAlpha.700" />
         <ModalBody>{content}</ModalBody>
