@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { IMember } from './definitions';
+import { IMember } from '../types';
 
 export const truncateAddress = (addr: string | undefined): string =>
   addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : '';

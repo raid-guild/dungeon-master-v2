@@ -6,10 +6,17 @@ export const MEMBER_LIST_QUERY = gql`
       id
       name
       eth_address
-      guild_classes {
+      contact_info {
+        email
+        discord
+        telegram
+        twitter
+        github
+      }
+      guild_class {
         guild_class
       }
-      applicationByApplication {
+      application {
         introduction
       }
     }
@@ -22,7 +29,10 @@ export const MEMBER_SLIM_LIST_QUERY = gql`
       id
       name
       eth_address
-      guild_classes {
+      contact_info {
+        telegram
+      }
+      guild_class {
         guild_class
       }
     }
@@ -35,15 +45,26 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
       id
       name
       eth_address
-      guild_classes {
+      contact_info {
+        email
+        discord
+        twitter
+        github
+        telegram
+      }
+      guild_class {
         guild_class
       }
-      applicationByApplication {
+      application {
         introduction
       }
-      skills {
-        skill
-        skill_type
+      members_skills {
+        skill {
+          skill
+        }
+        skill_type {
+          skill_type
+        }
       }
     }
   }
@@ -55,6 +76,9 @@ export const MEMBER_DETAIL_QUERY = gql`
     members_by_pk(id: $id) {
       id
       name
+      contact_info {
+        email
+      }
       eth_address
       raid_party {
         raidByRaid {

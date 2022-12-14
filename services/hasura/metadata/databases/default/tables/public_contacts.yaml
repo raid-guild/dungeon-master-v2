@@ -1,0 +1,32 @@
+table:
+  name: contacts
+  schema: public
+object_relationships:
+  - name: contact_info
+    using:
+      foreign_key_constraint_on: contact_info_id
+array_relationships:
+  - name: clients_contacts
+    using:
+      foreign_key_constraint_on:
+        column: contact_id
+        table:
+          name: clients_contacts
+          schema: public
+  - name: consultations_contacts
+    using:
+      foreign_key_constraint_on:
+        column: contact_id
+        table:
+          name: consultations_contacts
+          schema: public
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - bio
+        - eth_address
+        - name
+        - contact_info_id
+        - id
+      filter: {}

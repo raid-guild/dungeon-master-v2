@@ -32,7 +32,7 @@ const Raid = () => {
           <Box w="60%">
             <RaidDetailsCard
               raid={raid}
-              consultation={_.get(raid, 'consultationByConsultation')}
+              consultation={_.get(raid, 'consultation')}
             />
           </Box>
 

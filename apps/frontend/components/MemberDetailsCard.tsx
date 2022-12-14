@@ -32,30 +32,50 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   member,
   application,
 }: MemberProps) => {
-  const copyDiscord = useClipboard(_.get(member, 'discordHandle'));
-  const copyEns = useClipboard(_.get(member, 'ensName'));
-  const copyEth = useClipboard(_.get(member, 'ethAddress'));
+  const copyDiscord = useClipboard(
+    _.get(
+      member,
+      'contactInfo.discord',
+      _.get(application, 'contactInfo.discord')
+    )
+  );
+  const copyEth = useClipboard(
+    _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
+  );
+  console.log(application);
 
   const memberLinks = [
-    _.get(member, 'githubHandle', _.get(application, 'githubHandle')) && {
+    _.get(
+      member,
+      'contactInfo.github',
+      _.get(application, 'contactInfo.github')
+    ) && {
       href: `https://github.com/${_.get(
         member,
-        'githubHandle',
-        _.get(application, 'githubHandle')
+        'contactInfo.github',
+        _.get(application, 'contactInfo.github')
       )}`,
       tooltip: `Go to ${_.get(
         member,
         'name',
         _.get(application, 'name')
       )}'s GitHub profile`,
-      label: _.get(member, 'githubHandle', _.get(application, 'githubHandle')),
+      label: _.get(
+        member,
+        'contactInfo.github',
+        _.get(application, 'contactInfo.github')
+      ),
       icon: FaGithub,
     },
-    _.get(member, 'twitterHandle', _.get(application, 'twitterHandle')) && {
+    _.get(
+      member,
+      'contactInfo.twitter',
+      _.get(application, 'contactInfo.twitter')
+    ) && {
       href: `https://twitter.com/${_.get(
         member,
-        'twitterHandle',
-        _.get(application, 'twitterHandle')
+        'contactInfo.twitter',
+        _.get(application, 'contactInfo.twitter')
       )}`,
       tooltip: `Go to ${_.get(
         member,
@@ -64,12 +84,16 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
       )}'s Twitter profile`,
       label: _.get(
         member,
-        'twitterHandle',
-        _.get(application, 'twitterHandle')
+        'contactInfo.twitter',
+        _.get(application, 'contactInfo.twitter')
       ),
       icon: FaTwitter,
     },
-    _.get(member, 'discordHandle', _.get(application, 'discordHandle')) && {
+    _.get(
+      member,
+      'contactInfo.discord',
+      _.get(application, 'contactInfo.discord')
+    ) && {
       tooltip: `Go to ${_.get(
         member,
         'name',
@@ -77,26 +101,20 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
       )}'s Discord profile`,
       label: _.get(
         member,
-        'discordHandle',
-        _.get(application, 'discordHandle')
+        'contactInfo.discord',
+        _.get(application, 'contactInfo.discord')
       ),
       icon: FaDiscord,
       onClick: copyDiscord.onCopy,
     },
     (_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' ||
       _.get(member, 'ensName', _.get(application, 'ensAddress')) !== null) && {
-      tooltip: _.get(member, 'ensName', _.get(application, 'ensName'))
-        ? 'Copy ENS name'
-        : 'Copy ETH address',
-      label:
-        _.get(member, 'ensName', _.get(application, 'ensName')) ||
-        truncateAddress(
-          _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
-        ),
+      tooltip: 'Copy ETH address',
+      label: truncateAddress(
+        _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
+      ),
       icon: FaEthereum,
-      onClick: _.get(member, 'ensName', _.get(application, 'ethAddress'))
-        ? copyEns.onCopy
-        : copyEth.onCopy,
+      onClick: copyEth.onCopy,
     },
   ].filter((x) => x);
 
@@ -104,20 +122,28 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
     {
       label: 'Primary Skills',
       skills: _.map(
-        _.filter(_.get(member, 'skills', _.get(application, 'skills')), [
-          'skillType',
-          'PRIMARY',
-        ]),
+        _.filter(
+          _.get(
+            member,
+            'membersSkills',
+            _.get(application, 'applicationsSkills')
+          ),
+          ['skillType.skillType', 'PRIMARY']
+        ),
         'skill'
       ),
     },
     {
       label: 'Secondary Skills',
       skills: _.map(
-        _.filter(_.get(member, 'skills', _.get(application, 'skills')), [
-          'skillType',
-          'SECONDARY',
-        ]),
+        _.filter(
+          _.get(
+            member,
+            'membersSkills',
+            _.get(application, 'applicationsSkills')
+          ),
+          ['skillType.skillType', 'SECONDARY']
+        ),
         'skill'
       ),
     },
@@ -151,9 +177,9 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
                   marginBottom={1}
                   color="raid"
                   bgColor="gray.700"
-                  key={`${block.label}-${skill}`}
+                  key={`${block.label}-${_.get(skill, 'skill')}`}
                 >
-                  {SKILLS_DISPLAY(skill)}
+                  {SKILLS_DISPLAY(_.get(skill, 'skill'))}
                 </Badge>
               ))}
             </Flex>

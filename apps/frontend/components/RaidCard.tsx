@@ -16,14 +16,20 @@ import {
   Card,
   AvatarGroup,
   RoleBadge,
-  Avatar
+  Avatar,
 } from '@raidguild/design-system';
 import MemberAvatar from './MemberAvatar';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
 import { IConsultation, IRaid } from '../utils';
-import { PROJECT_TYPE_DISPLAY, RAID_CATEGORY_DISPLAY, BUDGET_DISPLAY, GUILD_CLASS_ICON, SKILLS_DISPLAY } from '../utils/constants';
+import {
+  PROJECT_TYPE_DISPLAY,
+  RAID_CATEGORY_DISPLAY,
+  BUDGET_DISPLAY,
+  GUILD_CLASS_ICON,
+  SKILLS_DISPLAY,
+} from '../utils/constants';
 import { displayDate } from '../utils/general';
 
 interface RaidProps {
@@ -39,10 +45,19 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const projectType = PROJECT_TYPE_DISPLAY[_.get(consultation, 'projectType')];
   const raidCategory = RAID_CATEGORY_DISPLAY[_.get(raid, 'category', '-')];
   const rolesRequired = _.map(_.get(raid, 'rolesRequired', []), 'role');
+  const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
+  const uniqueServicesRequired = _.uniq(
+    _.map(servicesRequired, (service: { guildService: string }) =>
+      _.get(service, 'guildService.guildService')
+    )
+  );
 
   // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
-  const raidParty = _.map(_.get(raid, 'raidParty', []), 'memberByMember.guildClass');
+  const raidParty = _.map(
+    _.get(raid, 'raidParty', []),
+    'memberByMember.guildClass'
+  );
   const raidCleric = _.get(raid, 'memberByCleric');
   const raidStatus = _.get(raid, 'status');
 
@@ -51,12 +66,11 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   if (raidStatus === 'RAIDING') {
     raidDate = _.get(raid, 'startDate');
     raidDateLabel = 'Started on: ';
-    
   } else if (raidStatus === 'SHIPPED' || raidStatus === 'LOST') {
     raidDate = _.get(raid, 'endDate');
     raidDateLabel = 'Ended on: ';
   }
-  
+
   return (
     <Card variant="withHeader">
       <Flex
@@ -75,10 +89,10 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               transition="all ease-in-out .25s"
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
-              {_.get(raid, 'name', _.get(consultation, 'projectName'))}
+              {_.get(raid, 'name', _.get(consultation, 'name'))}
             </Heading>
           </Link>
-          {submissionType === 'Paid' && (
+          {submissionType === 'PAID' && (
             <Tooltip label="Paid Submission" placement="right" hasArrow>
               <span>
                 <Icon as={AiOutlineDollarCircle} w={6} h={6} color="raid" />
@@ -86,12 +100,15 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             </Tooltip>
           )}
           <Badge colorScheme="green">
-            {_.get(raid, 'status', _.get(consultation, 'status'))}
+            {_.get(
+              raid,
+              'raidStatus.raidStatus',
+              _.get(consultation, 'consultationStatus.consultationStatus')
+            )}
           </Badge>
         </HStack>
         <HStack alignItems={'start'}>
           <VStack mr={'3'}>
-
             <Heading size="sm">Cleric</Heading>
             <MemberAvatar member={raidCleric} />
           </VStack>
@@ -185,24 +202,24 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           <InfoStack label="Category" details={raidCategory} />
           <InfoStack label="Project Type" details={projectType || '-'} />
         </SimpleGrid>
-          {rolesRequired?.length > 0 && (
-            <VStack align="start">
-              <Text as="span" color="gray.100" fontSize="small">
-                Roles Needed
-              </Text>
-              <HStack>
-                {rolesRequired?.map((role) => (
-                  <Text color="gray.100" key={role}>
-                    {SKILLS_DISPLAY(role)}
-                  </Text>
-                ))}
-              </HStack>
-            </VStack>
-          )}
-          {/* display comment  */}
-          <Flex direction="column">
-                {/* todo: display first comment, truncated, with careted date. Display full text inside tooltip */}
-          </Flex>
+        {rolesRequired?.length > 0 && (
+          <VStack align="start">
+            <Text as="span" color="gray.100" fontSize="small">
+              Roles Needed
+            </Text>
+            <HStack>
+              {rolesRequired?.map((role) => (
+                <Text color="gray.100" key={role}>
+                  {SKILLS_DISPLAY(role)}
+                </Text>
+              ))}
+            </HStack>
+          </VStack>
+        )}
+        {/* display comment  */}
+        <Flex direction="column">
+          {/* todo: display first comment, truncated, with careted date. Display full text inside tooltip */}
+        </Flex>
       </Flex>
     </Card>
   );

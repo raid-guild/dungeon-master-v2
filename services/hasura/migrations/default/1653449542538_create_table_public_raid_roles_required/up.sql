@@ -1,9 +1,9 @@
-CREATE TABLE "public"."raid_roles_required" (
+CREATE TABLE "public"."raids_roles_required" (
   "id" uuid NOT NULL DEFAULT gen_random_uuid(),
-  "raid" uuid NOT NULL,
+  "raid_id" uuid NOT NULL,
   "role" text NOT NULL,
   PRIMARY KEY ("id") ,
-  FOREIGN KEY ("raid") REFERENCES "public"."raids"("id") ON UPDATE restrict ON DELETE restrict,
+  FOREIGN KEY ("raid_id") REFERENCES "public"."raids"("id") ON UPDATE restrict ON DELETE restrict,
   FOREIGN KEY ("role") REFERENCES "public"."guild_classes"("guild_class") ON UPDATE restrict ON DELETE restrict,
   UNIQUE ("id")
 );

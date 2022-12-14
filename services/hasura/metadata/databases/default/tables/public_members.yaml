@@ -1,67 +1,89 @@
 table:
-  schema: public
   name: members
+  schema: public
 object_relationships:
-  - name: applicationByApplication
+  - name: application
     using:
-      foreign_key_constraint_on: application
-  - name: guildClassByGuildClass
+      foreign_key_constraint_on: application_id
+  - name: contact_info
     using:
-      foreign_key_constraint_on: guild_class
-  - name: memberTypeByMemberType
+      foreign_key_constraint_on: contact_info_id
+  - name: guild_class
     using:
-      foreign_key_constraint_on: member_type
+      foreign_key_constraint_on: primary_class_key
+  - name: member
+    using:
+      foreign_key_constraint_on: championed_by_id
+  - name: member_type
+    using:
+      foreign_key_constraint_on: member_type_key
 array_relationships:
   - name: applications
     using:
       foreign_key_constraint_on:
-        column: referred_by
+        column: referred_by_id
         table:
-          schema: public
           name: applications
+          schema: public
+  - name: members
+    using:
+      foreign_key_constraint_on:
+        column: championed_by_id
+        table:
+          name: members
+          schema: public
+  - name: members_skills
+    using:
+      foreign_key_constraint_on:
+        column: member_id
+        table:
+          name: members_skills
+          schema: public
+  - name: portfolios_roles
+    using:
+      foreign_key_constraint_on:
+        column: member_id
+        table:
+          name: portfolios_roles
+          schema: public
   - name: raid_parties
     using:
       foreign_key_constraint_on:
-        column: member
+        column: member_id
         table:
-          schema: public
           name: raid_parties
+          schema: public
   - name: raids
     using:
       foreign_key_constraint_on:
-        column: cleric
+        column: cleric_id
         table:
-          schema: public
           name: raids
-  - name: skills
+          schema: public
+  - name: updates
     using:
       foreign_key_constraint_on:
-        column: member
+        column: member_id
         table:
+          name: updates
           schema: public
-          name: members_skills
 select_permissions:
   - role: member
     permission:
       columns:
-        - id
-        - legacy_id
-        - v1_id
-        - name
-        - email_address
-        - discord_handle
-        - telegram_handle
-        - twitter_handle
-        - github_handle
-        - eth_address
-        - ens_name
-        - guild_class
-        - membership_date
-        - member_type
         - is_raiding
-        - championed_by
-        - application
+        - membership_date
         - application_v1
+        - eth_address
+        - legacy_id
+        - member_type_key
+        - name
+        - primary_class_key
+        - v1_id
         - created_at
         - updated_at
+        - application_id
+        - championed_by_id
+        - contact_info_id
+        - id
       filter: {}

@@ -10,12 +10,21 @@ type MemberAvatarProps = {
 
 const MemberAvatar = ({ member }: MemberAvatarProps) => {
   const address = _.get(member, 'ethAddress');
-  const { data: ensName } = useEnsName({ address, chainId: chain.mainnet.id, enabled: !!address });
-  let { data: avatarSrc } = useEnsAvatar({ address, chainId: chain.mainnet.id, enabled: !!address, cacheTime: 360_000 });
+  const { data: ensName } = useEnsName({
+    address,
+    chainId: chain.mainnet.id,
+    enabled: !!address,
+  });
+  let { data: avatarSrc } = useEnsAvatar({
+    address,
+    chainId: chain.mainnet.id,
+    enabled: !!address,
+    cacheTime: 360_000,
+  });
   if (!avatarSrc) {
     avatarSrc = blockies.create({ seed: address }).toDataURL();
   }
-  
+
   return (
     <Tooltip
       label={memberDisplayName(member, ensName)}

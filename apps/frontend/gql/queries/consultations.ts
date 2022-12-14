@@ -8,22 +8,43 @@ export const CONSULTATION_LIST_QUERY = gql`
   ) {
     consultations(limit: $limit, offset: $offset, where: $where) {
       id
-      budget
-      consultation_hash
-      services_required {
-        guild_service
+      budget_option {
+        budget_option
       }
-      contact_name
-      contact_bio
-      contact_email
-      desired_delivery
-      delivery_priorities
-      project_name
-      project_desc
-      project_link
-      project_specs
-      project_type
-      submission_type
+      consultation_hash
+      consultations_services_required {
+        guild_service {
+          guild_service
+        }
+      }
+      consultation_status {
+        consultation_status
+      }
+      consultations_contacts {
+        contact {
+          name
+          bio
+          contact_info {
+            email
+          }
+        }
+      }
+      desired_delivery_date
+      delivery_priority {
+        delivery_priority
+      }
+      name
+      description
+      link
+      available_project_spec {
+        available_project_spec
+      }
+      project_type {
+        project_type
+      }
+      submission_type {
+        submission_type
+      }
     }
   }
 `;
@@ -32,22 +53,40 @@ export const CONSULTATION_DETAIL_QUERY = gql`
   query ConsultationDetail($id: uuid!) {
     consultations_by_pk(id: $id) {
       id
-      budget
-      consultation_hash
-      services_required {
-        guild_service
+      budget_option {
+        budget_option
       }
-      contact_name
-      contact_bio
-      contact_email
-      desired_delivery
-      delivery_priorities
-      project_name
-      project_desc
-      project_link
-      project_specs
-      project_type
-      submission_type
+      consultation_hash
+      consultations_services_required {
+        guild_service {
+          guild_service
+        }
+      }
+      consultations_contacts {
+        contact {
+          name
+          bio
+          contact_info {
+            email
+          }
+        }
+      }
+      desired_delivery_date
+      delivery_priority {
+        delivery_priority
+      }
+      name
+      description
+      link
+      available_project_spec {
+        available_project_spec
+      }
+      project_type {
+        project_type
+      }
+      submission_type {
+        submission_type
+      }
     }
   }
 `;

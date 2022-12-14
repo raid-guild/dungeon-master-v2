@@ -7,6 +7,7 @@ import useDefaultTitle from '../hooks/useDefaultTitle';
 import MemberCard from '../components/MemberCard';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
+import { IMember } from '../types';
 
 const MemberList = () => {
   const title = useDefaultTitle();
@@ -36,10 +37,10 @@ const MemberList = () => {
           }
         >
           <Stack spacing={4}>
-            {_.map(members, (member) => (
+            {_.map(members, (member: IMember) => (
               <MemberCard
                 member={member}
-                application={_.get(member, 'applicationByApplication')}
+                application={_.get(member, 'application')}
                 key={_.get(member, 'id')}
               />
             ))}

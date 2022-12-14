@@ -44,7 +44,9 @@ const Member = () => {
                   bg="black"
                   icon={
                     <RoleBadge
-                      roleName={GUILD_CLASS_ICON[_.get(member, 'guildClass')]}
+                      roleName={
+                        GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
+                      }
                       height="64px"
                       width="64px"
                     />
@@ -69,10 +71,10 @@ const Member = () => {
         <Flex>
           <MemberDetailsCard
             member={member}
-            application={_.get(member, 'applicationByApplication')}
+            application={_.get(member, 'application')}
           />
           {/* <RaidsFeed /> */}
-          <Flex 
+          <Flex
             direction="column"
             w="30%"
             ml="4"
@@ -84,7 +86,6 @@ const Member = () => {
             <Heading size="sm">Active Raids</Heading>
             <Heading size="sm">Past Raids</Heading>
           </Flex>
-
         </Flex>
       </SiteLayout>
     </>

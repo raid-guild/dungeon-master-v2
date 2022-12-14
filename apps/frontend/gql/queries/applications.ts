@@ -9,13 +9,16 @@ export const APPLICATION_LIST_QUERY = gql`
     applications(limit: $limit, offset: $offset, where: $where) {
       id
       name
+      contact_info {
+        email
+        discord
+        telegram
+        twitter
+        github
+      }
       eth_address
-      ens_name
-      discord_handle
       introduction
       passion
-      telegram_handle
-      twitter_handle
       why_raidguild
       created_at
       updated_at
@@ -26,20 +29,23 @@ export const APPLICATION_LIST_QUERY = gql`
 export const APPLICATION_DETAIL_QUERY = gql`
   query ApplicationDetail($id: uuid!) {
     applications_by_pk(id: $id) {
-      comments
-      availability
-      crypto_experience
       cohort_availability {
         cohort_availability
       }
+      crypto_experience
       crypto_thrills
-      dao_familiarity
-      discord_handle
-      email_address
-      ens_name
+      dao_familiarity {
+        dao_familiarity
+      }
+      contact_info {
+        email
+        discord
+        github
+        telegram
+        twitter
+      }
       eth_address
       favorite_media
-      github_handle
       handbook_read
       id
       introduction
@@ -47,17 +53,23 @@ export const APPLICATION_DETAIL_QUERY = gql`
       name
       passion
       pledge_readiness
-      referred_by
-      skill_type
-      telegram_handle
-      twitter_handle
+      referred_by_id
+      technical_skill_type {
+        skill_type
+      }
+      created_at
       updated_at
       v1_id
       why_raidguild
-      skills {
-        skill
-        skill_type
+      applications_skills {
+        skill {
+          skill
+        }
+        skill_type {
+          skill_type
+        }
       }
+      comments
     }
   }
 `;
