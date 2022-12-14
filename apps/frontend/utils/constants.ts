@@ -54,6 +54,11 @@ export const PREFERRED_CONTACT = ['Discord', 'Email', 'Telegram'];
 
 export const PROJECT_TYPE = ['New', 'Existing'];
 
+export const PROJECT_TYPE_DISPLAY = {
+  NEW: 'New',
+  EXISTING: 'Existing'
+};
+
 export const AVAILABLE_PROJECT_SPECS = ['Yes', 'Partial', 'None'];
 
 export const BUDGET = [

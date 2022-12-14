@@ -68,6 +68,15 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
           skill_type
         }
       }
+      raid_parties {
+        raid {
+          name
+          id
+          raid_status {
+            raid_status
+          }
+        }
+      }
     }
   }
 `;
@@ -82,6 +91,15 @@ export const MEMBER_DETAIL_QUERY = gql`
         email
       }
       eth_address
+      raid_party {
+        raidByRaid {
+          name
+          created_at
+          start_date
+          end_date
+          status
+        }
+      }
     }
   }
 `;

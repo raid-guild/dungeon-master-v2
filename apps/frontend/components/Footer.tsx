@@ -12,7 +12,7 @@ const links = [
 ];
 
 const Footer = () => (
-  <Flex justify="space-around" mb="50px">
+  <Flex justify="space-around" mb="50px" mt="200px">
     <BuiltByRaidGuildComponent />
     <Stack>
       {_.map(links, (link) => (
