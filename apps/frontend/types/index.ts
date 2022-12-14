@@ -37,11 +37,12 @@ export interface IRaid {
 }
 
 type IContactInfo = {
+  id: string;
   email?: string;
-  discordHandle?: string;
-  githubHandle?: string;
-  twitterHandle?: string;
-  telegramHandle?: string;
+  discord?: string;
+  github?: string;
+  twitter?: string;
+  telegram?: string;
 };
 
 type IContact = {
@@ -54,7 +55,9 @@ export interface IMember {
   id: string;
   name: string;
   isRaiding: boolean;
-  guildClass: string;
+  guildClass: {
+    guildClass: string;
+  };
   skills: Skills[];
 
   // CONTACT

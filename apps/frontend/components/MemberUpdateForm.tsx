@@ -34,7 +34,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     memberId,
   });
 
-  console.log('member', memberId);
+  console.log('member', member);
 
   const localForm = useForm({
     mode: 'all',
@@ -55,25 +55,30 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
       'application',
       'name',
       'ensName',
+      'ethAddress',
       'emailAddress',
       'githubHandle',
       'discordHandle',
       'telegramHandle',
-      'twitterHandle'
+      'twitterHandle',
+      'guildClass',
+      'typename',
+      'membersSkills',
+      'contactInfo'
     );
     await updateMemberStatus({
-      name: values.memberName ?? member.name,
-      // ens_name: values.ensName ?? member.ensName,
-      // email_address: values.emailAddress ?? member.email,
-      guild_class: { guild_class: values.guildClass ?? member.guildClass },
-      // github_handle: values.githubHandle ?? member.githubHandle,
-      // discord_handle: values.discordHandle ?? member.discordHandle,
-      // telegram_handle: values.telegramHandle ?? member.telegramHandle,
-      // twitter_handle: values.twitterHandle ?? member.twitterHandle,
-      // category: values.raidCategory,
-      // status: raid.status ?? raid.status,
-      // start_date: values.startDate ?? raid.startDate,
-      // end_date: values.endDate ?? raid.endDate,
+      member_updates: {
+        name: values.memberName ?? member.name,
+        primary_class_key: values.guildClass ?? member.guildClass.guildClass,
+      },
+      contact_info_id: member.contactInfo.id,
+      contact_info_updates: {
+        email: values.emailAddress ?? member.contactInfo.email,
+        discord: values.discordHandle ?? member.contactInfo.discord,
+        github: values.githubHandle ?? member.contactInfo.github,
+        twitter: values.twitterHandle ?? member.contactInfo.twitter,
+        telegram: values.telegramHandle ?? member.contactInfo.telegram,
+      },
       ...memberWithoutUpdateValues,
     });
     closeModal();
@@ -179,7 +184,11 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   <FormLabel color="raid">Guild Class</FormLabel>
                   <Controller
                     name="guildClass"
-                    defaultValue={member?.guildClass ? member?.guildClass : ''}
+                    defaultValue={
+                      member?.guildClass.guildClass
+                        ? member?.guildClass.guildClass
+                        : ''
+                    }
                     control={control}
                     render={({ field }) => (
                       <Select

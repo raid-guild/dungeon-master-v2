@@ -36,6 +36,7 @@ const Member = () => {
     setModals({ memberForm: true });
   };
 
+  console.log('member top level', member);
   return (
     <>
       <NextSeo title="Member" />

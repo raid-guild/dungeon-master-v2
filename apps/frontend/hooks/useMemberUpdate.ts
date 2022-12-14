@@ -8,14 +8,17 @@ const useMemberUpdate = ({ token, memberId }) => {
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: IMember) => {
+    async ({ ...args }: any) => {
       console.log('args', args);
+      console.log('member id', memberId);
       if (!memberId || !token) return;
       const { data } = await client(token).mutate({
         mutation: MEMBER_UPDATE_MUTATION,
         variables: {
           id: memberId,
-          member_updates: args,
+          member_updates: args.member_updates,
+          contact_info_pk: args.contact_info_id,
+          contact_info_updates: args.contact_info_updates,
         },
       });
 
