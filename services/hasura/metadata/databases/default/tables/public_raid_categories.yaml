@@ -17,9 +17,22 @@ array_relationships:
         table:
           name: raids
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - raid_category
 select_permissions:
   - role: member
     permission:
       columns:
         - raid_category
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - raid_category
+      filter: {}
+      check: null

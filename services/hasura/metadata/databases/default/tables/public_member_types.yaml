@@ -10,9 +10,22 @@ array_relationships:
         table:
           name: members
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - member_type
 select_permissions:
   - role: member
     permission:
       columns:
         - member_type
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - member_type
+      filter: {}
+      check: null

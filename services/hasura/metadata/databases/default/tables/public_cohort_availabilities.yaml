@@ -10,9 +10,22 @@ array_relationships:
         table:
           name: applications
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - cohort_availability
 select_permissions:
   - role: member
     permission:
       columns:
         - cohort_availability
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - cohort_availability
+      filter: {}
+      check: null
