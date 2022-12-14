@@ -4,6 +4,7 @@
 
 export interface IRaid {
   id: string;
+  name: string;
   raidName: string;
   status: string;
   category: string;
@@ -206,6 +207,39 @@ export interface ChainList {
 
 export interface ChainIdMapping {
   [key: number]: Chain;
+}
+
+export interface IRaidUpdate {
+  id?: string;
+  raid_updates?: {
+    name?: string;
+    status_key?: string;
+    category_key?: string;
+    start_date?: string;
+    end_date?: string;
+  };
+
+  // // RELATIONSHIPS
+  // rolesRequired: {
+  //   role: string; // ENUM
+  // }[];
+  // raidCategory: {
+  //   raidCategory: string; // ENUM
+  // };
+  // raidParty: {
+  //   memberbyMember: IMember;
+  // }[];
+  // memberByCleric: IMember;
+  // consultationByConsultation: IConsultation;
+  // comments: IComment[];
+
+  // // LEGACY
+  // v1Id?: string;
+  // airtableId: string;
+  // escrowIndex: number;
+  // lockerHash: string;
+
+  // TIMELINE - ISO STRINGS
 }
 
 export interface IMemberUpdate {

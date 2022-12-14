@@ -42,29 +42,30 @@ StatusUpdateProps) => {
   // updated_at: timestamptz
   // v1_id: String
 
-  const raidWithoutUpdatedStatus = _.omit(
-    raid,
-    'status',
-    'airtableId',
-    'v1Id',
-    'lockerHash',
-    'invoiceAddress',
-    'raidCategory',
-    'raidParties',
-    'consultation',
-    'typename',
-    'raidStatus',
-    'cleric',
-    'raidsRolesRequired',
-    'createdAt',
-    'updatedAt',
-    'escrowIndex'
-  );
+  // const raidWithoutUpdatedStatus = _.omit(
+  //   raid,
+  //   'status',
+  //   'airtableId',
+  //   'v1Id',
+  //   'lockerHash',
+  //   'invoiceAddress',
+  //   'raidCategory',
+  //   'raidParties',
+  //   'consultation',
+  //   'typename',
+  //   'raidStatus',
+  //   'cleric',
+  //   'raidsRolesRequired',
+  //   'createdAt',
+  //   'updatedAt',
+  //   'escrowIndex'
+  // );
 
   const handleSetStatus = async (selectedStatus) => {
     await updateRaidStatus({
-      status_key: selectedStatus,
-      ...raidWithoutUpdatedStatus,
+      raid_updates: {
+        status_key: selectedStatus,
+      },
     });
     closeModal();
   };

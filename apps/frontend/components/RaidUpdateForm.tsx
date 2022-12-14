@@ -16,7 +16,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
-import { RAID_CATEGORY } from '../utils/constants';
+import { RAID_CATEGORY, RAID_CATEGORY_OPTIONS } from '../utils/constants';
 import useRaidUpdate from '../hooks/useRaidUpdate';
 import { useSession } from 'next-auth/react';
 
@@ -55,63 +55,17 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     value: category,
   }));
 
-  // const camelToSnakeCase = (str) =>
-  //   str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-
-  // const isObject = function (obj) {
-  //   return (
-  //     obj === Object(obj) && !Array.isArray(obj) && typeof obj !== 'function'
-  //   );
-  // };
-
-  // const keysToSnake = function (obj) {
-  //   if (isObject(obj)) {
-  //     const n = {};
-
-  //     Object.keys(obj).forEach((k) => {
-  //       n[camelToSnakeCase(k)] = keysToSnake(obj[k]);
-  //     });
-
-  //     return n;
-  //   } else if (Array.isArray(obj)) {
-  //     return obj.map((i) => {
-  //       return keysToSnake(i);
-  //     });
-  //   }
-
-  //   return obj;
-  // };
-
   async function onSubmit(values) {
     setSending(true);
-    // these aren't on the raid_set_input but are on the raid object
-
-    const raidWithoutUpdateValues = _.omit(
-      raid,
-      'status',
-      'airtableId',
-      'v1Id',
-      'lockerHash',
-      'invoiceAddress',
-      'raidParties',
-      'consultation',
-      'typename',
-      'raidStatus',
-      'cleric',
-      'raidsRolesRequired',
-      'createdAt',
-      'updatedAt',
-      'escrowIndex',
-      'raidCategory'
-    );
 
     await updateRaidStatus({
-      name: values.raidName ?? raid.raidName,
-      category_key: values.raidCategory ?? raid.raidCategory.raidCategory,
-      status_key: raid.status ?? raid.status,
-      start_date: values.startDate ?? raid.startDate,
-      end_date: values.endDate ?? raid.endDate,
-      ...raidWithoutUpdateValues,
+      raid_updates: {
+        name: values.raidName ?? raid.raidName,
+        category_key: values.raidCategory ?? raid.raidCategory.raidCategory,
+        status_key: raid.status ?? raid.status,
+        start_date: values.startDate ?? raid.startDate,
+        end_date: values.endDate ?? raid.endDate,
+      },
     });
     closeModal();
     setSending(false);
@@ -162,7 +116,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                       <Select
                         {...field}
                         name="raidCategory"
-                        options={raidCategoryMapped}
+                        options={RAID_CATEGORY_OPTIONS}
                         localForm={localForm}
                       />
                     )}

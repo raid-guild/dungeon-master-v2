@@ -9,6 +9,15 @@ export const RAID_CATEGORY = [
   'MARKETING',
 ];
 
+export const RAID_CATEGORY_OPTIONS = [
+  { label: 'Design Sprint', value: 'DESIGN_SPRINT' },
+  { label: 'Full Stack', value: 'FULL_STACK' },
+  { label: 'Wizarding', value: 'SMART_CONTRACTS' },
+  { label: 'Backend', value: 'BACKEND' },
+  { label: 'Frontend', value: 'FRONTEND' },
+  { label: 'Marketing', value: 'MARKETING' },
+];
+
 export const RAID_CATEGORY_DISPLAY = {
   DESIGN_SPRINT: 'Design Sprint',
   FULL_STACK: 'Full Stack',
