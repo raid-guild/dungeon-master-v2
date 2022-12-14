@@ -25,6 +25,14 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
     avatarSrc = blockies.create({ seed: address }).toDataURL();
   }
 
+  if (!address) {
+    return (
+      <Tooltip label={memberDisplayName(member)}>
+        <Avatar />
+      </Tooltip>
+    );
+  }
+
   return (
     <Tooltip
       label={memberDisplayName(member, ensName)}

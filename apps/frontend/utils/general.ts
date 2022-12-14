@@ -13,17 +13,15 @@ export const clearNonObjects = (array: any[]): object[] => {
 export const memberDisplayName = (member: Partial<IMember>, ensName?: string) =>
   _.get(member, 'name') ||
   ensName || // ens record from chain/wagmi
-  _.get(member, 'ensName') || // ens record from db
-  _.get(member, 'telegramHandle') ||
-  truncateAddress(_.get(member, 'address'));
-
+  _.get(member, 'contactInfo.telegram') ||
+  truncateAddress(_.get(member, 'ethAddress'));
 
 export const displayDate = (date: string) => {
   const options = { year: 'numeric', month: 'short', day: '2-digit' } as const;
-  const today  = new Date(date);
-  let formattedDate = today.toLocaleDateString("en-US", options);
+  const today = new Date(date);
+  let formattedDate = today.toLocaleDateString('en-US', options);
   if (formattedDate.slice(-4) === '1970') {
     formattedDate = 'N/A';
   }
   return formattedDate;
-}
+};
