@@ -13,7 +13,7 @@ const Home: React.FC = () => {
   const token = _.get(session, 'token');
   const { address } = useAccount();
   const { data } = useDashboardList({ token, address });
-  console.log(data);
+  // console.log(data);
 
   return (
     <>
@@ -23,9 +23,26 @@ const Home: React.FC = () => {
         <Flex alignItems="center" justify="space-between" gap={8} w="100%">
           <Stack w="45%" spacing={4}>
             <Heading size="lg">My Raids</Heading>
-            {_.map(_.get(data, 'myRaids'), (raid) => (
-              <MiniRaidCard key={raid.id} raid={raid} />
-            ))}
+            {!_.isEmpty(_.get(data, 'myRaids.active')) && (
+              <Stack spacing={4}>
+                <Heading size="md">Active Raids</Heading>
+                <Stack spacing={4}>
+                  {_.map(_.get(data, 'myRaids.active'), (raid) => (
+                    <MiniRaidCard key={raid.id} raid={raid} />
+                  ))}
+                </Stack>
+              </Stack>
+            )}
+            {!_.isEmpty(_.get(data, 'myRaids.past')) && (
+              <Stack spacing={4}>
+                <Heading size="md">Past Raids</Heading>
+                <Stack spacing={4}>
+                  {_.map(_.get(data, 'myRaids.past'), (raid) => (
+                    <MiniRaidCard key={raid.id} raid={raid} />
+                  ))}
+                </Stack>
+              </Stack>
+            )}
           </Stack>
           <Stack w="45%" spacing={4}>
             <Heading size="lg">New Raids</Heading>
