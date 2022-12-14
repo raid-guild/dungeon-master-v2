@@ -10,7 +10,6 @@ const Consultation = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: consultation } = useConsultationDetail({ token });
-  console.log(consultation);
 
   return (
     <>

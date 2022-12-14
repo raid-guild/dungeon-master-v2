@@ -42,7 +42,6 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   const copyEth = useClipboard(
     _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
   );
-  console.log(application);
 
   const memberLinks = [
     _.get(

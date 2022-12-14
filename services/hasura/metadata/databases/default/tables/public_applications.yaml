@@ -32,6 +32,32 @@ array_relationships:
         table:
           name: members
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - id
+        - v1_id
+        - name
+        - eth_address
+        - introduction
+        - learning_goals
+        - technical_skill_type_key
+        - passion
+        - favorite_media
+        - crypto_thrills
+        - why_raidguild
+        - dao_familiarity_key
+        - availability_key
+        - crypto_experience
+        - comments
+        - handbook_read
+        - pledge_readiness
+        - referred_by_id
+        - contact_info_id
+        - created_at
+        - updated_at
 select_permissions:
   - role: member
     permission:
@@ -58,3 +84,30 @@ select_permissions:
         - id
         - referred_by_id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - handbook_read
+        - pledge_readiness
+        - availability_key
+        - comments
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity_key
+        - eth_address
+        - favorite_media
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - technical_skill_type_key
+        - v1_id
+        - why_raidguild
+        - created_at
+        - updated_at
+        - contact_info_id
+        - id
+        - referred_by_id
+      filter: {}
+      check: null
