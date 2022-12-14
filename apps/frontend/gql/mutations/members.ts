@@ -26,6 +26,7 @@ export const MEMBER_UPDATE_MUTATION = gql`
     id
     name
     primary_class_key
+    eth_address
     contact_info {
       id
       discord

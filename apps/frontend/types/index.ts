@@ -207,3 +207,23 @@ export interface ChainList {
 export interface ChainIdMapping {
   [key: number]: Chain;
 }
+
+export interface IMemberUpdate {
+  // for the mutation
+  id?: string;
+  member_updates?: {
+    name?: string;
+    primary_class_key?: string;
+    skills?: Skills[];
+  };
+
+  // CONTACT
+  contact_info_id: string;
+  contact_info_updates?: {
+    email?: string;
+    discord?: string;
+    github?: string;
+    twitter?: string;
+    telegram?: string;
+  };
+}
