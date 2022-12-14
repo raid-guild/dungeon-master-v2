@@ -11,6 +11,15 @@ object_relationships:
   - name: skill_type
     using:
       foreign_key_constraint_on: skill_type_key
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - skill_key
+        - skill_type_key
+        - id
+        - member_id
 select_permissions:
   - role: member
     permission:
@@ -20,3 +29,13 @@ select_permissions:
         - id
         - member_id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - skill_key
+        - skill_type_key
+        - id
+        - member_id
+      filter: {}
+      check: null

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import _ from 'lodash';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '../gql';
 import { camelize, IMember } from '../utils';
 

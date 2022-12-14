@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   postgres:
@@ -38,11 +38,11 @@ services:
         condition: service_healthy
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@dm_db:5432/${POSTGRES_DATABASE}"
+      HASURA_GRAPHQL_DATABASE_URL: 'postgres://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@dm_db:5432/${POSTGRES_DATABASE}'
       HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE}
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: ${HASURA_GRAPHQL_ENABLED_LOG_TYPES}
       ## uncomment to retrieve console assets locally (no internet)
-      HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
+      # HASURA_GRAPHQL_CONSOLE_ASSETS_DIR: /srv/console-assets
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       ## uncomment next line for JWT configuration (NextAuth)

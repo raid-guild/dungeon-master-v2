@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useInfiniteQuery, useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { client, MEMBER_LIST_QUERY, MEMBER_SLIM_LIST_QUERY } from '../gql';
 import { camelize, IMember } from '../utils';
 
@@ -30,7 +30,7 @@ const useMemberList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IMember>>, Error>(
-    'memberList',
+    ['memberList'],
     ({ pageParam = 0 }) => memberQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
@@ -68,7 +68,7 @@ export const useSlimMemberList = ({ token }) => {
   const { status, error, data, isLoading } = useQuery<
     Array<Partial<IMember>>,
     Error
-  >('memberList', memberSlimListQueryResult, {
+  >(['memberList'], memberSlimListQueryResult, {
     enabled: Boolean(token),
   });
 

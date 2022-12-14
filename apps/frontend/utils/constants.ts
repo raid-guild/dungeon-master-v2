@@ -9,6 +9,15 @@ export const RAID_CATEGORY = [
   'MARKETING',
 ];
 
+export const RAID_CATEGORY_OPTIONS = [
+  { label: 'Design Sprint', value: 'DESIGN_SPRINT' },
+  { label: 'Full Stack', value: 'FULL_STACK' },
+  { label: 'Wizarding', value: 'SMART_CONTRACTS' },
+  { label: 'Backend', value: 'BACKEND' },
+  { label: 'Frontend', value: 'FRONTEND' },
+  { label: 'Marketing', value: 'MARKETING' },
+];
+
 export const RAID_CATEGORY_DISPLAY = {
   DESIGN_SPRINT: 'Design Sprint',
   FULL_STACK: 'Full Stack',
@@ -71,6 +80,43 @@ export const DELIVERY_PRIORITIES = [
 
 export const SUBMISSION_TYPE = ['Paid', 'Unpaid'];
 
+export const SKILLS_DISPLAY_OPTIONS = [
+  {
+    label: 'Frontend Dev',
+    value: 'FRONTEND',
+  },
+  {
+    label: 'Backend Dev',
+    value: 'BACKEND',
+  },
+  {
+    label: 'Solidity',
+    value: 'SOLIDITY',
+  },
+  {
+    label: 'BizDev',
+    value: 'BIZ_DEV',
+  },
+  {
+    label: 'Community',
+    value: 'COMMUNITY',
+  },
+  // {PROJECT_MANAGEMENT: 'Project Management',}
+  // {FINANCE: 'Finance'},
+  // {PRODUCT_DESIGN: 'Product Design'},
+  // UX_RESEARCH: 'UX Research',
+  // GAME_THEORY: 'Game Theory',
+  // DEVOPS: 'DevOps',
+  // TOKENOMICS: 'Tokenomics',
+  // CONTENT: 'Content',
+  // MEMES: 'Memes',
+  // VISUAL_DESIGN: 'Visual Design',
+  // UI_DESIGN: 'UI Design',
+  // ILLUSTRATION: 'Illustration',
+  // LEGAL: 'Legal',
+  // ACCOUNTING: 'Accounting',
+];
+
 export const SKILLS_DISPLAY = (skill: string) => {
   const skillsMap = {
     FRONTEND: 'Frontend Dev',
@@ -125,6 +171,21 @@ export const GUILD_CLASS_ICON = {
   LEGAL: 'rogue',
   ACCOUNT_MANAGER: 'cleric',
 };
+
+export const GUILD_CLASS_OPTIONS = [
+  { label: 'Tavern Keeper (Community)', value: 'COMMUNITY' },
+  { label: 'Archer (Design)', value: 'DESIGN' },
+  { label: 'Angry Dwarf (Treasury)', value: 'TREASURY' },
+  { label: 'Bard (Marketing)', value: 'MARKETING' },
+  { label: 'Warrior (FrontEnd Dev)', value: 'FRONTEND_DEV' },
+  { label: 'Healer (Ops)', value: 'OPERATIONS' },
+  { label: 'Hunter (BizDev)', value: 'BIZ_DEV' },
+  { label: 'Paladin (Backend Dev)', value: 'BACKEND_DEV' },
+  { label: 'Monk (PM)', value: 'PROJECT_MANAGEMENT' },
+  { label: 'Wizard (Smart Contracts)', value: 'SMART_CONTRACTS' },
+  { label: 'Rogue (Legal)', value: 'LEGAL' },
+  { label: 'Cleric (Client Manager)', value: 'ACCOUNT_MANAGER' },
+];
 
 export const GUILD_CLASS_DISPLAY = {
   COMMUNITY: 'Tavern Keeper (Community)',
