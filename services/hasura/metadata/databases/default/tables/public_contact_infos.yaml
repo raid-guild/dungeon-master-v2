@@ -23,6 +23,17 @@ array_relationships:
         table:
           name: members
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
 select_permissions:
   - role: member
     permission:
@@ -34,3 +45,15 @@ select_permissions:
         - twitter
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
+      filter: {}
+      check: null

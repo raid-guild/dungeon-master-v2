@@ -4,6 +4,7 @@
 
 export interface IRaid {
   id: string;
+  name: string;
   raidName: string;
   status: string;
   category: string;
@@ -13,6 +14,9 @@ export interface IRaid {
   rolesRequired: {
     role: string; // ENUM
   }[];
+  raidCategory: {
+    raidCategory: string; // ENUM
+  };
   raidParty: {
     memberbyMember: IMember;
   }[];
@@ -34,11 +38,12 @@ export interface IRaid {
 }
 
 type IContactInfo = {
+  id: string;
   email?: string;
-  discordHandle?: string;
-  githubHandle?: string;
-  twitterHandle?: string;
-  telegramHandle?: string;
+  discord?: string;
+  github?: string;
+  twitter?: string;
+  telegram?: string;
 };
 
 type IContact = {
@@ -51,7 +56,9 @@ export interface IMember {
   id: string;
   name: string;
   isRaiding: boolean;
-  guildClass: string;
+  guildClass: {
+    guildClass: string;
+  };
   skills: Skills[];
 
   // CONTACT
@@ -200,4 +207,57 @@ export interface ChainList {
 
 export interface ChainIdMapping {
   [key: number]: Chain;
+}
+
+export interface IRaidUpdate {
+  id?: string;
+  raid_updates?: {
+    name?: string;
+    status_key?: string;
+    category_key?: string;
+    start_date?: string;
+    end_date?: string;
+  };
+
+  // // RELATIONSHIPS
+  // rolesRequired: {
+  //   role: string; // ENUM
+  // }[];
+  // raidCategory: {
+  //   raidCategory: string; // ENUM
+  // };
+  // raidParty: {
+  //   memberbyMember: IMember;
+  // }[];
+  // memberByCleric: IMember;
+  // consultationByConsultation: IConsultation;
+  // comments: IComment[];
+
+  // // LEGACY
+  // v1Id?: string;
+  // airtableId: string;
+  // escrowIndex: number;
+  // lockerHash: string;
+
+  // TIMELINE - ISO STRINGS
+}
+
+export interface IMemberUpdate {
+  // for the mutation
+  id?: string;
+  member_updates?: {
+    name?: string;
+    primary_class_key?: string;
+    skills?: Skills[];
+  };
+
+  // CONTACT
+  contact_info_id: string;
+  contact_info_updates?: {
+    email?: string;
+    discord?: string;
+    github?: string;
+    twitter?: string;
+    telegram?: string;
+  };
 }

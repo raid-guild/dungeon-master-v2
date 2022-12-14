@@ -10,9 +10,22 @@ array_relationships:
         table:
           name: applications
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - dao_familiarity
 select_permissions:
   - role: member
     permission:
       columns:
         - dao_familiarity
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - dao_familiarity
+      filter: {}
+      check: null

@@ -8,14 +8,24 @@ import {
   Button,
   HStack,
   Text,
+  Stack,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { useEnsAvatar } from 'wagmi';
 import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
+import ModalWrapper from '../../components/ModalWrapper';
 import { memberDisplayName, GUILD_CLASS_ICON } from '../../utils';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
+import MiniRaidCard from '../../components/MiniRaidCard';
+import { useOverlay } from '../../contexts/OverlayContext';
+import UpdateMemberForm from '../../components/MemberUpdateForm';
+
+const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
+
+// TODO remove hardcoded limits on past and active raids
+
 
 const Member = () => {
   const { data: session } = useSession();
@@ -26,7 +36,22 @@ const Member = () => {
     chainId: 1,
     enabled: _.get(member, 'ethAddress') !== '0x',
   });
-  console.log(member);
+  const pastAndActiveRaids = {
+    active: _.filter(_.map(_.get(member, 'raidParties'), 'raid'), (r) =>
+      _.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
+    ),
+    past: _.filter(
+      _.map(_.get(member, 'raidParties'), 'raid'),
+      (r) => !_.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
+    ),
+  };
+  console.log('member details: ', pastAndActiveRaids);
+  const localOverlay = useOverlay();
+  const { setModals, closeModals } = localOverlay;
+
+  const handleShowUpdateModal = () => {
+    setModals({ memberForm: true });
+  };
 
   return (
     <>
@@ -63,16 +88,81 @@ const Member = () => {
                   <Text>⛺️ Not Raiding</Text>
                 )}
               </Badge>
-              <Button variant="outline">Edit</Button>
+              <Button variant="outline" onClick={handleShowUpdateModal}>
+                Edit
+              </Button>
             </HStack>
           </Flex>
         }
       >
-        <MemberDetailsCard
-          member={member}
-          application={_.get(member, 'application')}
-        />
+        <Flex w="100%">
+          <MemberDetailsCard
+            member={member}
+            application={_.get(member, 'application')}
+          />
+          {/* <RaidsFeed /> */}
+          <Flex
+            direction="column"
+            w="30%"
+            ml="4"
+            bg="gray.800"
+            rounded="md"
+            style={{ backdropFilter: 'blur(7px)' }}
+            p={8}
+          >
+            {!_.isEmpty(_.get(pastAndActiveRaids, 'active')) && (
+              <Stack>
+                <Heading size="sm">Active Raids</Heading>
+                <Stack>
+                  {_.map(
+                    _.get(pastAndActiveRaids, 'active').slice(0, 2),
+                    (raid) => (
+                      <MiniRaidCard
+                        key={_.get(raid, 'id')}
+                        raid={raid}
+                        noAvatar
+                        smallHeader
+                      />
+                    )
+                  )}
+                </Stack>
+              </Stack>
+            )}
+            {!_.isEmpty(_.get(pastAndActiveRaids, 'past')) && (
+              <Stack>
+                <Heading size="sm">Past Raids</Heading>
+                <Stack>
+                  {_.map(
+                    _.get(pastAndActiveRaids, 'past').slice(0, 3),
+                    (raid) => (
+                      <MiniRaidCard
+                        key={_.get(raid, 'id')}
+                        raid={raid}
+                        noAvatar
+                        smallHeader
+                      />
+                    )
+                  )}
+                </Stack>
+              </Stack>
+            )}
+          </Flex>
+        </Flex>
       </SiteLayout>
+      <ModalWrapper
+        name="memberForm"
+        size="xl"
+        title="Update Member Details"
+        localOverlay={localOverlay}
+        content={
+          <UpdateMemberForm
+            memberId={_.get(member, 'id')}
+            member={member}
+            application={_.get(member, 'application')}
+            closeModal={closeModals}
+          />
+        }
+      />
     </>
   );
 };

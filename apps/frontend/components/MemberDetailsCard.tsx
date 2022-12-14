@@ -42,7 +42,6 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   const copyEth = useClipboard(
     _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
   );
-  console.log(application);
 
   const memberLinks = [
     _.get(
@@ -152,12 +151,11 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   return (
     <Flex
       direction="column"
-      w="100%"
+      w="70%"
+      minW="600px"
       bg="gray.800"
       rounded="md"
       style={{ backdropFilter: 'blur(7px)' }}
-      align="stretch"
-      justify="space-between"
     >
       <VStack p={8} height="100%" align="stretch">
         {_.map(skillBlocks, (block) => (

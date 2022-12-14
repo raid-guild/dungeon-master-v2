@@ -13,11 +13,18 @@ import ChakraNextLink from './ChakraNextLink';
 import MemberAvatar from './MemberAvatar';
 
 type MiniRaidCardProps = {
-  newRaid?: boolean;
   raid: IRaid;
+  newRaid?: boolean;
+  noAvatar?: boolean;
+  smallHeader?: boolean;
 };
 
-const MiniRaidCard = ({ raid, newRaid }: MiniRaidCardProps) => (
+const MiniRaidCard = ({
+  raid,
+  newRaid,
+  noAvatar,
+  smallHeader,
+}: MiniRaidCardProps) => (
   <ChakraNextLink href={`/raids/${_.get(raid, 'id')}`}>
     <Flex
       align="center"
@@ -29,7 +36,9 @@ const MiniRaidCard = ({ raid, newRaid }: MiniRaidCardProps) => (
       p={4}
     >
       <Stack spacing={2}>
-        <Heading size="md">{_.get(raid, 'name')}</Heading>
+        <Heading size={smallHeader ? 'sm' : 'md'}>
+          {_.get(raid, 'name')}
+        </Heading>
         <HStack>
           <Badge>{_.get(raid, 'raidStatus.raidStatus')}</Badge>
           {newRaid && _.get(raid, 'createdAt') && (
@@ -37,7 +46,7 @@ const MiniRaidCard = ({ raid, newRaid }: MiniRaidCardProps) => (
           )}
         </HStack>
       </Stack>
-      <MemberAvatar member={_.get(raid, 'cleric')} />
+      {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
     </Flex>
   </ChakraNextLink>
 );

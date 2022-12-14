@@ -13,6 +13,22 @@ const RAID_DETAIL_FRAGMENT = gql`
     raids_roles_required {
       role
     }
+    cleric {
+      name
+      eth_address
+      contact_info {
+        telegram
+      }
+    }
+    raid_parties {
+      member {
+        name
+        eth_address
+        contact_info {
+          telegram
+        }
+      }
+    }
     consultation {
       description
       budget_option {
@@ -32,6 +48,8 @@ const RAID_DETAIL_FRAGMENT = gql`
     }
     created_at
     updated_at
+    start_date
+    end_date
   }
 `;
 

@@ -16,6 +16,14 @@ array_relationships:
         table:
           name: consultations_clients
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - name
+        - website
+        - id
 select_permissions:
   - role: member
     permission:
@@ -24,3 +32,12 @@ select_permissions:
         - website
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - name
+        - website
+        - id
+      filter: {}
+      check: null

@@ -10,9 +10,22 @@ array_relationships:
         table:
           name: consultations
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - available_project_spec
 select_permissions:
   - role: member
     permission:
       columns:
         - available_project_spec
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - available_project_spec
+      filter: {}
+      check: null

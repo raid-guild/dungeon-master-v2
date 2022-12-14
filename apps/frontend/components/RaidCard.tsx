@@ -13,12 +13,25 @@ import {
   SimpleGrid,
   UnorderedList,
   ListItem,
+  Stack,
   Card,
+  AvatarGroup,
+  RoleBadge,
+  Avatar,
 } from '@raidguild/design-system';
+import MemberAvatar from './MemberAvatar';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
-// import { format } from 'date-fns';
 import InfoStack from './InfoStack';
+import {
+  PROJECT_TYPE_DISPLAY,
+  RAID_CATEGORY_DISPLAY,
+  BUDGET_DISPLAY,
+  GUILD_CLASS_ICON,
+  SKILLS_DISPLAY,
+} from '../utils/constants';
+import { displayDate } from '../utils/general';
+import MemberAvatarStack from './MemberAvatarStack';
 import { IConsultation, IRaid } from '../utils';
 
 interface RaidProps {
@@ -36,13 +49,25 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const id = _.get(raid || consultation, 'id');
   const submissionType = _.get(consultation, 'submissionType.submissionType');
   const description = _.get(consultation, 'description');
-  const budget = _.get(consultation, 'budgetOption.budgetOption');
+  const budget =
+    BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
   const projectType = _.get(consultation, 'projectType.projectType');
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
-  console.log(consultation);
 
-  // TODO handle links for consulation/raid
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
+  const raidParty = _.map(_.get(raid, 'raidParties', []), 'member');
+  const raidCleric = _.get(raid, 'cleric');
+  const raidStatus = _.get(raid, 'status');
+
+  let raidDate = _.get(raid, 'createdAt');
+  let raidDateLabel = 'Created on: ';
+  if (raidStatus === 'RAIDING') {
+    raidDate = _.get(raid, 'startDate');
+    raidDateLabel = 'Started on: ';
+  } else if (raidStatus === 'SHIPPED' || raidStatus === 'LOST') {
+    raidDate = _.get(raid, 'endDate');
+    raidDateLabel = 'Ended on: ';
+  }
 
   return (
     <Card variant="withHeader">
@@ -53,38 +78,79 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         alignItems="space-apart"
         justifyContent="space-between"
       >
-        <HStack spacing={4} align="center">
+        <Stack spacing={4}>
           <Link href={link}>
             <Heading
               color="white"
               as="h3"
               fontSize="2xl"
               transition="all ease-in-out .25s"
+              minW="300px"
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
               {_.get(raid, 'name', _.get(consultation, 'name'))}
             </Heading>
           </Link>
-          {submissionType === 'PAID' && (
-            <Tooltip label="Paid Submission" placement="right" hasArrow>
-              <span>
-                <Icon as={AiOutlineDollarCircle} w={6} h={6} color="raid" />
-              </span>
-            </Tooltip>
-          )}
-          <Badge colorScheme="green">
-            {_.get(
-              raid,
-              'raidStatus.raidStatus',
-              _.get(consultation, 'consultationStatus.consultationStatus')
+          <HStack>
+            <Badge colorScheme="green">
+              {_.get(
+                raid,
+                'raidStatus.raidStatus',
+                _.get(consultation, 'consultationStatus.consultationStatus')
+              )}
+            </Badge>
+            {submissionType === 'PAID' && (
+              <Tooltip label="Paid Submission" placement="right" hasArrow>
+                <span>
+                  <Icon as={AiOutlineDollarCircle} w={6} h={6} color="white" />
+                </span>
+              </Tooltip>
             )}
-          </Badge>
+          </HStack>
+        </Stack>
+        <HStack spacing={4} align="flex-start">
+          {!raidCleric ? (
+            <Heading size="sm" color="white">
+              Needs Cleric!
+            </Heading>
+          ) : (
+            <Stack>
+              <Heading size="sm" color="white">
+                Cleric
+              </Heading>
+              <MemberAvatar member={raidCleric} />
+            </Stack>
+          )}
+
+          {!_.isEmpty(rolesRequired) && (
+            <Stack>
+              <Heading size="sm" color="white">
+                Roles Required
+              </Heading>
+              <AvatarGroup>
+                {_.map(rolesRequired, (role: string) => (
+                  <Avatar
+                    key={role}
+                    icon={
+                      <RoleBadge
+                        roleName={GUILD_CLASS_ICON[role]}
+                        width="44px"
+                        height="44px"
+                        border="2px solid"
+                      />
+                    }
+                  />
+                ))}
+              </AvatarGroup>
+            </Stack>
+          )}
+
+          <Link href={link}>
+            <Button color="raid" borderColor="raid" variant="outline">
+              View Details
+            </Button>
+          </Link>
         </HStack>
-        <Link href={link}>
-          <Button color="raid" borderColor="raid" variant="outline">
-            View Details
-          </Button>
-        </Link>
       </Flex>
       <Flex
         direction="row"
@@ -103,11 +169,10 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           {_.get(raid, 'createdAt') && (
             <HStack>
               <Text color="gray.100" fontSize="smaller">
-                Raid Started
+                {raidDateLabel}
               </Text>
               <Text color="gray.100" fontSize="smaller">
-                {_.get(raid, 'createdAt')}
-                {/* {createdAt && format(new Date(+createdAt), 'Pp')} */}
+                {displayDate(raidDate)}
               </Text>
             </HStack>
           )}
@@ -117,6 +182,15 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               : description}
           </Text>
         </Flex>
+        {!_.isEmpty(raidParty) && (
+          <Stack spacing={4}>
+            <Heading size="sm" color="white">
+              Raid Party
+            </Heading>
+
+            <MemberAvatarStack members={raidParty} />
+          </Stack>
+        )}
       </Flex>
       <Flex
         direction="column"
@@ -128,37 +202,20 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       >
         <SimpleGrid columns={3} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
-          <InfoStack label="Category" details={_.get(raid, 'category', '-')} />
+          <InfoStack
+            label="Category"
+            details={
+              RAID_CATEGORY_DISPLAY[
+                _.get(raid, 'raidCategory.raidCategory', '-')
+              ]
+            }
+          />
           <InfoStack label="Project Type" details={projectType || '-'} />
-          {rolesRequired?.length > 0 && (
-            <VStack align="start">
-              <Text as="span" color="gray.100" fontSize="small">
-                Roles Needed
-              </Text>
-              <HStack>
-                {rolesRequired?.map((role) => (
-                  <Text color="gray.100" key={role}>
-                    {role}
-                  </Text>
-                ))}
-              </HStack>
-            </VStack>
-          )}
-          {servicesRequired?.length > 0 && (
-            <VStack align="flex-start">
-              <Text color="white" fontSize="sm">
-                Services Required
-              </Text>
-              <UnorderedList paddingLeft={4}>
-                {[...uniqueServicesRequired].map((service) => (
-                  <ListItem color="gray.100" key={service}>
-                    {service}
-                  </ListItem>
-                ))}
-              </UnorderedList>
-            </VStack>
-          )}
         </SimpleGrid>
+        {/* display comment  */}
+        <Flex direction="column">
+          {/* todo: display first comment, truncated, with careted date. Display full text inside tooltip */}
+        </Flex>
       </Flex>
     </Card>
   );

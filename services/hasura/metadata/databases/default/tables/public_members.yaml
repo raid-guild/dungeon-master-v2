@@ -67,6 +67,26 @@ array_relationships:
         table:
           name: updates
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - is_raiding
+        - membership_date
+        - application_v1
+        - eth_address
+        - legacy_id
+        - member_type_key
+        - name
+        - primary_class_key
+        - v1_id
+        - created_at
+        - updated_at
+        - application_id
+        - championed_by_id
+        - contact_info_id
+        - id
 select_permissions:
   - role: member
     permission:
@@ -87,3 +107,24 @@ select_permissions:
         - contact_info_id
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - is_raiding
+        - membership_date
+        - application_v1
+        - eth_address
+        - legacy_id
+        - member_type_key
+        - name
+        - primary_class_key
+        - v1_id
+        - created_at
+        - updated_at
+        - application_id
+        - championed_by_id
+        - contact_info_id
+        - id
+      filter: {}
+      check: null

@@ -10,7 +10,6 @@ const Application = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: application } = useApplicationDetail({ token });
-  console.log(application);
 
   return (
     <>

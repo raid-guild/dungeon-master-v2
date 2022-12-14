@@ -8,6 +8,14 @@ object_relationships:
   - name: guild_service
     using:
       foreign_key_constraint_on: guild_service_key
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - guild_service_key
+        - consultation_id
+        - id
 select_permissions:
   - role: member
     permission:
@@ -16,3 +24,12 @@ select_permissions:
         - consultation_id
         - id
       filter: {}
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - guild_service_key
+        - consultation_id
+        - id
+      filter: {}
+      check: null
