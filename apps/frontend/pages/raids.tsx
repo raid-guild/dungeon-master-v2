@@ -17,7 +17,7 @@ import RaidCard from '../components/RaidCard';
 import { IRaid } from '../utils';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
-import { RAID_STATUS } from '../utils';
+import { RAID_STATUS, GUILD_CLASS_OPTIONS } from '../utils';
 
 const raidStatusMapped = RAID_STATUS.map((status) => ({
   label: status,
@@ -27,6 +27,12 @@ const raidStatusMapped = RAID_STATUS.map((status) => ({
 const raidStatusOptions = [
   ...[{ label: 'Active', value: 'ACTIVE' }],
   ...raidStatusMapped,
+];
+
+const raidRolesOptions = [
+  ...[{ label: 'Show All', value: 'ALL' }],
+  ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
+  ...GUILD_CLASS_OPTIONS,
 ];
 
 console.log('raidStatusOptions', raidStatusOptions);
@@ -44,12 +50,18 @@ const raidSortOptions = [
 const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
   const [raidSort, setRaidSort] = useState<string>('oldestComment');
+  const [raidRolesFilter, setRaidRolesFilter] =
+    useState<string>('FRONTEND_DEV');
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
   const handleRaidStatusFilterChange = async (status: string) => {
     setRaidStatusFilter(status);
+  };
+
+  const handleRaidRolesFilterChange = async (role: string) => {
+    setRaidRolesFilter(role);
   };
 
   const handleRaidSortChange = async (sortOption: string) => {
@@ -60,6 +72,7 @@ const RaidList = () => {
     token,
     raidStatusFilterKey: raidStatusFilter,
     raidSortKey: raidSort,
+    raidRolesFilterKey: raidRolesFilter,
   });
 
   const raids = _.flatten(_.get(data, 'pages'));
@@ -81,7 +94,7 @@ const RaidList = () => {
           gap={8}
         >
           <ChakraSelect
-            flexBasis="50%"
+            flexBasis="25%"
             name="raidStatus"
             value={raidStatusFilter}
             defaultValue={raidStatusOptions['Active']}
@@ -92,6 +105,20 @@ const RaidList = () => {
           >
             {raidStatusOptions.map((status) => (
               <option key={status.value}>{status.value}</option>
+            ))}
+          </ChakraSelect>
+          <ChakraSelect
+            flexBasis="25%"
+            name="raidRoles"
+            value={raidRolesFilter}
+            defaultValue={raidRolesOptions['Any Role Set']}
+            onChange={(e) => {
+              console.log('e', e.target.value);
+              handleRaidRolesFilterChange(e.target.value);
+            }}
+          >
+            {raidRolesOptions.map((role) => (
+              <option key={role.value}>{role.value}</option>
             ))}
           </ChakraSelect>
           <ChakraSelect

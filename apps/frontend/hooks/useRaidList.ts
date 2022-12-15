@@ -3,8 +3,14 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, RAIDS_LIST_QUERY } from '../gql';
 import { camelize, IRaid } from '../utils';
 
-const useRaidList = ({ token, raidStatusFilterKey, raidSortKey }) => {
+const useRaidList = ({
+  token,
+  raidStatusFilterKey,
+  raidRolesFilterKey,
+  raidSortKey,
+}) => {
   console.log('raidStatusFilterKey', raidStatusFilterKey);
+  console.log('raidRolesFilterKey', raidRolesFilterKey);
   console.log('raidSortKey', raidSortKey);
   const limit = 15;
   const where = {
@@ -25,6 +31,16 @@ const useRaidList = ({ token, raidStatusFilterKey, raidSortKey }) => {
         { status_key: { _eq: 'AWAITING' } },
       ],
     }),
+    ...(raidRolesFilterKey !== 'ANY_ROLE_SET' &&
+      raidRolesFilterKey !== 'ALL' && {
+        raids_roles_required: {
+          guild_class: { guild_class: { _in: raidRolesFilterKey } },
+        },
+      }),
+    ...(raidRolesFilterKey === 'ANY_ROLE_SET' &&
+      raidRolesFilterKey !== 'ALL' && {
+        raids_roles_required_aggregate: { count: { predicate: { _gte: 1 } } },
+      }),
   };
 
   const orderBy = {
@@ -73,7 +89,7 @@ const useRaidList = ({ token, raidStatusFilterKey, raidSortKey }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IRaid>>, Error>(
-    ['raidsList', raidStatusFilterKey, raidSortKey],
+    ['raidsList', raidStatusFilterKey, raidRolesFilterKey, raidSortKey],
     ({ pageParam = 0 }) => raidQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
