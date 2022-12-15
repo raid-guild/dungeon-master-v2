@@ -35,7 +35,7 @@ const raidRolesOptions = [
   ...GUILD_CLASS_OPTIONS,
 ];
 
-console.log('raidStatusOptions', raidStatusOptions);
+console.log('RAID ROLES OPTIONS', raidRolesOptions);
 
 const raidSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
@@ -50,8 +50,7 @@ const raidSortOptions = [
 const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
   const [raidSort, setRaidSort] = useState<string>('oldestComment');
-  const [raidRolesFilter, setRaidRolesFilter] =
-    useState<string>('FRONTEND_DEV');
+  const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -111,7 +110,7 @@ const RaidList = () => {
             flexBasis="25%"
             name="raidRoles"
             value={raidRolesFilter}
-            defaultValue={raidRolesOptions['Any Role Set']}
+            defaultValue={raidRolesOptions['Show All']}
             onChange={(e) => {
               console.log('e', e.target.value);
               handleRaidRolesFilterChange(e.target.value);

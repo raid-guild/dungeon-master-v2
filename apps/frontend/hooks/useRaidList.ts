@@ -39,7 +39,7 @@ const useRaidList = ({
       }),
     ...(raidRolesFilterKey === 'ANY_ROLE_SET' &&
       raidRolesFilterKey !== 'ALL' && {
-        raids_roles_required_aggregate: { count: { predicate: { _gte: 1 } } },
+        raids_roles_required_aggregate: { count: { predicate: { _gt: 0 } } },
       }),
   };
 
