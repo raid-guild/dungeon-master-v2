@@ -99,15 +99,17 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     );
   }
 
-  return data && _.isEmpty(data) ? (
-    <GeneralLayout>
-      <Flex justify="center" align="center" minH="50vh">
-        <Heading size="md">No projects found!</Heading>
-      </Flex>
-    </GeneralLayout>
-  ) : (
-    <GeneralLayout>{children}</GeneralLayout>
-  );
+  return <GeneralLayout>{children}</GeneralLayout>;
+
+  // return data && _.isEmpty(data) ? (
+  //   <GeneralLayout>
+  //     <Flex justify="center" align="center" minH="50vh">
+  //       <Heading size="md">No projects found!</Heading>
+  //     </Flex>
+  //   </GeneralLayout>
+  // ) : (
+  //   <GeneralLayout>{children}</GeneralLayout>
+  // );
 };
 
 export default SiteLayout;

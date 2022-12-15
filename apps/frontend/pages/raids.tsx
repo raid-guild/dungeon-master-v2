@@ -26,6 +26,7 @@ const raidStatusMapped = RAID_STATUS.map((status) => ({
 
 const raidStatusOptions = [
   ...[{ label: 'Active', value: 'ACTIVE' }],
+  ...[{ label: 'Show All', value: 'ALL' }],
   ...raidStatusMapped,
 ];
 
@@ -65,6 +66,7 @@ const RaidList = () => {
 
   const handleRaidSortChange = async (sortOption: string) => {
     setRaidSort(sortOption);
+    setRaidStatusFilter('ACTIVE');
   };
 
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({
@@ -75,6 +77,7 @@ const RaidList = () => {
   });
 
   const raids = _.flatten(_.get(data, 'pages'));
+  console.log('raids', raids);
 
   return (
     <>
@@ -135,26 +138,32 @@ const RaidList = () => {
             ))}
           </ChakraSelect>
         </Flex>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={fetchNextPage}
-          hasMore={hasNextPage}
-          loader={
-            <Flex my={25} w="100%" justify="center" key={1}>
-              <Spinner size="xl" my={50} />
-            </Flex>
-          }
-        >
-          <Stack spacing={4} mx="auto" key={2}>
-            {_.map(raids, (raid: IRaid) => (
-              <RaidCard
-                raid={raid}
-                consultation={_.get(raid, 'consultation')}
-                key={_.get(raid, 'id')}
-              />
-            ))}
-          </Stack>
-        </InfiniteScroll>
+        {raids && raids.length > 0 ? (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={fetchNextPage}
+            hasMore={hasNextPage}
+            loader={
+              <Flex my={25} w="100%" justify="center" key={1}>
+                <Spinner size="xl" my={50} />
+              </Flex>
+            }
+          >
+            <Stack spacing={4} mx="auto" key={2}>
+              {_.map(raids, (raid: IRaid) => (
+                <RaidCard
+                  raid={raid}
+                  consultation={_.get(raid, 'consultation')}
+                  key={_.get(raid, 'id')}
+                />
+              ))}
+            </Stack>
+          </InfiniteScroll>
+        ) : (
+          <Flex justify="center" align="center" minH="50vh">
+            <Heading size="md">No projects found!</Heading>
+          </Flex>
+        )}
       </SiteLayout>
     </>
   );

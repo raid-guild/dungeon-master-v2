@@ -4,6 +4,7 @@ const RAID_DETAIL_FRAGMENT = gql`
   fragment RaidDetail on raids {
     id
     name
+    status_key
     raid_status {
       raid_status
     }
@@ -64,7 +65,7 @@ export const RAIDS_LIST_QUERY = gql`
       ...RaidDetail
     }
   }
-  ${RAID_DETAIL_FRAGMENT}
+  # ${RAID_DETAIL_FRAGMENT}
 `;
 
 export const RAID_DETAIL_QUERY = gql`

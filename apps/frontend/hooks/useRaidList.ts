@@ -13,17 +13,21 @@ const useRaidList = ({
   console.log('raidRolesFilterKey', raidRolesFilterKey);
   console.log('raidSortKey', raidSortKey);
   const limit = 15;
+
   const where = {
-    ...(raidStatusFilterKey === 'ACTIVE' && {
-      _or: [
-        { status_key: { _eq: 'PREPARING' } },
-        { status_key: { _eq: 'RAIDING' } },
-        { status_key: { _eq: 'AWAITING' } },
-      ],
-    }),
-    ...(raidStatusFilterKey !== 'ACTIVE' && {
-      status_key: { _eq: raidStatusFilterKey },
-    }),
+    ...(raidStatusFilterKey === 'ACTIVE' &&
+      raidStatusFilterKey !== 'ALL' && {
+        _or: [
+          { status_key: { _eq: 'PREPARING' } },
+          { status_key: { _eq: 'RAIDING' } },
+          { status_key: { _eq: 'AWAITING' } },
+        ],
+      }),
+    ...(raidStatusFilterKey !== 'ACTIVE' &&
+      raidStatusFilterKey !== 'ALL' && {
+        status_key: { _eq: raidStatusFilterKey },
+      }),
+    ...(raidStatusFilterKey === 'ALL' && {}),
     ...(raidSortKey === 'oldestComment' && {
       _or: [
         { status_key: { _eq: 'PREPARING' } },
@@ -41,6 +45,7 @@ const useRaidList = ({
       raidRolesFilterKey !== 'ALL' && {
         raids_roles_required_aggregate: { count: { predicate: { _gt: 0 } } },
       }),
+    ...(raidRolesFilterKey === 'ALL' && {}),
   };
 
   const orderBy = {
