@@ -3,14 +3,20 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, RAIDS_LIST_QUERY } from '../gql';
 import { camelize, IRaid } from '../utils';
 
-const useRaidList = ({ token }) => {
+const useRaidList = ({ token, raidStatusFilterKey }) => {
+  console.log('raidStatusFilterKey', raidStatusFilterKey);
   const limit = 15;
   const where = {
-    _or: [
-      { status_key: { _eq: 'PREPARING' } },
-      { status_key: { _eq: 'RAIDING' } },
-      { status_key: { _eq: 'AWAITING' } },
-    ],
+    ...(raidStatusFilterKey === 'ACTIVE' && {
+      _or: [
+        { status_key: { _eq: 'PREPARING' } },
+        { status_key: { _eq: 'RAIDING' } },
+        { status_key: { _eq: 'AWAITING' } },
+      ],
+    }),
+    ...(raidStatusFilterKey !== 'ACTIVE' && {
+      status_key: { _eq: raidStatusFilterKey },
+    }),
   };
 
   const raidQueryResult = async (pageParam: number) => {
@@ -37,7 +43,7 @@ const useRaidList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IRaid>>, Error>(
-    ['raidsList'],
+    ['raidsList', raidStatusFilterKey],
     ({ pageParam = 0 }) => raidQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
@@ -48,7 +54,7 @@ const useRaidList = ({ token }) => {
       enabled: Boolean(token),
     }
   );
-
+  console.log('fetched data', data);
   return {
     status,
     error,
