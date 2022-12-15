@@ -25,8 +25,10 @@ import {
   GUILD_CLASS_DISPLAY,
   IRaid,
   IConsultation,
+  SIDEBAR_ACTION_STATES,
 } from '../../utils';
-import { useSlimMemberList } from '../../hooks/useMemberList';
+import { useSlimMemberList, useRaidUpdate } from '../../hooks';
+
 import RaidPartyButtons from './RaidPartyButtons';
 import MemberAvatar from '../MemberAvatar';
 import RaidPartyCard from './RaidPartyCard';
@@ -37,17 +39,25 @@ interface RaidInfoProps {
 }
 
 const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
+  const [buttonSelection, setButtonSelection] = useState<string>(
+    SIDEBAR_ACTION_STATES.none
+  );
   const [clearRoles, setClearRoles] = useState(false);
   const [localRoles, setLocalRoles] = useState<string[]>(
-    _.map(_.get(raid, 'rolesRequired'), 'role')
+    _.map(_.get(raid, 'raidsRolesRequired'), 'role')
   );
-
   const [raiders, setRaiders] = useState<any[]>();
-  const [clericToAdd, setClericToAdd] = useState<string>();
 
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: members } = useSlimMemberList({ token });
+  const { data: members } = useSlimMemberList({
+    token,
+    button: buttonSelection,
+  });
+  const { mutateAsync: updateRaid } = useRaidUpdate({
+    token,
+    raidId: _.get(raid, 'id'),
+  });
 
   const cleric = _.get(raid, 'cleric');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
@@ -69,13 +79,15 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
     console.log('submit updated roles');
   };
 
-  const submitUpdatedCleric = async (e) => {
-    console.log('submit updated cleric');
-  };
-
-  const submitClearCleric = async () => {
-    console.log('submit clear cleric');
-  };
+  // TODO do we want?
+  // const submitClearCleric = async () => {
+  //   await updateRaid({
+  //     id: _.get(raid, 'id'),
+  //     raid_updates: {
+  //       cleric_id: null,
+  //     },
+  //   });
+  // };
 
   const Divider = () => (
     <Box
@@ -94,7 +106,13 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
             <Flex direction="column" py={2}>
               <Stack>
                 <Heading size="sm">Cleric</Heading>
-                <RaidPartyCard member={cleric} members={members} isCleric />
+                <RaidPartyCard
+                  raid={raid}
+                  member={cleric}
+                  members={members}
+                  isCleric
+                  setButtonSelection={setButtonSelection}
+                />
               </Stack>
             </Flex>
             {!_.isEmpty(raidParty) && (
@@ -102,7 +120,7 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
                 <Divider />
                 <Heading size="sm">Raiders</Heading>
                 {_.map(raidParty, (member: Partial<IMember>) => (
-                  <RaidPartyCard member={member} />
+                  <RaidPartyCard member={member} key={_.get(member, 'id')} />
                 ))}
               </Stack>
             )}
@@ -116,9 +134,12 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
           </Stack>
         </Box>
         <RaidPartyButtons
+          raid={raid}
           cleric={cleric}
           raidParty={raidParty}
           members={members}
+          button={buttonSelection}
+          setButton={setButtonSelection}
         />
       </Stack>
     </Stack>

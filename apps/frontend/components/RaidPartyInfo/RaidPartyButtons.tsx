@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import _ from 'lodash';
+import { useSession } from 'next-auth/react';
 import {
   VStack,
   HStack,
@@ -14,23 +15,75 @@ import {
   memberDisplayName,
   GUILD_CLASS_DISPLAY,
   IMember,
+  IRaid,
   membersExceptRaidParty,
+  SIDEBAR_ACTION_STATES,
 } from '../../utils';
+import { useRaidUpdate } from '../../hooks';
 
-const STATES = {
-  none: 'NONE',
-  select: 'SELECT',
-  raider: 'RAIDER',
-  role: 'ROLE',
+type RaidPartyButtonsProps = {
+  raid?: Partial<IRaid>;
+  cleric?: Partial<IMember>;
+  raidParty?: Partial<IMember>[];
+  members?: Partial<IMember>[];
+  button?: string;
+  setButton?: (button: string) => void;
 };
 
-const RaidPartyButtons = ({ cleric, raidParty, members }) => {
-  const [state, setState] = useState<string>(STATES.none);
+const RaidPartyButtons = ({
+  raid,
+  cleric,
+  raidParty,
+  members,
+  button,
+  setButton,
+}: RaidPartyButtonsProps) => {
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
   const localMembers = membersExceptRaidParty(members, raidParty, cleric);
+  const [localRoles, setLocalRoles] = useState<string[]>(
+    _.map(_.get(raid, 'rolesRequired'), 'role')
+  );
+  const [roleToAdd, setRoleToAdd] = useState<string>();
+  const [raiders, setRaiders] = useState<any[]>();
+  const { mutateAsync: updateRaid } = useRaidUpdate({
+    token,
+    raidId: _.get(raid, 'id'),
+  });
+
+  const updateLocalRoles = (role: string) => {
+    const newRoles = _.cloneDeep(localRoles);
+    if (_.includes(_.map(newRoles, 'role'), role)) {
+      _.remove(newRoles, (r) => r.role === role);
+    } else {
+      newRoles.push({ role });
+    }
+    return newRoles;
+  };
 
   const submitAddRole = async () => {
     console.log('submit add role');
+    const roles = updateLocalRoles(roleToAdd);
+
+    // check against current localRoles
+    // remove or add based on that
+    await updateRaid({
+      id: _.get(raid, 'id'),
+      raid_updates: {
+        raids_roles_required: _.map(roles, (r: string) => ({ role: r })),
+      },
+    });
   };
+
+  // TODO clear click for selecting roles to remove in one save
+  // const clearRoleClick = () => {
+  //   if (clearRoles) {
+  //     // setClearRoles(false);
+  //     setLocalRoles(_.get(raid, 'rolesRequired'));
+  //   } else {
+  //     // setClearRoles(true);
+  //   }
+  // };
 
   const submitAddRaider = async () => {
     console.log('submit add raider');
@@ -40,7 +93,7 @@ const RaidPartyButtons = ({ cleric, raidParty, members }) => {
     <Button
       variant="link"
       leftIcon={<FiPlus />}
-      onClick={() => setState(STATES.select)}
+      onClick={() => setButton(SIDEBAR_ACTION_STATES.select)}
     >
       Add Role or Raider
     </Button>
@@ -48,14 +101,16 @@ const RaidPartyButtons = ({ cleric, raidParty, members }) => {
 
   const SelectRaiderOrRoleButton = () => (
     <HStack>
-      <Button variant="outline" onClick={() => setState(STATES.raider)}>
+      <Button
+        variant="outline"
+        onClick={() => setButton(SIDEBAR_ACTION_STATES.raider)}
+      >
         Add Raider
       </Button>
       <Button
         variant="outline"
         onClick={() => {
-          setState(STATES.role);
-          // setRoleToAdd('Tavern Keeper (Community)');
+          setButton(SIDEBAR_ACTION_STATES.role);
         }}
       >
         Add Role
@@ -69,9 +124,12 @@ const RaidPartyButtons = ({ cleric, raidParty, members }) => {
         variant="outline"
         icon={<Icon as={FiX} color="primary.500" />}
         aria-label="Clear Set Role Required for Raid"
-        onClick={() => setState(STATES.none)}
+        onClick={() => setButton(SIDEBAR_ACTION_STATES.none)}
       />
-      <ChakraSelect onChange={submitAddRole}>
+      <ChakraSelect
+        onChange={(e) => setRoleToAdd(e.target.value)}
+        value={roleToAdd}
+      >
         {_.map(_.keys(GUILD_CLASS_DISPLAY), (key: string) => (
           <option value={key} key={key}>
             {GUILD_CLASS_DISPLAY[key]}
@@ -88,7 +146,7 @@ const RaidPartyButtons = ({ cleric, raidParty, members }) => {
         variant="outline"
         icon={<Icon as={FiX} color="primary.500" />}
         aria-label="Clear Set Raider for Raid"
-        onClick={() => setState(STATES.none)}
+        onClick={() => setButton(SIDEBAR_ACTION_STATES.none)}
       />
       {_.isEmpty(localMembers) ? (
         <Box>No Raiders Found!</Box>
@@ -108,10 +166,11 @@ const RaidPartyButtons = ({ cleric, raidParty, members }) => {
 
   return (
     <VStack align="center" width="100%" marginTop={2}>
-      {state === STATES.none && <StartProcess />}
-      {state === STATES.select && <SelectRaiderOrRoleButton />}
-      {state === STATES.role && <SelectRole />}
-      {state === STATES.raider && <SelectRaider />}
+      {(button === SIDEBAR_ACTION_STATES.none ||
+        button === SIDEBAR_ACTION_STATES.cleric) && <StartProcess />}
+      {button === SIDEBAR_ACTION_STATES.select && <SelectRaiderOrRoleButton />}
+      {button === SIDEBAR_ACTION_STATES.role && <SelectRole />}
+      {button === SIDEBAR_ACTION_STATES.raider && <SelectRaider />}
     </VStack>
   );
 };

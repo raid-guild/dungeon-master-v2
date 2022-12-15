@@ -13,6 +13,7 @@ import {
   Button,
   Box,
 } from '@raidguild/design-system';
+import { useSession } from 'next-auth/react';
 import { FiX } from 'react-icons/fi';
 import { HiSwitchVertical } from 'react-icons/hi';
 import ChakraNextLink from '../ChakraNextLink';
@@ -21,10 +22,17 @@ import {
   GUILD_CLASS_DISPLAY,
   IMember,
   memberDisplayName,
+  SIDEBAR_ACTION_STATES,
+  IRaid,
 } from '../../utils';
+import { useRaidUpdate } from '../../hooks';
 import MemberAvatar from '../MemberAvatar';
 
 type RaidPartyCardProps = {
+  /*
+  | needed for updating raid
+  */
+  raid?: Partial<IRaid>;
   /*
   | needed for raider
   */
@@ -39,6 +47,9 @@ type RaidPartyCardProps = {
   roles?: string[];
   isCleric?: boolean;
   isRole?: boolean;
+  // update fns
+  buttonSelection?: typeof SIDEBAR_ACTION_STATES;
+  setButtonSelection?: (buttonSelection: string) => void;
 };
 
 type GeneralCardProps = {
@@ -47,13 +58,47 @@ type GeneralCardProps = {
 };
 
 const RaidPartyCard = ({
+  raid,
   member,
   members,
   roles,
   isCleric,
   isRole,
+  setButtonSelection,
 }: RaidPartyCardProps) => {
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
   const [updateCleric, setUpdateCleric] = useState(false);
+  const [clericToAdd, setClericToAdd] = useState<string>();
+  console.log(clericToAdd);
+
+  const { mutateAsync: updateRaid } = useRaidUpdate({
+    token,
+    raidId: _.get(raid, 'id'),
+  });
+
+  const submitUpdatedCleric = async () => {
+    const raid_updates = {
+      // ...raid,
+      cleric_id: clericToAdd,
+    };
+    console.log(raid_updates);
+    await updateRaid({
+      id: _.get(raid, 'id'),
+      raid_updates,
+    });
+    setTimeout(() => {
+      setUpdateCleric(false);
+      setClericToAdd(undefined);
+    }, 250);
+
+    console.log('submit updated cleric');
+  };
+
+  const handleSwitchCleric = () => {
+    setButtonSelection(SIDEBAR_ACTION_STATES.cleric);
+    setUpdateCleric(true);
+  };
 
   const GeneralCard = ({ button, children }: GeneralCardProps) => (
     <Flex
@@ -77,6 +122,52 @@ const RaidPartyCard = ({
       )}
     </Flex>
   );
+  console.log(clericToAdd);
+
+  if (updateCleric && isCleric) {
+    return (
+      <GeneralCard
+        button={
+          updateCleric ? (
+            <Button onClick={submitUpdatedCleric}>Go</Button>
+          ) : (
+            <Button variant="outline" onClick={() => setUpdateCleric(true)}>
+              Claim
+            </Button>
+          )
+        }
+      >
+        <Flex>
+          {updateCleric ? (
+            <HStack w="100%">
+              <IconButton
+                variant="outline"
+                icon={<Icon as={FiX} color="primary.300" />}
+                aria-label="Clear Set Raider for Raid"
+                onClick={() => setUpdateCleric(false)}
+              />
+              {!_.isEmpty(members) && (
+                <ChakraSelect
+                  value={clericToAdd}
+                  onChange={(e) => setClericToAdd(e.target.value)}
+                >
+                  {_.map(members, (m: Partial<IMember>) => (
+                    <option value={m.id} key={m.id}>
+                      {memberDisplayName(m)}
+                    </option>
+                  ))}
+                </ChakraSelect>
+              )}
+            </HStack>
+          ) : (
+            <Flex justify="space-between" w="100%" align="center">
+              <Text px={2}>Unclaimed</Text>
+            </Flex>
+          )}
+        </Flex>
+      </GeneralCard>
+    );
+  }
 
   if (member && isCleric) {
     return (
@@ -92,6 +183,7 @@ const RaidPartyCard = ({
             }
             aria-label="Switch Cleric"
             variant="outline"
+            onClick={handleSwitchCleric}
           />
         }
       >
@@ -114,49 +206,7 @@ const RaidPartyCard = ({
       </GeneralCard>
     );
   }
-
-  if (!member && isCleric) {
-    return (
-      <GeneralCard
-        button={
-          updateCleric ? (
-            <Button>Add</Button>
-          ) : (
-            <Button variant="outline" onClick={() => setUpdateCleric(true)}>
-              Claim
-            </Button>
-          )
-        }
-      >
-        <Flex>
-          {updateCleric ? (
-            <HStack w="100%">
-              <IconButton
-                variant="outline"
-                icon={<Icon as={FiX} color="primary.300" />}
-                aria-label="Clear Set Raider for Raid"
-                onClick={() => setUpdateCleric(false)}
-              />
-              {!_.isEmpty(members) && (
-                <ChakraSelect>
-                  {_.map(members, (m: Partial<IMember>) => (
-                    <option value={m.id} key={m.id}>
-                      {memberDisplayName(m)}
-                    </option>
-                  ))}
-                </ChakraSelect>
-              )}
-            </HStack>
-          ) : (
-            <Flex justify="space-between" w="100%" align="center">
-              <Text px={2}>Unclaimed</Text>
-            </Flex>
-          )}
-        </Flex>
-      </GeneralCard>
-    );
-  }
-
+  console.log(roles);
   if (isRole) {
     return (
       <GeneralCard

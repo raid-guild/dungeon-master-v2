@@ -26,5 +26,13 @@ export const RAID_UPDATE_MUTATION = gql`
         project_type
       }
     }
+    cleric {
+      id
+      name
+      eth_address
+      contact_info {
+        telegram
+      }
+    }
   }
 `;

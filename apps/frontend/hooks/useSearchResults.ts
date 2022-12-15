@@ -45,7 +45,7 @@ const useSearchResults = ({ token, search }) => {
   const { status, error, data, isLoading } = useQuery<any, Error>(
     ['searchResults', search],
     searchQueryResult,
-    { enabled: token && !!search }
+    { enabled: !!token && !!search }
   );
 
   return { status, error, data, isLoading };

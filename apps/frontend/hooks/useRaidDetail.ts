@@ -25,7 +25,7 @@ const useRaidDetail = ({ token }) => {
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IRaid,
     Error
-  >(['raidDetail', raidId], raidQueryResult, { enabled: Boolean(token) });
+  >(['raidDetail', raidId], raidQueryResult, { enabled: !!token && !!raidId });
 
   return { isLoading, isFetching, isError, error, data };
 };
