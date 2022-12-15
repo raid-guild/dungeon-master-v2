@@ -54,8 +54,13 @@ const RAID_DETAIL_FRAGMENT = gql`
 `;
 
 export const RAIDS_LIST_QUERY = gql`
-  query RaidsListQuery($offset: Int!, $limit: Int!, $where: raids_bool_exp) {
-    raids(limit: $limit, offset: $offset, where: $where) {
+  query RaidsListQuery(
+    $offset: Int!
+    $limit: Int!
+    $where: raids_bool_exp
+    $order_by: [raids_order_by!]
+  ) {
+    raids(limit: $limit, offset: $offset, where: $where, order_by: $order_by) {
       ...RaidDetail
     }
   }
