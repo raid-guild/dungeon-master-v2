@@ -42,9 +42,6 @@ const raidSortOptions = [
 ];
 
 const RaidList = () => {
-  // const [raidStatusFilter, setRaidStatusFilter] = useState(
-  //   raidStatusMapped[0].value
-  // );
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
   const [raidSort, setRaidSort] = useState<string>('oldestComment');
   const title = useDefaultTitle();

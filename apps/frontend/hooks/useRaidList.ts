@@ -18,9 +18,19 @@ const useRaidList = ({ token, raidStatusFilterKey, raidSortKey }) => {
     ...(raidStatusFilterKey !== 'ACTIVE' && {
       status_key: { _eq: raidStatusFilterKey },
     }),
+    ...(raidSortKey === 'oldestComment' && {
+      _or: [
+        { status_key: { _eq: 'PREPARING' } },
+        { status_key: { _eq: 'RAIDING' } },
+        { status_key: { _eq: 'AWAITING' } },
+      ],
+    }),
   };
 
   const orderBy = {
+    ...(raidSortKey === 'oldestComment' && {
+      updated_at: 'desc',
+    }),
     ...(raidSortKey === 'name' && {
       name: 'asc',
     }),
