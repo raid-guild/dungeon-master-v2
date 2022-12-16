@@ -75,6 +75,103 @@ const RaidList = () => {
     }
   };
 
+  // TODO: generalize and move to separate file -- will need to pass options and filter state
+  const RaidControls = () => (
+    <Flex direction="row" justifyContent="space-between" width="100%" gap={8}>
+      <Flex direction="column" flexBasis="25%">
+        <FormLabel
+          htmlFor="raidStatus"
+          maxWidth="720px"
+          fontFamily="texturina"
+          lineHeight="1.8"
+          color={['black', 'white']}
+          textAlign="left"
+        >
+          Raid Status
+        </FormLabel>
+        <ChakraSelect
+          width="100%"
+          name="raidStatus"
+          value={raidStatusFilter}
+          defaultValue={raidStatusOptions['Active']}
+          onChange={(e) => {
+            handleRaidStatusFilterChange(e.target.value);
+            if (raidSort === 'oldestComment') {
+              handleRaidStatusFilterChange('ACTIVE');
+            }
+          }}
+        >
+          {raidStatusOptions.map((status) => (
+            <option key={status.value} value={status.value}>
+              {status.label}
+            </option>
+          ))}
+        </ChakraSelect>
+      </Flex>
+      <Flex direction="column" flexBasis="25%">
+        <FormLabel
+          htmlFor="raidRoles"
+          maxWidth="720px"
+          fontFamily="texturina"
+          lineHeight="1.8"
+          color={['black', 'white']}
+          textAlign="left"
+        >
+          Raid Roles
+        </FormLabel>
+        <ChakraSelect
+          width="100%"
+          name="raidRoles"
+          id="raidRoles"
+          value={raidRolesFilter}
+          defaultValue={raidRolesOptions['Show All']}
+          onChange={(e) => {
+            handleRaidRolesFilterChange(e.target.value);
+            if (sortChanged === true && raidSort === 'oldestComment') {
+              setRaidStatusFilter('ACTIVE');
+            }
+          }}
+        >
+          {raidRolesOptions.map((role) => (
+            <option key={role.value} value={role.value}>
+              {role.label}
+            </option>
+          ))}
+        </ChakraSelect>
+      </Flex>
+      <Flex direction="column" flexBasis="25%">
+        <FormLabel
+          htmlFor="raidSort"
+          maxWidth="720px"
+          fontFamily="texturina"
+          lineHeight="1.8"
+          color={['black', 'white']}
+          textAlign="left"
+        >
+          Sort
+        </FormLabel>
+        <ChakraSelect
+          width="100%"
+          name="raidSort"
+          value={raidSort}
+          defaultValue={raidSortOptions['Name']}
+          onChange={(e) => {
+            handleRaidSortChange(e.target.value);
+            if (e.target.value === 'oldestComment') {
+              handleRaidStatusFilterChange('ACTIVE');
+            }
+          }}
+        >
+          {raidSortOptions.map((sortOption) => (
+            <option key={sortOption.value} value={sortOption.value}>
+              {sortOption.label}
+            </option>
+          ))}
+        </ChakraSelect>
+      </Flex>
+    </Flex>
+  );
+
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({
     token,
     raidStatusFilterKey: raidStatusFilter,
@@ -94,104 +191,8 @@ const RaidList = () => {
         subheader={<Heading>{title}</Heading>}
         error={error}
       >
-        <Flex
-          direction="row"
-          justifyContent="space-between"
-          width="100%"
-          gap={8}
-        >
-          <Flex direction="column" flexBasis="25%">
-            <FormLabel
-              htmlFor="raidStatus"
-              maxWidth="720px"
-              fontFamily="texturina"
-              lineHeight="1.8"
-              color={['black', 'white']}
-              textAlign="left"
-            >
-              Raid Status
-            </FormLabel>
-            <ChakraSelect
-              width="100%"
-              name="raidStatus"
-              value={raidStatusFilter}
-              defaultValue={raidStatusOptions['Active']}
-              onChange={(e) => {
-                handleRaidStatusFilterChange(e.target.value);
-                if (raidSort === 'oldestComment') {
-                  handleRaidStatusFilterChange('ACTIVE');
-                }
-              }}
-            >
-              {raidStatusOptions.map((status) => (
-                <option key={status.value} value={status.value}>
-                  {status.label}
-                </option>
-              ))}
-            </ChakraSelect>
-          </Flex>
-          <Flex direction="column" flexBasis="25%">
-            <FormLabel
-              htmlFor="raidRoles"
-              maxWidth="720px"
-              fontFamily="texturina"
-              lineHeight="1.8"
-              color={['black', 'white']}
-              textAlign="left"
-            >
-              Raid Roles
-            </FormLabel>
-            <ChakraSelect
-              width="100%"
-              name="raidRoles"
-              id="raidRoles"
-              value={raidRolesFilter}
-              defaultValue={raidRolesOptions['Show All']}
-              onChange={(e) => {
-                handleRaidRolesFilterChange(e.target.value);
-                if (sortChanged === true && raidSort === 'oldestComment') {
-                  setRaidStatusFilter('ACTIVE');
-                }
-              }}
-            >
-              {raidRolesOptions.map((role) => (
-                <option key={role.value} value={role.value}>
-                  {role.label}
-                </option>
-              ))}
-            </ChakraSelect>
-          </Flex>
-          <Flex direction="column" flexBasis="25%">
-            <FormLabel
-              htmlFor="raidSort"
-              maxWidth="720px"
-              fontFamily="texturina"
-              lineHeight="1.8"
-              color={['black', 'white']}
-              textAlign="left"
-            >
-              Sort
-            </FormLabel>
-            <ChakraSelect
-              width="100%"
-              name="raidSort"
-              value={raidSort}
-              defaultValue={raidSortOptions['Name']}
-              onChange={(e) => {
-                handleRaidSortChange(e.target.value);
-                if (e.target.value === 'oldestComment') {
-                  handleRaidStatusFilterChange('ACTIVE');
-                }
-              }}
-            >
-              {raidSortOptions.map((sortOption) => (
-                <option key={sortOption.value} value={sortOption.value}>
-                  {sortOption.label}
-                </option>
-              ))}
-            </ChakraSelect>
-          </Flex>
-        </Flex>
+        <RaidControls />
+
         {raids && raids.length > 0 ? (
           <InfiniteScroll
             pageStart={0}
