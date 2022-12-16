@@ -99,7 +99,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     );
   }
 
-  return <GeneralLayout>{children}</GeneralLayout>;
+  // NOTE: for raids / members / anything with filters we'll prob want to handle this at the page level or else the UI may not render if there's no data from the filter query
 
   // return data && _.isEmpty(data) ? (
   //   <GeneralLayout>
@@ -110,6 +110,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   // ) : (
   //   <GeneralLayout>{children}</GeneralLayout>
   // );
+  return <GeneralLayout>{children}</GeneralLayout>;
 };
 
 export default SiteLayout;

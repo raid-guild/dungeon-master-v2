@@ -50,8 +50,9 @@ const raidSortOptions = [
 
 const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
-  const [raidSort, setRaidSort] = useState<string>('oldestComment');
+  const [raidSort, setRaidSort] = useState<string>('name');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
+  const [sortChanged, setSortChanged] = useState(false);
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -66,7 +67,10 @@ const RaidList = () => {
 
   const handleRaidSortChange = async (sortOption: string) => {
     setRaidSort(sortOption);
-    setRaidStatusFilter('ACTIVE');
+    setSortChanged(true);
+    if (sortOption === 'oldestComment') {
+      setRaidStatusFilter('ACTIVE');
+    }
   };
 
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({
@@ -101,12 +105,16 @@ const RaidList = () => {
             value={raidStatusFilter}
             defaultValue={raidStatusOptions['Active']}
             onChange={(e) => {
-              console.log('e', e.target.value);
               handleRaidStatusFilterChange(e.target.value);
+              if (raidSort === 'oldestComment') {
+                handleRaidStatusFilterChange('ACTIVE');
+              }
             }}
           >
             {raidStatusOptions.map((status) => (
-              <option key={status.value}>{status.value}</option>
+              <option key={status.value} value={status.value}>
+                {status.label}
+              </option>
             ))}
           </ChakraSelect>
           <ChakraSelect
@@ -115,26 +123,34 @@ const RaidList = () => {
             value={raidRolesFilter}
             defaultValue={raidRolesOptions['Show All']}
             onChange={(e) => {
-              console.log('e', e.target.value);
               handleRaidRolesFilterChange(e.target.value);
+              if (sortChanged === true && raidSort === 'oldestComment') {
+                setRaidStatusFilter('ACTIVE');
+              }
             }}
           >
             {raidRolesOptions.map((role) => (
-              <option key={role.value}>{role.value}</option>
+              <option key={role.value} value={role.value}>
+                {role.label}
+              </option>
             ))}
           </ChakraSelect>
           <ChakraSelect
             flexBasis="25%"
             name="raidSort"
             value={raidSort}
-            defaultValue={raidSortOptions['Oldest Comment']}
+            defaultValue={raidSortOptions['Name']}
             onChange={(e) => {
-              console.log('sort', e.target.value);
               handleRaidSortChange(e.target.value);
+              if (e.target.value === 'oldestComment') {
+                handleRaidStatusFilterChange('ACTIVE');
+              }
             }}
           >
             {raidSortOptions.map((sortOption) => (
-              <option key={sortOption.value}>{sortOption.value}</option>
+              <option key={sortOption.value} value={sortOption.value}>
+                {sortOption.label}
+              </option>
             ))}
           </ChakraSelect>
         </Flex>
