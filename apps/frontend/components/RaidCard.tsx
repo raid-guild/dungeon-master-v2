@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   HStack,
+  VStack,
   Box,
   Badge,
   Icon,
@@ -222,7 +223,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           {
             latestUpdate ? 
               (
-                <HStack py={2}>
+                <VStack py={2} align="start">
                   <Text>{displayDate(latestUpdate.createdAt)}</Text>
                   <Tooltip label={latestUpdate.update} placement="top" hasArrow>
                     <span>
@@ -233,7 +234,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
                       </Text>
                     </span>
                   </Tooltip>
-                </HStack>
+                </VStack>
               )
               : (<Text>(no updates yet)</Text>)
           }
