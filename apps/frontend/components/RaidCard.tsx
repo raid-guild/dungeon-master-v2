@@ -68,6 +68,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
     raidDate = _.get(raid, 'endDate');
     raidDateLabel = 'Ended on: ';
   }
+  const [latestUpdate] = _.get(raid, 'updates');
 
   return (
     <Box bg="gray.800" rounded="md" p={8} w="100%">
@@ -212,9 +213,30 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           />
           <InfoStack label="Project Type" details={projectType || '-'} />
         </SimpleGrid>
-        {/* display update  */}
+      </Flex>
+      <Flex direction="column" paddingY={4}>
+        <Heading size="sm" color="white">
+          Status Update
+        </Heading>
         <Flex direction="column">
-          {/* todo: display first update, truncated, with careted date. Display full text inside tooltip */}
+          {
+            latestUpdate ? 
+              (
+                <HStack py={2}>
+                  <Text>{displayDate(latestUpdate.createdAt)}</Text>
+                  <Tooltip label={latestUpdate.update} placement="top" hasArrow>
+                    <span>
+                      <Text color="white">
+                        {_.gt(_.size(latestUpdate.update), 140)
+                          ? `${latestUpdate.update?.slice(0, 140)}...`
+                          : latestUpdate.update}
+                      </Text>
+                    </span>
+                  </Tooltip>
+                </HStack>
+              )
+              : (<Text>(no updates yet)</Text>)
+          }
         </Flex>
       </Flex>
     </Box>
