@@ -12,12 +12,13 @@ import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
+import "@fontsource/uncial-antiqua"
+import "@fontsource/texturina"
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();

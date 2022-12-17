@@ -29,7 +29,6 @@ import {
   RAID_CATEGORY_DISPLAY,
   BUDGET_DISPLAY,
   GUILD_CLASS_ICON,
-  SKILLS_DISPLAY,
 } from '../utils/constants';
 import { displayDate } from '../utils/general';
 import MemberAvatarStack from './MemberAvatarStack';
@@ -52,7 +51,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const description = _.get(consultation, 'description');
   const budget =
     BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
-  const projectType = _.get(consultation, 'projectType.projectType');
+  const projectType = PROJECT_TYPE_DISPLAY(_.get(consultation, 'projectType.projectType'));
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
 
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
