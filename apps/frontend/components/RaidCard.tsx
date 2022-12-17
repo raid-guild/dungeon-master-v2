@@ -69,7 +69,8 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
     raidDate = _.get(raid, 'endDate');
     raidDateLabel = 'Ended on: ';
   }
-  const [latestUpdate] = _.get(raid, 'updates');
+  const updates = _.get(raid, 'updates');
+  const latestUpdate = updates ? updates[0] : null;
 
   return (
     <Box bg="gray.800" rounded="md" p={8} w="100%">

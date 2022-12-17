@@ -32,7 +32,6 @@ const MiniRaidCard = ({
       border="1px solid"
       borderColor="whiteAlpha.500"
       borderRadius={15}
-      minH="100px"
       p={4}
     >
       <Stack spacing={2}>

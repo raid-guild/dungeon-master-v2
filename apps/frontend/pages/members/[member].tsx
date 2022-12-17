@@ -7,6 +7,7 @@ import {
   Heading,
   Button,
   HStack,
+  VStack,
   Text,
   Stack,
 } from '@raidguild/design-system';
@@ -51,6 +52,7 @@ const Member = () => {
   const handleShowUpdateModal = () => {
     setModals({ memberForm: true });
   };
+  const memberType = _.get(member, 'memberType.memberType');
 
   return (
     <>
@@ -80,13 +82,24 @@ const Member = () => {
             )}
             <Heading>{memberDisplayName(member)}</Heading>
             <HStack>
-              <Badge background="blackAlpha" fontSize="sm">
-                {_.get(member, 'isRaiding') === true ? (
-                  <Text>⚔️ Raiding</Text>
-                ) : (
-                  <Text>⛺️ Not Raiding</Text>
-                )}
-              </Badge>
+              <VStack align="start" mr={4}>
+                <Badge background="blackAlpha" fontSize="sm">
+                  {_.get(member, 'isRaiding') === true ? (
+                    <Text>⚔️ Raiding</Text>
+                  ) : (
+                    <Text>⛺️ Not Raiding</Text>
+                  )}
+                </Badge>
+                <Badge
+                  marginX={1}
+                  marginBottom={1}
+                  color="raid"
+                  bgColor="gray.700"
+                  
+                >
+                  {memberType}
+                </Badge>
+              </VStack>
               <Button variant="outline" onClick={handleShowUpdateModal}>
                 Edit
               </Button>
@@ -110,7 +123,7 @@ const Member = () => {
             p={8}
           >
             {!_.isEmpty(_.get(pastAndActiveRaids, 'active')) && (
-              <Stack>
+              <Stack mb={4}>
                 <Heading size="sm">Active Raids</Heading>
                 <Stack>
                   {_.map(

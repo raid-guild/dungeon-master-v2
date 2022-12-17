@@ -137,6 +137,7 @@ const MemberCard: React.FC<MemberProps> = ({
         }
       : null,
   ];
+  const memberType = _.get(member, 'memberType.memberType');
 
   return (
     <LinkBox>
@@ -168,7 +169,7 @@ const MemberCard: React.FC<MemberProps> = ({
                 justifyContent="space-between"
                 width="100%"
                 paddingX={4}
-                paddingTop={4}
+                paddingY={2}
               >
                 <Heading
                   color="white"
@@ -179,9 +180,20 @@ const MemberCard: React.FC<MemberProps> = ({
                 >
                   {_.get(member, 'name', _.get(application, 'name'))}
                 </Heading>
-                <Badge background="blackAlpha" fontSize="sm">
-                  {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
-                </Badge>
+                <VStack align="start">
+                  <Badge background="blackAlpha" fontSize="sm">
+                    {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
+                  </Badge>
+                  <Badge
+                    marginX={1}
+                    marginBottom={1}
+                    color="raid"
+                    bgColor="gray.700"
+                    
+                  >
+                    {memberType}
+                 </Badge>
+                </VStack>
               </HStack>
             </Flex>
           </LinkOverlay>
