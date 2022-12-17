@@ -46,6 +46,11 @@ const RAID_DETAIL_FRAGMENT = gql`
         project_type
       }
     }
+    updates(order_by: {created_at: desc}, limit:1) {
+      created_at
+      id
+      update
+    }
     created_at
     updated_at
     start_date
