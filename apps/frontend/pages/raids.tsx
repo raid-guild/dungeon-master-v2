@@ -15,7 +15,6 @@ const RaidList = () => {
   const token = _.get(session, 'token');
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({ token });
   const raids = _.flatten(_.get(data, 'pages'));
-  console.log('raids list: ', raids);
 
   return (
     <>
