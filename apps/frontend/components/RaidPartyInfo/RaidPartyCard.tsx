@@ -70,7 +70,7 @@ const RaidPartyCard = ({
   const token = _.get(session, 'token');
   const [updateCleric, setUpdateCleric] = useState(false);
   const [clericToAdd, setClericToAdd] = useState<string>();
-  console.log(clericToAdd);
+  // console.log(clericToAdd);
 
   const { mutateAsync: updateRaid } = useRaidUpdate({
     token,
@@ -122,7 +122,6 @@ const RaidPartyCard = ({
       )}
     </Flex>
   );
-  console.log(clericToAdd);
 
   if (updateCleric && isCleric) {
     return (
@@ -206,7 +205,7 @@ const RaidPartyCard = ({
       </GeneralCard>
     );
   }
-  console.log(roles);
+
   if (isRole) {
     return (
       <GeneralCard

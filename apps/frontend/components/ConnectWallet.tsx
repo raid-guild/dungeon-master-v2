@@ -64,7 +64,7 @@ export const ConnectWallet: React.FC = () => {
                       borderColor: 'brand.primary.600',
                     }}
                     leftIcon={<FiKey />}
-                    disabled={isConnecting}
+                    isDisabled={isConnecting}
                     onClick={openConnectModal}
                     data-cy="connect-wallet"
                   >
