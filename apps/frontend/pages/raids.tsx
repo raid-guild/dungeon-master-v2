@@ -170,8 +170,8 @@ const RaidList = () => {
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({
     token,
     raidStatusFilterKey: raidStatusFilter,
-    raidSortKey: raidSort,
     raidRolesFilterKey: raidRolesFilter,
+    raidSortKey: raidSort,
   });
 
   const raids = _.flatten(_.get(data, 'pages'));

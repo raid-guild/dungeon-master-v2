@@ -9,9 +9,6 @@ const useRaidList = ({
   raidRolesFilterKey,
   raidSortKey,
 }) => {
-  console.log('raidStatusFilterKey', raidStatusFilterKey);
-  console.log('raidRolesFilterKey', raidRolesFilterKey);
-  console.log('raidSortKey', raidSortKey);
   const limit = 15;
 
   const where = {

@@ -8,16 +8,14 @@ import {
   HStack,
   VStack,
   Badge,
-  Avatar,
   Link as ChakraLink,
   LinkBox,
   LinkOverlay,
   Divider,
   Tooltip,
-  Icon,
   RoleBadge,
 } from '@raidguild/design-system';
-import { useClipboard, AvatarBadge } from '@chakra-ui/react';
+import { useClipboard } from '@chakra-ui/react';
 import Link from './ChakraNextLink';
 import {
   FaGithub,

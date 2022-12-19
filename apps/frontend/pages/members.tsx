@@ -22,18 +22,14 @@ const MemberList = () => {
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data, error, fetchNextPage, hasNextPage } = useMemberList({ token });
-  const members = _.flatten(_.get(data, 'pages'));
-  const [memberStatusFilter, setMemberStatusFilter] =
-    useState<string>('IS_RAIDING');
+  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('true');
   const [memberSort, setMemberSort] = useState<string>('name');
   const [memberRolesFilter, setMemberRolesFilter] = useState<string>('ALL');
-  const [sortChanged, setSortChanged] = useState(false);
 
   const memberStatusOptions = [
     ...[{ label: 'Show All', value: 'ALL' }],
-    ...[{ label: 'Is Raiding', value: 'ACTIVE' }],
-    ...[{ label: 'Is Not Raiding', value: 'ACTIVE' }],
+    ...[{ label: 'Is Raiding', value: 'true' }],
+    ...[{ label: 'Is Not Raiding', value: 'false' }],
   ];
 
   const memberRolesOptions = [
@@ -53,7 +49,6 @@ const MemberList = () => {
 
   const handleMemberSortChange = async (sortOption: string) => {
     setMemberSort(sortOption);
-    setSortChanged(true);
   };
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
@@ -149,6 +144,14 @@ const MemberList = () => {
       </Flex>
     </Flex>
   );
+
+  const { data, error, fetchNextPage, hasNextPage } = useMemberList({
+    token,
+    memberRolesFilterKey: memberRolesFilter,
+    memberStatusFilterKey: memberStatusFilter,
+    memberSortKey: memberSort,
+  });
+  const members = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
