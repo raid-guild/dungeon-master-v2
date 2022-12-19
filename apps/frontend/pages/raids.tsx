@@ -211,7 +211,7 @@ const RaidList = () => {
           </InfiniteScroll>
         ) : (
           <Flex justify="center" align="center" minH="50vh">
-            <Heading size="md">No projects found!</Heading>
+            <Heading size="md">No Raids found!</Heading>
           </Flex>
         )}
       </SiteLayout>

@@ -164,26 +164,33 @@ const MemberList = () => {
         error={error}
       >
         <MemberControls />
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={fetchNextPage}
-          hasMore={hasNextPage}
-          loader={
-            <Flex my={25} w="100%" justify="center">
-              <Spinner size="xl" />
-            </Flex>
-          }
-        >
-          <Stack spacing={4}>
-            {_.map(members, (member: IMember) => (
-              <MemberCard
-                member={member}
-                application={_.get(member, 'application')}
-                key={_.get(member, 'id')}
-              />
-            ))}
-          </Stack>
-        </InfiniteScroll>
+
+        {members && members.length > 0 ? (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={fetchNextPage}
+            hasMore={hasNextPage}
+            loader={
+              <Flex my={25} w="100%" justify="center">
+                <Spinner size="xl" />
+              </Flex>
+            }
+          >
+            <Stack spacing={4}>
+              {_.map(members, (member: IMember) => (
+                <MemberCard
+                  member={member}
+                  application={_.get(member, 'application')}
+                  key={_.get(member, 'id')}
+                />
+              ))}
+            </Stack>
+          </InfiniteScroll>
+        ) : (
+          <Flex justify="center" align="center" minH="50vh">
+            <Heading size="md">No Members found!</Heading>
+          </Flex>
+        )}
       </SiteLayout>
     </>
   );
