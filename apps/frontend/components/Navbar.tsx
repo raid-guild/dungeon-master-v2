@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { Flex, Heading, HStack } from '@raidguild/design-system';
+import { Flex, Heading, HStack, Tooltip, Icon } from '@raidguild/design-system';
+import { HiSearch } from 'react-icons/hi';
 import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
 
@@ -24,7 +25,16 @@ const Navbar = () => (
         ))}
       </HStack>
     </HStack>
-    <ConnectWallet />
+    <Flex align="center">
+      <Flex cursor="pointer" mr={6}>
+        <Tooltip label={"press CMD + K to search"} placement="bottom" hasArrow>
+          <span>
+           <Icon as={HiSearch} boxSize={6} />
+          </span>
+        </Tooltip>
+      </Flex>
+      <ConnectWallet />
+    </Flex>
   </Flex>
 );
 
