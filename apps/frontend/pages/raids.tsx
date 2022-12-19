@@ -6,9 +6,6 @@ import {
   Spinner,
   Flex,
   FormLabel,
-  Text,
-
-  // Select
 } from '@raidguild/design-system';
 import { Select as ChakraSelect } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
@@ -37,8 +34,6 @@ const raidRolesOptions = [
   ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
   ...GUILD_CLASS_OPTIONS,
 ];
-
-console.log('RAID ROLES OPTIONS', raidRolesOptions);
 
 const raidSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
