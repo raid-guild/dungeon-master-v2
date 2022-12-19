@@ -31,6 +31,9 @@ export const MEMBER_LIST_QUERY = gql`
       application {
         introduction
       }
+      member_type {
+        member_type
+      }
     }
   }
 `;
@@ -81,6 +84,9 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
           skill_type
         }
       }
+      member_type {
+        member_type
+      }
       raid_parties {
         raid {
           name
@@ -113,6 +119,9 @@ export const MEMBER_DETAIL_QUERY = gql`
           end_date
           status
         }
+      }
+      member_type {
+        member_type
       }
     }
   }
