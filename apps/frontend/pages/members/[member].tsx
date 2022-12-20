@@ -22,15 +22,18 @@ import MemberDetailsCard from '../../components/MemberDetailsCard';
 import MiniRaidCard from '../../components/MiniRaidCard';
 import { useOverlay } from '../../contexts/OverlayContext';
 import UpdateMemberForm from '../../components/MemberUpdateForm';
+import { useRouter } from 'next/router';
 
 const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 
 // TODO remove hardcoded limits on past and active raids
 
 const Member = () => {
+  const router = useRouter();
+  const memberAddress = _.get(router, 'query.member');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: member } = useMemberDetail({ token });
+  const { data: member } = useMemberDetail({ token, memberAddress });
   const { data: ensAvatar } = useEnsAvatar({
     address: _.get(member, 'ethAddress'),
     chainId: 1,

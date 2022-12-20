@@ -1,34 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import {
-  Flex,
-  AvatarGroup,
-  HStack,
-  Button,
-  Avatar,
-  Text,
-  Stack,
-  Box,
-  IconButton,
-  Icon,
-  Tooltip,
-  ChakraSelect,
-  Heading,
-  RoleBadge,
-} from '@raidguild/design-system';
-import { FiUser, FiX, FiCheck } from 'react-icons/fi';
+import { Flex, Stack, Box, Heading } from '@raidguild/design-system';
 import {
   IMember,
-  GUILD_CLASS_ICON,
-  GUILD_CLASS_DISPLAY,
   IRaid,
   IConsultation,
+  SIDEBAR_ACTION_STATES,
 } from '../../utils';
-import { useSlimMemberList } from '../../hooks/useMemberList';
+import { useSlimMemberList } from '../../hooks';
+
 import RaidPartyButtons from './RaidPartyButtons';
-import MemberAvatar from '../MemberAvatar';
+// import MemberAvatar from '../MemberAvatar';
 import RaidPartyCard from './RaidPartyCard';
 
 interface RaidInfoProps {
@@ -37,45 +20,19 @@ interface RaidInfoProps {
 }
 
 const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
-  const [clearRoles, setClearRoles] = useState(false);
-  const [localRoles, setLocalRoles] = useState<string[]>(
-    _.map(_.get(raid, 'rolesRequired'), 'role')
+  const [buttonSelection, setButtonSelection] = useState<string>(
+    SIDEBAR_ACTION_STATES.none
   );
-
-  const [raiders, setRaiders] = useState<any[]>();
-  const [clericToAdd, setClericToAdd] = useState<string>();
-
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: members } = useSlimMemberList({ token });
+  const { data: members } = useSlimMemberList({
+    token,
+    button: buttonSelection,
+  });
 
+  const localRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
   const cleric = _.get(raid, 'cleric');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
-
-  const removeLocalRole = (role) => {
-    setLocalRoles(localRoles.filter((r) => r !== role));
-  };
-
-  const clearRoleClick = () => {
-    if (clearRoles) {
-      setClearRoles(false);
-      setLocalRoles(_.get(raid, 'rolesRequired'));
-    } else {
-      setClearRoles(true);
-    }
-  };
-
-  const submitUpdatedRoles = async () => {
-    console.log('submit updated roles');
-  };
-
-  const submitUpdatedCleric = async (e) => {
-    console.log('submit updated cleric');
-  };
-
-  const submitClearCleric = async () => {
-    console.log('submit clear cleric');
-  };
 
   const Divider = () => (
     <Box
@@ -94,7 +51,13 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
             <Flex direction="column" py={2}>
               <Stack>
                 <Heading size="sm">Cleric</Heading>
-                <RaidPartyCard member={cleric} members={members} isCleric />
+                <RaidPartyCard
+                  raid={raid}
+                  member={cleric}
+                  members={members}
+                  isCleric
+                  setButtonSelection={setButtonSelection}
+                />
               </Stack>
             </Flex>
             {!_.isEmpty(raidParty) && (
@@ -102,7 +65,11 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
                 <Divider />
                 <Heading size="sm">Raiders</Heading>
                 {_.map(raidParty, (member: Partial<IMember>) => (
-                  <RaidPartyCard member={member} />
+                  <RaidPartyCard
+                    raid={raid}
+                    member={member}
+                    key={_.get(member, 'id')}
+                  />
                 ))}
               </Stack>
             )}
@@ -116,9 +83,12 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
           </Stack>
         </Box>
         <RaidPartyButtons
+          raid={raid}
           cleric={cleric}
           raidParty={raidParty}
           members={members}
+          button={buttonSelection}
+          setButton={setButtonSelection}
         />
       </Stack>
     </Stack>

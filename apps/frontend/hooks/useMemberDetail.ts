@@ -1,12 +1,12 @@
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import _ from 'lodash';
 import { useQuery } from '@tanstack/react-query';
 import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '../gql';
 import { camelize, IMember } from '../utils';
 
-const useMemberDetail = ({ token }) => {
-  const router = useRouter();
-  const memberAddress = _.get(router, 'query.member');
+const useMemberDetail = ({ token, memberAddress }) => {
+  // const router = useRouter();
+  // const memberAddress = _.get(router, 'query.member', undefined);
 
   const memberQueryResult = async () => {
     if (!memberAddress || !token) return;
@@ -26,7 +26,7 @@ const useMemberDetail = ({ token }) => {
     IMember,
     Error
   >(['memberDetail', memberAddress], memberQueryResult, {
-    enabled: Boolean(token),
+    enabled: !!token && !!memberAddress,
   });
 
   return { isLoading, isFetching, isError, error, data };

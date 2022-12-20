@@ -6,7 +6,7 @@ import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
 import ModalWrapper from './ModalWrapper';
 import RaidPartyInfo from './RaidPartyInfo';
-import RaidTags from './RaidTags';
+// import RaidTags from './RaidTags';
 import { useOverlay } from '../contexts/OverlayContext';
 
 interface RaidDetailsSidebarProps {
@@ -16,6 +16,7 @@ interface RaidDetailsSidebarProps {
 const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
   raid,
 }: RaidDetailsSidebarProps) => {
+  console.log(raid);
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
   const relatedRaids = _.get(raid, 'raidByRelatedRaids');
@@ -68,7 +69,7 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
       />
 
       <RaidPartyInfo raid={raid} />
-      <RaidTags raid={raid} />
+      {/* <RaidTags raid={raid} /> */}
       {_.map(relatedRaids, (raid: IRaid) => (
         <Text key={1}>Related Raid 1</Text>
       ))}
