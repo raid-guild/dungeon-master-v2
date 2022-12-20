@@ -19,7 +19,7 @@ const Consultation = () => {
         subheader={<Heading>{_.get(consultation, 'name')}</Heading>}
         isLoading={false}
       >
-        <HStack align="flex-start">
+        <HStack align="flex-start" width="100%">
           <RaidDetailsCard consultation={consultation} />
           <Button>Create Raid</Button>
         </HStack>
