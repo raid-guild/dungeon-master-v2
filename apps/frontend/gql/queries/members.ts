@@ -1,11 +1,22 @@
 import { gql } from '@apollo/client';
 
 export const MEMBER_LIST_QUERY = gql`
-  query MemberList($offset: Int!, $limit: Int!, $where: members_bool_exp) {
-    members(limit: $limit, offset: $offset, where: $where) {
+  query MemberList(
+    $offset: Int!
+    $limit: Int!
+    $where: members_bool_exp
+    $order_by: [members_order_by!]
+  ) {
+    members(
+      limit: $limit
+      offset: $offset
+      where: $where
+      order_by: $order_by
+    ) {
       id
       name
       eth_address
+      is_raiding
       contact_info {
         id
         email
@@ -33,6 +44,7 @@ export const MEMBER_SLIM_LIST_QUERY = gql`
       id
       name
       eth_address
+      is_raiding
       contact_info {
         telegram
       }
@@ -49,6 +61,7 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
       id
       name
       eth_address
+      is_raiding
       contact_info {
         id
         email
@@ -92,6 +105,7 @@ export const MEMBER_DETAIL_QUERY = gql`
   query MemberDetail($id: uuid!) {
     members_by_pk(id: $id) {
       id
+      is_raiding
       name
       contact_info {
         email

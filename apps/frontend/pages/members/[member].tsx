@@ -45,7 +45,7 @@ const Member = () => {
       (r) => !_.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
     ),
   };
-  // console.log('member details: ', pastAndActiveRaids);
+
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
 
@@ -54,6 +54,7 @@ const Member = () => {
   };
   const memberType = _.get(member, 'memberType.memberType');
 
+  console.log('member', member);
   return (
     <>
       <NextSeo title={_.get(member, 'name')} />

@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, MEMBER_UPDATE_MUTATION } from '../gql';
-import { useToast } from '@raidguild/design-system';
+import { useCustomToast } from '@raidguild/design-system';
 import { IMemberUpdate } from '../utils';
 
 const useMemberUpdate = ({ token, memberId }) => {
   const queryClient = useQueryClient();
-  const toast = useToast();
+  const toast = useCustomToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberUpdate) => {
@@ -30,17 +30,19 @@ const useMemberUpdate = ({ token, memberId }) => {
         ]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
 
-        toast({
+        toast.success({
           title: 'Member Info Updated',
           status: 'success',
+          iconName: 'crown',
           duration: 3000,
           isClosable: true,
         });
       },
       onError: (error) => {
-        toast({
+        toast.error({
           title: 'Unable to Update Member',
           status: 'error',
+          iconName: 'alert',
           duration: 3000,
           isClosable: true,
         });
