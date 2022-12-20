@@ -133,18 +133,20 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             </HStack>
           )}
 
-          {!raidCleric ? (
-            <Heading size="sm" color="white" mr={4} mb={{ base: 4, md: 0 }}>
-              Needs Cleric!
-            </Heading>
-          ) : (
-            <HStack mr={4} mb={{ base: 4, md: 0 }}>
-              <Heading size="sm" color="white">
-                Cleric
+          <HStack mr={4} mb={{ base: 4, md: 0 }}>
+            {!raidCleric ? (
+              <Heading size="sm" color="white" mr={4} mb={{ base: 4, md: 0 }}>
+                Needs Cleric!
               </Heading>
-              <MemberAvatar member={raidCleric} />
-            </HStack>
-          )}
+            ) : (
+              <>
+                <Heading size="sm" color="white">
+                  Cleric
+                </Heading>
+                <MemberAvatar member={raidCleric} />
+              </>
+            )}
+          </HStack>
 
           <Link href={link}>
             <Button color="raid" borderColor="raid" variant="outline">

@@ -54,7 +54,7 @@ const MemberList = () => {
   // TODO: generalize and move to separate file -- will need to pass options and filter state
   const MemberControls = () => (
     <Flex
-      direction="row"
+      direction={{ base: "column", md: "row" }}
       justifyContent="space-between"
       width="100%"
       gap={8}
