@@ -54,6 +54,7 @@ export const PREFERRED_CONTACT = ['Discord', 'Email', 'Telegram'];
 
 export const PROJECT_TYPE = ['New', 'Existing'];
 
+
 export const PROJECT_TYPE_DISPLAY = (projectType: string) => {
   const projectTypeMap = {
     NEW:'New',
