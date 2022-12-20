@@ -74,7 +74,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   return (
     <Box bg="gray.800" rounded="md" p={8} w="100%">
       <Flex
-        direction="row"
+        direction={{ base: "column", md: "row" }}
         // width="90%"
         // mx="auto"
         alignItems="space-apart"
@@ -87,7 +87,6 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               as="h3"
               fontSize="2xl"
               transition="all ease-in-out .25s"
-              minW="300px"
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
               {_.get(raid, 'name', _.get(consultation, 'name'))}
@@ -110,9 +109,9 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             )}
           </HStack>
         </Stack>
-        <HStack spacing={4} align="flex-start">
+        <Flex direction={{ base: "column", md: "row" }} align="flex-start">
           {!_.isEmpty(rolesRequired) && (
-            <HStack>
+            <HStack mb={{ base: 4, md: 0}} mr={4}>
               <Heading size="sm" color="white">
                 Roles Required
               </Heading>
@@ -135,11 +134,11 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           )}
 
           {!raidCleric ? (
-            <Heading size="sm" color="white">
+            <Heading size="sm" color="white" mr={4} mb={{ base: 4, md: 0 }}>
               Needs Cleric!
             </Heading>
           ) : (
-            <HStack>
+            <HStack mr={4} mb={{ base: 4, md: 0 }}>
               <Heading size="sm" color="white">
                 Cleric
               </Heading>
@@ -152,7 +151,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               View Details
             </Button>
           </Link>
-        </HStack>
+        </Flex>
       </Flex>
       <Flex
         direction="row"
@@ -202,7 +201,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         maxWidth="90%"
         paddingY={4}
       >
-        <SimpleGrid columns={3} spacing={4} width="100%">
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
           <InfoStack
             label="Category"
