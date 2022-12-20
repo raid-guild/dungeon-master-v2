@@ -23,6 +23,7 @@ import {
   truncateAddress,
 } from '../utils';
 import InfoStack from './InfoStack';
+import { DELIVERY_PRIORITIES_DISPLAY, AVAILABLE_PROJECT_SPECS_DISPLAY, PROJECT_TYPE_DISPLAY } from '../utils/constants';
 
 interface RaidProps {
   raid?: IRaid;
@@ -97,7 +98,9 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   const keyLinkItems = [
     consultation?.link && {
       label: 'Project Specs',
-      details: _.get(consultation, 'availableProjectSpec.availableProjectSpec'),
+      details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+        _.get(consultation, 'availableProjectSpec.availableProjectSpec')
+      ),
       link: consultation?.link,
     },
     _.get(consultation, 'consultationHash') && {
@@ -138,22 +141,28 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
         },
         {
           label: 'Project Type',
-          details: _.get(consultation, 'projectType.projectType', '-'),
-        },
-        {
-          label: 'Specs',
-          details: _.get(
-            consultation,
-            'availableProjectSpec.availableProjectSpec',
-            '-'
+          details: PROJECT_TYPE_DISPLAY(
+            _.get(consultation, 'projectType.projectType', '-')
           ),
         },
         {
+          label: 'Specs',
+          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+            _.get(
+              consultation,
+              'availableProjectSpec.availableProjectSpec',
+              '-'
+            ),
+          )
+        },
+        {
           label: 'Delivery Priority',
-          details: _.get(
-            consultation,
-            'deliveryPriority.deliveryPriority',
-            '-'
+          details: DELIVERY_PRIORITIES_DISPLAY(
+            _.get(
+              consultation,
+              'deliveryPriority.deliveryPriority',
+              '-'
+            )
           ),
         },
       ].filter((x) => x),
