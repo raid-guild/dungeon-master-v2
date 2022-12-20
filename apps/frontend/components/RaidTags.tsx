@@ -38,7 +38,7 @@ const RaidTags = ({ raid }: RaidTagsProps) => (
             borderRadius="full"
             size="md"
             variant="solid"
-            colorScheme="whiteAlpha"
+            colorScheme="gray"
             marginX={2}
           >
             <TagLabel padding={1} color="blackAlpha.800">

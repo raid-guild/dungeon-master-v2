@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-const RAID_DETAIL_FRAGMENT = gql`
+export const RAID_DETAIL_FRAGMENT = gql`
   fragment RaidDetail on raids {
     id
     name
@@ -47,9 +47,14 @@ const RAID_DETAIL_FRAGMENT = gql`
         project_type
       }
     }
-    updates(order_by: {created_at: desc}, limit:1) {
+    updates(order_by: { created_at: desc }, limit: 1) {
       created_at
       id
+      member {
+        name
+        eth_address
+        id
+      }
       update
     }
     created_at

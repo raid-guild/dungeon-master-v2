@@ -17,10 +17,12 @@ import {
   AccordionPanel,
 } from '@raidguild/design-system';
 import { useForm } from 'react-hook-form';
-import { IUpdate, IRaid } from '../utils';
+import { IStatusUpdate, IRaid } from '../utils';
 import RaidUpdate from './RaidUpdates';
 // import { isAfter } from 'date-fns';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
+import useUpdateCreate from '../hooks/useUpdateCreate';
+import { useSession } from 'next-auth/react';
 // import { useInjectedProvider } from '../contexts/InjectedProviderContexts';
 
 interface UpdatesProps {
@@ -29,15 +31,21 @@ interface UpdatesProps {
 
 const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   // const { userData } = useInjectedProvider();
-  console.log(raid);
+  // console.log(raid);
   const updates = _.get(raid, 'updates', null);
-  const { address } = useAccount();
+  // const { address } = useAccount();
+  const { data: session } = useSession();
   const localForm = useForm();
   const { handleSubmit, setValue } = localForm;
   const toast = useToast();
   const [addUpdate, setAddUpdate] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
   const [sortedUpdates, setSortedUpdates] = useState<any[]>();
+  const token: string = _.get(session, 'token', '');
+  const { mutateAsync } = useUpdateCreate({
+    token,
+    memberId: _.get(session, 'user.id'),
+  });
 
   const updatesCount = useMemo(() => {
     if (!sortedUpdates) return 0;
@@ -60,6 +68,14 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   };
 
   const submitNewUpdate = async (values: any) => {
+    console.log(values);
+    mutateAsync({
+      update: values.update,
+      raidId: raid.id,
+    });
+    setValue('update', '');
+    setAddUpdate(false);
+
     // const result = await createRecord('update', {
     //   update: values.update,
     //   member: userData.member.id,
@@ -120,7 +136,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
       {updatesCount > 0 &&
         sortedUpdates
           ?.slice(0, updatesCount > 4 ? 1 : updatesCount)
-          .map((c: IUpdate) => (
+          .map((c: IStatusUpdate) => (
             <Stack as="ul" width="100%" key={c.createdAt}>
               <RaidUpdate
                 // id={c.id}
