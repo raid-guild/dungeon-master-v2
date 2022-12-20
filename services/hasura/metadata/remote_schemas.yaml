@@ -1,12 +1,19 @@
-- name: "Smart-Escrow xDai"
-  definition:
-    url: https://api.thegraph.com/subgraphs/name/dan13ram/xdai-smart-invoices
-    timeout_seconds: 40
-    customization:
-      root_field_namespace: smart_escrow_xdai_
-- name: "DAOHaus Stats xDai"
+- name: DaoHaus-Stats-xDai
   definition:
     url: https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai
     timeout_seconds: 40
     customization:
-      root_field_namespace: daohaus_stats_xdai_
+      root_fields_namespace: daohaus_stats_xdai
+      type_names:
+        mapping: {}
+        prefix: daohaus_stats_xdai
+  comment: ""
+- name: Smart-Escrow-xDai
+  definition:
+    url: https://api.thegraph.com/subgraphs/name/dan13ram/xdai-smart-invoices
+    timeout_seconds: 40
+    customization:
+      root_fields_namespace: smart_escrow_xdai
+      type_names:
+        mapping: {}
+        prefix: smart_escrow_xdai
