@@ -120,7 +120,11 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
                 <Divider />
                 <Heading size="sm">Raiders</Heading>
                 {_.map(raidParty, (member: Partial<IMember>) => (
-                  <RaidPartyCard member={member} key={_.get(member, 'id')} />
+                  <RaidPartyCard
+                    raid={raid}
+                    member={member}
+                    key={_.get(member, 'id')}
+                  />
                 ))}
               </Stack>
             )}

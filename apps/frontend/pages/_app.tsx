@@ -17,15 +17,15 @@ import { chains } from '../utils/chains';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
-import "@fontsource/uncial-antiqua"
-import "@fontsource/texturina"
+import '@fontsource/uncial-antiqua';
+import '@fontsource/texturina';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useCustomToast();
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchInterval: 120 * 1000,
+        refetchInterval: 1200 * 1000,
         refetchOnWindowFocus: false,
       },
     },
@@ -68,7 +68,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       />
 
       <WagmiConfig client={wagmiClient}>
-        <SessionProvider refetchInterval={120} session={pageProps.session}>
+        <SessionProvider
+          refetchInterval={8 * 60}
+          session={pageProps.session}
+          refetchOnWindowFocus={true}
+        >
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>

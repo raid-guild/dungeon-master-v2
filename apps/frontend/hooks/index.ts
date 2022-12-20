@@ -12,5 +12,6 @@ export * from './useRaidDetail';
 export * from './useRaidList';
 export { default as useRaidUpdate } from './useRaidUpdate';
 export * from './useRaidPartyUpdate';
+export * from './useRolesRequiredUpdate';
 export * from './useSearchResults';
 export * from './useUpdateCreate';

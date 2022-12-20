@@ -25,7 +25,7 @@ import {
   SIDEBAR_ACTION_STATES,
   IRaid,
 } from '../../utils';
-import { useRaidUpdate } from '../../hooks';
+import { useRaidUpdate, useRaidPartyRemove } from '../../hooks';
 import MemberAvatar from '../MemberAvatar';
 
 type RaidPartyCardProps = {
@@ -70,19 +70,20 @@ const RaidPartyCard = ({
   const token = _.get(session, 'token');
   const [updateCleric, setUpdateCleric] = useState(false);
   const [clericToAdd, setClericToAdd] = useState<string>();
-  // console.log(clericToAdd);
+  console.log(raid);
 
   const { mutateAsync: updateRaid } = useRaidUpdate({
     token,
     raidId: _.get(raid, 'id'),
   });
+  const { mutateAsync: removeRaider } = useRaidPartyRemove({ token });
 
+  // * fallback to current user
   const submitUpdatedCleric = async () => {
     const raid_updates = {
-      // ...raid,
-      cleric_id: clericToAdd,
+      cleric_id: clericToAdd || _.get(session, 'user.id'),
     };
-    console.log(raid_updates);
+
     await updateRaid({
       id: _.get(raid, 'id'),
       raid_updates,
@@ -99,6 +100,22 @@ const RaidPartyCard = ({
     setButtonSelection(SIDEBAR_ACTION_STATES.cleric);
     setUpdateCleric(true);
   };
+
+  const submitRemoveRaider = async (memberId: string) => {
+    await removeRaider({
+      raidId: _.get(raid, 'id'),
+      memberId,
+    });
+  };
+
+  // const clearRoleClick = () => {
+  //   if (clearRoles) {
+  //     setClearRoles(false);
+  //     setLocalRoles(_.get(raid, 'rolesRequired'));
+  //   } else {
+  //     setClearRoles(true);
+  //   }
+  // };
 
   const GeneralCard = ({ button, children }: GeneralCardProps) => (
     <Flex
@@ -130,7 +147,7 @@ const RaidPartyCard = ({
           updateCleric ? (
             <Button onClick={submitUpdatedCleric}>Go</Button>
           ) : (
-            <Button variant="outline" onClick={() => setUpdateCleric(true)}>
+            <Button variant="outline" onClick={submitUpdatedCleric}>
               Claim
             </Button>
           )
@@ -214,6 +231,7 @@ const RaidPartyCard = ({
             variant="outline"
             icon={<Icon as={FiX} color="primary.500" fontSize="1.5rem" />}
             aria-label="Remove roles"
+            onClick={}
           />
         }
       >
@@ -255,10 +273,10 @@ const RaidPartyCard = ({
     <GeneralCard
       button={
         <IconButton
+          onClick={() => submitRemoveRaider(_.get(member, 'id'))}
           icon={<Icon as={FiX} color="primary.500" fontSize="1.5rem" />}
           aria-label="Remove Raider"
           variant="outline"
-          isDisabled
         />
       }
     >

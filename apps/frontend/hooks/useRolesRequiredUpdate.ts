@@ -1,27 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { camelize } from '../utils';
-import { useToast } from '@raidguild/design-system';
-import {
-  client,
-  RAID_PARTY_DELETE_MUTATION,
-  RAID_PARTY_INSERT_MUTATION,
-} from '../gql';
-import { IRaidPartyInsert } from '../utils';
+import { useCustomToast } from '@raidguild/design-system';
+import { client, ROLES_REQUIRED_INSERT_MUTATION } from '../gql';
+import { IRoleRequiredInsert, camelize } from '../utils';
 
-export const useRaidPartyAdd = ({ token }) => {
+export const useAddRolesRequired = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useToast();
+  const toast = useCustomToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, memberId }: IRaidPartyInsert) => {
+    async ({ raidId, role }: IRoleRequiredInsert) => {
       if (!raidId || !token) return;
       const { data } = await client(token).mutate({
-        mutation: RAID_PARTY_INSERT_MUTATION,
+        mutation: ROLES_REQUIRED_INSERT_MUTATION,
         variables: {
-          raid_parties: {
+          raidParty: {
             raid_id: raidId,
-            member_id: memberId,
+            role,
           },
         },
       });
@@ -33,25 +28,31 @@ export const useRaidPartyAdd = ({ token }) => {
         console.log(data);
         queryClient.invalidateQueries([
           'raidDetail',
-          _.get(data, 'insert_raid_parties.returning.0.raid_id'),
+          _.get(data, 'insert_raids_roles_required.returning.0.raid_id'),
         ]); // invalidate raidDetail with id from the successful mutation response
+        queryClient.invalidateQueries(['raidList']); // invalidate the raidList
+        console.log(
+          _.get(data, 'insert_raids_roles_required.returning.0.raid')
+        );
         queryClient.setQueryData(
           [
             'raidDetail',
-            _.get(data, 'insert_raid_parties.returning.0.raid_id'),
+            _.get(data, 'insert_raids_roles_required.returning.0.raid_id'),
           ],
-          camelize(_.get(data, 'insert_raid_parties.returning.0.raid'))
+          camelize(_.get(data, 'insert_raids_roles_required.returning.0.raid'))
         );
+        // setButton
+        // clear roleToAdd
 
-        toast({
-          title: 'Raid Party Updated',
+        toast.success({
+          title: 'Role Added',
           status: 'success',
           duration: 3000,
           isClosable: true,
         });
       },
       onError: (error) => {
-        toast({
+        toast.error({
           title: 'Unable to Update Raid',
           status: 'error',
           duration: 3000,
@@ -64,21 +65,20 @@ export const useRaidPartyAdd = ({ token }) => {
   return { mutateAsync, isLoading, isError, isSuccess };
 };
 
-export const useRaidPartyRemove = ({ token }) => {
+export const useDeleteRolesRequired = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useToast();
+  const toast = useCustomToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, memberId }: IRaidPartyInsert) => {
-      console.log(raidId, memberId);
+    async ({ raidId, role }: IRoleRequiredInsert) => {
       if (!raidId || !token) return;
       const { data } = await client(token).mutate({
-        mutation: RAID_PARTY_DELETE_MUTATION,
+        mutation: ROLES_REQUIRED_INSERT_MUTATION,
         variables: {
           where: {
             _and: {
-              member_id: { _eq: memberId },
-              raid_id: { _eq: raidId },
+              raid_id: raidId,
+              role,
             },
           },
         },
@@ -86,31 +86,36 @@ export const useRaidPartyRemove = ({ token }) => {
 
       return data;
     },
-
     {
       onSuccess: (data) => {
-        console.log('here?', data);
+        console.log(data);
         queryClient.invalidateQueries([
           'raidDetail',
-          _.get(data, 'delete_raid_parties.returning.0.raid_id'),
+          _.get(data, 'insert_raids_roles_required.returning.0.raid_id'),
         ]); // invalidate raidDetail with id from the successful mutation response
+        queryClient.invalidateQueries(['raidList']); // invalidate the raidList
+        console.log(
+          _.get(data, 'insert_raids_roles_required.returning.0.raid')
+        );
         queryClient.setQueryData(
           [
             'raidDetail',
-            _.get(data, 'delete_raid_parties.returning.0.raid_id'),
+            _.get(data, 'insert_raids_roles_required.returning.0.raid_id'),
           ],
-          camelize(_.get(data, 'delete_raid_parties.returning.0.raid'))
+          camelize(_.get(data, 'insert_raids_roles_required.returning.0.raid'))
         );
-        toast({
-          title: 'Raid Party Updated',
+        // setButton
+        // clear roleToAdd
 
+        toast.success({
+          title: 'Role Added',
           status: 'success',
           duration: 3000,
           isClosable: true,
         });
       },
       onError: (error) => {
-        toast({
+        toast.error({
           title: 'Unable to Update Raid',
           status: 'error',
           duration: 3000,

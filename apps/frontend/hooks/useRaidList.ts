@@ -90,18 +90,21 @@ const useRaidList = ({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<Array<Array<IRaid>>, Error>(
-    ['raidsList', raidStatusFilterKey, raidRolesFilterKey, raidSortKey],
-    ({ pageParam = 0 }) => raidQueryResult(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit);
-      },
-      enabled: Boolean(token),
-    }
-  );
+  } = useInfiniteQuery<Array<Array<IRaid>>, Error>({
+    queryKey: [
+      'raidsList',
+      raidStatusFilterKey,
+      raidRolesFilterKey,
+      raidSortKey,
+    ],
+    queryFn: ({ pageParam = 0 }) => raidQueryResult(pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      return _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit);
+    },
+    enabled: Boolean(token),
+  });
 
   return {
     status,

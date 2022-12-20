@@ -9,6 +9,7 @@ import {
   ChakraSelect,
   Box,
   Icon,
+  Flex,
 } from '@raidguild/design-system';
 import { FiPlus, FiX } from 'react-icons/fi';
 import {
@@ -18,8 +19,9 @@ import {
   IRaid,
   membersExceptRaidParty,
   SIDEBAR_ACTION_STATES,
+  rolesExceptRequiredRoles,
 } from '../../utils';
-import { useRaidUpdate } from '../../hooks';
+import { useRaidPartyAdd, useAddRolesRequired } from '../../hooks';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;
@@ -29,6 +31,8 @@ type RaidPartyButtonsProps = {
   button?: string;
   setButton?: (button: string) => void;
 };
+
+// TODO swap for better selects
 
 const RaidPartyButtons = ({
   raid,
@@ -41,38 +45,30 @@ const RaidPartyButtons = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const localMembers = membersExceptRaidParty(members, raidParty, cleric);
-  const [localRoles, setLocalRoles] = useState<string[]>(
-    _.map(_.get(raid, 'rolesRequired'), 'role')
+  const localRoles = rolesExceptRequiredRoles(
+    _.keys(GUILD_CLASS_DISPLAY),
+    raid
   );
   const [roleToAdd, setRoleToAdd] = useState<string>();
-  const [raiders, setRaiders] = useState<any[]>();
-  const { mutateAsync: updateRaid } = useRaidUpdate({
-    token,
-    raidId: _.get(raid, 'id'),
-  });
+  const [raiderToAdd, setRaiderToAdd] = useState<string>();
 
-  const updateLocalRoles = (role: string) => {
-    const newRoles = _.cloneDeep(localRoles);
-    if (_.includes(_.map(newRoles, 'role'), role)) {
-      _.remove(newRoles, (r) => r.role === role);
-    } else {
-      newRoles.push({ role });
-    }
-    return newRoles;
-  };
+  const { mutateAsync: updateRolesRequired } = useAddRolesRequired({
+    token,
+  });
+  const { mutateAsync: addRaider } = useRaidPartyAdd({ token });
+
+  console.log(raiderToAdd);
 
   const submitAddRole = async () => {
-    console.log('submit add role');
-    const roles = updateLocalRoles(roleToAdd);
-
-    // check against current localRoles
-    // remove or add based on that
-    await updateRaid({
-      id: _.get(raid, 'id'),
-      raid_updates: {
-        raids_roles_required: _.map(roles, (r: string) => ({ role: r })),
-      },
+    // TODO check against current localRoles
+    await updateRolesRequired({
+      raidId: _.get(raid, 'id'),
+      role: roleToAdd,
     });
+    setTimeout(() => {
+      setRoleToAdd(undefined);
+      setButton(SIDEBAR_ACTION_STATES.none);
+    }, 250);
   };
 
   // TODO clear click for selecting roles to remove in one save
@@ -86,7 +82,15 @@ const RaidPartyButtons = ({
   // };
 
   const submitAddRaider = async () => {
-    console.log('submit add raider');
+    await addRaider({
+      raidId: _.get(raid, 'id'),
+      memberId: raiderToAdd,
+    });
+
+    setTimeout(() => {
+      setRaiderToAdd(undefined);
+      setButton(SIDEBAR_ACTION_STATES.none);
+    }, 250);
   };
 
   const StartProcess = () => (
@@ -103,7 +107,10 @@ const RaidPartyButtons = ({
     <HStack>
       <Button
         variant="outline"
-        onClick={() => setButton(SIDEBAR_ACTION_STATES.raider)}
+        onClick={() => {
+          setButton(SIDEBAR_ACTION_STATES.raider);
+          setRaiderToAdd(_.get(_.first(localMembers), 'id'));
+        }}
       >
         Add Raider
       </Button>
@@ -111,6 +118,7 @@ const RaidPartyButtons = ({
         variant="outline"
         onClick={() => {
           setButton(SIDEBAR_ACTION_STATES.role);
+          setRoleToAdd(_.keys(GUILD_CLASS_DISPLAY)[0]);
         }}
       >
         Add Role
@@ -119,49 +127,59 @@ const RaidPartyButtons = ({
   );
 
   const SelectRole = () => (
-    <HStack w="100%">
+    <Flex justify="space-between" gap={1} w="100%">
       <IconButton
         variant="outline"
         icon={<Icon as={FiX} color="primary.500" />}
         aria-label="Clear Set Role Required for Raid"
-        onClick={() => setButton(SIDEBAR_ACTION_STATES.none)}
+        onClick={() => {
+          setButton(SIDEBAR_ACTION_STATES.none);
+          setRoleToAdd(undefined);
+        }}
       />
       <ChakraSelect
         onChange={(e) => setRoleToAdd(e.target.value)}
         value={roleToAdd}
       >
-        {_.map(_.keys(GUILD_CLASS_DISPLAY), (key: string) => (
+        {_.map(localRoles, (key: string) => (
           <option value={key} key={key}>
             {GUILD_CLASS_DISPLAY[key]}
           </option>
         ))}
       </ChakraSelect>
       <Button onClick={submitAddRole}>Add</Button>
-    </HStack>
+    </Flex>
   );
 
+  // TODO handle loading a bit better
   const SelectRaider = () => (
-    <HStack w="100%">
+    <Flex justify="space-between" gap={1} w="100%">
       <IconButton
         variant="outline"
         icon={<Icon as={FiX} color="primary.500" />}
         aria-label="Clear Set Raider for Raid"
-        onClick={() => setButton(SIDEBAR_ACTION_STATES.none)}
+        onClick={() => {
+          setButton(SIDEBAR_ACTION_STATES.none);
+          setRaiderToAdd(undefined);
+        }}
       />
       {_.isEmpty(localMembers) ? (
         <Box>No Raiders Found!</Box>
       ) : (
-        <ChakraSelect onChange={submitAddRaider}>
-          {_.map(localMembers, (c: IMember) => (
-            <option value={c.id} key={c.id}>
-              {memberDisplayName(c)}
+        <ChakraSelect
+          onChange={(e) => setRaiderToAdd(e.target.value)}
+          value={raiderToAdd}
+        >
+          {_.map(localMembers, (m: IMember) => (
+            <option value={m.id} key={m.id}>
+              {memberDisplayName(m)}
             </option>
           ))}
         </ChakraSelect>
       )}
 
-      <Button>Add</Button>
-    </HStack>
+      <Button onClick={submitAddRaider}>Add</Button>
+    </Flex>
   );
 
   return (

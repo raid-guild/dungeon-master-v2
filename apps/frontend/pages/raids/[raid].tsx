@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Heading, HStack, Stack, Box } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import { useRouter } from 'next/router';
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
@@ -10,9 +11,11 @@ import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
 
 const Raid = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const token = _.get(session, 'token');
-  const { data: raid } = useRaidDetail({ token });
-  console.log(raid);
+  const raidId = _.get(router, 'query.raid');
+  const { data: raid, isLoading } = useRaidDetail({ raidId, token });
+  console.log(isLoading, raid);
 
   return (
     <>

@@ -248,6 +248,16 @@ export interface IRaidUpdate {
   // TIMELINE - ISO STRINGS
 }
 
+export interface IRaidPartyInsert {
+  raidId: string;
+  memberId: string;
+}
+
+export interface IRoleRequiredInsert {
+  raidId: string;
+  role: string;
+}
+
 export interface IMemberUpdate {
   // for the mutation
   id?: string;

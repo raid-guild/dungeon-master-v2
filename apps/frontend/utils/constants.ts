@@ -196,7 +196,7 @@ export const GUILD_CLASS_ICON = {
   COMMUNITY: 'tavernkeeper',
   DESIGN: 'archer',
   TREASURY: 'dwarf',
-  MARKETING: 'healer',
+  MARKETING: 'hunter', // ! need another role badge for bard
   FRONTEND_DEV: 'warrior',
   OPERATIONS: 'healer',
   BIZ_DEV: 'hunter',
