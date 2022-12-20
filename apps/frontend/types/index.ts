@@ -258,6 +258,10 @@ export interface IRoleRequiredInsert {
   role: string;
 }
 
+export interface IRoleRemoveMany {
+  where: any;
+}
+
 export interface IMemberUpdate {
   // for the mutation
   id?: string;

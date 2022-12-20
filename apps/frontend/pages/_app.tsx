@@ -69,8 +69,8 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
 
       <WagmiConfig client={wagmiClient}>
         <SessionProvider
-          refetchInterval={8 * 60}
           session={pageProps.session}
+          refetchInterval={8 * 60 * 1000}
           refetchOnWindowFocus={true}
         >
           <RainbowKitSiweNextAuthProvider>

@@ -8,13 +8,13 @@ import {
   IconButton,
   Icon,
   Avatar,
-  AvatarGroup,
+  // AvatarGroup,
   ChakraSelect,
   Button,
   Box,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiCheck } from 'react-icons/fi';
 import { HiSwitchVertical } from 'react-icons/hi';
 import ChakraNextLink from '../ChakraNextLink';
 import {
@@ -25,7 +25,11 @@ import {
   SIDEBAR_ACTION_STATES,
   IRaid,
 } from '../../utils';
-import { useRaidUpdate, useRaidPartyRemove } from '../../hooks';
+import {
+  useRaidUpdate,
+  useRaidPartyRemove,
+  useRemoveRolesRequired,
+} from '../../hooks';
 import MemberAvatar from '../MemberAvatar';
 
 type RaidPartyCardProps = {
@@ -69,14 +73,19 @@ const RaidPartyCard = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const [updateCleric, setUpdateCleric] = useState(false);
+  const [localRoles, setLocalRoles] = useState(roles);
+  const [clearRoles, setClearRoles] = useState(false);
   const [clericToAdd, setClericToAdd] = useState<string>();
-  console.log(raid);
+  console.log(localRoles);
 
   const { mutateAsync: updateRaid } = useRaidUpdate({
     token,
     raidId: _.get(raid, 'id'),
   });
   const { mutateAsync: removeRaider } = useRaidPartyRemove({ token });
+  const { mutateAsync: removeRolesRequired } = useRemoveRolesRequired({
+    token,
+  });
 
   // * fallback to current user
   const submitUpdatedCleric = async () => {
@@ -108,14 +117,53 @@ const RaidPartyCard = ({
     });
   };
 
-  // const clearRoleClick = () => {
-  //   if (clearRoles) {
-  //     setClearRoles(false);
-  //     setLocalRoles(_.get(raid, 'rolesRequired'));
-  //   } else {
-  //     setClearRoles(true);
-  //   }
-  // };
+  const clearRoleClick = () => {
+    if (clearRoles) {
+      setClearRoles(false);
+    } else {
+      setClearRoles(true);
+    }
+  };
+
+  const removeLocalRole = (role: string) => {
+    const newRoles = localRoles.filter((r) => r !== role);
+    setLocalRoles(newRoles);
+  };
+
+  // TODO holy refactor
+  const saveUpdatedRoles = async () => {
+    const rolesRemoved = _.difference(roles, localRoles);
+    const rolesAdded = _.difference(localRoles, roles);
+    console.log(rolesRemoved, rolesAdded);
+    let rolesRemovedWhere = null;
+    // setClearRoles(false);
+    if (!_.isEmpty(rolesRemoved)) {
+      if (rolesRemoved.length === 1) {
+        rolesRemovedWhere = {
+          _and: {
+            raid_id: _.get(raid, 'id'),
+            role: rolesRemoved[0],
+          },
+        };
+      }
+      if (rolesRemoved.length > 1) {
+        rolesRemovedWhere = {
+          _or: rolesRemoved.map((role: string) => ({
+            _and: {
+              raid_id: _.get(raid, 'id'),
+              role,
+            },
+          })),
+        };
+      }
+      if (!rolesRemovedWhere) return;
+
+      console.log('remove roles');
+      await removeRolesRequired({
+        where: rolesRemovedWhere,
+      });
+    }
+  };
 
   const GeneralCard = ({ button, children }: GeneralCardProps) => (
     <Flex
@@ -223,33 +271,59 @@ const RaidPartyCard = ({
     );
   }
 
-  if (isRole) {
+  if (isRole && localRoles) {
     return (
       <GeneralCard
         button={
           <IconButton
             variant="outline"
-            icon={<Icon as={FiX} color="primary.500" fontSize="1.5rem" />}
+            icon={
+              !clearRoles ? (
+                <Icon as={FiX} color="primary.500" fontSize="1.5rem" />
+              ) : (
+                <Icon as={FiCheck} color="primary.500" fontSize="1.5rem" />
+              )
+            }
             aria-label="Remove roles"
-            onClick={}
+            onClick={!clearRoles ? clearRoleClick : saveUpdatedRoles}
+            isDisabled
           />
         }
       >
-        <AvatarGroup>
-          {_.map(roles, (role: string) => (
-            <Avatar
-              key={role}
-              icon={
-                <RoleBadge
-                  roleName={GUILD_CLASS_ICON[role]}
-                  width="44px"
-                  height="44px"
-                  border="2px solid"
-                />
-              }
-            />
-          ))}
-        </AvatarGroup>
+        <HStack spacing={1}>
+          {!_.isEmpty(localRoles) ? (
+            _.map(localRoles, (role: string, i) => (
+              <Avatar
+                key={i}
+                icon={
+                  <RoleBadge
+                    roleName={GUILD_CLASS_ICON[role]}
+                    width="44px"
+                    height="44px"
+                    border="2px solid"
+                  />
+                }
+              >
+                {clearRoles && (
+                  <Icon
+                    as={FiX}
+                    bg="primary.500"
+                    color="white"
+                    position="absolute"
+                    borderRadius={10}
+                    top="-5px"
+                    right="-5px"
+                    aria-label={`Remove ${role} role`}
+                    _hover={{ cursor: 'pointer' }}
+                    onClick={() => removeLocalRole(role)}
+                  />
+                )}
+              </Avatar>
+            ))
+          ) : (
+            <Text color="whiteAlpha.600">No Roles Needed</Text>
+          )}
+        </HStack>
       </GeneralCard>
     );
   }

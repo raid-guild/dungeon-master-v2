@@ -1,36 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import {
-  Flex,
-  AvatarGroup,
-  HStack,
-  Button,
-  Avatar,
-  Text,
-  Stack,
-  Box,
-  IconButton,
-  Icon,
-  Tooltip,
-  ChakraSelect,
-  Heading,
-  RoleBadge,
-} from '@raidguild/design-system';
-import { FiUser, FiX, FiCheck } from 'react-icons/fi';
+import { Flex, Stack, Box, Heading } from '@raidguild/design-system';
 import {
   IMember,
-  GUILD_CLASS_ICON,
-  GUILD_CLASS_DISPLAY,
   IRaid,
   IConsultation,
   SIDEBAR_ACTION_STATES,
 } from '../../utils';
-import { useSlimMemberList, useRaidUpdate } from '../../hooks';
+import { useSlimMemberList } from '../../hooks';
 
 import RaidPartyButtons from './RaidPartyButtons';
-import MemberAvatar from '../MemberAvatar';
+// import MemberAvatar from '../MemberAvatar';
 import RaidPartyCard from './RaidPartyCard';
 
 interface RaidInfoProps {
@@ -42,52 +23,16 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
   const [buttonSelection, setButtonSelection] = useState<string>(
     SIDEBAR_ACTION_STATES.none
   );
-  const [clearRoles, setClearRoles] = useState(false);
-  const [localRoles, setLocalRoles] = useState<string[]>(
-    _.map(_.get(raid, 'raidsRolesRequired'), 'role')
-  );
-  const [raiders, setRaiders] = useState<any[]>();
-
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: members } = useSlimMemberList({
     token,
     button: buttonSelection,
   });
-  const { mutateAsync: updateRaid } = useRaidUpdate({
-    token,
-    raidId: _.get(raid, 'id'),
-  });
 
+  const localRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
   const cleric = _.get(raid, 'cleric');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
-
-  const removeLocalRole = (role) => {
-    setLocalRoles(localRoles.filter((r) => r !== role));
-  };
-
-  const clearRoleClick = () => {
-    if (clearRoles) {
-      setClearRoles(false);
-      setLocalRoles(_.get(raid, 'rolesRequired'));
-    } else {
-      setClearRoles(true);
-    }
-  };
-
-  const submitUpdatedRoles = async () => {
-    console.log('submit updated roles');
-  };
-
-  // TODO do we want?
-  // const submitClearCleric = async () => {
-  //   await updateRaid({
-  //     id: _.get(raid, 'id'),
-  //     raid_updates: {
-  //       cleric_id: null,
-  //     },
-  //   });
-  // };
 
   const Divider = () => (
     <Box

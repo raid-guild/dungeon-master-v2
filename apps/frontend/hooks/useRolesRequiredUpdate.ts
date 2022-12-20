@@ -1,8 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useCustomToast } from '@raidguild/design-system';
-import { client, ROLES_REQUIRED_INSERT_MUTATION } from '../gql';
-import { IRoleRequiredInsert, camelize } from '../utils';
+import {
+  client,
+  ROLES_REQUIRED_INSERT_MUTATION,
+  ROLES_REQUIRED_DELETE_MUTATION,
+} from '../gql';
+import { IRoleRequiredInsert, IRoleRemoveMany, camelize } from '../utils';
 
 export const useAddRolesRequired = ({ token }) => {
   const queryClient = useQueryClient();
@@ -65,22 +69,17 @@ export const useAddRolesRequired = ({ token }) => {
   return { mutateAsync, isLoading, isError, isSuccess };
 };
 
-export const useDeleteRolesRequired = ({ token }) => {
+export const useRemoveRolesRequired = ({ token }) => {
   const queryClient = useQueryClient();
   const toast = useCustomToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, role }: IRoleRequiredInsert) => {
-      if (!raidId || !token) return;
+    async ({ where }: IRoleRemoveMany) => {
+      if (!where) return;
       const { data } = await client(token).mutate({
-        mutation: ROLES_REQUIRED_INSERT_MUTATION,
+        mutation: ROLES_REQUIRED_DELETE_MUTATION,
         variables: {
-          where: {
-            _and: {
-              raid_id: raidId,
-              role,
-            },
-          },
+          where,
         },
       });
 
