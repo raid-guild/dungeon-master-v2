@@ -39,3 +39,7 @@ update_permissions:
         - id
       filter: {}
       check: null
+delete_permissions:
+  - role: member
+    permission:
+      filter: {}

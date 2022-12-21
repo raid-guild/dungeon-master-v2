@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { IMember } from '../types';
+import { IMember, IRaid } from '../types';
 
 export const membersExceptRaidParty = (
   members: Partial<IMember>[],
@@ -22,4 +22,15 @@ export const membersExceptRaidParty = (
   );
 
   return _.orderBy(filteredMembers, 'name');
+};
+
+export const rolesExceptRequiredRoles = (
+  roles: string[],
+  raid: Partial<IRaid>
+) => {
+  if (!roles || !raid) return null;
+
+  const requiredRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
+
+  return _.difference(roles, requiredRoles);
 };
