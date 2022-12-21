@@ -9,35 +9,31 @@ import {
   Textarea,
   HStack,
   Heading,
-  useToast,
   Accordion,
   AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  IconButton,
+  Icon,
 } from '@raidguild/design-system';
+import { useMediaQuery } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { IStatusUpdate, IRaid } from '../utils';
 import RaidUpdate from './RaidUpdates';
-// import { isAfter } from 'date-fns';
-// import { useAccount } from 'wagmi';
+import { FaPlus } from 'react-icons/fa';
 import useUpdateCreate from '../hooks/useUpdateCreate';
 import { useSession } from 'next-auth/react';
-// import { useInjectedProvider } from '../contexts/InjectedProviderContexts';
 
 interface UpdatesProps {
   raid: IRaid;
 }
 
 const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
-  // const { userData } = useInjectedProvider();
-  // console.log(raid);
   const updates = _.get(raid, 'updates', null);
-  // const { address } = useAccount();
   const { data: session } = useSession();
   const localForm = useForm();
   const { handleSubmit, setValue } = localForm;
-  const toast = useToast();
   const [addUpdate, setAddUpdate] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
   const [sortedUpdates, setSortedUpdates] = useState<any[]>();
@@ -75,13 +71,9 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
     });
     setValue('update', '');
     setAddUpdate(false);
-
-    // const result = await createRecord('update', {
-    //   update: values.update,
-    //   member: userData.member.id,
-    //   raid: raidId,
-    // });
   };
+
+  const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   return (
     <Flex
@@ -107,6 +99,12 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
                   Submit
                 </Button>
               </HStack>
+            ) : upTo780 ? (
+              <IconButton
+                icon={<Icon as={FaPlus} />}
+                onClick={showUpdateBox}
+                aria-label="Add new update"
+              />
             ) : (
               <Button onClick={showUpdateBox}>Add Update</Button>
             )}

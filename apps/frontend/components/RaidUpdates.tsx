@@ -27,13 +27,19 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
         justifyContent="space-between"
         marginY={2}
       >
-        <HStack
-          spacing={4}
+        <Flex
+          gap={4}
+          direction={['column', null, null, 'row']}
           alignItems="flex-start"
           justifyContent="space-between"
           width="100%"
         >
-          <Text color="white" as="p" fontSize="md" maxWidth="60%">
+          <Text
+            color="white"
+            as="p"
+            fontSize="md"
+            maxWidth={['95%', null, null, '60%']}
+          >
             {update}
           </Text>
           <HStack spacing={1} color="gray.100">
@@ -42,7 +48,7 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
               {createdAt && format(new Date(createdAt), 'Pp')}
             </Text>
           </HStack>
-        </HStack>
+        </Flex>
       </Flex>
       <Divider color="blackAlpha" size="sm" />
     </>

@@ -54,10 +54,10 @@ const MemberList = () => {
   // TODO: generalize and move to separate file -- will need to pass options and filter state
   const MemberControls = () => (
     <Flex
-      direction="row"
+      direction={{ base: 'column', md: 'row' }}
       justifyContent="space-between"
       width="100%"
-      gap={8}
+      gap={[4, null, null, 8]}
       paddingX={6}
     >
       <Flex direction="column" flexBasis="25%">
@@ -66,7 +66,7 @@ const MemberList = () => {
           maxWidth="720px"
           fontFamily="texturina"
           lineHeight="1.8"
-          color={['black', 'white']}
+          color="white"
           textAlign="left"
         >
           Member Role
@@ -93,7 +93,7 @@ const MemberList = () => {
           maxWidth="720px"
           fontFamily="texturina"
           lineHeight="1.8"
-          color={['black', 'white']}
+          color="white"
           textAlign="left"
         >
           Member Status
@@ -121,7 +121,7 @@ const MemberList = () => {
           maxWidth="720px"
           fontFamily="texturina"
           lineHeight="1.8"
-          color={['black', 'white']}
+          color="white"
           textAlign="left"
         >
           Sort
