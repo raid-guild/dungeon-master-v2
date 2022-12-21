@@ -20,6 +20,7 @@ import {
   RoleBadge,
   Avatar,
 } from '@raidguild/design-system';
+import { useMediaQuery } from '@chakra-ui/react';
 import MemberAvatar from './MemberAvatar';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 import Link from './ChakraNextLink';
@@ -51,7 +52,9 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const description = _.get(consultation, 'description');
   const budget =
     BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
-  const projectType = PROJECT_TYPE_DISPLAY(_.get(consultation, 'projectType.projectType'));
+  const projectType = PROJECT_TYPE_DISPLAY(
+    _.get(consultation, 'projectType.projectType')
+  );
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
 
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
@@ -71,10 +74,18 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const updates = _.get(raid, 'updates');
   const latestUpdate = updates ? updates[0] : null;
 
+  const [upTo780] = useMediaQuery('(max-width: 780px)');
+
   return (
-    <Box bg="gray.800" rounded="md" p={8} w="100%">
+    <Box
+      bg="gray.800"
+      rounded="md"
+      p={8}
+      m="auto"
+      w={['95%', null, null, '100%']}
+    >
       <Flex
-        direction={{ base: "column", md: "row" }}
+        direction={{ base: 'column', md: 'row' }}
         // width="90%"
         // mx="auto"
         alignItems="space-apart"
@@ -109,9 +120,9 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
             )}
           </HStack>
         </Stack>
-        <Flex direction={{ base: "column", md: "row" }} align="flex-start">
+        <Flex direction={{ base: 'column', md: 'row' }} align="flex-start">
           {!_.isEmpty(rolesRequired) && (
-            <HStack mb={{ base: 4, md: 0}} mr={4}>
+            <HStack mb={{ base: 4, md: 0 }}>
               <Heading size="sm" color="white">
                 Roles Required
               </Heading>
@@ -185,7 +196,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
               : description}
           </Text>
         </Flex>
-        {!_.isEmpty(raidParty) && (
+        {!_.isEmpty(raidParty) && !upTo780 && (
           <Stack spacing={4}>
             <Heading size="sm" color="white">
               Raid Party
@@ -205,42 +216,50 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
       >
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} width="100%">
           <InfoStack label="Budget" details={budget || '-'} />
-          <InfoStack
-            label="Category"
-            details={
-              RAID_CATEGORY_DISPLAY[
-                _.get(raid, 'raidCategory.raidCategory', '-')
-              ]
-            }
-          />
+          {_.get(raid, 'raidCategory.raidCategory') && (
+            <InfoStack
+              label="Category"
+              details={
+                RAID_CATEGORY_DISPLAY[
+                  _.get(raid, 'raidCategory.raidCategory', '-')
+                ]
+              }
+            />
+          )}
+
           <InfoStack label="Project Type" details={projectType || '-'} />
         </SimpleGrid>
       </Flex>
-      <Flex direction="column" paddingY={4}>
-        <Heading size="sm" color="white">
-          Status Update
-        </Heading>
-        <Flex direction="column">
-          {
-            latestUpdate ? 
-              (
-                <VStack py={2} align="start">
-                  <Text>{displayDate(latestUpdate.createdAt)}</Text>
-                  <Tooltip label={latestUpdate.update} placement="top" hasArrow>
-                    <span>
-                      <Text color="white">
-                        {_.gt(_.size(latestUpdate.update), 140)
-                          ? `${latestUpdate.update?.slice(0, 140)}...`
-                          : latestUpdate.update}
-                      </Text>
-                    </span>
-                  </Tooltip>
-                </VStack>
-              )
-              : (<Text>(no updates yet)</Text>)
-          }
+      {!_.isEmpty(raidParty) && upTo780 && (
+        <Stack spacing={4}>
+          <Heading size="sm" color="white">
+            Raid Party
+          </Heading>
+
+          <MemberAvatarStack members={raidParty} horizontal />
+        </Stack>
+      )}
+      {latestUpdate && (
+        <Flex direction="column" paddingY={4}>
+          <Heading size="sm" color="white">
+            Status Update
+          </Heading>
+          <Flex direction="column">
+            <VStack py={2} align="start">
+              <Text>{displayDate(latestUpdate.createdAt)}</Text>
+              <Tooltip label={latestUpdate.update} placement="top" hasArrow>
+                <span>
+                  <Text color="white">
+                    {_.gt(_.size(latestUpdate.update), 140)
+                      ? `${latestUpdate.update?.slice(0, 140)}...`
+                      : latestUpdate.update}
+                  </Text>
+                </span>
+              </Tooltip>
+            </VStack>
+          </Flex>
         </Flex>
-      </Flex>
+      )}
     </Box>
   );
 };

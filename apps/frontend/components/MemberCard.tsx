@@ -187,10 +187,9 @@ const MemberCard: React.FC<MemberProps> = ({
                     marginBottom={1}
                     color="raid"
                     bgColor="gray.700"
-                    
                   >
                     {memberType}
-                 </Badge>
+                  </Badge>
                 </VStack>
               </HStack>
             </Flex>

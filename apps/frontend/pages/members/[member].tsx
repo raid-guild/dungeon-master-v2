@@ -64,7 +64,12 @@ const Member = () => {
 
       <SiteLayout
         subheader={
-          <Flex justify="space-between" align="center" w="100%">
+          <Flex
+            justify="space-between"
+            align="center"
+            w="100%"
+            direction={['column', null, null, 'row']}
+          >
             {ensAvatar ? (
               <Avatar size="lg" bg="black" src={ensAvatar} />
             ) : (
@@ -99,7 +104,6 @@ const Member = () => {
                   marginBottom={1}
                   color="raid"
                   bgColor="gray.700"
-                  
                 >
                   {memberType}
                 </Badge>
@@ -111,7 +115,7 @@ const Member = () => {
           </Flex>
         }
       >
-        <Flex w="100%">
+        <Flex w="100%" direction={['column', null, null, 'row']} gap={6}>
           <MemberDetailsCard
             member={member}
             application={_.get(member, 'application')}
@@ -119,8 +123,8 @@ const Member = () => {
           {/* <RaidsFeed /> */}
           <Flex
             direction="column"
-            w="30%"
-            ml="4"
+            w={['100%', null, null, '30%']}
+            ml={[null, null, null, '4']}
             bg="gray.800"
             rounded="md"
             style={{ backdropFilter: 'blur(7px)' }}
