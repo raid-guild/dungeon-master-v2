@@ -7,6 +7,7 @@ import { camelize, IRaid } from '../utils';
 const useRaidDetail = ({ token }) => {
   const router = useRouter();
   const raidId = _.get(router, 'query.raid');
+  console.log('bool raid id', Boolean(raidId));
 
   const raidQueryResult = async () => {
     if (!raidId || !token) return;
@@ -25,7 +26,9 @@ const useRaidDetail = ({ token }) => {
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IRaid,
     Error
-  >(['raidDetail', raidId], raidQueryResult, { enabled: Boolean(token) });
+  >(['raidDetail', raidId], raidQueryResult, {
+    enabled: Boolean(token) && Boolean(raidId),
+  });
 
   return { isLoading, isFetching, isError, error, data };
 };
