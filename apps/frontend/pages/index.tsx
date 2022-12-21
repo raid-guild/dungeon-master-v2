@@ -20,8 +20,14 @@ const Home: React.FC = () => {
       <NextSeo title="Dashboard" />
 
       <SiteLayout isLoading={!data} subheader={<Heading>Dashboard</Heading>}>
-        <Flex alignItems="center" justify="space-between" gap={8} w="100%">
-          <Stack w="45%" spacing={4}>
+        <Flex
+          direction={['column', null, null, 'row']}
+          alignItems="center"
+          justify="space-between"
+          gap={8}
+          w="100%"
+        >
+          <Stack w={['90%', null, null, '45%']} spacing={4}>
             <Heading size="lg">My Raids</Heading>
             {!_.isEmpty(_.get(data, 'myRaids.active')) && (
               <Stack spacing={4}>
@@ -44,7 +50,7 @@ const Home: React.FC = () => {
               </Stack>
             )}
           </Stack>
-          <Stack w="45%" spacing={4}>
+          <Stack w={['90%', null, null, '45%']} spacing={4}>
             <Heading size="lg">New Raids</Heading>
             {_.map(_.get(data, 'newRaids'), (raid) => (
               <MiniRaidCard key={raid.id} raid={raid} newRaid />
