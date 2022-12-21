@@ -3,24 +3,9 @@
 
 ## Local Development
 
-Requires installed Docker, Docker Compose and Hasura CLI locally.
+Requires installed Docker
 
 ```bash
 # cd into the root directory
-docker compose up -d
-# open new terminal
-# cd into this directory
-hasura console
+docker-compose up -d
 ```
-
-Initial migrations & metadata
-
-On the first load of the DB/console you'll need to migrate the db & add metadata. Create an `.env` to set the variables.
-
-```bash
-hasura migrations apply
-hasura seeds apply
-hasura metadata apply
-```
-
-
