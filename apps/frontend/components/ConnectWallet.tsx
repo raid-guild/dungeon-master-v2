@@ -58,13 +58,10 @@ export const ConnectWallet: React.FC = () => {
                   <Button
                     variant="outline"
                     transition="all 100ms ease-in-out"
-                    _hover={{
-                      bgColor: 'brand.primary.100',
-                      borderWidth: '2px',
-                      borderColor: 'brand.primary.600',
-                    }}
-                    leftIcon={<FiKey />}
-                    disabled={isConnecting}
+                    leftIcon={
+                      <Icon as={FiKey} color="primary.500" w="20px" h="20px" />
+                    }
+                    isDisabled={isConnecting}
                     onClick={openConnectModal}
                     data-cy="connect-wallet"
                   >
@@ -112,7 +109,7 @@ export const ConnectWallet: React.FC = () => {
                             ? account.ensName
                             : truncateAddress(account.address)}
                         </Text>
-                        <Icon as={FiChevronDown} color="primary.600" />
+                        <Icon as={FiChevronDown} color="primary.500" />
                       </HStack>
                     </MenuButton>
                     <MenuList minWidth="none">

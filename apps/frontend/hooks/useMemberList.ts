@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { client, MEMBER_LIST_QUERY, MEMBER_SLIM_LIST_QUERY } from '../gql';
-import { camelize, IMember } from '../utils';
+import { camelize, IMember, SIDEBAR_ACTION_STATES } from '../utils';
 
 const useMemberList = ({
   token,
@@ -61,7 +61,7 @@ const useMemberList = ({
           ? undefined
           : _.divide(_.size(_.flatten(allPages)), limit);
       },
-      enabled: Boolean(token),
+      enabled: !!token,
     }
   );
 
@@ -77,7 +77,7 @@ const useMemberList = ({
 
 export default useMemberList;
 
-export const useSlimMemberList = ({ token }) => {
+export const useSlimMemberList = ({ token, button }) => {
   const memberSlimListQueryResult = async () => {
     if (!token) return;
 
@@ -91,8 +91,11 @@ export const useSlimMemberList = ({ token }) => {
   const { status, error, data, isLoading } = useQuery<
     Array<Partial<IMember>>,
     Error
-  >(['memberList'], memberSlimListQueryResult, {
-    enabled: Boolean(token),
+  >(['slimMemberList'], memberSlimListQueryResult, {
+    enabled:
+      !!token &&
+      (button === SIDEBAR_ACTION_STATES.raider ||
+        button === SIDEBAR_ACTION_STATES.cleric),
   });
 
   return {

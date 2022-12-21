@@ -118,6 +118,7 @@ export default async function auth(req: any, res: any) {
           // roles = [...roles, 'user', 'public'];
           // isCommunity = _.includes(roles, 'community');
         } catch (error) {
+          // TODO handle expired better
           console.log(error);
         }
 

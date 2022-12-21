@@ -9,35 +9,39 @@ import {
   Textarea,
   HStack,
   Heading,
-  useToast,
   Accordion,
   AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  IconButton,
+  Icon,
 } from '@raidguild/design-system';
+import { useMediaQuery } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { IUpdate, IRaid } from '../utils';
+import { IStatusUpdate, IRaid } from '../utils';
 import RaidUpdate from './RaidUpdates';
-// import { isAfter } from 'date-fns';
-import { useAccount } from 'wagmi';
-// import { useInjectedProvider } from '../contexts/InjectedProviderContexts';
+import { FaPlus } from 'react-icons/fa';
+import useUpdateCreate from '../hooks/useUpdateCreate';
+import { useSession } from 'next-auth/react';
 
 interface UpdatesProps {
   raid: IRaid;
 }
 
 const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
-  // const { userData } = useInjectedProvider();
-  console.log(raid);
   const updates = _.get(raid, 'updates', null);
-  const { address } = useAccount();
+  const { data: session } = useSession();
   const localForm = useForm();
   const { handleSubmit, setValue } = localForm;
-  const toast = useToast();
   const [addUpdate, setAddUpdate] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
   const [sortedUpdates, setSortedUpdates] = useState<any[]>();
+  const token: string = _.get(session, 'token', '');
+  const { mutateAsync } = useUpdateCreate({
+    token,
+    memberId: _.get(session, 'user.id'),
+  });
 
   const updatesCount = useMemo(() => {
     if (!sortedUpdates) return 0;
@@ -60,12 +64,16 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   };
 
   const submitNewUpdate = async (values: any) => {
-    // const result = await createRecord('update', {
-    //   update: values.update,
-    //   member: userData.member.id,
-    //   raid: raidId,
-    // });
+    console.log(values);
+    mutateAsync({
+      update: values.update,
+      raidId: raid.id,
+    });
+    setValue('update', '');
+    setAddUpdate(false);
   };
+
+  const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   return (
     <Flex
@@ -91,6 +99,12 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
                   Submit
                 </Button>
               </HStack>
+            ) : upTo780 ? (
+              <IconButton
+                icon={<Icon as={FaPlus} />}
+                onClick={showUpdateBox}
+                aria-label="Add new update"
+              />
             ) : (
               <Button onClick={showUpdateBox}>Add Update</Button>
             )}
@@ -120,7 +134,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
       {updatesCount > 0 &&
         sortedUpdates
           ?.slice(0, updatesCount > 4 ? 1 : updatesCount)
-          .map((c: IUpdate) => (
+          .map((c: IStatusUpdate) => (
             <Stack as="ul" width="100%" key={c.createdAt}>
               <RaidUpdate
                 // id={c.id}

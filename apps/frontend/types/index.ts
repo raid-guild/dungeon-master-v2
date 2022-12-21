@@ -22,7 +22,7 @@ export interface IRaid {
   }[];
   memberByCleric: IMember;
   consultationByConsultation: IConsultation;
-  updates: IUpdate[];
+  updates: IStatusUpdate[];
 
   // LEGACY
   v1Id?: string;
@@ -180,11 +180,13 @@ export interface IApplication {
   updatedAt?: string;
 }
 
-export interface IUpdate {
+export interface IStatusUpdate {
   id: string;
   update: string;
   member: IMember;
+  memberId?: string;
   raid: IRaid;
+  raidId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -217,6 +219,10 @@ export interface IRaidUpdate {
     category_key?: string;
     start_date?: string;
     end_date?: string;
+    cleric_id?: string;
+    raids_roles_required?: {
+      role: string; // ENUM
+    }[];
   };
 
   // // RELATIONSHIPS
@@ -240,6 +246,20 @@ export interface IRaidUpdate {
   // lockerHash: string;
 
   // TIMELINE - ISO STRINGS
+}
+
+export interface IRaidPartyInsert {
+  raidId: string;
+  memberId: string;
+}
+
+export interface IRoleRequiredInsert {
+  raidId: string;
+  role: string;
+}
+
+export interface IRoleRemoveMany {
+  where: any;
 }
 
 export interface IMemberUpdate {

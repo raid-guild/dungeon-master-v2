@@ -22,6 +22,7 @@ import '@fontsource/texturina';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useCustomToast();
+<<<<<<< HEAD
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -43,6 +44,26 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         }),
       })
   );
+=======
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: 1200 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
+    queryCache: new QueryCache({
+      onError: (error) => {
+        toast.error({
+          title: 'Something went wrong.',
+          status: 'error',
+          iconName: 'alert',
+          description: `Please try again: ${error}`,
+        });
+      },
+    }),
+  });
+>>>>>>> develop
 
   return (
     <RGThemeProvider>
@@ -71,7 +92,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       />
 
       <WagmiConfig client={wagmiClient}>
-        <SessionProvider refetchInterval={120} session={pageProps.session}>
+        <SessionProvider
+          session={pageProps.session}
+          refetchInterval={8 * 60 * 1000}
+          refetchOnWindowFocus={true}
+        >
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>

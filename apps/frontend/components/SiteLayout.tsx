@@ -45,7 +45,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
       overflowX="hidden"
       margin="0 auto"
       minHeight={minHeight || '100vh'}
-      minWidth="100vw"
+      minWidth={['100%', null, null, '100vw']}
       position="relative"
       background="gray.700"
     >
@@ -58,7 +58,12 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
         align="center"
         minHeight={['100vh', '100vh', '0', '0']}
       >
-        <Stack spacing={8} align="center" w="70%" mx="auto">
+        <Stack
+          spacing={8}
+          align="center"
+          w={['90%', null, null, '70%']}
+          mx="auto"
+        >
           {subheader}
 
           {children}

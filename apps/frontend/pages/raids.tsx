@@ -72,14 +72,19 @@ const RaidList = () => {
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
   const RaidControls = () => (
-    <Flex direction="row" justifyContent="space-between" width="100%" gap={8}>
+    <Flex
+      direction={{ base: 'column', md: 'row' }}
+      justifyContent="space-between"
+      width={['90%', null, null, '100%']}
+      gap={[2, 4, 4, 8]}
+    >
       <Flex direction="column" flexBasis="25%">
         <FormLabel
           htmlFor="raidStatus"
           maxWidth="720px"
           fontFamily="texturina"
           lineHeight="1.8"
-          color={['black', 'white']}
+          color="white"
           textAlign="left"
         >
           Raid Status
@@ -109,7 +114,7 @@ const RaidList = () => {
           maxWidth="720px"
           fontFamily="texturina"
           lineHeight="1.8"
-          color={['black', 'white']}
+          color="white"
           textAlign="left"
         >
           Raid Roles
@@ -140,7 +145,7 @@ const RaidList = () => {
           maxWidth="720px"
           fontFamily="texturina"
           lineHeight="1.8"
-          color={['black', 'white']}
+          color="white"
           textAlign="left"
         >
           Sort

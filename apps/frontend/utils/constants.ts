@@ -54,11 +54,10 @@ export const PREFERRED_CONTACT = ['Discord', 'Email', 'Telegram'];
 
 export const PROJECT_TYPE = ['New', 'Existing'];
 
-
 export const PROJECT_TYPE_DISPLAY = (projectType: string) => {
   const projectTypeMap = {
-    NEW:'New',
-    EXISTING:'Existing',
+    NEW: 'New',
+    EXISTING: 'Existing',
   };
 
   if (!_.includes(_.keys(projectTypeMap), projectType)) return;
@@ -70,9 +69,9 @@ export const AVAILABLE_PROJECT_SPECS = ['Yes', 'Partial', 'None'];
 
 export const AVAILABLE_PROJECT_SPECS_DISPLAY = (spec: string) => {
   const specsMap = {
-    YES:'Yes',
-    PARTIAL:'Partial',
-    NONE:'None',
+    YES: 'Yes',
+    PARTIAL: 'Partial',
+    NONE: 'None',
   };
 
   if (!_.includes(_.keys(specsMap), spec)) return;
@@ -197,7 +196,7 @@ export const GUILD_CLASS_ICON = {
   COMMUNITY: 'tavernkeeper',
   DESIGN: 'archer',
   TREASURY: 'dwarf',
-  MARKETING: 'healer',
+  MARKETING: 'hunter', // ! need another role badge for bard
   FRONTEND_DEV: 'warrior',
   OPERATIONS: 'healer',
   BIZ_DEV: 'hunter',
@@ -236,4 +235,12 @@ export const GUILD_CLASS_DISPLAY = {
   SMART_CONTRACTS: 'Wizard (Smart Contracts)',
   LEGAL: 'Rogue (Legal)',
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
+};
+
+export const SIDEBAR_ACTION_STATES = {
+  none: 'NONE',
+  select: 'SELECT',
+  raider: 'RAIDER',
+  role: 'ROLE',
+  cleric: 'CLERIC',
 };
