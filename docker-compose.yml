@@ -24,7 +24,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
   graphql-engine:
     container_name: dm_hasura
-    image: hasura/graphql-engine:latest
+    image: hasura/graphql-engine:latest.cli-migrations-v3
     ports:
       - target: 8080
         published: ${HASURA_ENDPOINT_PORT}
@@ -47,6 +47,21 @@ services:
       # HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       ## uncomment next line for JWT configuration (NextAuth)
       # HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+
+  hasura-setup:
+    container_name: dm_hasura_setup
+    image: alpine:latest
+    depends_on:       
+      - graphql-engine
+    restart: "no"
+    volumes:
+      - ./services/hasura:/usr/local/hasura
+    entrypoint: ["/bin/sh", "-c", "cd /usr/local/hasura && chmod +x ./setup.sh && ./setup.sh"]
+    environment:
+      HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:${HASURA_ENDPOINT_PORT}
+      ## uncomment next line to set an admin secret
+      # HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
 
 volumes:
   postgres_data: {}
