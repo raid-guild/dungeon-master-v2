@@ -4,7 +4,6 @@ import { DefaultSeo } from 'next-seo';
 import { SessionProvider } from 'next-auth/react';
 import { WagmiConfig } from 'wagmi';
 import {
-  Hydrate,
   QueryClient,
   QueryClientProvider,
   QueryCache,
@@ -76,12 +75,10 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>
-                <Hydrate state={pageProps.dehydratedState}>
-                  <OverlayContextProvider>
-                    <Component {...pageProps} />
-                    <ReactQueryDevtools initialIsOpen={false} />
-                  </OverlayContextProvider>
-                </Hydrate>
+                <OverlayContextProvider>
+                  <Component {...pageProps} />
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </OverlayContextProvider>
               </QueryClientProvider>
             </RainbowKitProvider>
           </RainbowKitSiweNextAuthProvider>

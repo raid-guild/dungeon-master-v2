@@ -26,7 +26,7 @@ const useMemberDetail = ({ token }) => {
     IMember,
     Error
   >(['memberDetail', memberAddress], memberQueryResult, {
-    enabled: Boolean(token),
+    enabled: Boolean(token) && Boolean(memberAddress),
   });
 
   return { isLoading, isFetching, isError, error, data };

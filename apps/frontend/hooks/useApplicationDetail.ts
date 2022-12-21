@@ -26,7 +26,7 @@ const useApplicationDetail = ({ token }) => {
     IApplication,
     Error
   >(['applicationDetail', applicationId], applicationQueryResult, {
-    enabled: Boolean(token),
+    enabled: Boolean(token) && Boolean(applicationId),
   });
 
   return { isLoading, isFetching, isError, error, data };
