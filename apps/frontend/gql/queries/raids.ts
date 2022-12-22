@@ -1,9 +1,10 @@
 import { gql } from '@apollo/client';
 
-const RAID_DETAIL_FRAGMENT = gql`
+export const RAID_DETAIL_FRAGMENT = gql`
   fragment RaidDetail on raids {
     id
     name
+    status_key
     raid_status {
       raid_status
     }
@@ -46,9 +47,14 @@ const RAID_DETAIL_FRAGMENT = gql`
         project_type
       }
     }
-    updates(order_by: {created_at: desc}, limit:1) {
+    updates(order_by: { created_at: desc }, limit: 1) {
       created_at
       id
+      member {
+        name
+        eth_address
+        id
+      }
       update
     }
     created_at
@@ -59,12 +65,17 @@ const RAID_DETAIL_FRAGMENT = gql`
 `;
 
 export const RAIDS_LIST_QUERY = gql`
-  query RaidsListQuery($offset: Int!, $limit: Int!, $where: raids_bool_exp) {
-    raids(limit: $limit, offset: $offset, where: $where) {
+  query RaidsListQuery(
+    $offset: Int!
+    $limit: Int!
+    $where: raids_bool_exp
+    $order_by: [raids_order_by!]
+  ) {
+    raids(limit: $limit, offset: $offset, where: $where, order_by: $order_by) {
       ...RaidDetail
     }
   }
-  ${RAID_DETAIL_FRAGMENT}
+  # ${RAID_DETAIL_FRAGMENT}
 `;
 
 export const RAID_DETAIL_QUERY = gql`

@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import { Heading, HStack, Stack, Box } from '@raidguild/design-system';
+import { Heading, Flex, Stack, Box } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import { useRouter } from 'next/router';
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
@@ -10,27 +11,30 @@ import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
 
 const Raid = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const token = _.get(session, 'token');
-  const { data: raid } = useRaidDetail({ token });
-  console.log(raid);
+  const raidId = _.get(router, 'query.raid');
+  const { data: raid, isLoading } = useRaidDetail({ raidId, token });
+  console.log(isLoading, raid);
 
   return (
     <>
       <NextSeo title={_.get(raid, 'name')} />
 
       <SiteLayout
-        subheader={<Heading>{_.get(raid, 'name')}</Heading>}
+        subheader={<Heading size="lg">{_.get(raid, 'name')}</Heading>}
         isLoading={!raid}
         data={raid}
       >
-        <HStack
-          w="90%"
-          minW={['1200px']}
+        <Flex
+          w="95%"
+          minW={['350px', null, null, '1200px']}
           mx="auto"
-          spacing={10}
+          direction={['column', null, null, 'row']}
+          gap={10}
           align="flex-start"
         >
-          <Stack w="60%" spacing={8}>
+          <Stack w={['100%', null, null, '60%']} spacing={8}>
             <RaidDetailsCard
               raid={raid}
               consultation={_.get(raid, 'consultation')}
@@ -38,10 +42,10 @@ const Raid = () => {
             <RaidUpdatesFeed raid={raid} />
           </Stack>
 
-          <Box w="35%">
+          <Box w={['100%', null, null, '35%']}>
             <RaidDetailsSidebar raid={raid} />
           </Box>
-        </HStack>
+        </Flex>
       </SiteLayout>
     </>
   );

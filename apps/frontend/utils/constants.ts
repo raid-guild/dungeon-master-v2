@@ -54,12 +54,30 @@ export const PREFERRED_CONTACT = ['Discord', 'Email', 'Telegram'];
 
 export const PROJECT_TYPE = ['New', 'Existing'];
 
-export const PROJECT_TYPE_DISPLAY = {
-  NEW: 'New',
-  EXISTING: 'Existing'
+export const PROJECT_TYPE_DISPLAY = (projectType: string) => {
+  const projectTypeMap = {
+    NEW: 'New',
+    EXISTING: 'Existing',
+  };
+
+  if (!_.includes(_.keys(projectTypeMap), projectType)) return;
+
+  return projectTypeMap[projectType];
 };
 
 export const AVAILABLE_PROJECT_SPECS = ['Yes', 'Partial', 'None'];
+
+export const AVAILABLE_PROJECT_SPECS_DISPLAY = (spec: string) => {
+  const specsMap = {
+    YES: 'Yes',
+    PARTIAL: 'Partial',
+    NONE: 'None',
+  };
+
+  if (!_.includes(_.keys(specsMap), spec)) return;
+
+  return specsMap[spec];
+};
 
 export const BUDGET = [
   'LESS_THAN_FIVE_THOUSAND',
@@ -82,6 +100,18 @@ export const DELIVERY_PRIORITIES = [
   'Fast & Inexpensive',
   'Polished & Inexpensive',
 ];
+
+export const DELIVERY_PRIORITIES_DISPLAY = (priority: string) => {
+  const deliveryPrioritiesMap = {
+    FAST_AND_POLISHED: 'Fast & Polished',
+    FAST_AND_INEXPENSIVE: 'Fast & Inexpensive',
+    POLISHED_AND_INEXPENSIVE: 'Polished & Inexpensive',
+  };
+
+  if (!_.includes(_.keys(deliveryPrioritiesMap), priority)) return;
+
+  return deliveryPrioritiesMap[priority];
+};
 
 export const SUBMISSION_TYPE = ['Paid', 'Unpaid'];
 
@@ -166,7 +196,7 @@ export const GUILD_CLASS_ICON = {
   COMMUNITY: 'tavernkeeper',
   DESIGN: 'archer',
   TREASURY: 'dwarf',
-  MARKETING: 'healer',
+  MARKETING: 'hunter', // ! need another role badge for bard
   FRONTEND_DEV: 'warrior',
   OPERATIONS: 'healer',
   BIZ_DEV: 'hunter',
@@ -205,4 +235,12 @@ export const GUILD_CLASS_DISPLAY = {
   SMART_CONTRACTS: 'Wizard (Smart Contracts)',
   LEGAL: 'Rogue (Legal)',
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
+};
+
+export const SIDEBAR_ACTION_STATES = {
+  none: 'NONE',
+  select: 'SELECT',
+  raider: 'RAIDER',
+  role: 'ROLE',
+  cleric: 'CLERIC',
 };

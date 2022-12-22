@@ -20,7 +20,7 @@ const MemberAvatarStack = ({
     return (
       <HStack spacing={4}>
         {_.map(members, (member: IMember) => (
-          <MemberAvatar member={member} />
+          <MemberAvatar member={member} key={_.get(member, 'id')} />
         ))}
       </HStack>
     );
@@ -29,7 +29,7 @@ const MemberAvatarStack = ({
   return (
     <Stack align="center" spacing={4}>
       {_.map(members, (member: IMember) => (
-        <MemberAvatar member={member} />
+        <MemberAvatar member={member} key={_.get(member, 'id')} />
       ))}
     </Stack>
   );

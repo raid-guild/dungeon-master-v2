@@ -8,31 +8,33 @@ import {
   QueryClientProvider,
   QueryCache,
 } from '@tanstack/react-query';
-import { RGThemeProvider, useToast } from '@raidguild/design-system';
+import { RGThemeProvider, useCustomToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
 import { wagmiClient } from '../utils/wagmiClient';
 import { chains } from '../utils/chains';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
+import '@fontsource/uncial-antiqua';
+import '@fontsource/texturina';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
-  const toast = useToast();
+  const toast = useCustomToast();
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchInterval: 120 * 1000,
+        refetchInterval: 1200 * 1000,
         refetchOnWindowFocus: false,
       },
     },
     queryCache: new QueryCache({
       onError: (error) => {
-        toast({
+        toast.error({
           title: 'Something went wrong.',
           status: 'error',
+          iconName: 'alert',
           description: `Please try again: ${error}`,
         });
       },
@@ -66,7 +68,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
       />
 
       <WagmiConfig client={wagmiClient}>
-        <SessionProvider refetchInterval={120} session={pageProps.session}>
+        <SessionProvider
+          session={pageProps.session}
+          refetchInterval={8 * 60 * 1000}
+          refetchOnWindowFocus={true}
+        >
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>

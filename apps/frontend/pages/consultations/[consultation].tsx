@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { HStack, Heading, Button } from '@raidguild/design-system';
+import { Flex, Heading, Button } from '@raidguild/design-system';
+import { useMediaQuery } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import useConsultationDetail from '../../hooks/useConsultationDetail';
@@ -11,6 +12,8 @@ const Consultation = () => {
   const token = _.get(session, 'token');
   const { data: consultation } = useConsultationDetail({ token });
 
+  const [upTo780] = useMediaQuery('(max-width: 780px)');
+
   return (
     <>
       <NextSeo title={_.get(consultation, 'name')} />
@@ -19,10 +22,16 @@ const Consultation = () => {
         subheader={<Heading>{_.get(consultation, 'name')}</Heading>}
         isLoading={false}
       >
-        <HStack align="flex-start">
+        <Flex
+          align="flex-start"
+          width="100%"
+          direction={['column', null, null, 'row']}
+          gap={6}
+        >
+          {upTo780 && <Button>Create Raid</Button>}
           <RaidDetailsCard consultation={consultation} />
-          <Button>Create Raid</Button>
-        </HStack>
+          {!upTo780 && <Button>Create Raid</Button>}
+        </Flex>
       </SiteLayout>
     </>
   );

@@ -151,11 +151,10 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   return (
     <Flex
       direction="column"
-      w="70%"
-      minW="600px"
+      w={['100%', null, null, '70%']}
+      minW={[null, null, null, '600px']}
       bg="gray.800"
       rounded="md"
-      style={{ backdropFilter: 'blur(7px)' }}
     >
       <VStack p={8} height="100%" align="stretch">
         {_.map(skillBlocks, (block) => (
@@ -195,7 +194,7 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
           <Divider />
         </Box>
 
-        <HStack wrap="wrap">
+        <Flex gap={4} direction={['column', null, null, 'row']} wrap="wrap">
           {_.map(memberLinks, (link) => (
             <Tooltip label={_.get(link, 'tooltip')} size="sm">
               <Button
@@ -213,7 +212,7 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
               </Button>
             </Tooltip>
           ))}
-        </HStack>
+        </Flex>
       </VStack>
     </Flex>
   );

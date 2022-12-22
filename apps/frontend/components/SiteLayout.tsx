@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react';
+import { useRouter } from 'next/router';
 import _ from 'lodash';
 import { Flex, Heading, Spinner, Stack } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import CommandPalette from './CommandPalette';
+import ScrollToTopButton from './ScrollToTopButton';
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -29,6 +31,13 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   minHeight = '100vh',
 }: SiteLayoutProps) => {
   const { data: session } = useSession();
+  const { pathname } = useRouter();
+
+  const showScrollToTopButton =
+    pathname === '/raids' ||
+    pathname === '/consultations' ||
+    pathname === '/members' ||
+    pathname === '/applications';
 
   const GeneralLayout = ({ children }: GeneralLayoutProps) => (
     <Flex
@@ -36,7 +45,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
       overflowX="hidden"
       margin="0 auto"
       minHeight={minHeight || '100vh'}
-      minWidth="100vw"
+      minWidth={['100%', null, null, '100vw']}
       position="relative"
       background="gray.700"
     >
@@ -49,12 +58,18 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
         align="center"
         minHeight={['100vh', '100vh', '0', '0']}
       >
-        <Stack spacing={8} align="center" w="70%" mx="auto">
+        <Stack
+          spacing={8}
+          align="center"
+          w={['90%', null, null, '70%']}
+          mx="auto"
+        >
           {subheader}
 
           {children}
         </Stack>
       </Flex>
+      {showScrollToTopButton && <ScrollToTopButton />}
       <Footer />
     </Flex>
   );
@@ -89,15 +104,18 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     );
   }
 
-  return data && _.isEmpty(data) ? (
-    <GeneralLayout>
-      <Flex justify="center" align="center" minH="50vh">
-        <Heading size="md">No projects found!</Heading>
-      </Flex>
-    </GeneralLayout>
-  ) : (
-    <GeneralLayout>{children}</GeneralLayout>
-  );
+  // NOTE: for raids / members / anything with filters we'll prob want to handle this at the page level or else the UI may not render if there's no data from the filter query
+
+  // return data && _.isEmpty(data) ? (
+  //   <GeneralLayout>
+  //     <Flex justify="center" align="center" minH="50vh">
+  //       <Heading size="md">No projects found!</Heading>
+  //     </Flex>
+  //   </GeneralLayout>
+  // ) : (
+  //   <GeneralLayout>{children}</GeneralLayout>
+  // );
+  return <GeneralLayout>{children}</GeneralLayout>;
 };
 
 export default SiteLayout;
