@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
-import { Flex, Heading, Spinner, Stack } from '@chakra-ui/react';
+import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -65,7 +65,6 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
           mx="auto"
         >
           {subheader}
-
           {children}
         </Stack>
       </Flex>
@@ -77,7 +76,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   if (!_.get(session, 'token')) {
     return (
       <GeneralLayout>
-        <Flex justify="center" align="center" minH="50vh">
+        <Flex justify="center" align="center" minH="100vh">
           <Heading size="md">Connect your wallet & Sign in</Heading>
         </Flex>
       </GeneralLayout>
@@ -87,8 +86,8 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   if (isLoading) {
     return (
       <GeneralLayout>
-        <Flex w="100%" justify="center" py={60}>
-          <Spinner color="govrn.300" size="xl" />
+        <Flex w="100%" justify="center" alignItems="center" py={60}>
+          <Spinner />
         </Flex>
       </GeneralLayout>
     );
@@ -98,7 +97,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     return (
       <GeneralLayout>
         <Flex w="100%" justify="center" pt={40}>
-          <Heading size="md">Error loading [data type]</Heading>
+          <Heading size="md">Error loading data: {error}</Heading>
         </Flex>
       </GeneralLayout>
     );

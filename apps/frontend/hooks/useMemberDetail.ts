@@ -5,9 +5,6 @@ import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '../gql';
 import { camelize, IMember } from '../utils';
 
 const useMemberDetail = ({ token, memberAddress }) => {
-  // const router = useRouter();
-  // const memberAddress = _.get(router, 'query.member', undefined);
-
   const memberQueryResult = async () => {
     if (!memberAddress || !token) return;
     // TODO handle filters

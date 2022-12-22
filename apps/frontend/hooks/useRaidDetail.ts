@@ -25,7 +25,6 @@ const useRaidDetail = ({ raidId, token }) => {
     queryKey: ['raidDetail', raidId],
     queryFn: raidQueryResult,
     enabled: Boolean(token) && Boolean(raidId),
-    notifyOnChangeProps: ['data'],
   });
 
   return { isLoading, isFetching, isError, error, data };
