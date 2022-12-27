@@ -10,10 +10,15 @@ const ADMIN_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 
 interface setLinkProps {
   token?: string;
+  thirdPartyUri?: string;
 }
 
-const setLink = ({ token }: setLinkProps) => {
-  const httpLink = new HttpLink({ uri: API_URL });
+const setLink = ({ token, thirdPartyUri }: setLinkProps) => {
+  const httpLink = new HttpLink({ uri: thirdPartyUri ? thirdPartyUri : API_URL });
+  
+  if (thirdPartyUri && !token) {
+    return httpLink;
+  }
 
   const authLink = new ApolloLink((operation: any, forward: any) => {
     // Use the setContext method to set the HTTP headers.
@@ -39,9 +44,9 @@ const setLink = ({ token }: setLinkProps) => {
   return authLink.concat(httpLink);
 };
 
-const client = (token?: string) =>
+const client = (token?: string, thirdPartyUri?: string) =>
   new ApolloClient({
-    link: setLink({ token }),
+    link: setLink({ token, thirdPartyUri }),
     cache: new InMemoryCache(),
   });
 

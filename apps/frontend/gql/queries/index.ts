@@ -3,3 +3,4 @@ export * from './consultations';
 export * from './dashboard';
 export * from './members';
 export * from './raids';
+export * from './transactions';
