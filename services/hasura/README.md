@@ -1,6 +1,5 @@
 # DM Hasura
 
-
 ## Local Development
 
 Requires installed Docker
