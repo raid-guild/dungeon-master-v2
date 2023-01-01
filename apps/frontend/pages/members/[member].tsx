@@ -106,7 +106,7 @@ const Member = () => {
           </Flex>
         }
       >
-        <Flex w="100%" direction={['column', null, null, 'row']} gap={6}>
+        <Flex w="100%" direction={['column', null, null, 'row']} gap={4}>
           <MemberDetailsCard
             member={member}
             application={_.get(member, 'application')}
@@ -114,8 +114,7 @@ const Member = () => {
           {/* <RaidsFeed /> */}
           <Flex
             direction="column"
-            w={['100%', null, null, '30%']}
-            ml={[null, null, null, '4']}
+            w={['100%', null, null, '40%']}
             bg="gray.800"
             rounded="md"
             style={{ backdropFilter: 'blur(7px)' }}

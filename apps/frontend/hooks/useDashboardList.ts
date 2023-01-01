@@ -7,12 +7,9 @@ const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 
 const useDashboardList = ({ token, address }) => {
   const dashboardQueryResult = async () => {
-    const result = await client(token).query({
-      query: DASHBOARD_QUERY,
-      variables: { address },
-    });
+    const result = await client(token).request(DASHBOARD_QUERY, { address });
 
-    const resultData = camelize(_.get(result, 'data'));
+    const resultData = camelize(result);
 
     const raids = _.concat(
       _.get(resultData, 'raidPartyRaids'),
@@ -38,7 +35,7 @@ const useDashboardList = ({ token, address }) => {
     };
   };
 
-  const { data, error, status, isLoading } = useQuery<any>(
+  const { data, error, status, isLoading } = useQuery(
     ['dashboard', address],
     dashboardQueryResult,
     { enabled: !!token && !!address }

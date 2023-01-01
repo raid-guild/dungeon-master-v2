@@ -45,7 +45,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = localForm;
 
   async function onSubmit(values) {
@@ -86,7 +86,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
               <Stack spacing={4}>
                 <Input
                   id="memberName"
-                  defaultValue={member?.name ? member?.name : ''}
+                  defaultValue={member?.name ? member.name : ''}
                   aria-label="Enter your name"
                   placeholder="What is your name?"
                   rounded="base"
@@ -97,7 +97,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="emailAddress"
                   defaultValue={
-                    member?.contactInfo.email ? member?.contactInfo.email : null
+                    member?.contactInfo?.email
+                      ? member?.contactInfo.email
+                      : null
                   }
                   aria-label="Enter your email address"
                   placeholder="What is your email address?"
@@ -109,7 +111,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="githubHandle"
                   defaultValue={
-                    member?.contactInfo.github
+                    member?.contactInfo?.github
                       ? member?.contactInfo.github
                       : null
                   }
@@ -123,7 +125,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="discordHandle"
                   defaultValue={
-                    member?.contactInfo.discord
+                    member?.contactInfo?.discord
                       ? member?.contactInfo.discord
                       : null
                   }
@@ -137,7 +139,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="telegramHandle"
                   defaultValue={
-                    member?.contactInfo.telegram
+                    member?.contactInfo?.telegram
                       ? member?.contactInfo.telegram
                       : null
                   }
@@ -151,7 +153,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <Input
                   id="twitterHandle"
                   defaultValue={
-                    member?.contactInfo.twitter
+                    member?.contactInfo?.twitter
                       ? member?.contactInfo.twitter
                       : null
                   }
@@ -167,8 +169,8 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   <Controller
                     name="guildClass"
                     defaultValue={
-                      member?.guildClass.guildClass
-                        ? member?.guildClass.guildClass
+                      member?.guildClass?.guildClass
+                        ? member?.guildClass?.guildClass
                         : ''
                     }
                     control={control}

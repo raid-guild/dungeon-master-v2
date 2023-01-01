@@ -3,7 +3,7 @@ import { useToast } from '@raidguild/design-system';
 import _ from 'lodash';
 import { camelize } from '../utils';
 import { STATUS_UPDATE_CREATE_MUTATION, client } from '../gql';
-import { IRaid, IStatusUpdate } from '../types';
+import { IStatusUpdate } from '../types';
 
 type useUpdateCreateProps = {
   token: string;
@@ -17,19 +17,19 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: Partial<IStatusUpdate>) => {
       if (!memberId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: STATUS_UPDATE_CREATE_MUTATION,
-        variables: {
+      const result = await client({ token }).request(
+        STATUS_UPDATE_CREATE_MUTATION,
+        {
           update: {
             update: args.update,
             raid_id: args.raidId,
             member_id: memberId,
             // TODO reply_to
           },
-        },
-      });
+        }
+      );
 
-      return data;
+      return result;
     },
     {
       onSuccess: (data) => {
@@ -47,13 +47,11 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
 
         toast.success({
           title: 'Update added',
-          status: 'success',
         });
       },
       onError: (error) => {
         toast.error({
           title: 'Unable to add Update',
-          status: 'error',
         });
       },
     }

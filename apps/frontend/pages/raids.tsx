@@ -7,11 +7,13 @@ import {
   Flex,
   FormLabel,
   ChakraSelect,
+  Text,
+  Spacer,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import useDefaultTitle from '../hooks/useDefaultTitle';
-import useRaidList from '../hooks/useRaidList';
+import useRaidList, { useRaidsCount } from '../hooks/useRaidList';
 import RaidCard from '../components/RaidCard';
 import { IRaid } from '../utils';
 import SiteLayout from '../components/SiteLayout';
@@ -74,24 +76,24 @@ const RaidList = () => {
   const RaidControls = () => (
     <Flex
       direction={{ base: 'column', md: 'row' }}
-      justifyContent="space-between"
+      justifyContent='space-between'
       width={['90%', null, null, '100%']}
       gap={[2, 4, 4, 8]}
     >
-      <Flex direction="column" flexBasis="25%">
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor="raidStatus"
-          maxWidth="720px"
-          fontFamily="texturina"
-          lineHeight="1.8"
-          color="white"
-          textAlign="left"
+          htmlFor='raidStatus'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
         >
           Raid Status
         </FormLabel>
         <ChakraSelect
-          width="100%"
-          name="raidStatus"
+          width='100%'
+          name='raidStatus'
           value={raidStatusFilter}
           defaultValue={raidStatusOptions['Active']}
           onChange={(e) => {
@@ -108,21 +110,21 @@ const RaidList = () => {
           ))}
         </ChakraSelect>
       </Flex>
-      <Flex direction="column" flexBasis="25%">
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor="raidRoles"
-          maxWidth="720px"
-          fontFamily="texturina"
-          lineHeight="1.8"
-          color="white"
-          textAlign="left"
+          htmlFor='raidRoles'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
         >
           Raid Roles
         </FormLabel>
         <ChakraSelect
-          width="100%"
-          name="raidRoles"
-          id="raidRoles"
+          width='100%'
+          name='raidRoles'
+          id='raidRoles'
           value={raidRolesFilter}
           defaultValue={raidRolesOptions['Show All']}
           onChange={(e) => {
@@ -139,20 +141,20 @@ const RaidList = () => {
           ))}
         </ChakraSelect>
       </Flex>
-      <Flex direction="column" flexBasis="25%">
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor="raidSort"
-          maxWidth="720px"
-          fontFamily="texturina"
-          lineHeight="1.8"
-          color="white"
-          textAlign="left"
+          htmlFor='raidSort'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
         >
           Sort
         </FormLabel>
         <ChakraSelect
-          width="100%"
-          name="raidSort"
+          width='100%'
+          name='raidSort'
           value={raidSort}
           defaultValue={raidSortOptions['Name']}
           onChange={(e) => {
@@ -178,17 +180,34 @@ const RaidList = () => {
     raidRolesFilterKey: raidRolesFilter,
     raidSortKey: raidSort,
   });
+  const { data: count } = useRaidsCount({
+    token,
+    raidStatusFilterKey: raidStatusFilter,
+    raidRolesFilterKey: raidRolesFilter,
+    raidSortKey: raidSort,
+  });
 
   const raids = _.flatten(_.get(data, 'pages'));
 
   return (
     <>
-      <NextSeo title="Raids List" />
+      <NextSeo title='Raids List' />
 
       <SiteLayout
         isLoading={!data}
         data={raids}
-        subheader={<Heading>{title}</Heading>}
+        subheader={
+          <Flex w='100%' align='center'>
+            <Spacer />
+            <Heading>{title}</Heading>
+            <Spacer />
+            {count > 0 && (
+              <Text fontSize='3xl' fontWeight={800}>
+                {count}
+              </Text>
+            )}
+          </Flex>
+        }
         error={error}
       >
         <RaidControls />
@@ -199,12 +218,12 @@ const RaidList = () => {
             loadMore={fetchNextPage}
             hasMore={hasNextPage}
             loader={
-              <Flex my={25} w="100%" justify="center" key={1}>
-                <Spinner size="xl" my={50} />
+              <Flex my={25} w='100%' justify='center' key={1}>
+                <Spinner size='xl' my={50} />
               </Flex>
             }
           >
-            <Stack spacing={4} mx="auto" key={2}>
+            <Stack spacing={4} mx='auto' key={2}>
               {_.map(raids, (raid: IRaid) => (
                 <RaidCard
                   raid={raid}
@@ -215,8 +234,8 @@ const RaidList = () => {
             </Stack>
           </InfiniteScroll>
         ) : (
-          <Flex justify="center" align="center" minH="50vh">
-            <Heading size="md">No Raids found!</Heading>
+          <Flex justify='center' align='center' minH='50vh'>
+            <Heading size='md'>No Raids found!</Heading>
           </Flex>
         )}
       </SiteLayout>

@@ -5,7 +5,6 @@ import {
   Button,
   Text,
   Heading,
-  HStack,
   VStack,
   Badge,
   Icon,
@@ -106,119 +105,106 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
       icon: FaDiscord,
       onClick: copyDiscord.onCopy,
     },
-    (_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' ||
-      _.get(member, 'ensName', _.get(application, 'ensAddress')) !== null) && {
+    ((_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' &&
+      _.get(member, 'ethAddress', _.get(application, 'ethAddress'))) ||
+      _.get(member, 'ensName', _.get(application, 'ensAddress'))) && {
       tooltip: 'Copy ETH address',
-      label: truncateAddress(
-        _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
-      ),
+      label:
+        _.get(member, 'ensName', _.get(application, 'ensAddress')) ??
+        truncateAddress(
+          _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
+        ),
       icon: FaEthereum,
       onClick: copyEth.onCopy,
     },
   ].filter((x) => x);
 
+  const skillsByType = (skills, type) =>
+    _.map(_.filter(skills, ['skillType.skillType', type]), 'skill');
+
+  const localSkills = _.get(
+    member,
+    'membersSkills',
+    _.get(application, 'applicationsSkills')
+  );
   const skillBlocks = [
     {
       label: 'Primary Skills',
-      skills: _.map(
-        _.filter(
-          _.get(
-            member,
-            'membersSkills',
-            _.get(application, 'applicationsSkills')
-          ),
-          ['skillType.skillType', 'PRIMARY']
-        ),
-        'skill'
-      ),
+      skills: skillsByType(localSkills, 'PRIMARY'),
     },
-    {
+    _.size(skillsByType(localSkills, 'SECONDARY')) && {
       label: 'Secondary Skills',
-      skills: _.map(
-        _.filter(
-          _.get(
-            member,
-            'membersSkills',
-            _.get(application, 'applicationsSkills')
-          ),
-          ['skillType.skillType', 'SECONDARY']
-        ),
-        'skill'
-      ),
+      skills: skillsByType(localSkills, 'SECONDARY'),
     },
-  ];
+  ].filter((x) => x);
 
   return (
-    <Flex
-      direction="column"
-      w={['100%', null, null, '70%']}
-      minW={[null, null, null, '600px']}
-      bg="gray.800"
-      rounded="md"
-    >
-      <VStack p={8} height="100%" align="stretch">
-        {_.map(skillBlocks, (block) => (
-          <Flex direction="column" flexGrow={1} key={block.label}>
-            <Heading size="sm">{block.label}</Heading>
-            <Flex
-              direction="row"
-              maxWidth="100%"
-              wrap="wrap"
-              paddingTop={2}
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              {_.map(block.skills, (skill) => (
-                <Badge
-                  marginX={1}
-                  marginBottom={1}
-                  color="raid"
-                  bgColor="gray.700"
-                  key={`${block.label}-${_.get(skill, 'skill')}`}
-                >
-                  {SKILLS_DISPLAY(_.get(skill, 'skill'))}
-                </Badge>
-              ))}
-            </Flex>
-          </Flex>
-        ))}
-
-        {_.get(application, 'introduction') && (
-          <>
-            <Divider paddingTop={2} width="100%" alignSelf="center" />
-            <Text size="md">{_.get(application, 'introduction')}</Text>
-          </>
-        )}
-
-        <Box py={4}>
-          <Divider />
-        </Box>
-
-        <Flex gap={4} direction={['column', null, null, 'row']} wrap="wrap">
-          {_.map(memberLinks, (link) => (
-            <Tooltip
-              label={_.get(link, 'tooltip')}
-              size="sm"
-              key={_.get(link, 'href')}
-            >
-              <Button
-                as={ChakraLink}
-                variant="outline"
-                size="xs"
-                color="white"
-                leftIcon={<Icon as={_.get(link, 'icon')} color="white" />}
-                target="_blank"
-                rel="noreferrer noopener"
-                href={_.get(link, 'href')}
-                onClick={_.get(link, 'onClick')}
+    <Box minW={[null, null, null, '600px']}>
+      <Flex direction="column" w="100%" bg="gray.800" rounded="md">
+        <VStack p={8} height="100%" align="stretch">
+          {_.map(skillBlocks, (block) => (
+            <Flex direction="column" flexGrow={1} key={block.label}>
+              <Heading size="sm">{block.label}</Heading>
+              <Flex
+                direction="row"
+                maxWidth="100%"
+                wrap="wrap"
+                paddingTop={2}
+                alignItems="center"
+                justifyContent="flex-start"
               >
-                {_.get(link, 'label')}
-              </Button>
-            </Tooltip>
+                {_.map(block.skills, (skill) => (
+                  <Badge
+                    marginX={1}
+                    marginBottom={1}
+                    color="raid"
+                    bgColor="gray.700"
+                    key={`${block.label}-${_.get(skill, 'skill')}`}
+                  >
+                    {SKILLS_DISPLAY(_.get(skill, 'skill'))}
+                  </Badge>
+                ))}
+              </Flex>
+            </Flex>
           ))}
-        </Flex>
-      </VStack>
-    </Flex>
+
+          {_.get(application, 'introduction') && (
+            <>
+              <Divider paddingTop={2} width="100%" alignSelf="center" />
+              <Text size="md">{_.get(application, 'introduction')}</Text>
+            </>
+          )}
+
+          <Box py={4}>
+            <Divider />
+          </Box>
+
+          <Flex gap={4} direction={['column', null, null, 'row']} wrap="wrap">
+            {_.map(memberLinks, (link) => (
+              <Tooltip
+                label={_.get(link, 'tooltip')}
+                size="sm"
+                key={_.get(link, 'label')}
+              >
+                <Button
+                  as={ChakraLink}
+                  variant="outline"
+                  size="xs"
+                  color="white"
+                  leftIcon={<Icon as={_.get(link, 'icon')} color="white" />}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  href={_.get(link, 'href')}
+                  onClick={_.get(link, 'onClick')}
+                >
+                  {_.get(link, 'label')}
+                </Button>
+              </Tooltip>
+            ))}
+          </Flex>
+        </VStack>
+      </Flex>
+    </Box>
   );
 };
 

@@ -15,15 +15,15 @@ export const useAddRolesRequired = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, role }: IRoleRequiredInsert) => {
       if (!raidId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: ROLES_REQUIRED_INSERT_MUTATION,
-        variables: {
+      const { data } = await client(token).request(
+        ROLES_REQUIRED_INSERT_MUTATION,
+        {
           raidParty: {
             raid_id: raidId,
             role,
           },
-        },
-      });
+        }
+      );
 
       return data;
     },
@@ -50,7 +50,6 @@ export const useAddRolesRequired = ({ token }) => {
 
         toast.success({
           title: 'Role Added',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -58,7 +57,6 @@ export const useAddRolesRequired = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });
@@ -76,14 +74,14 @@ export const useRemoveRolesRequired = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ where }: IRoleRemoveMany) => {
       if (!where) return;
-      const { data } = await client(token).mutate({
-        mutation: ROLES_REQUIRED_DELETE_MUTATION,
-        variables: {
+      const result = await client(token).request(
+        ROLES_REQUIRED_DELETE_MUTATION,
+        {
           where,
-        },
-      });
+        }
+      );
 
-      return data;
+      return result;
     },
     {
       onSuccess: (data) => {
@@ -108,7 +106,6 @@ export const useRemoveRolesRequired = ({ token }) => {
 
         toast.success({
           title: 'Role Added',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -116,7 +113,6 @@ export const useRemoveRolesRequired = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });

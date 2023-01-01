@@ -10,16 +10,13 @@ const useApplicationList = ({ token }) => {
     if (!token) return;
     // TODO handle filters
 
-    const { data } = await client(token).query({
-      query: APPLICATION_LIST_QUERY,
-      variables: {
-        limit,
-        offset: pageParam * limit,
-        where: { _not: { member: {} } },
-      },
+    const result = await client(token).request(APPLICATION_LIST_QUERY, {
+      limit,
+      offset: pageParam * limit,
+      where: { _not: { member: {} } },
     });
 
-    return camelize(_.get(data, 'applications'));
+    return camelize(_.get(result, 'applications'));
   };
 
   const {

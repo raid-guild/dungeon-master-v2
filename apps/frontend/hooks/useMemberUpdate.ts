@@ -10,23 +10,20 @@ const useMemberUpdate = ({ token, memberId }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberUpdate) => {
       if (!memberId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: MEMBER_UPDATE_MUTATION,
-        variables: {
-          id: memberId,
-          member_updates: args.member_updates,
-          contact_info_pk: args.contact_info_id,
-          contact_info_updates: args.contact_info_updates,
-        },
+      const result = await client(token).request(MEMBER_UPDATE_MUTATION, {
+        id: memberId,
+        member_updates: args.member_updates,
+        contact_info_pk: args.contact_info_id,
+        contact_info_updates: args.contact_info_updates,
       });
 
-      return { data };
+      return result;
     },
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries([
           'memberDetail',
-          data?.data.update_members_by_pk?.eth_address,
+          data.update_members_by_pk?.eth_address,
         ]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
 

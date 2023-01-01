@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 export const RAID_DETAIL_FRAGMENT = gql`
   fragment RaidDetail on raids {
@@ -81,8 +81,23 @@ export const RAIDS_LIST_QUERY = gql`
     raids(limit: $limit, offset: $offset, where: $where, order_by: $order_by) {
       ...RaidDetail
     }
+    raids_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
   }
   # ${RAID_DETAIL_FRAGMENT}
+`;
+
+export const RAIDS_COUNT_QUERY = gql`
+  query RaidsCountQuery($where: raids_bool_exp) {
+    raids_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
+  }
 `;
 
 export const RAID_DETAIL_QUERY = gql`
