@@ -24,8 +24,6 @@ import { useOverlay } from '../../contexts/OverlayContext';
 import UpdateMemberForm from '../../components/MemberUpdateForm';
 import { useRouter } from 'next/router';
 
-const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
-
 // TODO remove hardcoded limits on past and active raids
 
 const Member = () => {
@@ -33,21 +31,14 @@ const Member = () => {
   const memberAddress = _.get(router, 'query.member');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: member } = useMemberDetail({ token, memberAddress });
+  const { data } = useMemberDetail({ token, memberAddress });
+  const member = _.get(data, 'member');
+  const raids = _.get(data, 'raids');
   const { data: ensAvatar } = useEnsAvatar({
     address: _.get(member, 'ethAddress'),
     chainId: 1,
     enabled: _.get(member, 'ethAddress') !== '0x',
   });
-  const pastAndActiveRaids = {
-    active: _.filter(_.map(_.get(member, 'raidParties'), 'raid'), (r) =>
-      _.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
-    ),
-    past: _.filter(
-      _.map(_.get(member, 'raidParties'), 'raid'),
-      (r) => !_.includes(activeStatus, _.get(r, 'raidStatus.raidStatus'))
-    ),
-  };
 
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
@@ -130,39 +121,33 @@ const Member = () => {
             style={{ backdropFilter: 'blur(7px)' }}
             p={8}
           >
-            {!_.isEmpty(_.get(pastAndActiveRaids, 'active')) && (
+            {!_.isEmpty(_.get(raids, 'active')) && (
               <Stack mb={4}>
                 <Heading size="sm">Active Raids</Heading>
                 <Stack>
-                  {_.map(
-                    _.get(pastAndActiveRaids, 'active').slice(0, 2),
-                    (raid) => (
-                      <MiniRaidCard
-                        key={_.get(raid, 'id')}
-                        raid={raid}
-                        noAvatar
-                        smallHeader
-                      />
-                    )
-                  )}
+                  {_.map(_.get(raids, 'active'), (raid) => (
+                    <MiniRaidCard
+                      key={_.get(raid, 'id')}
+                      raid={raid}
+                      noAvatar
+                      smallHeader
+                    />
+                  ))}
                 </Stack>
               </Stack>
             )}
-            {!_.isEmpty(_.get(pastAndActiveRaids, 'past')) && (
+            {!_.isEmpty(_.get(raids, 'past')) && (
               <Stack>
                 <Heading size="sm">Past Raids</Heading>
                 <Stack>
-                  {_.map(
-                    _.get(pastAndActiveRaids, 'past').slice(0, 3),
-                    (raid) => (
-                      <MiniRaidCard
-                        key={_.get(raid, 'id')}
-                        raid={raid}
-                        noAvatar
-                        smallHeader
-                      />
-                    )
-                  )}
+                  {_.map(_.get(raids, 'past').slice(0, 3), (raid) => (
+                    <MiniRaidCard
+                      key={_.get(raid, 'id')}
+                      raid={raid}
+                      noAvatar
+                      smallHeader
+                    />
+                  ))}
                 </Stack>
               </Stack>
             )}

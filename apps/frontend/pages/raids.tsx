@@ -6,8 +6,8 @@ import {
   Spinner,
   Flex,
   FormLabel,
+  ChakraSelect,
 } from '@raidguild/design-system';
-import { Select as ChakraSelect } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import useDefaultTitle from '../hooks/useDefaultTitle';

@@ -4,6 +4,7 @@ export const RAID_DETAIL_FRAGMENT = gql`
   fragment RaidDetail on raids {
     id
     name
+    category_key
     status_key
     raid_status {
       raid_status
@@ -15,6 +16,7 @@ export const RAID_DETAIL_FRAGMENT = gql`
       role
     }
     cleric {
+      id
       name
       eth_address
       contact_info {
@@ -32,6 +34,11 @@ export const RAID_DETAIL_FRAGMENT = gql`
     }
     consultation {
       description
+      budget_key
+      submission_type_key
+      project_type {
+        project_type
+      }
       budget_option {
         budget_option
       }

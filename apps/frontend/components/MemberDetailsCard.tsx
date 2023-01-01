@@ -158,7 +158,7 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
     >
       <VStack p={8} height="100%" align="stretch">
         {_.map(skillBlocks, (block) => (
-          <Flex direction="column" flexGrow={1}>
+          <Flex direction="column" flexGrow={1} key={block.label}>
             <Heading size="sm">{block.label}</Heading>
             <Flex
               direction="row"
@@ -196,7 +196,11 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
 
         <Flex gap={4} direction={['column', null, null, 'row']} wrap="wrap">
           {_.map(memberLinks, (link) => (
-            <Tooltip label={_.get(link, 'tooltip')} size="sm">
+            <Tooltip
+              label={_.get(link, 'tooltip')}
+              size="sm"
+              key={_.get(link, 'href')}
+            >
               <Button
                 as={ChakraLink}
                 variant="outline"

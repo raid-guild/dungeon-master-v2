@@ -22,7 +22,7 @@ const Home: React.FC = () => {
       <SiteLayout isLoading={!data} subheader={<Heading>Dashboard</Heading>}>
         <Flex
           direction={['column', null, null, 'row']}
-          alignItems="center"
+          alignItems="flex-start"
           justify="space-between"
           gap={8}
           w="100%"

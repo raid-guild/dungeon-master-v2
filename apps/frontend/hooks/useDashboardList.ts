@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { DASHBOARD_QUERY, client } from '../gql';
-import { camelize } from '../utils';
+import { camelize, IRaid } from '../utils';
 
 const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 
@@ -11,16 +11,21 @@ const useDashboardList = ({ token, address }) => {
       query: DASHBOARD_QUERY,
       variables: { address },
     });
-    console.log(result);
 
     const resultData = camelize(_.get(result, 'data'));
 
-    const activeRaids = _.filter(_.get(resultData, 'myRaids'), (r) =>
+    const raids = _.concat(
+      _.get(resultData, 'raidPartyRaids'),
+      _.get(resultData, 'clericRaids')
+    );
+    const uniqueRaids = _.uniqBy(raids, 'id');
+
+    const activeRaids = _.filter(uniqueRaids, (r: IRaid) =>
       _.includes(ACTIVE_RAID_STATUSES, _.get(r, 'raidStatus.raidStatus'))
     );
     const pastRaids = _.filter(
-      _.get(resultData, 'myRaids'),
-      (r) =>
+      uniqueRaids,
+      (r: IRaid) =>
         !_.includes(ACTIVE_RAID_STATUSES, _.get(r, 'raidStatus.raidStatus'))
     );
 

@@ -122,7 +122,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         </Stack>
         <Flex direction={{ base: 'column', md: 'row' }} align="flex-start">
           {!_.isEmpty(rolesRequired) && (
-            <HStack mb={{ base: 4, md: 0 }}>
+            <HStack mb={{ base: 4, md: 0 }} mr={4}>
               <Heading size="sm" color="white">
                 Roles Required
               </Heading>

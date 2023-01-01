@@ -97,6 +97,13 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
         }
       }
     }
+    cleric_raids: raids(where: { cleric: { eth_address: { _eq: $address } } }) {
+      id
+      name
+      raid_status {
+        raid_status
+      }
+    }
   }
 `;
 
