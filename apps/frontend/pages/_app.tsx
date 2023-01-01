@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import { SessionProvider } from 'next-auth/react';
@@ -22,24 +22,27 @@ import '@fontsource/texturina';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useCustomToast();
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchInterval: 1200 * 1000,
-        refetchOnWindowFocus: false,
-      },
-    },
-    queryCache: new QueryCache({
-      onError: (error) => {
-        toast.error({
-          title: 'Something went wrong.',
-          status: 'error',
-          iconName: 'alert',
-          description: `Please try again: ${error}`,
-        });
-      },
-    }),
-  });
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchInterval: 120 * 1000,
+            refetchOnWindowFocus: false,
+          },
+        },
+        queryCache: new QueryCache({
+          onError: (error) => {
+            toast.error({
+              title: 'Something went wrong.',
+              status: 'error',
+              iconName: 'alert',
+              description: `Please try again: ${error}`,
+            });
+          },
+        }),
+      })
+  );
 
   return (
     <RGThemeProvider>

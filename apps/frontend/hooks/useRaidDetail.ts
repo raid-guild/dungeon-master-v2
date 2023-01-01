@@ -4,9 +4,7 @@ import { client, RAID_DETAIL_QUERY } from '../gql';
 import { camelize, IRaid } from '../utils';
 
 const useRaidDetail = ({ raidId, token }) => {
-  console.log(raidId, token);
   const raidQueryResult = async () => {
-    console.log('here');
     if (!raidId || !token) return;
     // TODO handle filters
 
@@ -26,7 +24,7 @@ const useRaidDetail = ({ raidId, token }) => {
   >({
     queryKey: ['raidDetail', raidId],
     queryFn: raidQueryResult,
-    enabled: !!token && !!raidId,
+    enabled: Boolean(token) && Boolean(raidId),
   });
 
   return { isLoading, isFetching, isError, error, data };

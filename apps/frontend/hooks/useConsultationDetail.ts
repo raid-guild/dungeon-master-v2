@@ -26,7 +26,7 @@ const useConsultationDetail = ({ token }) => {
     IConsultation,
     Error
   >(['consultationDetail', consultationId], consultationQueryResult, {
-    enabled: Boolean(token),
+    enabled: Boolean(token) && Boolean(consultationId),
   });
 
   return { isLoading, isFetching, isError, error, data };
