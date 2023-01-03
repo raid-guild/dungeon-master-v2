@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
 import { SessionProvider } from 'next-auth/react';
@@ -8,7 +8,7 @@ import {
   QueryClientProvider,
   QueryCache,
 } from '@tanstack/react-query';
-import { RGThemeProvider, useCustomToast } from '@raidguild/design-system';
+import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -21,28 +21,24 @@ import '@fontsource/uncial-antiqua';
 import '@fontsource/texturina';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
-  const toast = useCustomToast();
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            refetchInterval: 120 * 1000,
-            refetchOnWindowFocus: false,
-          },
-        },
-        queryCache: new QueryCache({
-          onError: (error) => {
-            toast.error({
-              title: 'Something went wrong.',
-              status: 'error',
-              iconName: 'alert',
-              description: `Please try again: ${error}`,
-            });
-          },
-        }),
-      })
-  );
+  const toast = useToast();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: 1200 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
+    queryCache: new QueryCache({
+      onError: (error) => {
+        toast.error({
+          title: 'Something went wrong.',
+          iconName: 'alert',
+          description: `Please try again: ${error}`,
+        });
+      },
+    }),
+  });
 
   return (
     <RGThemeProvider>

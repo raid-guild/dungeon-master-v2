@@ -12,14 +12,11 @@ const useApplicationDetail = ({ token }) => {
     if (!applicationId || !token) return;
     // TODO handle filters
 
-    const { data } = await client(token).query({
-      query: APPLICATION_DETAIL_QUERY,
-      variables: {
-        id: applicationId,
-      },
+    const result = await client(token).request(APPLICATION_DETAIL_QUERY, {
+      id: applicationId,
     });
 
-    return camelize(_.get(data, 'applications_by_pk'));
+    return camelize(_.get(result, 'applications_by_pk'));
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<

@@ -1,26 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
 import { DASHBOARD_QUERY, client } from '../gql';
-import { camelize } from '../utils';
+import { camelize, IRaid } from '../utils';
 
 const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 
 const useDashboardList = ({ token, address }) => {
   const dashboardQueryResult = async () => {
-    const result = await client(token).query({
-      query: DASHBOARD_QUERY,
-      variables: { address },
-    });
-    console.log(result);
+    const result = await client(token).request(DASHBOARD_QUERY, { address });
 
-    const resultData = camelize(_.get(result, 'data'));
+    const resultData = camelize(result);
 
-    const activeRaids = _.filter(_.get(resultData, 'myRaids'), (r) =>
+    const raids = _.concat(
+      _.get(resultData, 'raidPartyRaids'),
+      _.get(resultData, 'clericRaids')
+    );
+    const uniqueRaids = _.uniqBy(raids, 'id');
+
+    const activeRaids = _.filter(uniqueRaids, (r: IRaid) =>
       _.includes(ACTIVE_RAID_STATUSES, _.get(r, 'raidStatus.raidStatus'))
     );
     const pastRaids = _.filter(
-      _.get(resultData, 'myRaids'),
-      (r) =>
+      uniqueRaids,
+      (r: IRaid) =>
         !_.includes(ACTIVE_RAID_STATUSES, _.get(r, 'raidStatus.raidStatus'))
     );
 
@@ -33,7 +35,7 @@ const useDashboardList = ({ token, address }) => {
     };
   };
 
-  const { data, error, status, isLoading } = useQuery<any>(
+  const { data, error, status, isLoading } = useQuery(
     ['dashboard', address],
     dashboardQueryResult,
     { enabled: !!token && !!address }

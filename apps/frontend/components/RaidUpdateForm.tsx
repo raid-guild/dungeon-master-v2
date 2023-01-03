@@ -16,7 +16,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
-import { RAID_CATEGORY, RAID_CATEGORY_OPTIONS } from '../utils/constants';
+import { RAID_CATEGORY_OPTIONS } from '../utils/constants';
 import useRaidUpdate from '../hooks/useRaidUpdate';
 import { useSession } from 'next-auth/react';
 

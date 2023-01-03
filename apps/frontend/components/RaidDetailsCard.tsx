@@ -47,15 +47,17 @@ const Description = ({ description }: { description: string }) => {
             : 'There is no project description.'}
         </Text>
       </Collapse>
-      <Button
-        onClick={handleToggleDesc}
-        color="gray.400"
-        size="sm"
-        fontWeight="normal"
-        variant="link"
-      >
-        {showFullDescription === true ? 'Show Less' : 'Show More'}
-      </Button>
+      {description !== null && description?.length > 150 && (
+        <Button
+          onClick={handleToggleDesc}
+          color="gray.400"
+          size="sm"
+          fontWeight="normal"
+          variant="link"
+        >
+          {showFullDescription === true ? 'Show Less' : 'Show More'}
+        </Button>
+      )}
     </VStack>
   );
 };

@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi';
 import SiteLayout from '../components/SiteLayout';
 import MiniRaidCard from '../components/MiniRaidCard';
 import useDashboardList from '../hooks/useDashboardList';
+import { IConsultation, IRaid } from '../types';
 
 const Home: React.FC = () => {
   const { data: session } = useSession();
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
       <SiteLayout isLoading={!data} subheader={<Heading>Dashboard</Heading>}>
         <Flex
           direction={['column', null, null, 'row']}
-          alignItems="center"
+          alignItems="flex-start"
           justify="space-between"
           gap={8}
           w="100%"
@@ -33,7 +34,7 @@ const Home: React.FC = () => {
               <Stack spacing={4}>
                 <Heading size="md">Active Raids</Heading>
                 <Stack spacing={4}>
-                  {_.map(_.get(data, 'myRaids.active'), (raid) => (
+                  {_.map(_.get(data, 'myRaids.active'), (raid: IRaid) => (
                     <MiniRaidCard key={raid.id} raid={raid} />
                   ))}
                 </Stack>
@@ -43,7 +44,7 @@ const Home: React.FC = () => {
               <Stack spacing={4}>
                 <Heading size="md">Past Raids</Heading>
                 <Stack spacing={4}>
-                  {_.map(_.get(data, 'myRaids.past'), (raid) => (
+                  {_.map(_.get(data, 'myRaids.past'), (raid: IRaid) => (
                     <MiniRaidCard key={raid.id} raid={raid} />
                   ))}
                 </Stack>
@@ -51,8 +52,18 @@ const Home: React.FC = () => {
             )}
           </Stack>
           <Stack w={['90%', null, null, '45%']} spacing={4}>
+            <Heading>New Consultations</Heading>
+            {_.map(
+              _.get(data, 'newConsultations'),
+              (consultation: IConsultation) => (
+                <MiniRaidCard
+                  key={consultation.id}
+                  consultation={consultation}
+                />
+              )
+            )}
             <Heading size="lg">New Raids</Heading>
-            {_.map(_.get(data, 'newRaids'), (raid) => (
+            {_.map(_.get(data, 'newRaids'), (raid: IRaid) => (
               <MiniRaidCard key={raid.id} raid={raid} newRaid />
             ))}
           </Stack>

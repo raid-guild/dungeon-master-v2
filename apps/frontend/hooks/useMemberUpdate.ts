@@ -1,38 +1,34 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, MEMBER_UPDATE_MUTATION } from '../gql';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import { IMemberUpdate } from '../utils';
 
 const useMemberUpdate = ({ token, memberId }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberUpdate) => {
       if (!memberId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: MEMBER_UPDATE_MUTATION,
-        variables: {
-          id: memberId,
-          member_updates: args.member_updates,
-          contact_info_pk: args.contact_info_id,
-          contact_info_updates: args.contact_info_updates,
-        },
+      const result = await client(token).request(MEMBER_UPDATE_MUTATION, {
+        id: memberId,
+        member_updates: args.member_updates,
+        contact_info_pk: args.contact_info_id,
+        contact_info_updates: args.contact_info_updates,
       });
 
-      return { data };
+      return result;
     },
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries([
           'memberDetail',
-          data?.data.update_members_by_pk?.eth_address,
+          data.update_members_by_pk?.eth_address,
         ]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
 
         toast.success({
           title: 'Member Info Updated',
-          status: 'success',
           iconName: 'crown',
           duration: 3000,
           isClosable: true,
@@ -41,7 +37,6 @@ const useMemberUpdate = ({ token, memberId }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Member',
-          status: 'error',
           iconName: 'alert',
           duration: 3000,
           isClosable: true,
