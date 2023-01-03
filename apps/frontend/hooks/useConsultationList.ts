@@ -10,7 +10,7 @@ const useConsultationList = ({ token }) => {
     if (!token) return;
     // TODO handle filters
 
-    const result = await client(token).request(CONSULTATION_LIST_QUERY, {
+    const result = await client({ token }).request(CONSULTATION_LIST_QUERY, {
       limit,
       offset: pageParam * limit,
       where: {

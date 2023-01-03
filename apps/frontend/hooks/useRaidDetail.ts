@@ -8,7 +8,7 @@ const useRaidDetail = ({ raidId, token }) => {
     if (!raidId || !token) return;
     // TODO handle filters
 
-    const result = await client(token).request(RAID_DETAIL_QUERY, {
+    const result = await client({ token }).request(RAID_DETAIL_QUERY, {
       id: raidId,
     });
 

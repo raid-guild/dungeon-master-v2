@@ -8,7 +8,7 @@ const useConsultationDetail = ({ token, consultationId }) => {
     if (!consultationId) return;
     // TODO handle filters
 
-    const result = await client(token).request(CONSULTATION_DETAIL_QUERY, {
+    const result = await client({ token }).request(CONSULTATION_DETAIL_QUERY, {
       id: consultationId,
     });
 

@@ -12,7 +12,7 @@ const useApplicationDetail = ({ token }) => {
     if (!applicationId || !token) return;
     // TODO handle filters
 
-    const result = await client(token).request(APPLICATION_DETAIL_QUERY, {
+    const result = await client({ token }).request(APPLICATION_DETAIL_QUERY, {
       id: applicationId,
     });
 

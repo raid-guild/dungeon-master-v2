@@ -10,7 +10,7 @@ const useMemberUpdate = ({ token, memberId }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberUpdate) => {
       if (!memberId || !token) return;
-      const result = await client(token).request(MEMBER_UPDATE_MUTATION, {
+      const result = await client({ token }).request(MEMBER_UPDATE_MUTATION, {
         id: memberId,
         member_updates: args.member_updates,
         contact_info_pk: args.contact_info_id,

@@ -9,7 +9,7 @@ const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 
 export const CONFIG = {
   encodingAlgorithm: 'HS256',
-  defaultRoles: ['public'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
+  defaultRoles: ['member'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
   defaultMaxAge: 30 * 60, // 30 minutes
 };
 
@@ -22,13 +22,14 @@ export const createToken = ({
 }: CreateTokenParams): HasuraAuthToken => ({
   ...token,
   address: _.get(token, 'sub'),
+  id: _.get(user, 'id'),
   iat: Math.floor(Date.now() / 1000),
   exp: Math.floor(Date.now() / 1000) + (maxAge ?? CONFIG.defaultMaxAge),
   'https://hasura.io/jwt/claims': {
     'x-hasura-allowed-roles': roles ?? CONFIG.defaultRoles,
     'x-hasura-default-role': _.first(roles ?? CONFIG.defaultRoles),
     'x-hasura-role': _.first(roles ?? CONFIG.defaultRoles),
-    'x-hasura-user-id': _.get(token, 'sub'),
+    'x-hasura-user-id': _.get(user, 'id'),
   },
 });
 

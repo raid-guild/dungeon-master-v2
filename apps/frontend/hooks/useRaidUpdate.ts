@@ -11,7 +11,7 @@ const useRaidUpdate = ({ token, raidId }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidUpdate) => {
       if (!raidId || !token) return;
-      const result = await client(token).request(RAID_UPDATE_MUTATION, {
+      const result = await client({ token }).request(RAID_UPDATE_MUTATION, {
         id: raidId,
         raid_updates: args.raid_updates,
       });
