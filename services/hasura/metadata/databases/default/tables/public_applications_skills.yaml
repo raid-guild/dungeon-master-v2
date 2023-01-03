@@ -29,6 +29,7 @@ select_permissions:
         - skill_key
         - skill_type_key
       filter: {}
+      allow_aggregations: true
 update_permissions:
   - role: member
     permission:

@@ -15,7 +15,7 @@ export const useAddRolesRequired = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, role }: IRoleRequiredInsert) => {
       if (!raidId || !token) return;
-      const { data } = await client({ token }).request(
+      const result = await client({ token }).request(
         ROLES_REQUIRED_INSERT_MUTATION,
         {
           raidParty: {
@@ -25,7 +25,7 @@ export const useAddRolesRequired = ({ token }) => {
         }
       );
 
-      return data;
+      return result;
     },
     {
       onSuccess: (data) => {
@@ -86,20 +86,22 @@ export const useRemoveRolesRequired = ({ token }) => {
     {
       onSuccess: (data) => {
         console.log(data);
+        const raid = _.get(
+          data,
+          'delete_raids_roles_required.returning.0.raid'
+        );
         queryClient.invalidateQueries([
           'raidDetail',
-          _.get(data, 'insert_raids_roles_required.returning.0.raid_id'),
+          _.get(data, 'delete_raids_roles_required.returning.0.raid_id'),
         ]); // invalidate raidDetail with id from the successful mutation response
         queryClient.invalidateQueries(['raidList']); // invalidate the raidList
-        console.log(
-          _.get(data, 'insert_raids_roles_required.returning.0.raid')
-        );
+        console.log(raid);
         queryClient.setQueryData(
           [
             'raidDetail',
-            _.get(data, 'insert_raids_roles_required.returning.0.raid_id'),
+            _.get(data, 'delete_raids_roles_required.returning.0.raid_id'),
           ],
-          camelize(_.get(data, 'insert_raids_roles_required.returning.0.raid'))
+          camelize(raid)
         );
         // setButton
         // clear roleToAdd
