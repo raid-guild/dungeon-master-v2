@@ -80,7 +80,7 @@ export const useSlimMemberList = ({ token, button }) => {
 
     const result = await client({ token }).request(MEMBER_SLIM_LIST_QUERY);
 
-    return camelize(_.get(result, 'data.members'));
+    return camelize(_.get(result, 'members'));
   };
 
   const { status, error, data, isLoading } = useQuery<

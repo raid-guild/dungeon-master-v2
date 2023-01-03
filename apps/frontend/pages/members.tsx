@@ -55,25 +55,25 @@ const MemberList = () => {
   const MemberControls = () => (
     <Flex
       direction={{ base: 'column', md: 'row' }}
-      justifyContent="space-between"
-      width="100%"
+      justifyContent='space-between'
+      width='100%'
       gap={[4, null, null, 8]}
       paddingX={6}
     >
-      <Flex direction="column" flexBasis="25%">
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor="memberRole"
-          maxWidth="720px"
-          fontFamily="texturina"
-          lineHeight="1.8"
-          color="white"
-          textAlign="left"
+          htmlFor='memberRole'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
         >
           Member Role
         </FormLabel>
         <ChakraSelect
-          width="100%"
-          name="memberRole"
+          width='100%'
+          name='memberRole'
           value={memberRolesFilter}
           defaultValue={memberRolesFilter['Frontend Dev']}
           onChange={(e) => {
@@ -87,21 +87,21 @@ const MemberList = () => {
           ))}
         </ChakraSelect>
       </Flex>
-      <Flex direction="column" flexBasis="25%">
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor="memberStatus"
-          maxWidth="720px"
-          fontFamily="texturina"
-          lineHeight="1.8"
-          color="white"
-          textAlign="left"
+          htmlFor='memberStatus'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
         >
           Member Status
         </FormLabel>
         <ChakraSelect
-          width="100%"
-          name="memberStatus"
-          id="raidRoles"
+          width='100%'
+          name='memberStatus'
+          id='raidRoles'
           value={memberStatusFilter}
           defaultValue={memberStatusOptions['Show All']}
           onChange={(e) => {
@@ -115,20 +115,20 @@ const MemberList = () => {
           ))}
         </ChakraSelect>
       </Flex>
-      <Flex direction="column" flexBasis="25%">
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor="memberSort"
-          maxWidth="720px"
-          fontFamily="texturina"
-          lineHeight="1.8"
-          color="white"
-          textAlign="left"
+          htmlFor='memberSort'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
         >
           Sort
         </FormLabel>
         <ChakraSelect
-          width="100%"
-          name="memberSort"
+          width='100%'
+          name='memberSort'
           value={memberSort}
           defaultValue={memberSortOptions['Name']}
           onChange={(e) => {
@@ -155,42 +155,40 @@ const MemberList = () => {
 
   return (
     <>
-      <NextSeo title="Members List" />
+      <NextSeo title='Members List' />
 
       <SiteLayout
         isLoading={!data}
         data={members}
-        subheader={<Heading>{title} List</Heading>}
+        subheader={
+          <>
+            <Heading>{title} List</Heading>
+            <MemberControls />
+          </>
+        }
+        emptyDataPhrase='No members found'
         error={error}
       >
-        <MemberControls />
-
-        {members && members.length > 0 ? (
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={fetchNextPage}
-            hasMore={hasNextPage}
-            loader={
-              <Flex my={25} w="100%" justify="center">
-                <Spinner size="xl" />
-              </Flex>
-            }
-          >
-            <Stack spacing={4}>
-              {_.map(members, (member: IMember) => (
-                <MemberCard
-                  member={member}
-                  application={_.get(member, 'application')}
-                  key={_.get(member, 'id')}
-                />
-              ))}
-            </Stack>
-          </InfiniteScroll>
-        ) : (
-          <Flex justify="center" align="center" minH="50vh">
-            <Heading size="md">No Members found!</Heading>
-          </Flex>
-        )}
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={
+            <Flex my={25} w='100%' justify='center'>
+              <Spinner size='xl' />
+            </Flex>
+          }
+        >
+          <Stack spacing={4}>
+            {_.map(members, (member: IMember) => (
+              <MemberCard
+                member={member}
+                application={_.get(member, 'application')}
+                key={_.get(member, 'id')}
+              />
+            ))}
+          </Stack>
+        </InfiniteScroll>
       </SiteLayout>
     </>
   );

@@ -197,47 +197,43 @@ const RaidList = () => {
         isLoading={!data}
         data={raids}
         subheader={
-          <Flex w='100%' align='center'>
-            <Spacer />
-            <Heading>{title}</Heading>
-            <Spacer />
-            {count > 0 && (
-              <Text fontSize='3xl' fontWeight={800}>
-                {count}
-              </Text>
-            )}
-          </Flex>
+          <>
+            <Flex w='100%' align='center'>
+              <Spacer />
+              <Heading>{title}</Heading>
+              <Spacer />
+              {count > 0 && (
+                <Text fontSize='3xl' fontWeight={800}>
+                  {count}
+                </Text>
+              )}
+            </Flex>
+            <RaidControls />
+          </>
         }
         error={error}
       >
-        <RaidControls />
-
-        {raids && raids.length > 0 ? (
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={fetchNextPage}
-            hasMore={hasNextPage}
-            loader={
-              <Flex my={25} w='100%' justify='center' key={1}>
-                <Spinner size='xl' my={50} />
-              </Flex>
-            }
-          >
-            <Stack spacing={4} mx='auto' key={2}>
-              {_.map(raids, (raid: IRaid) => (
-                <RaidCard
-                  raid={raid}
-                  consultation={_.get(raid, 'consultation')}
-                  key={_.get(raid, 'id')}
-                />
-              ))}
-            </Stack>
-          </InfiniteScroll>
-        ) : (
-          <Flex justify='center' align='center' minH='50vh'>
-            <Heading size='md'>No Raids found!</Heading>
-          </Flex>
-        )}
+        <InfiniteScroll
+          pageStart={0}
+          style={{ width: '100%' }}
+          loadMore={fetchNextPage}
+          hasMore={hasNextPage}
+          loader={
+            <Flex my={25} w='100%' justify='center' key={1}>
+              <Spinner size='xl' my={50} />
+            </Flex>
+          }
+        >
+          <Stack spacing={4} mx='auto' key={2} w='100%'>
+            {_.map(raids, (raid: IRaid) => (
+              <RaidCard
+                raid={raid}
+                consultation={_.get(raid, 'consultation')}
+                key={_.get(raid, 'id')}
+              />
+            ))}
+          </Stack>
+        </InfiniteScroll>
       </SiteLayout>
     </>
   );
