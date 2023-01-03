@@ -29,6 +29,7 @@ select_permissions:
         - member_id
         - portfolio_id
       filter: {}
+      allow_aggregations: true
 update_permissions:
   - role: member
     permission:
