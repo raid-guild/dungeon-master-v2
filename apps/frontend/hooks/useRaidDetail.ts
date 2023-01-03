@@ -8,14 +8,11 @@ const useRaidDetail = ({ raidId, token }) => {
     if (!raidId || !token) return;
     // TODO handle filters
 
-    const { data } = await client(token).query({
-      query: RAID_DETAIL_QUERY,
-      variables: {
-        id: raidId,
-      },
+    const result = await client(token).request(RAID_DETAIL_QUERY, {
+      id: raidId,
     });
 
-    return camelize(_.get(data, 'raids_by_pk'));
+    return camelize(_.get(result, 'raids_by_pk'));
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<

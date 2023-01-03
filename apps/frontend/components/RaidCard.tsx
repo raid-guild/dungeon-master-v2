@@ -6,16 +6,11 @@ import {
   Button,
   Text,
   HStack,
-  VStack,
   Box,
-  Badge,
   Icon,
   Tooltip,
   SimpleGrid,
-  UnorderedList,
-  ListItem,
   Stack,
-  Card,
   AvatarGroup,
   RoleBadge,
   Avatar,
@@ -33,6 +28,7 @@ import {
 } from '../utils/constants';
 import { displayDate } from '../utils/general';
 import MemberAvatarStack from './MemberAvatarStack';
+import RaidStatusBadge from './RaidStatusBadge';
 import { IConsultation, IRaid } from '../utils';
 
 interface RaidProps {
@@ -41,12 +37,12 @@ interface RaidProps {
 }
 
 const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
-  const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
-  const uniqueServicesRequired = _.uniq(
-    _.map(servicesRequired, (service: { guildService: string }) =>
-      _.get(service, 'guildService.guildService')
-    )
-  );
+  // const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
+  // const uniqueServicesRequired = _.uniq(
+  //   _.map(servicesRequired, (service: { guildService: string }) =>
+  //     _.get(service, 'guildService.guildService')
+  //   )
+  // );
   const id = _.get(raid || consultation, 'id');
   const submissionType = _.get(consultation, 'submissionType.submissionType');
   const description = _.get(consultation, 'description');
@@ -78,52 +74,50 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
 
   return (
     <Box
-      bg="gray.800"
-      rounded="md"
+      bg='gray.800'
+      rounded='md'
       p={8}
-      m="auto"
+      m='auto'
       w={['95%', null, null, '100%']}
     >
       <Flex
         direction={{ base: 'column', md: 'row' }}
-        // width="90%"
-        // mx="auto"
-        alignItems="space-apart"
-        justifyContent="space-between"
+        alignItems='space-apart'
+        justifyContent='space-between'
       >
         <Stack spacing={4}>
           <Link href={link}>
             <Heading
-              color="white"
-              as="h3"
-              fontSize="2xl"
-              transition="all ease-in-out .25s"
+              color='white'
+              as='h3'
+              fontSize='2xl'
+              transition='all ease-in-out .25s'
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
               {_.get(raid, 'name', _.get(consultation, 'name'))}
             </Heading>
           </Link>
           <HStack>
-            <Badge colorScheme="green">
-              {_.get(
+            <RaidStatusBadge
+              status={_.get(
                 raid,
                 'raidStatus.raidStatus',
                 _.get(consultation, 'consultationStatus.consultationStatus')
               )}
-            </Badge>
+            />
             {submissionType === 'PAID' && (
-              <Tooltip label="Paid Submission" placement="right" hasArrow>
+              <Tooltip label='Paid Submission' placement='right' hasArrow>
                 <span>
-                  <Icon as={AiOutlineDollarCircle} w={6} h={6} color="white" />
+                  <Icon as={AiOutlineDollarCircle} w={6} h={6} color='white' />
                 </span>
               </Tooltip>
             )}
           </HStack>
         </Stack>
-        <Flex direction={{ base: 'column', md: 'row' }} align="flex-start">
+        <Flex direction={{ base: 'column', md: 'row' }} align='flex-start'>
           {!_.isEmpty(rolesRequired) && (
-            <HStack mb={{ base: 4, md: 0 }}>
-              <Heading size="sm" color="white">
+            <HStack mb={{ base: 4, md: 0 }} mr={4}>
+              <Heading size='sm' color='white'>
                 Roles Required
               </Heading>
               <AvatarGroup>
@@ -133,9 +127,9 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
                     icon={
                       <RoleBadge
                         roleName={GUILD_CLASS_ICON[role]}
-                        width="44px"
-                        height="44px"
-                        border="2px solid"
+                        width='44px'
+                        height='44px'
+                        border='2px solid'
                       />
                     }
                   />
@@ -145,60 +139,75 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           )}
 
           <HStack mr={4} mb={{ base: 4, md: 0 }}>
-            {!raidCleric ? (
-              <Heading size="sm" color="white" mr={4} mb={{ base: 4, md: 0 }}>
-                Needs Cleric!
-              </Heading>
-            ) : (
-              <>
-                <Heading size="sm" color="white">
-                  Cleric
+            {raid &&
+              (!raidCleric ? (
+                <Heading size='sm' color='white' mr={4} mb={{ base: 4, md: 0 }}>
+                  Needs Cleric!
                 </Heading>
-                <MemberAvatar member={raidCleric} />
-              </>
-            )}
+              ) : (
+                <>
+                  <Heading size='sm' color='white'>
+                    Cleric
+                  </Heading>
+                  <MemberAvatar member={raidCleric} />
+                </>
+              ))}
           </HStack>
 
           <Link href={link}>
-            <Button color="raid" borderColor="raid" variant="outline">
+            <Button color='raid' borderColor='raid' variant='outline'>
               View Details
             </Button>
           </Link>
         </Flex>
       </Flex>
-      <Flex
-        direction="row"
-        // width="90%"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Flex
-          direction="column"
-          width="100%"
-          alignItems="flex-start"
-          justifyContent="space-between"
-          maxWidth="80%"
-          paddingY={4}
-        >
-          {_.get(raid, 'createdAt') && (
-            <HStack>
-              <Text color="gray.100" fontSize="smaller">
-                {raidDateLabel}
-              </Text>
-              <Text color="gray.100" fontSize="smaller">
-                {displayDate(raidDate)}
-              </Text>
-            </HStack>
-          )}
-          <Text color="white">
-            {_.gt(_.size(description), 300)
-              ? `${description?.slice(0, 300)}...`
-              : description}
-          </Text>
-        </Flex>
+      <Flex direction='row' justifyContent='space-between'>
+        <Stack w='90%'>
+          <Flex
+            direction='column'
+            width='100%'
+            alignItems='flex-start'
+            justifyContent='space-between'
+            maxWidth='80%'
+            paddingY={4}
+          >
+            {_.get(raid, 'createdAt') && (
+              <HStack>
+                <Text color='gray.100' fontSize='smaller'>
+                  {raidDateLabel}
+                </Text>
+                <Text color='gray.100' fontSize='smaller'>
+                  {displayDate(raidDate)}
+                </Text>
+              </HStack>
+            )}
+            <Text color='white'>
+              {_.gt(_.size(description), 300)
+                ? `${description?.slice(0, 300)}...`
+                : description}
+            </Text>
+          </Flex>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} width='100%'>
+            <InfoStack label='Budget' details={budget || '-'} />
+            {_.get(raid, 'raidCategory.raidCategory') && (
+              <InfoStack
+                label='Category'
+                details={
+                  RAID_CATEGORY_DISPLAY[
+                    _.get(raid, 'raidCategory.raidCategory', '-')
+                  ]
+                }
+              />
+            )}
+
+            <InfoStack label='Project Type' details={projectType || '-'} />
+          </SimpleGrid>
+        </Stack>
+
         {!_.isEmpty(raidParty) && !upTo780 && (
-          <Stack spacing={4}>
-            <Heading size="sm" color="white">
+          <Stack spacing={4} minW='150px' align='center'>
+            <Heading size='sm' color='white'>
               Raid Party
             </Heading>
 
@@ -206,33 +215,10 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           </Stack>
         )}
       </Flex>
-      <Flex
-        direction="column"
-        width="100%"
-        alignItems="flex-start"
-        justifyContent="space-between"
-        maxWidth="90%"
-        paddingY={4}
-      >
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} width="100%">
-          <InfoStack label="Budget" details={budget || '-'} />
-          {_.get(raid, 'raidCategory.raidCategory') && (
-            <InfoStack
-              label="Category"
-              details={
-                RAID_CATEGORY_DISPLAY[
-                  _.get(raid, 'raidCategory.raidCategory', '-')
-                ]
-              }
-            />
-          )}
 
-          <InfoStack label="Project Type" details={projectType || '-'} />
-        </SimpleGrid>
-      </Flex>
       {!_.isEmpty(raidParty) && upTo780 && (
         <Stack spacing={4}>
-          <Heading size="sm" color="white">
+          <Heading size='sm' color='white'>
             Raid Party
           </Heading>
 
@@ -240,23 +226,24 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         </Stack>
       )}
       {latestUpdate && (
-        <Flex direction="column" paddingY={4}>
-          <Heading size="sm" color="white">
-            Status Update
-          </Heading>
-          <Flex direction="column">
-            <VStack py={2} align="start">
-              <Text>{displayDate(latestUpdate.createdAt)}</Text>
-              <Tooltip label={latestUpdate.update} placement="top" hasArrow>
-                <span>
-                  <Text color="white">
-                    {_.gt(_.size(latestUpdate.update), 140)
-                      ? `${latestUpdate.update?.slice(0, 140)}...`
-                      : latestUpdate.update}
-                  </Text>
-                </span>
-              </Tooltip>
-            </VStack>
+        <Flex direction='column' paddingY={4}>
+          <HStack spacing={10} align='center'>
+            <Heading size='sm' color='white'>
+              Last Status Update
+            </Heading>
+            <Text>{displayDate(latestUpdate.createdAt)}</Text>
+          </HStack>
+
+          <Flex direction='column'>
+            <Tooltip label={latestUpdate.update} placement='top' hasArrow>
+              <span>
+                <Text color='white'>
+                  {_.gt(_.size(latestUpdate.update), 140)
+                    ? `${latestUpdate.update?.slice(0, 140)}...`
+                    : latestUpdate.update}
+                </Text>
+              </span>
+            </Tooltip>
           </Flex>
         </Flex>
       )}

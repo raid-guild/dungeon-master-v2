@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 // WRAP QUERY IN %QUERY% TO ENABLE FUZZY SEARCH
 export const SEARCH_QUERY = gql`

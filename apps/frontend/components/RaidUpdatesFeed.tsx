@@ -64,7 +64,6 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   };
 
   const submitNewUpdate = async (values: any) => {
-    console.log(values);
     mutateAsync({
       update: values.update,
       raidId: raid.id,

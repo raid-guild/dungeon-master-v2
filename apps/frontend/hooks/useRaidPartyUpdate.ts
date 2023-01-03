@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { camelize } from '../utils';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import {
   client,
   RAID_PARTY_DELETE_MUTATION,
@@ -11,22 +11,19 @@ import { IRaidPartyInsert } from '../utils';
 
 export const useRaidPartyAdd = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, memberId }: IRaidPartyInsert) => {
       if (!raidId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: RAID_PARTY_INSERT_MUTATION,
-        variables: {
-          raid_parties: {
-            raid_id: raidId,
-            member_id: memberId,
-          },
+      const result = await client(token).request(RAID_PARTY_INSERT_MUTATION, {
+        raid_parties: {
+          raid_id: raidId,
+          member_id: memberId,
         },
       });
 
-      return data;
+      return result;
     },
     {
       onSuccess: (data) => {
@@ -45,7 +42,6 @@ export const useRaidPartyAdd = ({ token }) => {
 
         toast.success({
           title: 'Raid Party Updated',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -53,7 +49,6 @@ export const useRaidPartyAdd = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });
@@ -66,20 +61,17 @@ export const useRaidPartyAdd = ({ token }) => {
 
 export const useRaidPartyRemove = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, memberId }: IRaidPartyInsert) => {
       console.log(raidId, memberId);
       if (!raidId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: RAID_PARTY_DELETE_MUTATION,
-        variables: {
-          where: {
-            _and: {
-              member_id: { _eq: memberId },
-              raid_id: { _eq: raidId },
-            },
+      const { data } = await client(token).request(RAID_PARTY_DELETE_MUTATION, {
+        where: {
+          _and: {
+            member_id: { _eq: memberId },
+            raid_id: { _eq: raidId },
           },
         },
       });
@@ -103,7 +95,6 @@ export const useRaidPartyRemove = ({ token }) => {
         );
         toast.success({
           title: 'Raid Party Updated',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -111,7 +102,6 @@ export const useRaidPartyRemove = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });
