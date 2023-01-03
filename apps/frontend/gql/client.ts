@@ -15,7 +15,9 @@ const client = ({ token, userId }: ClientParams) => {
     headers.authorization = `Bearer ${token}`;
 
     // * Set matching session variables for Hasura where needed
-    // headers['x-hasura-user-id'] = userId;
+    if (userId) {
+      headers['x-hasura-user-id'] = userId;
+    }
   }
   if (HASURA_ADMIN_SECRET) {
     headers['x-hasura-admin-secret'] = HASURA_ADMIN_SECRET;

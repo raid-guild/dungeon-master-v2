@@ -15,7 +15,7 @@ export const useAddRolesRequired = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, role }: IRoleRequiredInsert) => {
       if (!raidId || !token) return;
-      const { data } = await client(token).request(
+      const { data } = await client({ token }).request(
         ROLES_REQUIRED_INSERT_MUTATION,
         {
           raidParty: {
@@ -74,7 +74,7 @@ export const useRemoveRolesRequired = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ where }: IRoleRemoveMany) => {
       if (!where) return;
-      const result = await client(token).request(
+      const result = await client({ token }).request(
         ROLES_REQUIRED_DELETE_MUTATION,
         {
           where,

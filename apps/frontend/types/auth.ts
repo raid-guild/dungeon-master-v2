@@ -34,6 +34,7 @@ export type CreateTokenParams = {
 
 export type HasuraAuthToken = {
   sub?: string;
+  id?: string;
   address?: string;
   iat?: number;
   exp?: number;

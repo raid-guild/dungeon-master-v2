@@ -11,9 +11,12 @@ const useMemberDetail = ({ token, memberAddress }) => {
     if (!memberAddress || !token) return;
     // TODO handle filters
 
-    const result = await client(token).request(MEMBER_ADDRESS_LOOKUP_QUERY, {
-      address: memberAddress,
-    });
+    const result = await client({ token }).request(
+      MEMBER_ADDRESS_LOOKUP_QUERY,
+      {
+        address: memberAddress,
+      }
+    );
 
     const member = camelize(_.first(_.get(result, 'members')));
     const raids = _.concat(

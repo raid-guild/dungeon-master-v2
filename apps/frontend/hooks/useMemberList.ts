@@ -32,7 +32,7 @@ const useMemberList = ({
     if (!token) return;
     // TODO handle filters
 
-    const result = await client(token).request(MEMBER_LIST_QUERY, {
+    const result = await client({ token }).request(MEMBER_LIST_QUERY, {
       where,
       limit,
       offset: pageParam * limit,
@@ -78,7 +78,7 @@ export const useSlimMemberList = ({ token, button }) => {
   const memberSlimListQueryResult = async () => {
     if (!token) return;
 
-    const result = await client(token).request(MEMBER_SLIM_LIST_QUERY);
+    const result = await client({ token }).request(MEMBER_SLIM_LIST_QUERY);
 
     return camelize(_.get(result, 'data.members'));
   };

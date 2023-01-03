@@ -15,7 +15,7 @@ const useMemberCreate = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberCreate) => {
       if (!token) return;
-      const result = await client(token).request(MEMBER_CREATE_MUTATION, {
+      const result = await client({ token }).request(MEMBER_CREATE_MUTATION, {
         member: { ...args },
       });
 

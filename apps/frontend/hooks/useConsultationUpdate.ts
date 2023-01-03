@@ -11,10 +11,13 @@ const useConsultationUpdate = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IConsultationUpdate) => {
       if (!token) return;
-      const result = await client(token).request(CONSULTATION_UPDATE_MUTATION, {
-        id: args.id,
-        update: args.update,
-      });
+      const result = await client({ token }).request(
+        CONSULTATION_UPDATE_MUTATION,
+        {
+          id: args.id,
+          update: args.update,
+        }
+      );
 
       return result;
     },

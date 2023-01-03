@@ -79,7 +79,7 @@ const useRaidList = ({
   const raidQueryResult = async (pageParam: number) => {
     if (!token) return;
 
-    const result = await client(token).request(RAIDS_LIST_QUERY, {
+    const result = await client({ token }).request(RAIDS_LIST_QUERY, {
       where: where(raidStatusFilterKey, raidRolesFilterKey, raidSortKey),
       limit,
       offset: pageParam * limit,
@@ -131,7 +131,7 @@ export const useRaidsCount = ({
   raidSortKey,
 }) => {
   const raidsCountQuery = async () => {
-    const result = await client(token).request(RAIDS_COUNT_QUERY, {
+    const result = await client({ token }).request(RAIDS_COUNT_QUERY, {
       where: where(raidStatusFilterKey, raidRolesFilterKey, raidSortKey),
     });
 

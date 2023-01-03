@@ -13,7 +13,7 @@ const useRaidCreate = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidCreate) => {
       if (!token) return;
-      const result = await client(token).request(RAID_CREATE_MUTATION, {
+      const result = await client({ token }).request(RAID_CREATE_MUTATION, {
         raid: {
           ...args,
         },

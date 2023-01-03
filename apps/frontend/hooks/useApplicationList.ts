@@ -10,7 +10,7 @@ const useApplicationList = ({ token }) => {
     if (!token) return;
     // TODO handle filters
 
-    const result = await client(token).request(APPLICATION_LIST_QUERY, {
+    const result = await client({ token }).request(APPLICATION_LIST_QUERY, {
       limit,
       offset: pageParam * limit,
       where: { _not: { member: {} } },
