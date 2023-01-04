@@ -3,6 +3,7 @@ import _ from 'lodash';
 import {
   Flex,
   Button,
+  Card,
   Text,
   Heading,
   VStack,
@@ -139,12 +140,12 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   ].filter((x) => x);
 
   return (
-    <Box minW={[null, null, null, '600px']}>
-      <Flex direction="column" w="100%" bg="gray.800" rounded="md">
+    <Box minW={[null, null, null, '600px']} w={['100%', null, null, '60%']}>
+      <Card variant="filled" w="100%">
         <VStack p={8} height="100%" align="stretch">
           {_.map(skillBlocks, (block) => (
             <Flex direction="column" flexGrow={1} key={block.label}>
-              <Heading size="sm">{block.label}</Heading>
+              <Heading color="white" size="sm">{block.label}</Heading>
               <Flex
                 direction="row"
                 maxWidth="100%"
@@ -157,9 +158,9 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
                   <Badge
                     marginX={1}
                     marginBottom={1}
-                    color="raid"
                     bgColor="gray.700"
                     key={`${block.label}-${_.get(skill, 'skill')}`}
+                    color="white"
                   >
                     {SKILLS_DISPLAY(_.get(skill, 'skill'))}
                   </Badge>
@@ -203,7 +204,7 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
             ))}
           </Flex>
         </VStack>
-      </Flex>
+      </Card>
     </Box>
   );
 };

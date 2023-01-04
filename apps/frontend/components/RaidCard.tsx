@@ -7,6 +7,7 @@ import {
   Text,
   HStack,
   Box,
+  Card,
   Icon,
   Tooltip,
   SimpleGrid,
@@ -73,14 +74,14 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   return (
-    <Box
-      bg='gray.800'
-      rounded='md'
-      p={8}
-      m='auto'
+    <Card
+      variant="filled"
+      p={3}
+      bg={"gray.800"}
       w={['95%', null, null, '100%']}
     >
       <Flex
+        w="100%"
         direction={{ base: 'column', md: 'row' }}
         alignItems='space-apart'
         justifyContent='space-between'
@@ -161,7 +162,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           </Link>
         </Flex>
       </Flex>
-      <Flex direction='row' justifyContent='space-between'>
+      <Flex direction='row' justifyContent='space-between' w="100%">
         <Stack w='90%'>
           <Flex
             direction='column'
@@ -226,7 +227,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
         </Stack>
       )}
       {latestUpdate && (
-        <Flex direction='column' paddingY={4}>
+        <Flex direction='column' paddingY={4} w="100%">
           <HStack spacing={10} align='center'>
             <Heading size='sm' color='white'>
               Last Status Update
@@ -247,7 +248,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
           </Flex>
         </Flex>
       )}
-    </Box>
+    </Card>
   );
 };
 

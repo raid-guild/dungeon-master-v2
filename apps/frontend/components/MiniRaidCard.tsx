@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Flex, Heading, Stack, HStack, Text } from '@raidguild/design-system';
+import { Card, Flex, Heading, Stack, HStack, Text } from '@raidguild/design-system';
 import { format } from 'date-fns';
 import { IRaid, IConsultation } from '../types';
 import ChakraNextLink from './ChakraNextLink';
@@ -28,16 +28,12 @@ const MiniRaidCard = ({
         : `/consultations/${_.get(consultation, 'id')}`
     }
   >
-    <Flex
-      align="center"
-      justify="space-between"
-      border="1px solid"
-      borderColor="whiteAlpha.500"
-      borderRadius={15}
-      p={4}
+    <Card
+      variant="outline"
+      width="100%"
     >
-      <Stack spacing={2}>
-        <Heading size={smallHeader ? 'sm' : 'md'}>
+      <Stack spacing={2} width="100%">
+        <Heading color="white" size={smallHeader ? 'sm' : 'md'}>
           {_.get(raid, 'name', _.get(consultation, 'name'))}
         </Heading>
         <HStack>
@@ -56,7 +52,7 @@ const MiniRaidCard = ({
         </HStack>
       </Stack>
       {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
-    </Flex>
+    </Card>
   </ChakraNextLink>
 );
 

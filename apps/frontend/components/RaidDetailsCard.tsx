@@ -9,6 +9,7 @@ import {
   Flex,
   Grid,
   Button,
+  Card,
   Text,
   VStack,
   Stack,
@@ -255,13 +256,10 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <VStack
-      direction="column"
-      width="100%"
-      justifyContent="center"
-      padding={8}
+    <Card
+      variant="filled"
+      padding={2}
       bg="gray.800"
-      rounded="md"
     >
       <Accordion defaultIndex={[0]} allowMultiple w="100%">
         {_.map(panels, (panel, index) => {
@@ -270,7 +268,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
             <AccordionItem key={index}>
               <AccordionButton color="raid">
                 <Flex justify="space-between" w="100%">
-                  <Heading size="sm" as="h2">
+                  <Heading size="sm" as="h2" color="white">
                     {_.get(panel, 'title')}
                   </Heading>
                   <AccordionIcon />
@@ -322,7 +320,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                 </VStack>
               )} */}
       </Accordion>
-    </VStack>
+    </Card>
   );
 };
 

@@ -14,7 +14,6 @@ const Home: React.FC = () => {
   const token = _.get(session, 'token');
   const { address } = useAccount();
   const { data } = useDashboardList({ token, address });
-  // console.log(data);
 
   return (
     <>
