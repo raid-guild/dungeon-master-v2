@@ -3484,10 +3484,10 @@
     fs-extra "^10.0.0"
     lodash "^4.17.21"
 
-"@raidguild/design-system@^0.4.22":
-  version "0.4.22"
-  resolved "https://registry.yarnpkg.com/@raidguild/design-system/-/design-system-0.4.22.tgz#6d6f403deca71cfdc2e6319313f231f577c5e323"
-  integrity sha512-0vNdteClo+lIEEaJX59jUreeYw7C7wu4FtCH7kfss/13+T5A+07DZmIiESdQ+E+qpqEkuyUVHhrpvDWQSY208Q==
+"@raidguild/design-system@^0.4.23":
+  version "0.4.23"
+  resolved "https://registry.yarnpkg.com/@raidguild/design-system/-/design-system-0.4.23.tgz#51a6753ae1d93a3c6aa9350509bee0b91eae0f04"
+  integrity sha512-8bes4SfDCiNP2O/eQyGpDcDFY/qZIY6AKGnof73vZ0hyAfzRGpBFIXMHG02oE8EZjavgMw4bMmPRkrhzRQPoWQ==
   dependencies:
     "@chakra-ui/react" "^2.4.6"
     "@emotion/react" "^11.10.5"
