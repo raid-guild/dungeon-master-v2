@@ -16,7 +16,6 @@ interface RaidDetailsSidebarProps {
 const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
   raid,
 }: RaidDetailsSidebarProps) => {
-  console.log(raid);
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
   const relatedRaids = _.get(raid, 'raidByRelatedRaids');
