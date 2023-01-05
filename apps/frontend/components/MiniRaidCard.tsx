@@ -32,26 +32,28 @@ const MiniRaidCard = ({
       variant="outline"
       width="100%"
     >
-      <Stack spacing={2} width="100%">
-        <Heading color="white" size={smallHeader ? 'sm' : 'md'}>
-          {_.get(raid, 'name', _.get(consultation, 'name'))}
-        </Heading>
-        <HStack>
-          <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
-          {newRaid &&
-            _.get(raid, 'createdAt', _.get(consultation, 'createdAt')) && (
-              <Text>
-                {format(
-                  new Date(
-                    _.get(raid, 'createdAt', _.get(consultation, 'createdAt'))
-                  ),
-                  'Pp'
-                )}
-              </Text>
-            )}
-        </HStack>
-      </Stack>
-      {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
+      <Flex direction="row" alignItems={'space-between'} width="100%">
+        <Stack spacing={2} width="100%">
+          <Heading color="white" size={smallHeader ? 'sm' : 'md'}>
+            {_.get(raid, 'name', _.get(consultation, 'name'))}
+          </Heading>
+          <HStack>
+            <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
+            {newRaid &&
+              _.get(raid, 'createdAt', _.get(consultation, 'createdAt')) && (
+                <Text>
+                  {format(
+                    new Date(
+                      _.get(raid, 'createdAt', _.get(consultation, 'createdAt'))
+                    ),
+                    'Pp'
+                  )}
+                </Text>
+              )}
+          </HStack>
+        </Stack>
+        {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
+      </Flex>
     </Card>
   </ChakraNextLink>
 );
