@@ -191,7 +191,6 @@ const MemberCard: React.FC<MemberProps> = ({
           </Link>
         }
         width='100%'
-        bg={"gray.800"}
       >
         <VStack height='100%' align='stretch' width='100%'>
           <Divider paddingTop={2} width='100%' alignSelf='center' />

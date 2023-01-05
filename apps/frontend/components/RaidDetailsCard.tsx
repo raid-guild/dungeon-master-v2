@@ -259,7 +259,6 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     <Card
       variant="filled"
       padding={2}
-      bg="gray.800"
     >
       <Accordion defaultIndex={[0]} allowMultiple w="100%">
         {_.map(panels, (panel, index) => {
@@ -268,7 +267,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
             <AccordionItem key={index}>
               <AccordionButton color="raid">
                 <Flex justify="space-between" w="100%">
-                  <Heading size="sm" as="h2" color="white">
+                  <Heading size="sm" as="h2">
                     {_.get(panel, 'title')}
                   </Heading>
                   <AccordionIcon />

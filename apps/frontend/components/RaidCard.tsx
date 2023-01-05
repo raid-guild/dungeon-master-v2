@@ -77,7 +77,6 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
     <Card
       variant="filled"
       p={3}
-      bg={"gray.800"}
       w={['95%', null, null, '100%']}
     >
       <Flex

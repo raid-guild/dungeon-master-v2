@@ -79,7 +79,6 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
     <Card
       variant="filled"
       padding={2}
-      bg="gray.800"
     >
       <Flex w="100%">
         <Flex direction="row" align="center" justify="space-between" w="100%">

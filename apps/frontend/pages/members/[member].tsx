@@ -116,7 +116,6 @@ const Member = () => {
           <Card
             variant="filled"
             w={['100%', null, null, '35%']}
-            bg="gray.800"
           >
             {!_.isEmpty(_.get(raids, 'active')) && (
               <Stack mb={4} w="100%">
