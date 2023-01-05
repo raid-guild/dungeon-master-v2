@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {
   Flex,
   Avatar,
+  Card,
   RoleBadge,
   Badge,
   Heading,
@@ -112,17 +113,13 @@ const Member = () => {
             application={_.get(member, 'application')}
           />
           {/* <RaidsFeed /> */}
-          <Flex
-            direction="column"
-            w={['100%', null, null, '40%']}
-            bg="gray.800"
-            rounded="md"
-            style={{ backdropFilter: 'blur(7px)' }}
-            p={8}
+          <Card
+            variant="filled"
+            w={['100%', null, null, '35%']}
           >
             {!_.isEmpty(_.get(raids, 'active')) && (
-              <Stack mb={4}>
-                <Heading size="sm">Active Raids</Heading>
+              <Stack mb={4} w="100%">
+                <Heading size="sm" color="white">Active Raids</Heading>
                 <Stack>
                   {_.map(_.get(raids, 'active'), (raid) => (
                     <MiniRaidCard
@@ -136,8 +133,8 @@ const Member = () => {
               </Stack>
             )}
             {!_.isEmpty(_.get(raids, 'past')) && (
-              <Stack>
-                <Heading size="sm">Past Raids</Heading>
+              <Stack w="100%">
+                <Heading size="sm" color="white">Past Raids</Heading>
                 <Stack>
                   {_.map(_.get(raids, 'past').slice(0, 3), (raid) => (
                     <MiniRaidCard
@@ -150,7 +147,7 @@ const Member = () => {
                 </Stack>
               </Stack>
             )}
-          </Flex>
+          </Card>
         </Flex>
       </SiteLayout>
       <ModalWrapper

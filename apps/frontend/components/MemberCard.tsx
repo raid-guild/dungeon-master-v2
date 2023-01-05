@@ -8,6 +8,7 @@ import {
   HStack,
   VStack,
   Badge,
+  Card,
   Link as ChakraLink,
   LinkBox,
   LinkOverlay,
@@ -139,66 +140,59 @@ const MemberCard: React.FC<MemberProps> = ({
 
   return (
     <LinkBox>
-      <Flex
-        direction='column'
-        width='100%'
-        bg='gray.800'
-        rounded='md'
-        minHeight='40vh'
-        style={{ backdropFilter: 'blur(7px)' }}
-        align='stretch'
-        justify='space-between'
-        position='relative'
-      >
-        <Link href={link}>
-          <LinkOverlay>
-            <Flex
-              direction='column'
-              alignItems='center'
-              justifyContent='center'
-              width='100%'
-              bgGradient='linear-gradient(96.18deg, #FF3864 -44.29%, #8B1DBA 53.18%, #4353DF 150.65%);'
-              minHeight='70px'
-              borderTopRadius='md'
-            >
+      <Card
+        variant='withHeader'
+        centerDivider={
+          member && (
+            <RoleBadge
+              roleName={
+                GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
+              }
+              width='60px'
+              height='60px'
+            />
+          )
+        }
+        heading={
+          <Link href={link}>
+            <LinkOverlay>
               <HStack
-                spacing={4}
-                alignItems='center'
-                justifyContent='space-between'
-                width='100%'
-                paddingX={4}
-                paddingY={2}
-              >
-                <Heading
-                  color='white'
-                  as='h3'
-                  fontSize='2xl'
-                  transition='all ease-in-out .25s'
-                  _hover={{ cursor: 'pointer', color: 'raid' }}
+                  spacing={4}
+                  alignItems='center'
+                  justifyContent='space-between'
+                  width='100%'
                 >
-                  {_.get(member, 'name', _.get(application, 'name'))}
-                </Heading>
-                <VStack align='start'>
-                  {_.get(member, 'name') && (
-                    <Badge background='blackAlpha' fontSize='sm'>
-                      {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
-                    </Badge>
-                  )}
-
-                  <Badge
-                    marginX={1}
-                    marginBottom={1}
-                    color='raid'
-                    bgColor='gray.700'
+                  <Heading
+                    color='white'
+                    as='h3'
+                    fontSize='2xl'
+                    transition='all ease-in-out .25s'
+                    _hover={{ cursor: 'pointer', color: 'raid' }}
                   >
-                    {memberType}
-                  </Badge>
-                </VStack>
+                    {_.get(member, 'name', _.get(application, 'name'))}
+                  </Heading>
+                  <VStack align='start'>
+                    {_.get(member, 'name') && (
+                      <Badge background='blackAlpha' fontSize='sm'>
+                        {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
+                      </Badge>
+                    )}
+                    <Badge
+                      marginX={1}
+                      marginBottom={1}
+                      color='raid'
+                      bgColor='gray.700'
+                    >
+                      {memberType}
+                    </Badge>
+                  </VStack>
               </HStack>
-            </Flex>
-          </LinkOverlay>
-        </Link>
-        <VStack paddingX={8} height='100%' align='stretch'>
+            </LinkOverlay>
+          </Link>
+        }
+        width='100%'
+      >
+        <VStack height='100%' align='stretch' width='100%'>
           <Divider paddingTop={2} width='100%' alignSelf='center' />
           <Text size='md' maxW='900px'>
             {_.gte(_.size(_.get(application, 'introduction')), 250)
@@ -206,7 +200,7 @@ const MemberCard: React.FC<MemberProps> = ({
               : _.get(application, 'introduction')}
           </Text>
 
-          <Flex wrap='wrap' width='100%' maxWidth='100%' paddingBottom={4}>
+          <Flex wrap='wrap' width='100%' maxWidth='100%'>
             {_.map(
               clearNonObjects(socials),
               ({ href, icon, label, tooltip, onClick }) => (
@@ -222,18 +216,7 @@ const MemberCard: React.FC<MemberProps> = ({
             )}
           </Flex>
         </VStack>
-        {member && (
-          <Flex position='absolute' top='40px' left='47%' zIndex={2}>
-            <RoleBadge
-              roleName={
-                GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
-              }
-              width='60px'
-              height='60px'
-            />
-          </Flex>
-        )}
-      </Flex>
+      </Card>
     </LinkBox>
   );
 };

@@ -9,6 +9,7 @@ import {
   Flex,
   Grid,
   Button,
+  Card,
   Text,
   VStack,
   Stack,
@@ -255,13 +256,9 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <VStack
-      direction="column"
-      width="100%"
-      justifyContent="center"
-      padding={8}
-      bg="gray.800"
-      rounded="md"
+    <Card
+      variant="filled"
+      padding={2}
     >
       <Accordion defaultIndex={[0]} allowMultiple w="100%">
         {_.map(panels, (panel, index) => {
@@ -322,7 +319,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                 </VStack>
               )} */}
       </Accordion>
-    </VStack>
+    </Card>
   );
 };
 
