@@ -16,17 +16,17 @@ export const useRaidPartyAdd = ({ token }) => {
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, memberId }: IRaidPartyInsert) => {
       if (!raidId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: RAID_PARTY_INSERT_MUTATION,
-        variables: {
+      const result = await client({ token }).request(
+        RAID_PARTY_INSERT_MUTATION,
+        {
           raid_parties: {
             raid_id: raidId,
             member_id: memberId,
           },
-        },
-      });
+        }
+      );
 
-      return data;
+      return result;
     },
     {
       onSuccess: (data) => {
@@ -70,17 +70,17 @@ export const useRaidPartyRemove = ({ token }) => {
     async ({ raidId, memberId }: IRaidPartyInsert) => {
       console.log(raidId, memberId);
       if (!raidId || !token) return;
-      const { data } = await client(token).mutate({
-        mutation: RAID_PARTY_DELETE_MUTATION,
-        variables: {
+      const { data } = await client({ token }).request(
+        RAID_PARTY_DELETE_MUTATION,
+        {
           where: {
             _and: {
               member_id: { _eq: memberId },
               raid_id: { _eq: raidId },
             },
           },
-        },
-      });
+        }
+      );
 
       return data;
     },

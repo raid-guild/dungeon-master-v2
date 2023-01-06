@@ -32,12 +32,11 @@ const useSearchResults = ({ token, search }) => {
   const searchQueryResult = async (): searchQueryReturn => {
     if (!search) return null;
 
-    const result = await client(token).query({
-      query: SEARCH_QUERY,
-      variables: { search: `%${search}%` },
+    const result = await client({ token }).request(SEARCH_QUERY, {
+      search: `%${search}%`,
     });
 
-    return _.mapValues(_.get(result, 'data'), (o: any, k: string) => {
+    return _.mapValues(result, (o: any, k: string) => {
       return _.map(o, (r: any) => processForCommandPalette(k, r));
     });
   };

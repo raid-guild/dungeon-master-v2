@@ -30,6 +30,7 @@ select_permissions:
         - member_id
         - raid_id
       filter: {}
+      allow_aggregations: true
 update_permissions:
   - role: member
     permission:

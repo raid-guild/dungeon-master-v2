@@ -29,6 +29,7 @@ select_permissions:
         - id
         - member_id
       filter: {}
+      allow_aggregations: true
 update_permissions:
   - role: member
     permission:

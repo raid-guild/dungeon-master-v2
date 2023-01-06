@@ -10,16 +10,18 @@ const useConsultationList = ({ token }) => {
     if (!token) return;
     // TODO handle filters
 
-    const { data } = await client(token).query({
-      query: CONSULTATION_LIST_QUERY,
-      variables: {
-        limit,
-        offset: pageParam * limit,
-        where: { _not: { raids: {} } },
+    const result = await client({ token }).request(CONSULTATION_LIST_QUERY, {
+      limit,
+      offset: pageParam * limit,
+      where: {
+        _and: {
+          _not: { raids: {} },
+          consultation_status_key: { _neq: 'CANCELLED' },
+        },
       },
     });
 
-    return camelize(_.get(data, 'consultations'));
+    return camelize(_.get(result, 'consultations'));
   };
 
   const {

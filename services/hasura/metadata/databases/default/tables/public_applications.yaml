@@ -11,7 +11,7 @@ object_relationships:
   - name: dao_familiarity
     using:
       foreign_key_constraint_on: dao_familiarity_key
-  - name: member
+  - name: referred_by
     using:
       foreign_key_constraint_on: referred_by_id
   - name: technical_skill_type
@@ -25,7 +25,7 @@ array_relationships:
         table:
           name: applications_skills
           schema: public
-  - name: members
+  - name: member
     using:
       foreign_key_constraint_on:
         column: application_id
@@ -84,6 +84,7 @@ select_permissions:
         - id
         - referred_by_id
       filter: {}
+      allow_aggregations: true
 update_permissions:
   - role: member
     permission:

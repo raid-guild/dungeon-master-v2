@@ -1,32 +1,25 @@
 import _ from 'lodash';
 import { useQuery } from '@tanstack/react-query';
 import { client, CONSULTATION_DETAIL_QUERY } from '../gql';
-import { useRouter } from 'next/router';
 import { camelize, IConsultation } from '../utils';
 
-const useConsultationDetail = ({ token }) => {
-  const router = useRouter();
-  const consultationId = _.get(router, 'query.consultation');
-
+const useConsultationDetail = ({ token, consultationId }) => {
   const consultationQueryResult = async () => {
     if (!consultationId) return;
     // TODO handle filters
 
-    const { data } = await client(token).query({
-      query: CONSULTATION_DETAIL_QUERY,
-      variables: {
-        id: consultationId,
-      },
+    const result = await client({ token }).request(CONSULTATION_DETAIL_QUERY, {
+      id: consultationId,
     });
 
-    return camelize(_.get(data, 'consultations_by_pk'));
+    return camelize(_.get(result, 'consultations_by_pk'));
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IConsultation,
     Error
   >(['consultationDetail', consultationId], consultationQueryResult, {
-    enabled: Boolean(token),
+    enabled: Boolean(token) && Boolean(consultationId),
   });
 
   return { isLoading, isFetching, isError, error, data };
