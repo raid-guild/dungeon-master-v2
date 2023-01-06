@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import {
   useReactTable,
   flexRender,
@@ -62,9 +62,9 @@ export function DataTable<Data extends object>({
                   <chakra.span pl="4">
                     {header.column.getIsSorted() ? (
                       header.column.getIsSorted() === 'desc' ? (
-                        <TriangleDownIcon aria-label="sorted descending" />
+                        <FiChevronDown aria-label="sorted descending" />
                       ) : (
-                        <TriangleUpIcon aria-label="sorted ascending" />
+                        <FiChevronUp aria-label="sorted ascending" />
                       )
                     ) : null}
                   </chakra.span>
