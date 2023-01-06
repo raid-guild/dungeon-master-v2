@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import _ from 'lodash';
 import { camelize } from '../utils';
 import { STATUS_UPDATE_CREATE_MUTATION, client } from '../gql';
@@ -12,7 +12,7 @@ type useUpdateCreateProps = {
 
 const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: Partial<IStatusUpdate>) => {
@@ -47,13 +47,11 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
 
         toast.success({
           title: 'Update added',
-          status: 'success',
         });
       },
       onError: (error) => {
         toast.error({
           title: 'Unable to add Update',
-          status: 'error',
         });
       },
     }

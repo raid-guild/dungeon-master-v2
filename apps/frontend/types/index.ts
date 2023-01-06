@@ -285,51 +285,53 @@ export interface IMemberUpdate {
 }
 
 export type IMolochStatsBalance = {
-  id: string
-  timestamp: string
-  balance: string
-  tokenSymbol: string
-  tokenAddress: string
-  tokenDecimals: string
-  transactionHash: string
-  amount: string
-  payment: boolean
-  tribute: boolean
-  counterpartyAddress: string
-  action: string
+  id: string;
+  timestamp: string;
+  balance: string;
+  tokenSymbol: string;
+  tokenAddress: string;
+  tokenDecimals: string;
+  transactionHash: string;
+  amount: string;
+  payment: boolean;
+  tribute: boolean;
+  counterpartyAddress: string;
+  action: string;
   proposalDetail: {
-    proposalId: string
-    applicant: string
-    details: string | null
-    lootRequested: string | null
-    sharesRequested: string | null
-  } | null
-}
+    proposalId: string;
+    applicant: string;
+    details: string | null;
+    lootRequested: string | null;
+    sharesRequested: string | null;
+  } | null;
+};
 
 export type IVaultTransaction = {
-  date: string | Date
-  txExplorerLink: string
-  type: string
-  tokenSymbol: string
-  tokenDecimals: string
-  tokenAddress: string
-  in: BigNumber
-  out: BigNumber
-  counterparty: string // receiver/sender to minion vault or sender to treasury
+  date: Date;
+  txExplorerLink: string;
+  type: string;
+  tokenSymbol: string;
+  tokenDecimals: number;
+  tokenAddress: string;
+  in: BigNumber;
+  out: BigNumber;
+  net: BigNumber;
+  balance: BigNumber;
+  counterparty: string; // receiver/sender to minion vault or sender to treasury
   proposal?: {
-    id: string
-    link: string
-    shares: string // requested in case of proposal, ragequitted in case of rage quit
-    loot: string // requested in case of proposal, ragequitted in case of rage quit
-    title: string // title of the proposal in details
-    applicant: string // submitted by address
-  }
-}
+    id: string;
+    link: string;
+    shares?: BigNumber; // requested in case of proposal, ragequitted in case of rage quit
+    loot?: BigNumber; // requested in case of proposal, ragequitted in case of rage quit
+    title: string; // title of the proposal in details
+    applicant: string; // submitted by address
+  };
+};
 
 export type ICalculatedTokenBalances = {
   [tokenAddress: string]: {
-    in: BigNumber
-    out: BigNumber
-    balance: BigNumber
-  }
-}
+    in: BigNumber;
+    out: BigNumber;
+    balance: BigNumber;
+  };
+};

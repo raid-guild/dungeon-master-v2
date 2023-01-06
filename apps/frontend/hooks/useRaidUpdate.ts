@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { client, RAID_UPDATE_MUTATION } from '../gql';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import { IRaidUpdate } from '../utils';
 
 const useRaidUpdate = ({ token, raidId }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidUpdate) => {
@@ -36,7 +36,6 @@ const useRaidUpdate = ({ token, raidId }) => {
 
         toast.success({
           title: 'Raid Updated',
-          status: 'success',
           iconName: 'crown',
           duration: 3000,
           isClosable: true,
@@ -45,7 +44,6 @@ const useRaidUpdate = ({ token, raidId }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           iconName: 'alert',
           duration: 3000,
           isClosable: true,

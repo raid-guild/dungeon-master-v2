@@ -5,20 +5,24 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, TRANSACTIONS_QUERY } from '../gql';
 import { camelize } from '../utils';
 import { useEffect, useState } from 'react';
-import { ICalculatedTokenBalances, IVaultTransaction, IMolochStatsBalance } from '../types'
+import {
+  ICalculatedTokenBalances,
+  IVaultTransaction,
+  IMolochStatsBalance,
+} from '../types';
 
 const RG_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 
 class CalculateTokenBalances {
-  calculatedTokenBalances: ICalculatedTokenBalances
+  calculatedTokenBalances: ICalculatedTokenBalances;
 
   constructor() {
-    this.calculatedTokenBalances = {}
+    this.calculatedTokenBalances = {};
   }
 
   getBalance(tokenAddress: string) {
-    this.initTokenBalance(tokenAddress)
-    return this.calculatedTokenBalances[tokenAddress].balance
+    this.initTokenBalance(tokenAddress);
+    return this.calculatedTokenBalances[tokenAddress].balance;
   }
 
   initTokenBalance(tokenAddress: string) {
@@ -27,39 +31,41 @@ class CalculateTokenBalances {
         out: BigNumber.from(0),
         in: BigNumber.from(0),
         balance: BigNumber.from(0),
-      }
+      };
     }
   }
 
   incrementInflow(tokenAddress: string, inValue: BigNumber) {
-    this.initTokenBalance(tokenAddress)
-    const tokenStats = this.calculatedTokenBalances[tokenAddress]
+    this.initTokenBalance(tokenAddress);
+    const tokenStats = this.calculatedTokenBalances[tokenAddress];
     this.calculatedTokenBalances[tokenAddress] = {
       ...tokenStats,
       in: tokenStats.in.add(inValue),
       balance: tokenStats.balance.add(inValue),
-    }
+    };
   }
 
   incrementOutflow(tokenAddress: string, outValue: BigNumber) {
-    this.initTokenBalance(tokenAddress)
-    const tokenStats = this.calculatedTokenBalances[tokenAddress]
+    this.initTokenBalance(tokenAddress);
+    const tokenStats = this.calculatedTokenBalances[tokenAddress];
     this.calculatedTokenBalances[tokenAddress] = {
       ...tokenStats,
       out: tokenStats.out.add(outValue),
       balance: tokenStats.balance.sub(outValue),
-    }
+    };
   }
 
   getBalances() {
-    return this.calculatedTokenBalances
+    return this.calculatedTokenBalances;
   }
 }
 
-const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>) => {
+const formatBalancesAsTransactions = async (
+  balances: Array<IMolochStatsBalance>
+) => {
   try {
     // used to store all the inflow and outflow of each token when iterating over the list of moloch stats
-    const calculatedTokenBalances = new CalculateTokenBalances()
+    const calculatedTokenBalances = new CalculateTokenBalances();
 
     const mapMolochStatsToTreasuryTransaction = async (
       molochStatsBalances: Array<IMolochStatsBalance>
@@ -74,7 +80,7 @@ const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>
           const tokenValue = calculatedTokenBalances
             .getBalance(molochStatBalance.tokenAddress)
             .sub(BigNumber.from(molochStatBalance.balance))
-            .abs()
+            .abs();
 
           const balances = (() => {
             if (
@@ -84,7 +90,11 @@ const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>
               return {
                 in: BigNumber.from(0),
                 out: BigNumber.from(0),
-              }
+                net: BigNumber.from(0),
+                balance: calculatedTokenBalances.getBalance(
+                  molochStatBalance.tokenAddress
+                ),
+              };
             }
             if (
               molochStatBalance.payment === false &&
@@ -93,11 +103,15 @@ const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>
               calculatedTokenBalances.incrementInflow(
                 molochStatBalance.tokenAddress,
                 tokenValue
-              )
+              );
               return {
                 in: tokenValue,
                 out: BigNumber.from(0),
-              }
+                net: tokenValue,
+                balance: calculatedTokenBalances.getBalance(
+                  molochStatBalance.tokenAddress
+                ),
+              };
             }
 
             if (
@@ -107,83 +121,100 @@ const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>
               calculatedTokenBalances.incrementOutflow(
                 molochStatBalance.tokenAddress,
                 tokenValue
-              )
+              );
               return {
                 in: BigNumber.from(0),
                 out: tokenValue,
-              }
+                net: BigNumber.from(0).sub(tokenValue),
+                balance: calculatedTokenBalances.getBalance(
+                  molochStatBalance.tokenAddress
+                ),
+              };
             }
 
             return {
               in: BigNumber.from(0),
               out: BigNumber.from(0),
-            }
-          })()
+              net: BigNumber.from(0),
+              balance: calculatedTokenBalances.getBalance(
+                molochStatBalance.tokenAddress
+              ),
+            };
+          })();
 
           const proposalTitle = (() => {
             try {
               return JSON.parse(
                 molochStatBalance.proposalDetail?.details ?? '{}'
-              ).title
+              ).title;
             } catch (error) {
-              return ''
+              return '';
             }
-          })()
+          })();
 
-          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${molochStatBalance.transactionHash}`
+          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${molochStatBalance.transactionHash}`;
           const proposalLink = molochStatBalance.proposalDetail
             ? `https://app.daohaus.club/dao/0x64/${RG_GNOSIS_DAO_ADDRESS}/proposals/${molochStatBalance.proposalDetail.proposalId}`
             : '';
 
           return {
-            date: molochStatBalance.timestamp,
+            date: new Date(Number(molochStatBalance.timestamp) * 1000),
             type: _.startCase(molochStatBalance.action),
             tokenSymbol: molochStatBalance.tokenSymbol,
-            tokenDecimals: molochStatBalance.tokenDecimals,
+            tokenDecimals: Number(molochStatBalance.tokenDecimals),
             tokenAddress: molochStatBalance.tokenAddress,
             txExplorerLink,
             counterparty: molochStatBalance.counterpartyAddress,
             proposal: {
               id: molochStatBalance.proposalDetail?.proposalId ?? '',
               link: proposalLink,
-              shares: molochStatBalance.proposalDetail?.sharesRequested ?? '',
-              loot: molochStatBalance.proposalDetail?.lootRequested ?? '',
+              shares: molochStatBalance.proposalDetail?.sharesRequested ? BigNumber.from(molochStatBalance.proposalDetail.sharesRequested) : BigNumber.from(0),
+              loot: molochStatBalance.proposalDetail?.lootRequested ? BigNumber.from(molochStatBalance.proposalDetail.lootRequested) : BigNumber.from(0),
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
               title: proposalTitle,
             },
             ...balances,
-          }
+          };
         })
-      )
-      return treasuryTransactions
-    }
+      );
+      return treasuryTransactions;
+    };
 
     const treasuryTransactions = await mapMolochStatsToTreasuryTransaction(
       balances
-    )
+    );
 
     return {
-      transactions: _.orderBy(treasuryTransactions, 'date', 'desc') as Array<IVaultTransaction>,
+      transactions: _.orderBy(
+        treasuryTransactions,
+        'date',
+        'desc'
+      ) as Array<IVaultTransaction>,
       vaultName: 'DAO Treasury',
-    }
+    };
   } catch (error) {
     return {
       error: {
         message: (error as Error).message,
       },
-    }
+    };
   }
-}
+};
 
 const useTransactions = ({ token }) => {
-  const [transactions, setTransactions] = useState<Array<IVaultTransaction>>([])
+  const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
+    []
+  );
   const limit = 1000;
 
   const consultationQueryResult = async (pageParam: number) => {
     if (!token) return;
     // TODO handle filters
 
-    const { data } = await client(undefined, 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai').query({
+    const { data } = await client(
+      undefined,
+      'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai'
+    ).query({
       query: TRANSACTIONS_QUERY,
       variables: {
         first: limit,
@@ -219,10 +250,10 @@ const useTransactions = ({ token }) => {
     (async () => {
       if (status === 'success') {
         const formattedData = await formatBalancesAsTransactions(data.pages[0]);
-        setTransactions(formattedData.transactions || [])
-      };
-    })()   
-  }, [data, status])
+        setTransactions(formattedData.transactions || []);
+      }
+    })();
+  }, [data, status]);
 
   return {
     status,
