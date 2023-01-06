@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, chakra } from '@chakra-ui/react';
-import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {
   useReactTable,
   flexRender,

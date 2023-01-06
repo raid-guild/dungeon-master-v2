@@ -1,5 +1,5 @@
 import { Link } from '@raidguild/design-system';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
+import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
 import { BigNumber } from 'ethers';
 import { IVaultTransaction } from '../types';
 import { DataTable } from './DataTable';
@@ -19,12 +19,21 @@ const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
   }
 };
 
+const sortNumeric = (rowA: Row<IVaultTransaction>, rowB: Row<IVaultTransaction>, columnId: string) => {
+  const n1 = Number(rowA.getValue(columnId));
+  const n2 = Number(rowB.getValue(columnId));
+  if (n1 < n2) return -1;
+  if (n2 < n1) return 1;
+  return 0;
+};
+
 const columnHelper = createColumnHelper<IVaultTransaction>();
 
 const columns = [
   columnHelper.accessor('date', {
     cell: (info) => info.getValue().toLocaleString(),
     header: 'Date',
+    sortingFn: 'datetime',
   }),
   columnHelper.accessor('type', {
     cell: (info) => info.getValue(),
@@ -40,6 +49,7 @@ const columns = [
     meta: {
       hidden: true,
     },
+    sortingFn: sortNumeric,
   }),
   columnHelper.accessor('net', {
     cell: formatTokenAmount,
@@ -47,6 +57,7 @@ const columns = [
     meta: {
       isNumeric: true,
     },
+    sortingFn: sortNumeric,
   }),
   columnHelper.accessor('balance', {
     cell: formatTokenAmount,
@@ -54,23 +65,30 @@ const columns = [
     meta: {
       isNumeric: true,
     },
+    sortingFn: sortNumeric,
   }),
-//   columnHelper.accessor('proposal.loot', {
-//     cell: (info) => info?.getValue()?.toString(),
-//     header: 'Loot',
-//     meta: {
-//       isNumeric: true,
-//     },
-//   }),
+  //   columnHelper.accessor('proposal.loot', {
+  //     cell: (info) => info?.getValue()?.toString(),
+  //     header: 'Loot',
+  //     meta: {
+  //       isNumeric: true,
+  //     },
+  //    sortingFn: sortNumeric,
+  //   }),
   columnHelper.accessor('proposal.shares', {
     cell: (info) => info.getValue().toNumber(),
     header: 'Shares',
     meta: {
       isNumeric: true,
     },
+    sortingFn: sortNumeric,
   }),
   columnHelper.accessor('proposal', {
-    cell: (info) => <Link href={info.getValue().link} target="_blank">{info.getValue().title}</Link>,
+    cell: (info) => (
+      <Link href={info.getValue().link} target="_blank">
+        {info.getValue().title}
+      </Link>
+    ),
     header: 'Proposal',
   }),
   columnHelper.accessor('counterparty', {
@@ -78,7 +96,11 @@ const columns = [
     header: 'Counterparty',
   }),
   columnHelper.accessor('txExplorerLink', {
-    cell: (info) => <Link href={info.getValue()} target="_blank">view</Link>,
+    cell: (info) => (
+      <Link href={info.getValue()} target="_blank">
+        view
+      </Link>
+    ),
     header: 'Tx',
   }),
 ];
