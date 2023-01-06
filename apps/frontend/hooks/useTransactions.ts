@@ -12,6 +12,7 @@ import {
 } from '../types';
 
 const RG_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 class CalculateTokenBalances {
   calculatedTokenBalances: ICalculatedTokenBalances;
@@ -156,9 +157,13 @@ const formatBalancesAsTransactions = async (
           const proposalLink = molochStatBalance.proposalDetail
             ? `https://app.daohaus.club/dao/0x64/${RG_GNOSIS_DAO_ADDRESS}/proposals/${molochStatBalance.proposalDetail.proposalId}`
             : '';
+          const epochTimeAtIngressMs = Number(molochStatBalance.timestamp) * 1000;
+          const date = new Date(epochTimeAtIngressMs);
+          const elapsedDays = Math.floor((Date.now() - epochTimeAtIngressMs) / MILLISECONDS_PER_DAY);
 
           return {
-            date: new Date(Number(molochStatBalance.timestamp) * 1000),
+            date,
+            elapsedDays,
             type: _.startCase(molochStatBalance.action),
             tokenSymbol: molochStatBalance.tokenSymbol,
             tokenDecimals: Number(molochStatBalance.tokenDecimals),

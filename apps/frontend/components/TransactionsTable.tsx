@@ -35,6 +35,11 @@ const columns = [
     header: 'Date',
     sortingFn: 'datetime',
   }),
+  columnHelper.accessor('elapsedDays', {
+    cell: (info) => info.row.getValue('net') > 0 ? info.getValue() : undefined,
+    header: 'Days Held',
+    sortingFn: sortNumeric,
+  }),
   columnHelper.accessor('type', {
     cell: (info) => info.getValue(),
     header: 'Type',
