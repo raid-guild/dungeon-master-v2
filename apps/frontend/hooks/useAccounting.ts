@@ -2,10 +2,10 @@
 import _ from 'lodash';
 import { BigNumber } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { client, TRANSACTIONS_QUERY } from '../gql';
+import { client, TRANSACTIONS_QUERY, MOLOCH_QUERY } from '../gql';
 import { camelize } from '../utils';
 import { useEffect, useState } from 'react';
-import { ICalculatedTokenBalances, IVaultTransaction, IMolochStatsBalance } from '../types'
+import { ICalculatedTokenBalances, IVaultTransaction, IMolochStatsBalance, ITokenBalance, ITokenBalanceLineItem } from '../types'
 
 const RG_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 
@@ -56,10 +56,11 @@ class CalculateTokenBalances {
   }
 }
 
+// used to store all the inflow and outflow of each token when iterating over the list of moloch stats
+const calculatedTokenBalances = new CalculateTokenBalances()
+
 const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>) => {
   try {
-    // used to store all the inflow and outflow of each token when iterating over the list of moloch stats
-    const calculatedTokenBalances = new CalculateTokenBalances()
 
     const mapMolochStatsToTreasuryTransaction = async (
       molochStatsBalances: Array<IMolochStatsBalance>
@@ -164,7 +165,6 @@ const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>
 
     return {
       transactions: _.orderBy(treasuryTransactions, 'date', 'desc') as Array<IVaultTransaction>,
-      vaultName: 'DAO Treasury',
     }
   } catch (error) {
     return {
@@ -175,11 +175,11 @@ const formatBalancesAsTransactions = async (balances: Array<IMolochStatsBalance>
   }
 }
 
-const useTransactions = ({ token }) => {
+export const useTransactions = ({ token }) => {
   const [transactions, setTransactions] = useState<Array<IVaultTransaction>>([])
   const limit = 1000;
 
-  const consultationQueryResult = async (pageParam: number) => {
+  const transactionQueryResult = async (pageParam: number) => {
     if (!token) return;
     // TODO handle filters
 
@@ -194,6 +194,7 @@ const useTransactions = ({ token }) => {
 
     return camelize(_.get(data, 'balances'));
   };
+  
 
   const {
     status,
@@ -204,7 +205,7 @@ const useTransactions = ({ token }) => {
     isFetchingNextPage,
   } = useInfiniteQuery<Array<IMolochStatsBalance>, Error>(
     ['transactions'],
-    ({ pageParam = 0 }) => consultationQueryResult(pageParam),
+    ({ pageParam = 0 }) => transactionQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
         return _.isEmpty(lastPage)
@@ -228,6 +229,97 @@ const useTransactions = ({ token }) => {
     status,
     error,
     data: transactions,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
+
+const mapMolochTokenBalancesToTokenBalanceLineItem = async (
+  molochTokenBalances: ITokenBalance[],
+  calculatedTokenBalances: ICalculatedTokenBalances
+): Promise<ITokenBalanceLineItem[]> => {
+  const tokenBalanceLineItems = await Promise.all(
+    molochTokenBalances.map(async (molochTokenBalance) => {
+      const tokenValue = BigNumber.from(molochTokenBalance.tokenBalance)
+      const tokenExplorerLink = `https://blockscout.com/xdai/mainnet/token/${molochTokenBalance.token.tokenAddress}`;
+
+      return {
+        ...molochTokenBalance,
+        tokenExplorerLink,
+        inflow: {
+          tokenValue:
+            calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
+              ?.in || BigNumber.from(0),
+        },
+        outflow: {
+          tokenValue:
+            calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
+              ?.out || BigNumber.from(0),
+        },
+        closing: {
+          tokenValue,
+        },
+      }
+    })
+  )
+  return tokenBalanceLineItems
+}
+
+export const useBalances = ({ token }) => {
+  const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([])
+  const limit = 1000;
+
+  const balancesQueryResult = async () => {
+    if (!token) return;
+    // TODO handle filters
+
+    const { data } = await client(undefined, 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai').query({
+      query: MOLOCH_QUERY,
+      variables: {
+        contractAddr: RG_GNOSIS_DAO_ADDRESS,
+      },
+    });
+
+    return camelize(_.get(data, 'moloch'));
+  };
+
+  const {
+    status,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<{ tokenBalances: Array<ITokenBalance> }, Error>(
+    ['balances'],
+    () => balancesQueryResult(),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return _.isEmpty(lastPage)
+          ? undefined
+          : _.divide(_.size(_.flatten(allPages)), limit);
+      },
+      enabled: Boolean(token),
+    }
+  );
+
+  useEffect(() => {
+    (async () => {
+      if (status === 'success') {
+        const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
+          data.pages[0]?.tokenBalances || [],
+          calculatedTokenBalances.getBalances()
+        )
+        setBalances(tokenBalances)
+      };
+    })()   
+  }, [data, status])
+
+  return {
+    status,
+    error,
+    data: balances,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
