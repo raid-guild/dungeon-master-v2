@@ -224,14 +224,13 @@ const useTransactions = ({ token }) => {
   const consultationQueryResult = async (pageParam: number) => {
     if (!token) return;
     // TODO handle filters
-    // 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai'
-    const { data } = await client({ token }).request(TRANSACTIONS_QUERY, {
+    const response = await client({ token }).request(TRANSACTIONS_QUERY, {
       first: limit,
       skip: pageParam * limit,
       molochAddress: RG_GNOSIS_DAO_ADDRESS,
     });
-
-    return camelize(_.get(data, 'balances'));
+    
+    return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
   };
 
   const {
