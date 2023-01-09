@@ -307,14 +307,12 @@ export const useBalances = ({ token }) => {
     if (!token) return;
     // TODO handle filters
 
-    const { data } = await client(undefined, 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai').query({
-      query: MOLOCH_QUERY,
-      variables: {
-        contractAddr: RG_GNOSIS_DAO_ADDRESS,
-      },
+    const response = await client({ token }).request(MOLOCH_QUERY, {
+      contractAddr: RG_GNOSIS_DAO_ADDRESS,
     });
 
-    return camelize(_.get(data, 'moloch'));
+
+    return camelize(_.get(response, 'daohaus_xdai.moloch'));
   };
 
   const {

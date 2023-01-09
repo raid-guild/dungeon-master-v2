@@ -46,6 +46,14 @@ export type IVaultTransaction = {
   };
 };
 
+export type ICalculatedTokenBalances = {
+  [tokenAddress: string]: {
+    in: BigNumber
+    out: BigNumber
+    balance: BigNumber
+  }
+}
+
 export type IToken = {
   tokenAddress: string
   decimals: string

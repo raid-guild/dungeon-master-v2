@@ -1,19 +1,21 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 
 export const MOLOCH_QUERY = gql`
-  query moloch($contractAddr: String!) {
-    moloch(id: $contractAddr) {
-      id
-      minions {
-        minionAddress
-      }
-      tokenBalances(where: {guildBank: true}) {
-        token {
-          tokenAddress
-          symbol
-          decimals
+  query moloch($contractAddr: ID!) {
+    daohaus_xdai {
+      moloch(id: $contractAddr) {
+        id
+        minions {
+          minionAddress
         }
-        tokenBalance
+        tokenBalances(where: {guildBank: true}) {
+          token {
+            tokenAddress
+            symbol
+            decimals
+          }
+          tokenBalance
+        }
       }
     }
   }
