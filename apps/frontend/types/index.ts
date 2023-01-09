@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 export * from './auth';
 export * from './accounting';
 export * from './applications';

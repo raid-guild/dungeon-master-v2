@@ -1,8 +1,8 @@
 import { NextSeo } from 'next-seo';
-import { Heading, Button } from '@raidguild/design-system';
+import { Heading, Button, Flex } from '@raidguild/design-system';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
-import useTransactions from '../hooks/useTransactions';
+import { useTransactions, useBalances } from '../hooks/useAccounting';
 import Papa from 'papaparse';
 import _ from 'lodash';
 import TransactionsTable from '../components/TransactionsTable';
@@ -10,18 +10,21 @@ import TransactionsTable from '../components/TransactionsTable';
 export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data, error /* hasNextPage, fetchNextPage */ } = useTransactions({
+  const { data: transactions, error: transactionsError  } = useTransactions({
     token,
   });
-  console.log(data);
+  const { data: balances, error: balancesError } = useBalances({ token });
 
-  const onExportTransactions = () => {
-    const csvString = Papa.unparse(data);
+  const onExportCsv = (type: 'transactions' | 'balances') => {
+    let csvString = Papa.unparse(transactions)
+    if (type === 'balances') {
+      csvString = Papa.unparse(balances)
+    }
     const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', 'transactions.csv');
+    link.setAttribute('download', `${type}.csv`);
     link.click();
     link.remove();
   };
@@ -31,14 +34,23 @@ export const Accounting = () => {
       <NextSeo title="Accounting" />
 
       <SiteLayout
-        isLoading={!data}
-        data={data}
+        isLoading={!(transactions && balances)}
+        data={[...transactions, ...balances]}
         subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase="No transactions"
-        error={error}
+        error={transactionsError || balancesError}
       >
-        <TransactionsTable data={data} />
-        <Button onClick={onExportTransactions} size="sm" fontWeight="normal">
+      <Flex gap="16px">
+        <Button
+          onClick={() => onExportCsv('balances')}
+          size="sm"
+          fontWeight="normal"
+        >
+          Export Balances
+        </Button>
+      </Flex>
+        <TransactionsTable data={transactions} />
+        <Button onClick={() => onExportCsv('transactions')} size="sm" fontWeight="normal">
           Export Transactions
         </Button>
       </SiteLayout>

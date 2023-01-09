@@ -48,8 +48,32 @@ export type IVaultTransaction = {
 
 export type ICalculatedTokenBalances = {
   [tokenAddress: string]: {
-    in: BigNumber;
-    out: BigNumber;
-    balance: BigNumber;
-  };
-};
+    in: BigNumber
+    out: BigNumber
+    balance: BigNumber
+  }
+}
+
+export type IToken = {
+  tokenAddress: string
+  decimals: string
+  symbol: string
+}
+
+export type ITokenBalance = {
+  token: IToken
+  tokenBalance: string
+}
+
+export type ITokenBalanceLineItem = ITokenBalance & {
+  tokenExplorerLink: string
+  inflow: {
+    tokenValue: BigNumber
+  }
+  outflow: {
+    tokenValue: BigNumber
+  }
+  closing: {
+    tokenValue: BigNumber
+  }
+}
