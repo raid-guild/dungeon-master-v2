@@ -35,7 +35,7 @@ export const Accounting = () => {
 
       <SiteLayout
         isLoading={!(transactions && balances)}
-        data={null}
+        data={[...transactions, ...balances]}
         subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase="No transactions"
         error={transactionsError || balancesError}
