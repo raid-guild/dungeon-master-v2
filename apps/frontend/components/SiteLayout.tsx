@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
-import { Flex, Heading, Spinner, Stack } from '@chakra-ui/react';
+import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -10,8 +10,10 @@ import ScrollToTopButton from './ScrollToTopButton';
 
 interface SiteLayoutProps {
   children: ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
   subheader: ReactNode;
+  emptyDataPhrase?: string;
   error?: Error;
   isLoading?: boolean;
   minHeight?: string;
@@ -27,6 +29,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   data,
   error,
   subheader,
+  emptyDataPhrase,
   children,
   minHeight = '100vh',
 }: SiteLayoutProps) => {
@@ -41,31 +44,30 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
 
   const GeneralLayout = ({ children }: GeneralLayoutProps) => (
     <Flex
-      direction="column"
-      overflowX="hidden"
-      margin="0 auto"
+      direction='column'
+      overflowX='hidden'
+      margin='0 auto'
       minHeight={minHeight || '100vh'}
       minWidth={['100%', null, null, '100vw']}
-      position="relative"
-      background="gray.700"
+      position='relative'
+      background='gray.700'
     >
       <Navbar />
       <CommandPalette />
       <Flex
-        direction="column"
-        justify="flex-start"
-        flex="1"
-        align="center"
+        direction='column'
+        justify='flex-start'
+        flex='1'
+        align='center'
         minHeight={['100vh', '100vh', '0', '0']}
       >
         <Stack
           spacing={8}
-          align="center"
+          align='center'
           w={['90%', null, null, '70%']}
-          mx="auto"
+          mx='auto'
         >
           {subheader}
-
           {children}
         </Stack>
       </Flex>
@@ -77,8 +79,8 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   if (!_.get(session, 'token')) {
     return (
       <GeneralLayout>
-        <Flex justify="center" align="center" minH="50vh">
-          <Heading size="md">Connect your wallet & Sign in</Heading>
+        <Flex justify='center' align='center' minH='100vh'>
+          <Heading size='md'>Connect your wallet & Sign in</Heading>
         </Flex>
       </GeneralLayout>
     );
@@ -87,8 +89,8 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   if (isLoading) {
     return (
       <GeneralLayout>
-        <Flex w="100%" justify="center" py={60}>
-          <Spinner color="govrn.300" size="xl" />
+        <Flex w='100%' justify='center' alignItems='center' py={60}>
+          <Spinner size='xl' />
         </Flex>
       </GeneralLayout>
     );
@@ -97,25 +99,22 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   if (error) {
     return (
       <GeneralLayout>
-        <Flex w="100%" justify="center" pt={40}>
-          <Heading size="md">Error loading [data type]</Heading>
+        <Flex w='100%' justify='center' pt={40}>
+          <Heading size='md'>Error loading data: {error.message}</Heading>
         </Flex>
       </GeneralLayout>
     );
   }
 
-  // NOTE: for raids / members / anything with filters we'll prob want to handle this at the page level or else the UI may not render if there's no data from the filter query
-
-  // return data && _.isEmpty(data) ? (
-  //   <GeneralLayout>
-  //     <Flex justify="center" align="center" minH="50vh">
-  //       <Heading size="md">No projects found!</Heading>
-  //     </Flex>
-  //   </GeneralLayout>
-  // ) : (
-  //   <GeneralLayout>{children}</GeneralLayout>
-  // );
-  return <GeneralLayout>{children}</GeneralLayout>;
+  return data && _.isEmpty(data) ? (
+    <GeneralLayout>
+      <Flex justify='center' align='center' minH='50vh'>
+        <Heading size='md'>{emptyDataPhrase || 'No raids found!'}</Heading>
+      </Flex>
+    </GeneralLayout>
+  ) : (
+    <GeneralLayout>{children}</GeneralLayout>
+  );
 };
 
 export default SiteLayout;

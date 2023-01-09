@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-request';
 import { RAID_DETAIL_FRAGMENT } from '../index';
 
 export const STATUS_UPDATE_CREATE_MUTATION = gql`

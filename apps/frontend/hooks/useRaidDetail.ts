@@ -4,20 +4,15 @@ import { client, RAID_DETAIL_QUERY } from '../gql';
 import { camelize, IRaid } from '../utils';
 
 const useRaidDetail = ({ raidId, token }) => {
-  console.log(raidId, token);
   const raidQueryResult = async () => {
-    console.log('here');
     if (!raidId || !token) return;
     // TODO handle filters
 
-    const { data } = await client(token).query({
-      query: RAID_DETAIL_QUERY,
-      variables: {
-        id: raidId,
-      },
+    const result = await client({ token }).request(RAID_DETAIL_QUERY, {
+      id: raidId,
     });
 
-    return camelize(_.get(data, 'raids_by_pk'));
+    return camelize(_.get(result, 'raids_by_pk'));
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<
@@ -26,7 +21,7 @@ const useRaidDetail = ({ raidId, token }) => {
   >({
     queryKey: ['raidDetail', raidId],
     queryFn: raidQueryResult,
-    enabled: !!token && !!raidId,
+    enabled: Boolean(token) && Boolean(raidId),
   });
 
   return { isLoading, isFetching, isError, error, data };

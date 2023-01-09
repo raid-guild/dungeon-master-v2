@@ -9,6 +9,7 @@ import {
   Flex,
   Grid,
   Button,
+  Card,
   Text,
   VStack,
   Stack,
@@ -47,15 +48,17 @@ const Description = ({ description }: { description: string }) => {
             : 'There is no project description.'}
         </Text>
       </Collapse>
-      <Button
-        onClick={handleToggleDesc}
-        color="gray.400"
-        size="sm"
-        fontWeight="normal"
-        variant="link"
-      >
-        {showFullDescription === true ? 'Show Less' : 'Show More'}
-      </Button>
+      {description !== null && description?.length > 150 && (
+        <Button
+          onClick={handleToggleDesc}
+          color="gray.400"
+          size="sm"
+          fontWeight="normal"
+          variant="link"
+        >
+          {showFullDescription === true ? 'Show Less' : 'Show More'}
+        </Button>
+      )}
     </VStack>
   );
 };
@@ -253,13 +256,9 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <VStack
-      direction="column"
-      width="100%"
-      justifyContent="center"
-      padding={8}
-      bg="gray.800"
-      rounded="md"
+    <Card
+      variant="filled"
+      padding={2}
     >
       <Accordion defaultIndex={[0]} allowMultiple w="100%">
         {_.map(panels, (panel, index) => {
@@ -320,7 +319,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                 </VStack>
               )} */}
       </Accordion>
-    </VStack>
+    </Card>
   );
 };
 

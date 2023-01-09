@@ -32,6 +32,7 @@ select_permissions:
         - website
         - id
       filter: {}
+      allow_aggregations: true
 update_permissions:
   - role: member
     permission:

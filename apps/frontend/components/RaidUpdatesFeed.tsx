@@ -3,6 +3,7 @@ import _ from 'lodash';
 import {
   Flex,
   Box,
+  Card,
   Stack,
   Button,
   Text,
@@ -64,7 +65,6 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   };
 
   const submitNewUpdate = async (values: any) => {
-    console.log(values);
     mutateAsync({
       update: values.update,
       raidId: raid.id,
@@ -76,15 +76,11 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   return (
-    <Flex
-      direction="column"
-      width="100%"
-      justifyContent="center"
-      padding={8}
-      bg="gray.800"
-      rounded="md"
+    <Card
+      variant="filled"
+      padding={2}
     >
-      <Flex>
+      <Flex w="100%">
         <Flex direction="row" align="center" justify="space-between" w="100%">
           <Heading size="md" color="white">
             Status Updates
@@ -122,6 +118,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
           >
             <Stack spacing={4} w="100%">
               <Textarea
+                color="white"
                 name="update"
                 label="Update"
                 localForm={localForm}
@@ -178,7 +175,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
           <Text>Leave the first update about this raid.</Text>
         </Flex>
       )}
-    </Flex>
+    </Card>
   );
 };
 

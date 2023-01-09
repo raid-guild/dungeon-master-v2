@@ -37,6 +37,7 @@ export const Accounting = () => {
         isLoading={!(transactions && balances)}
         data={null}
         subheader={<Heading>Accounting</Heading>}
+        emptyDataPhrase="No transactions"
         error={transactionsError || balancesError}
       >
       <Flex gap="16px">

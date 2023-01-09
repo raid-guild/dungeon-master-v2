@@ -153,9 +153,12 @@ const formatBalancesAsTransactions = async (
           const proposalLink = molochStatBalance.proposalDetail
             ? `https://app.daohaus.club/dao/0x64/${RG_GNOSIS_DAO_ADDRESS}/proposals/${molochStatBalance.proposalDetail.proposalId}`
             : '';
-          const epochTimeAtIngressMs = Number(molochStatBalance.timestamp) * 1000;
+          const epochTimeAtIngressMs =
+            Number(molochStatBalance.timestamp) * 1000;
           const date = new Date(epochTimeAtIngressMs);
-          const elapsedDays = Math.floor((Date.now() - epochTimeAtIngressMs) / MILLISECONDS_PER_DAY);
+          const elapsedDays = Math.floor(
+            (Date.now() - epochTimeAtIngressMs) / MILLISECONDS_PER_DAY
+          );
 
           return {
             date,
@@ -169,8 +172,14 @@ const formatBalancesAsTransactions = async (
             proposal: {
               id: molochStatBalance.proposalDetail?.proposalId ?? '',
               link: proposalLink,
-              shares: molochStatBalance.proposalDetail?.sharesRequested ? BigNumber.from(molochStatBalance.proposalDetail.sharesRequested) : BigNumber.from(0),
-              loot: molochStatBalance.proposalDetail?.lootRequested ? BigNumber.from(molochStatBalance.proposalDetail.lootRequested) : BigNumber.from(0),
+              shares: molochStatBalance.proposalDetail?.sharesRequested
+                ? BigNumber.from(
+                    molochStatBalance.proposalDetail.sharesRequested
+                  )
+                : BigNumber.from(0),
+              loot: molochStatBalance.proposalDetail?.lootRequested
+                ? BigNumber.from(molochStatBalance.proposalDetail.lootRequested)
+                : BigNumber.from(0),
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
               title: proposalTitle,
             },
@@ -210,20 +219,13 @@ export const useTransactions = ({ token }) => {
   const transactionQueryResult = async (pageParam: number) => {
     if (!token) return;
     // TODO handle filters
-
-    const { data } = await client(
-      undefined,
-      'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai'
-    ).query({
-      query: TRANSACTIONS_QUERY,
-      variables: {
-        first: limit,
-        skip: pageParam * limit,
-        molochAddress: RG_GNOSIS_DAO_ADDRESS,
-      },
+    const response = await client({ token }).request(TRANSACTIONS_QUERY, {
+      first: limit,
+      skip: pageParam * limit,
+      molochAddress: RG_GNOSIS_DAO_ADDRESS,
     });
-
-    return camelize(_.get(data, 'balances'));
+    
+    return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
   };
   
 
