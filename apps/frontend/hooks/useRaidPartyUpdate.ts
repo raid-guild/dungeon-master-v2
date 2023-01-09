@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { camelize } from '../utils';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import {
   client,
   RAID_PARTY_DELETE_MUTATION,
@@ -11,7 +11,7 @@ import { IRaidPartyInsert } from '../utils';
 
 export const useRaidPartyAdd = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, memberId }: IRaidPartyInsert) => {
@@ -45,7 +45,6 @@ export const useRaidPartyAdd = ({ token }) => {
 
         toast.success({
           title: 'Raid Party Updated',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -53,7 +52,6 @@ export const useRaidPartyAdd = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });
@@ -66,7 +64,7 @@ export const useRaidPartyAdd = ({ token }) => {
 
 export const useRaidPartyRemove = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, memberId }: IRaidPartyInsert) => {
@@ -103,7 +101,6 @@ export const useRaidPartyRemove = ({ token }) => {
         );
         toast.success({
           title: 'Raid Party Updated',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -111,7 +108,6 @@ export const useRaidPartyRemove = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });

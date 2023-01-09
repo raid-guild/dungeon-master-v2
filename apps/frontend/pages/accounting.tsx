@@ -1,13 +1,13 @@
-import React from 'react';
 import { NextSeo } from 'next-seo';
 import { Heading, Button, Flex } from '@raidguild/design-system';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
 import { useTransactions, useBalances } from '../hooks/useAccounting';
-import Papa from 'papaparse'
+import Papa from 'papaparse';
 import _ from 'lodash';
+import TransactionsTable from '../components/TransactionsTable';
 
-export const Accounting: React.FC = () => {
+export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: transactions, error: transactionsError  } = useTransactions({
@@ -27,7 +27,7 @@ export const Accounting: React.FC = () => {
     link.setAttribute('download', `${type}.csv`);
     link.click();
     link.remove();
-  }
+  };
 
   return (
     <>
@@ -41,13 +41,6 @@ export const Accounting: React.FC = () => {
       >
       <Flex gap="16px">
         <Button
-          onClick={() => onExportCsv('transactions')}
-          size="sm"
-          fontWeight="normal"
-        >
-          Export Transactions
-        </Button>
-        <Button
           onClick={() => onExportCsv('balances')}
           size="sm"
           fontWeight="normal"
@@ -55,9 +48,13 @@ export const Accounting: React.FC = () => {
           Export Balances
         </Button>
       </Flex>
+        <TransactionsTable data={transactions} />
+        <Button onClick={() => onExportCsv('transactions')} size="sm" fontWeight="normal">
+          Export Transactions
+        </Button>
       </SiteLayout>
     </>
-  )
-}
+  );
+};
 
-export default Accounting
+export default Accounting;

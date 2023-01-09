@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import {
   client,
   ROLES_REQUIRED_INSERT_MUTATION,
@@ -10,7 +10,7 @@ import { IRoleRequiredInsert, IRoleRemoveMany, camelize } from '../utils';
 
 export const useAddRolesRequired = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ raidId, role }: IRoleRequiredInsert) => {
@@ -50,7 +50,6 @@ export const useAddRolesRequired = ({ token }) => {
 
         toast.success({
           title: 'Role Added',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -58,7 +57,6 @@ export const useAddRolesRequired = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });
@@ -71,7 +69,7 @@ export const useAddRolesRequired = ({ token }) => {
 
 export const useRemoveRolesRequired = ({ token }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ where }: IRoleRemoveMany) => {
@@ -108,7 +106,6 @@ export const useRemoveRolesRequired = ({ token }) => {
 
         toast.success({
           title: 'Role Added',
-          status: 'success',
           duration: 3000,
           isClosable: true,
         });
@@ -116,7 +113,6 @@ export const useRemoveRolesRequired = ({ token }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Raid',
-          status: 'error',
           duration: 3000,
           isClosable: true,
         });

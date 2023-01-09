@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, MEMBER_UPDATE_MUTATION } from '../gql';
-import { useCustomToast } from '@raidguild/design-system';
+import { useToast } from '@raidguild/design-system';
 import { IMemberUpdate } from '../utils';
 
 const useMemberUpdate = ({ token, memberId }) => {
   const queryClient = useQueryClient();
-  const toast = useCustomToast();
+  const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberUpdate) => {
@@ -32,7 +32,6 @@ const useMemberUpdate = ({ token, memberId }) => {
 
         toast.success({
           title: 'Member Info Updated',
-          status: 'success',
           iconName: 'crown',
           duration: 3000,
           isClosable: true,
@@ -41,7 +40,6 @@ const useMemberUpdate = ({ token, memberId }) => {
       onError: (error) => {
         toast.error({
           title: 'Unable to Update Member',
-          status: 'error',
           iconName: 'alert',
           duration: 3000,
           isClosable: true,
