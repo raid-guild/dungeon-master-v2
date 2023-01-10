@@ -1,7 +1,8 @@
-import { Link } from '@raidguild/design-system';
-import { CellContext, createColumnHelper, Row } from '@tanstack/react-table';
+import { Heading, Link } from '@raidguild/design-system';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { BigNumber } from 'ethers';
 import { IVaultTransaction } from '../types';
+import { sortNumeric } from '../utils';
 import { DataTable } from './DataTable';
 
 export interface TransactionsTableProps {
@@ -17,14 +18,6 @@ const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
     console.error(e);
     return info.getValue().toString();
   }
-};
-
-const sortNumeric = (rowA: Row<IVaultTransaction>, rowB: Row<IVaultTransaction>, columnId: string) => {
-  const n1 = Number(rowA.getValue(columnId));
-  const n2 = Number(rowB.getValue(columnId));
-  if (n1 < n2) return -1;
-  if (n2 < n1) return 1;
-  return 0;
 };
 
 const columnHelper = createColumnHelper<IVaultTransaction>();
@@ -112,7 +105,12 @@ const columns = [
 ];
 
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
-  return <DataTable columns={columns} data={data} />;
+  return (
+    <>
+      <Heading size='sm'>Transactions</Heading>
+      <DataTable columns={columns} data={data} />
+    </>
+  );
 };
 
 export default TransactionsTable;

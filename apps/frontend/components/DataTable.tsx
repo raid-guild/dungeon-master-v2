@@ -21,13 +21,15 @@ declare module '@tanstack/table-core' {
 export type DataTableProps<Data extends object> = {
   data: Data[];
   columns: ColumnDef<Data, unknown>[];
+  sort?: SortingState;
 };
 
 export function DataTable<Data extends object>({
   data,
   columns,
+  sort = [],
 }: DataTableProps<Data>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(sort);
   const table = useReactTable({
     columns,
     data,
@@ -59,12 +61,12 @@ export function DataTable<Data extends object>({
                     header.getContext()
                   )}
 
-                  <chakra.span pl="4">
+                  <chakra.span pl='4'>
                     {header.column.getIsSorted() ? (
                       header.column.getIsSorted() === 'desc' ? (
-                        <FiChevronDown aria-label="sorted descending" />
+                        <FiChevronDown aria-label='sorted descending' />
                       ) : (
-                        <FiChevronUp aria-label="sorted ascending" />
+                        <FiChevronUp aria-label='sorted ascending' />
                       )
                     ) : null}
                   </chakra.span>
