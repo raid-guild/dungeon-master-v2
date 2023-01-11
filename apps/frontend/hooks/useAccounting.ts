@@ -2,10 +2,18 @@
 import _ from 'lodash';
 import { BigNumber } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { client, TRANSACTIONS_QUERY, MOLOCH_QUERY } from '../gql';
+import { client, TRANSACTIONS_QUERY, MOLOCH_QUERY, TOKEN_PRICES_QUERY } from '../gql';
 import { camelize } from '../utils';
 import { useEffect, useState } from 'react';
-import { ICalculatedTokenBalances, IVaultTransaction, IMolochStatsBalance, ITokenBalance, ITokenBalanceLineItem } from '../types'
+import {
+  ICalculatedTokenBalances,
+  IVaultTransaction,
+  IMolochStatsBalance,
+  ITokenBalance,
+  ITokenBalanceLineItem,
+  ITokenPrice,
+  IMappedTokenPrice,
+} from '../types'
 
 const RG_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -183,6 +191,7 @@ const formatBalancesAsTransactions = async (
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
               title: proposalTitle,
             },
+            priceConversion: 1,
             ...balances,
           };
         })
@@ -224,7 +233,7 @@ export const useTransactions = ({ token }) => {
       skip: pageParam * limit,
       molochAddress: RG_GNOSIS_DAO_ADDRESS,
     });
-    
+
     return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
   };
   
@@ -351,6 +360,66 @@ export const useBalances = ({ token }) => {
     status,
     error,
     data: balances,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
+
+export const useTokenPrices = ({ token }) => {
+  const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({})
+
+  const tokenPricesQueryResult = async () => {
+    if (!token) return;
+    // TODO handle filters
+
+    const response = await client({ token }).request(TOKEN_PRICES_QUERY);
+
+    return camelize(_.get(response, 'treasury_token_history'));
+  };
+
+  const {
+    status,
+    error,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<Array<ITokenPrice>, Error>(
+    ['tokenPrices'],
+    () => tokenPricesQueryResult(),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        return _.isEmpty(lastPage)
+          ? undefined
+          : _.divide(_.size(_.flatten(allPages)));
+      },
+      enabled: Boolean(token),
+    }
+  );
+
+  useEffect(() => {
+    (async () => {
+      if (status === 'success') {
+        const prices = data.pages[0];
+        const mappedPrices = {};
+        prices.forEach(price => {
+          if (!mappedPrices[price.tokenName]) {
+            mappedPrices[price.tokenName] = {}
+            mappedPrices[price.tokenName][price.date] = price.priceUsd
+          } else {
+            mappedPrices[price.tokenName][price.date] = price.priceUsd
+          }
+        })
+        setTokenPrices(mappedPrices)
+      };
+    })()   
+  }, [data, status])
+
+  return {
+    status,
+    error,
+    data: tokenPrices,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

@@ -35,6 +35,7 @@ export type IVaultTransaction = {
   out: BigNumber;
   net: BigNumber;
   balance: BigNumber;
+  priceConversion: number;
   counterparty: string; // receiver/sender to minion vault or sender to treasury
   proposal?: {
     id: string;
@@ -75,5 +76,18 @@ export type ITokenBalanceLineItem = ITokenBalance & {
   }
   closing: {
     tokenValue: BigNumber
+  }
+}
+
+export type ITokenPrice = {
+  id: number;
+  date: string;
+  priceUsd: number;
+  tokenName: string;
+}
+
+export type IMappedTokenPrice = {
+  [key: string]: {
+    [key: string]: number;
   }
 }

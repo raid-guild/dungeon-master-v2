@@ -2,11 +2,12 @@ import { NextSeo } from 'next-seo';
 import { Heading, Button } from '@raidguild/design-system';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
-import { useTransactions, useBalances } from '../hooks/useAccounting';
+import { useTransactions, useBalances, useTokenPrices } from '../hooks/useAccounting';
 import Papa from 'papaparse';
 import _ from 'lodash';
 import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
+import { useMemo } from 'react';
 
 export const Accounting = () => {
   const { data: session } = useSession();
@@ -15,6 +16,7 @@ export const Accounting = () => {
     token,
   });
   const { data: balances, error: balancesError } = useBalances({ token });
+  const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({ token });
 
   const onExportCsv = (type: 'transactions' | 'balances') => {
     let csvString = Papa.unparse(transactions);
@@ -30,6 +32,20 @@ export const Accounting = () => {
     link.remove();
   };
 
+  const transactionsWithPrices = useMemo(() => {
+    return transactions.map(t => {
+      const fomrattedDate = t.date.toISOString().split('T')[0];
+      if (tokenPrices[t.tokenSymbol] && tokenPrices[t.tokenSymbol][fomrattedDate]) {
+        return {
+          ...t,
+          priceConversion: tokenPrices[t.tokenSymbol][fomrattedDate],
+        }
+      }
+      return t;
+    })
+  }, [tokenPrices, transactions])
+
+
   return (
     <>
       <NextSeo title='Accounting' />
@@ -39,7 +55,7 @@ export const Accounting = () => {
         data={[...transactions, ...balances]}
         subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase='No transactions'
-        error={transactionsError || balancesError}
+        error={transactionsError || balancesError || tokenPricesError}
       >
         <BalancesTable data={balances} />
         <Button
@@ -49,7 +65,7 @@ export const Accounting = () => {
         >
           Export Balances
         </Button>
-        <TransactionsTable data={transactions} />
+        <TransactionsTable data={transactionsWithPrices} />
         <Button
           onClick={() => onExportCsv('transactions')}
           size='sm'

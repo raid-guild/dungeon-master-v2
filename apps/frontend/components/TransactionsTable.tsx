@@ -20,6 +20,19 @@ const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
   }
 };
 
+const formatTokenVlue = (info: CellContext<IVaultTransaction, BigNumber>) => {
+  try {
+    const n = info.getValue();
+    const decimals = Number(info.row.getValue('tokenDecimals'));
+    const priceConversion = Number(info.row.getValue('priceConversion'));
+    const tokenValue = n.div(BigNumber.from(10).pow(decimals)).toNumber() * priceConversion;
+    return tokenValue.toLocaleString();
+  } catch (e) {
+    console.error(e);
+    return info.getValue().toString();
+  }
+};
+
 const columnHelper = createColumnHelper<IVaultTransaction>();
 
 const columns = [
@@ -50,6 +63,14 @@ const columns = [
     },
     sortingFn: sortNumeric,
   }),
+  columnHelper.accessor('priceConversion', {
+    cell: (info) => info.getValue(),
+    header: 'Conversion',
+    meta: {
+      hidden: true,
+    },
+    sortingFn: sortNumeric,
+  }),
   columnHelper.accessor('net', {
     cell: formatTokenAmount,
     header: 'Amount',
@@ -59,7 +80,12 @@ const columns = [
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('balance', {
-    cell: formatTokenAmount,
+    cell: (info) => (
+      <div>
+        <p>{formatTokenAmount(info)}</p>
+        <p>${formatTokenVlue(info)}</p>
+      </div>
+    ),
     header: 'Balance',
     meta: {
       isNumeric: true,
