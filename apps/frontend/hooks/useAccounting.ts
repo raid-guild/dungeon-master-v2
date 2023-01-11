@@ -191,7 +191,7 @@ const formatBalancesAsTransactions = async (
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
               title: proposalTitle,
             },
-            priceConversion: 1,
+            priceConversion: 0,
             ...balances,
           };
         })

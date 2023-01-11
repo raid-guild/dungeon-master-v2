@@ -25,8 +25,11 @@ const formatTokenVlue = (info: CellContext<IVaultTransaction, BigNumber>) => {
     const n = info.getValue();
     const decimals = Number(info.row.getValue('tokenDecimals'));
     const priceConversion = Number(info.row.getValue('priceConversion'));
+    if (!priceConversion) {
+      return 'Unknown value'
+    }
     const tokenValue = n.div(BigNumber.from(10).pow(decimals)).toNumber() * priceConversion;
-    return tokenValue.toLocaleString();
+    return `$${tokenValue.toLocaleString()}`;
   } catch (e) {
     console.error(e);
     return info.getValue().toString();
@@ -83,7 +86,7 @@ const columns = [
     cell: (info) => (
       <div>
         <p>{formatTokenAmount(info)}</p>
-        <p>${formatTokenVlue(info)}</p>
+        <p>{formatTokenVlue(info)}</p>
       </div>
     ),
     header: 'Balance',

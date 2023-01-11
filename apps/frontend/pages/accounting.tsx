@@ -41,6 +41,11 @@ export const Accounting = () => {
           ...t,
           priceConversion: tokenPrices[tokenSymbol][fomrattedDate],
         }
+      } else if (tokenSymbol.includes('xdai')) {
+        return {
+          ...t,
+          priceConversion: 1,
+        }
       }
       return t;
     })
