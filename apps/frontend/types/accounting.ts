@@ -83,7 +83,7 @@ export type ITokenPrice = {
   id: number;
   date: string;
   priceUsd: number;
-  tokenName: string;
+  symbol: string;
 }
 
 export type IMappedTokenPrice = {

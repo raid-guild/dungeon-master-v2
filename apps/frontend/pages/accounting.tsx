@@ -34,11 +34,17 @@ export const Accounting = () => {
 
   const transactionsWithPrices = useMemo(() => {
     return transactions.map(t => {
-      const fomrattedDate = t.date.toISOString().split('T')[0];
-      if (tokenPrices[t.tokenSymbol] && tokenPrices[t.tokenSymbol][fomrattedDate]) {
+      const formattedDate = t.date.toISOString().split('T')[0];
+      const tokenSymbol = t.tokenSymbol.toLowerCase();
+      if (tokenPrices[tokenSymbol] && tokenPrices[tokenSymbol][formattedDate]) {
         return {
           ...t,
-          priceConversion: tokenPrices[t.tokenSymbol][fomrattedDate],
+          priceConversion: tokenPrices[tokenSymbol][formattedDate],
+        }
+      } else if (tokenSymbol.includes('xdai')) {
+        return {
+          ...t,
+          priceConversion: 1,
         }
       }
       return t;

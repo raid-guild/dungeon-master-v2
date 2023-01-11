@@ -191,7 +191,7 @@ const formatBalancesAsTransactions = async (
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
               title: proposalTitle,
             },
-            priceConversion: 1,
+            priceConversion: 0,
             ...balances,
           };
         })
@@ -404,11 +404,11 @@ export const useTokenPrices = ({ token }) => {
         const prices = data.pages[0];
         const mappedPrices = {};
         prices.forEach(price => {
-          if (!mappedPrices[price.tokenName]) {
-            mappedPrices[price.tokenName] = {}
-            mappedPrices[price.tokenName][price.date] = price.priceUsd
+          if (!mappedPrices[price.symbol]) {
+            mappedPrices[price.symbol] = {}
+            mappedPrices[price.symbol][price.date] = price.priceUsd
           } else {
-            mappedPrices[price.tokenName][price.date] = price.priceUsd
+            mappedPrices[price.symbol][price.date] = price.priceUsd
           }
         })
         setTokenPrices(mappedPrices)

@@ -6,7 +6,7 @@ export const TOKEN_PRICES_QUERY = gql`
       id
       date
       price_usd
-      token_name
+      symbol
     }
   }
 `;
