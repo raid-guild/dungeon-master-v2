@@ -2,7 +2,12 @@
 import _ from 'lodash';
 import { BigNumber } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { client, TRANSACTIONS_QUERY, MOLOCH_QUERY, TOKEN_PRICES_QUERY } from '../gql';
+import {
+  client,
+  TRANSACTIONS_QUERY,
+  MOLOCH_QUERY,
+  TOKEN_PRICES_QUERY,
+} from '../gql';
 import { camelize } from '../utils';
 import { useEffect, useState } from 'react';
 import {
@@ -13,7 +18,7 @@ import {
   ITokenBalanceLineItem,
   ITokenPrice,
   IMappedTokenPrice,
-} from '../types'
+} from '../types';
 
 const RG_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -236,7 +241,6 @@ export const useTransactions = ({ token }) => {
 
     return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
   };
-  
 
   const {
     status,
@@ -283,8 +287,8 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
 ): Promise<ITokenBalanceLineItem[]> => {
   const tokenBalanceLineItems = await Promise.all(
     molochTokenBalances.map(async (molochTokenBalance) => {
-      const tokenValue = BigNumber.from(molochTokenBalance.tokenBalance)
-      const tokenExplorerLink = `https://blockscout.com/xdai/mainnet/token/${molochTokenBalance.token.tokenAddress}`;
+      const tokenValue = BigNumber.from(molochTokenBalance.tokenBalance);
+      const tokenExplorerLink = `https://blockscout.com/xdai/mainnet/address/${molochTokenBalance.token.tokenAddress}`;
 
       return {
         ...molochTokenBalance,
@@ -302,14 +306,14 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
         closing: {
           tokenValue,
         },
-      }
+      };
     })
-  )
-  return tokenBalanceLineItems
-}
+  );
+  return tokenBalanceLineItems;
+};
 
 export const useBalances = ({ token }) => {
-  const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([])
+  const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([]);
   const limit = 1000;
 
   const balancesQueryResult = async () => {
@@ -319,7 +323,6 @@ export const useBalances = ({ token }) => {
     const response = await client({ token }).request(MOLOCH_QUERY, {
       contractAddr: RG_GNOSIS_DAO_ADDRESS,
     });
-
 
     return camelize(_.get(response, 'daohaus_xdai.moloch'));
   };
@@ -347,14 +350,15 @@ export const useBalances = ({ token }) => {
   useEffect(() => {
     (async () => {
       if (status === 'success') {
-        const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
-          data.pages[0]?.tokenBalances || [],
-          calculatedTokenBalances.getBalances()
-        )
-        setBalances(tokenBalances)
-      };
-    })()   
-  }, [data, status])
+        const tokenBalances =
+          await mapMolochTokenBalancesToTokenBalanceLineItem(
+            data.pages[0]?.tokenBalances || [],
+            calculatedTokenBalances.getBalances()
+          );
+        setBalances(tokenBalances);
+      }
+    })();
+  }, [data, status]);
 
   return {
     status,
@@ -367,7 +371,7 @@ export const useBalances = ({ token }) => {
 };
 
 export const useTokenPrices = ({ token }) => {
-  const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({})
+  const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({});
 
   const tokenPricesQueryResult = async () => {
     if (!token) return;
@@ -403,18 +407,18 @@ export const useTokenPrices = ({ token }) => {
       if (status === 'success') {
         const prices = data.pages[0];
         const mappedPrices = {};
-        prices.forEach(price => {
+        prices.forEach((price) => {
           if (!mappedPrices[price.symbol]) {
-            mappedPrices[price.symbol] = {}
-            mappedPrices[price.symbol][price.date] = price.priceUsd
+            mappedPrices[price.symbol] = {};
+            mappedPrices[price.symbol][price.date] = price.priceUsd;
           } else {
-            mappedPrices[price.symbol][price.date] = price.priceUsd
+            mappedPrices[price.symbol][price.date] = price.priceUsd;
           }
-        })
-        setTokenPrices(mappedPrices)
-      };
-    })()   
-  }, [data, status])
+        });
+        setTokenPrices(mappedPrices);
+      }
+    })();
+  }, [data, status]);
 
   return {
     status,

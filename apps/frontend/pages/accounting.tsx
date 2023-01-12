@@ -1,8 +1,21 @@
 import { NextSeo } from 'next-seo';
-import { Heading, Button } from '@raidguild/design-system';
+import {
+  Heading,
+  Button,
+  Tab,
+  Tabs,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Flex,
+} from '@raidguild/design-system';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
-import { useTransactions, useBalances, useTokenPrices } from '../hooks/useAccounting';
+import {
+  useTransactions,
+  useBalances,
+  useTokenPrices,
+} from '../hooks/useAccounting';
 import Papa from 'papaparse';
 import _ from 'lodash';
 import TransactionsTable from '../components/TransactionsTable';
@@ -16,7 +29,9 @@ export const Accounting = () => {
     token,
   });
   const { data: balances, error: balancesError } = useBalances({ token });
-  const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({ token });
+  const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({
+    token,
+  });
 
   const onExportCsv = (type: 'transactions' | 'balances') => {
     let csvString = Papa.unparse(transactions);
@@ -33,24 +48,23 @@ export const Accounting = () => {
   };
 
   const transactionsWithPrices = useMemo(() => {
-    return transactions.map(t => {
+    return transactions.map((t) => {
       const formattedDate = t.date.toISOString().split('T')[0];
       const tokenSymbol = t.tokenSymbol.toLowerCase();
       if (tokenPrices[tokenSymbol] && tokenPrices[tokenSymbol][formattedDate]) {
         return {
           ...t,
           priceConversion: tokenPrices[tokenSymbol][formattedDate],
-        }
+        };
       } else if (tokenSymbol.includes('xdai')) {
         return {
           ...t,
           priceConversion: 1,
-        }
+        };
       }
       return t;
-    })
-  }, [tokenPrices, transactions])
-
+    });
+  }, [tokenPrices, transactions]);
 
   return (
     <>
@@ -63,22 +77,49 @@ export const Accounting = () => {
         emptyDataPhrase='No transactions'
         error={transactionsError || balancesError || tokenPricesError}
       >
-        <BalancesTable data={balances} />
-        <Button
-          onClick={() => onExportCsv('balances')}
-          size='sm'
-          fontWeight='normal'
-        >
-          Export Balances
-        </Button>
-        <TransactionsTable data={transactionsWithPrices} />
-        <Button
-          onClick={() => onExportCsv('transactions')}
-          size='sm'
-          fontWeight='normal'
-        >
-          Export Transactions
-        </Button>
+        <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
+          <TabList>
+            <Tab>Balances</Tab>
+            <Tab>Transactions</Tab>
+          </TabList>
+
+          <TabPanels>
+            <TabPanel>
+              <Flex
+                alignItems='center'
+                justifyContent='space-between'
+                marginBlock='20px'
+              >
+                <Heading size='sm'>Balances</Heading>
+                <Button
+                  onClick={() => onExportCsv('balances')}
+                  size='sm'
+                  fontWeight='normal'
+                >
+                  Export Balances
+                </Button>
+              </Flex>
+              <BalancesTable data={balances} />
+            </TabPanel>
+            <TabPanel>
+              <Flex
+                alignItems='center'
+                justifyContent='space-between'
+                marginBlock='20px'
+              >
+                <Heading size='sm'>Transactions</Heading>
+                <Button
+                  onClick={() => onExportCsv('transactions')}
+                  size='sm'
+                  fontWeight='normal'
+                >
+                  Export Transactions
+                </Button>
+              </Flex>
+              <TransactionsTable data={transactionsWithPrices} />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </SiteLayout>
     </>
   );

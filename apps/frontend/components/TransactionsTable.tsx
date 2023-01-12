@@ -1,8 +1,8 @@
-import { Heading, Link } from '@raidguild/design-system';
+import { Link, TableContainer } from '@raidguild/design-system';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { IVaultTransaction } from '../types';
-import { sortNumeric } from '../utils';
+import { sortNumeric, truncateAddress } from '../utils';
 import { DataTable } from './DataTable';
 
 export interface TransactionsTableProps {
@@ -13,7 +13,7 @@ const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
   try {
     const n = info.getValue();
     const decimals = Number(info.row.getValue('tokenDecimals'));
-    return n.div(BigNumber.from(10).pow(decimals)).toNumber().toLocaleString();
+    return Number(utils.formatUnits(n, decimals)).toLocaleString();
   } catch (e) {
     console.error(e);
     return info.getValue().toString();
@@ -26,9 +26,9 @@ const formatTokenVlue = (info: CellContext<IVaultTransaction, BigNumber>) => {
     const decimals = Number(info.row.getValue('tokenDecimals'));
     const priceConversion = Number(info.row.getValue('priceConversion'));
     if (!priceConversion) {
-      return 'Unknown value'
+      return 'Unknown value';
     }
-    const tokenValue = n.div(BigNumber.from(10).pow(decimals)).toNumber() * priceConversion;
+    const tokenValue = Number(utils.formatUnits(n, decimals)) * priceConversion;
     return `$${tokenValue.toLocaleString()}`;
   } catch (e) {
     console.error(e);
@@ -75,7 +75,12 @@ const columns = [
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('net', {
-    cell: formatTokenAmount,
+    cell: (info) => (
+      <div>
+        <p>{formatTokenAmount(info)}</p>
+        <p>{formatTokenVlue(info)}</p>
+      </div>
+    ),
     header: 'Amount',
     meta: {
       isNumeric: true,
@@ -120,7 +125,7 @@ const columns = [
     header: 'Proposal',
   }),
   columnHelper.accessor('counterparty', {
-    cell: (info) => info.getValue(),
+    cell: (info) => truncateAddress(info.getValue()),
     header: 'Counterparty',
   }),
   columnHelper.accessor('txExplorerLink', {
@@ -135,10 +140,9 @@ const columns = [
 
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
   return (
-    <>
-      <Heading size='sm'>Transactions</Heading>
+    <TableContainer border='1px solid grey' borderRadius='4px' maxWidth='90vw'>
       <DataTable columns={columns} data={data} />
-    </>
+    </TableContainer>
   );
 };
 

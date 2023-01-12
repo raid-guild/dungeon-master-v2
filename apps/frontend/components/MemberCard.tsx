@@ -157,35 +157,35 @@ const MemberCard: React.FC<MemberProps> = ({
           <Link href={link}>
             <LinkOverlay>
               <HStack
-                  spacing={4}
-                  alignItems='center'
-                  justifyContent='space-between'
-                  width='100%'
+                spacing={4}
+                alignItems='center'
+                justifyContent='space-between'
+                width='100%'
+              >
+                <Heading
+                  color='white'
+                  as='h3'
+                  fontSize='2xl'
+                  transition='all ease-in-out .25s'
+                  _hover={{ cursor: 'pointer', color: 'raid' }}
                 >
-                  <Heading
-                    color='white'
-                    as='h3'
-                    fontSize='2xl'
-                    transition='all ease-in-out .25s'
-                    _hover={{ cursor: 'pointer', color: 'raid' }}
-                  >
-                    {_.get(member, 'name', _.get(application, 'name'))}
-                  </Heading>
-                  <VStack align='start'>
-                    {_.get(member, 'name') && (
-                      <Badge background='blackAlpha' fontSize='sm'>
-                        {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
-                      </Badge>
-                    )}
-                    <Badge
-                      marginX={1}
-                      marginBottom={1}
-                      color='raid'
-                      bgColor='gray.700'
-                    >
-                      {memberType}
+                  {_.get(member, 'name', _.get(application, 'name'))}
+                </Heading>
+                <VStack align='start'>
+                  {_.get(member, 'name') && (
+                    <Badge background='blackAlpha' fontSize='sm'>
+                      {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
                     </Badge>
-                  </VStack>
+                  )}
+                  <Badge
+                    marginX={1}
+                    marginBottom={1}
+                    color='raid'
+                    bgColor='gray.700'
+                  >
+                    {memberType}
+                  </Badge>
+                </VStack>
               </HStack>
             </LinkOverlay>
           </Link>
