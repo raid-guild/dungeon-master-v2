@@ -36,12 +36,9 @@ const columns = [
   columnHelper.accessor('token.symbol', {
     id: 'tokenSymbol',
     cell: (info) => (
-      <div>
-        <p>{info.getValue()}</p>
-        <Link href={info.row.getValue('tokenExplorerLink')} target='_blank'>
-          View Token
-        </Link>
-      </div>
+      <Link href={info.row.getValue('tokenExplorerLink')} target='_blank'>
+        {info.getValue()}
+      </Link>
     ),
     header: 'Token',
   }),
@@ -82,6 +79,7 @@ const BalancesTable = ({ data }: BalancesTableProps) => {
   return (
     <TableContainer border='1px solid grey' borderRadius='4px'>
       <DataTable
+        id='balancesDataTable'
         columns={columns}
         data={data}
         sort={[{ id: 'tokenSymbol', desc: false }]}

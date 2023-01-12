@@ -20,7 +20,7 @@ const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
   }
 };
 
-const formatTokenVlue = (info: CellContext<IVaultTransaction, BigNumber>) => {
+const formatTokenValue = (info: CellContext<IVaultTransaction, BigNumber>) => {
   try {
     const n = info.getValue();
     const decimals = Number(info.row.getValue('tokenDecimals'));
@@ -78,7 +78,7 @@ const columns = [
     cell: (info) => (
       <div>
         <p>{formatTokenAmount(info)}</p>
-        <p>{formatTokenVlue(info)}</p>
+        <p>{formatTokenValue(info)}</p>
       </div>
     ),
     header: 'Amount',
@@ -88,12 +88,18 @@ const columns = [
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('balance', {
-    cell: (info) => (
-      <div>
-        <p>{formatTokenAmount(info)}</p>
-        <p>{formatTokenVlue(info)}</p>
-      </div>
-    ),
+    cell: formatTokenAmount,
+    // (info) => {
+    //   const usdValue = formatTokenValue(info);
+    //   return usdValue ? (
+    //     <div>
+    //       <p>{formatTokenAmount(info)}</p>
+    //       <p>{usdValue}</p>
+    //     </div>
+    //   ) : (
+    //     formatTokenAmount(info)
+    //   );
+    // },
     header: 'Balance',
     meta: {
       isNumeric: true,
@@ -111,10 +117,13 @@ const columns = [
   columnHelper.accessor('proposal.shares', {
     cell: (info) => info.getValue().toNumber(),
     header: 'Shares',
-    meta: {
-      isNumeric: true,
-    },
+    meta: { isNumeric: true },
     sortingFn: sortNumeric,
+  }),
+  columnHelper.accessor('proposal.link', {
+    cell: (info) => info.getValue(),
+    meta: { hidden: true },
+    header: 'Proposal Link',
   }),
   columnHelper.accessor('proposal', {
     cell: (info) => (
@@ -141,7 +150,7 @@ const columns = [
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
   return (
     <TableContainer border='1px solid grey' borderRadius='4px' maxWidth='90vw'>
-      <DataTable columns={columns} data={data} />
+      <DataTable id="transactionsDataTable" columns={columns} data={data} />
     </TableContainer>
   );
 };
