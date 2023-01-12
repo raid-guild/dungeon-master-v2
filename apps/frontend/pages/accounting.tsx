@@ -79,18 +79,21 @@ export const Accounting = () => {
       >
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
-            <Tab>Balances</Tab>
-            <Tab>Transactions</Tab>
+            <Tab>
+              <Heading size='sm'>Balances</Heading>
+            </Tab>
+            <Tab>
+              <Heading size='sm'>Transactions</Heading>
+            </Tab>
           </TabList>
 
           <TabPanels>
             <TabPanel>
               <Flex
-                alignItems='center'
-                justifyContent='space-between'
+                alignItems='right'
+                justifyContent='right'
                 marginBlock='20px'
               >
-                <Heading size='sm'>Balances</Heading>
                 <Button
                   onClick={() => onExportCsv('balances')}
                   size='sm'
@@ -103,11 +106,10 @@ export const Accounting = () => {
             </TabPanel>
             <TabPanel>
               <Flex
-                alignItems='center'
-                justifyContent='space-between'
+                alignItems='right'
+                justifyContent='right'
                 marginBlock='20px'
               >
-                <Heading size='sm'>Transactions</Heading>
                 <Button
                   onClick={() => onExportCsv('transactions')}
                   size='sm'
