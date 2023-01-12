@@ -1,6 +1,6 @@
-import { Heading } from '@raidguild/design-system';
+import { Link, TableContainer } from '@raidguild/design-system';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { ITokenBalanceLineItem } from '../types';
 import { sortNumeric } from '../utils';
 import { DataTable } from './DataTable';
@@ -10,12 +10,12 @@ export interface BalancesTableProps {
 }
 
 const formatTokenAmount = (
-  info: CellContext<ITokenBalanceLineItem, string>
+  info: CellContext<ITokenBalanceLineItem, BigNumber>
 ) => {
   try {
     const n = BigNumber.from(info.getValue());
     const decimals = Number(info.row.getValue('token_decimals'));
-    return n.div(BigNumber.from(10).pow(decimals)).toNumber().toLocaleString();
+    return Number(utils.formatUnits(n, decimals)).toLocaleString();
   } catch (e) {
     console.log(info.row);
     console.error(e);
@@ -26,9 +26,23 @@ const formatTokenAmount = (
 const columnHelper = createColumnHelper<ITokenBalanceLineItem>();
 
 const columns = [
+  columnHelper.accessor('tokenExplorerLink', {
+    cell: (info) => info.getValue(),
+    header: 'Token Link',
+    meta: {
+      hidden: true,
+    },
+  }),
   columnHelper.accessor('token.symbol', {
     id: 'tokenSymbol',
-    cell: (info) => info.getValue(),
+    cell: (info) => (
+      <div>
+        <p>{info.getValue()}</p>
+        <Link href={info.row.getValue('tokenExplorerLink')} target='_blank'>
+          View Token
+        </Link>
+      </div>
+    ),
     header: 'Token',
   }),
   columnHelper.accessor('token.decimals', {
@@ -37,6 +51,22 @@ const columns = [
     meta: {
       hidden: true,
     },
+  }),
+  columnHelper.accessor('inflow.tokenValue', {
+    cell: formatTokenAmount,
+    header: 'Inflow',
+    meta: {
+      isNumeric: true,
+    },
+    sortingFn: sortNumeric,
+  }),
+  columnHelper.accessor('outflow.tokenValue', {
+    cell: formatTokenAmount,
+    header: 'Outflow',
+    meta: {
+      isNumeric: true,
+    },
+    sortingFn: sortNumeric,
   }),
   columnHelper.accessor('tokenBalance', {
     cell: formatTokenAmount,
@@ -50,14 +80,13 @@ const columns = [
 
 const BalancesTable = ({ data }: BalancesTableProps) => {
   return (
-    <>
-      <Heading size='sm'>Balances</Heading>
+    <TableContainer border='1px solid grey' borderRadius='4px'>
       <DataTable
         columns={columns}
         data={data}
         sort={[{ id: 'tokenSymbol', desc: false }]}
       />
-    </>
+    </TableContainer>
   );
 };
 

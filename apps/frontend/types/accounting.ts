@@ -49,45 +49,45 @@ export type IVaultTransaction = {
 
 export type ICalculatedTokenBalances = {
   [tokenAddress: string]: {
-    in: BigNumber
-    out: BigNumber
-    balance: BigNumber
-  }
-}
+    in: BigNumber;
+    out: BigNumber;
+    balance: BigNumber;
+  };
+};
 
 export type IToken = {
-  tokenAddress: string
-  decimals: string
-  symbol: string
-}
+  tokenAddress: string;
+  decimals: string;
+  symbol: string;
+};
 
 export type ITokenBalance = {
-  token: IToken
-  tokenBalance: string
-}
+  token: IToken;
+  tokenBalance: BigNumber;
+};
 
 export type ITokenBalanceLineItem = ITokenBalance & {
-  tokenExplorerLink: string
+  tokenExplorerLink: string;
   inflow: {
-    tokenValue: BigNumber
-  }
+    tokenValue: BigNumber;
+  };
   outflow: {
-    tokenValue: BigNumber
-  }
+    tokenValue: BigNumber;
+  };
   closing: {
-    tokenValue: BigNumber
-  }
-}
+    tokenValue: BigNumber;
+  };
+};
 
 export type ITokenPrice = {
   id: number;
   date: string;
   priceUsd: number;
   symbol: string;
-}
+};
 
 export type IMappedTokenPrice = {
   [key: string]: {
     [key: string]: number;
-  }
-}
+  };
+};

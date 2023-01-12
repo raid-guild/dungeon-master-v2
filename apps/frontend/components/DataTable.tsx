@@ -84,7 +84,11 @@ export function DataTable<Data extends object>({
               return meta?.hidden ? (
                 <></>
               ) : (
-                <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                <Td
+                  key={cell.id}
+                  isNumeric={meta?.isNumeric}
+                  borderBlock='1px solid white'
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Td>
               );
