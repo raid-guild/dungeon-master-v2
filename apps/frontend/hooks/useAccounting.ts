@@ -195,9 +195,13 @@ const formatBalancesAsTransactions = async (
           const epochTimeAtIngressMs =
             Number(molochStatBalance.timestamp) * 1000;
           const date = new Date(epochTimeAtIngressMs);
-          const elapsedDays = Math.floor(
-            (Date.now() - epochTimeAtIngressMs) / MILLISECONDS_PER_DAY
-          );
+          const elapsedDays =
+            balances.net > 0
+              ? Math.floor(
+                  (Date.now() - epochTimeAtIngressMs) / MILLISECONDS_PER_DAY
+                )
+              : undefined;
+
           const proposal = molochStatBalance.proposalDetail;
 
           return {
@@ -211,8 +215,12 @@ const formatBalancesAsTransactions = async (
             counterparty: molochStatBalance.counterpartyAddress,
             proposalId: proposal?.proposalId ?? '',
             proposalLink,
-            proposalShares: proposal?.sharesRequested ? BigNumber.from(proposal.sharesRequested) : undefined,
-            proposalLoot: proposal?.lootRequested ? BigNumber.from(proposal.lootRequested) : undefined,
+            proposalShares: proposal?.sharesRequested
+              ? BigNumber.from(proposal.sharesRequested)
+              : undefined,
+            proposalLoot: proposal?.lootRequested
+              ? BigNumber.from(proposal.lootRequested)
+              : undefined,
             proposalApplicant: proposal?.applicant ?? '',
             proposalTitle,
             ...balances,
