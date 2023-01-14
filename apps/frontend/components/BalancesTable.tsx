@@ -1,32 +1,19 @@
 import { Link, TableContainer } from '@raidguild/design-system';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { BigNumber, utils } from 'ethers';
+import { createColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '../types';
-import { sortNumeric } from '../utils';
+import { formatNumber, minMaxNumberFilter, sortNumeric } from '../utils';
 import { DataTable } from './DataTable';
+import TokenWithUsdValue from './TokenWithUsdValue';
 
-export interface BalancesTableProps {
+interface BalancesTableProps {
   data: ITokenBalanceLineItem[];
 }
-
-const formatTokenAmount = (
-  info: CellContext<ITokenBalanceLineItem, BigNumber>
-) => {
-  try {
-    const n = BigNumber.from(info.getValue());
-    const decimals = Number(info.row.getValue('token_decimals'));
-    return Number(utils.formatUnits(n, decimals)).toLocaleString();
-  } catch (e) {
-    console.log(info.row);
-    console.error(e);
-    return info.getValue().toString();
-  }
-};
 
 const columnHelper = createColumnHelper<ITokenBalanceLineItem>();
 
 const columns = [
   columnHelper.accessor('tokenExplorerLink', {
+    id: 'tokenExplorerLink',
     cell: (info) => info.getValue(),
     header: 'Token Link',
     meta: {
@@ -37,40 +24,49 @@ const columns = [
     id: 'tokenSymbol',
     cell: (info) => (
       <Link href={info.row.getValue('tokenExplorerLink')} target='_blank'>
-        {info.getValue()}
+        {/* <Tooltip label='view token'> */}
+          {info.getValue()}
+        {/* </Tooltip> */}
       </Link>
     ),
     header: 'Token',
   }),
-  columnHelper.accessor('token.decimals', {
-    cell: (info) => info.getValue(),
-    header: 'Decimals',
-    meta: {
-      hidden: true,
-    },
-  }),
   columnHelper.accessor('inflow.tokenValue', {
-    cell: formatTokenAmount,
+    cell: formatNumber,
     header: 'Inflow',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('outflow.tokenValue', {
-    cell: formatTokenAmount,
+    cell: formatNumber,
     header: 'Outflow',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
-  columnHelper.accessor('tokenBalance', {
-    cell: formatTokenAmount,
+  columnHelper.accessor('priceConversion', {
+    id: 'priceConversion',
+    cell: (info) => info.getValue(),
+    header: 'Conversion',
+    meta: {
+      dataType: 'numeric',
+      hidden: true,
+    },
+    filterFn: minMaxNumberFilter,
+    sortingFn: sortNumeric,
+  }),
+  columnHelper.accessor('closing.tokenValue', {
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Balance',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
 ];

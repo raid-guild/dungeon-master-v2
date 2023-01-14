@@ -1,6 +1,6 @@
 // All credit to @midgerate, @xivanc, @daniel-ivanco, and the DAOHaus team for the original code
 import _ from 'lodash';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   client,
@@ -91,19 +91,28 @@ const formatBalancesAsTransactions = async (
             .getBalance(molochStatBalance.tokenAddress)
             .sub(BigNumber.from(molochStatBalance.balance))
             .abs();
+          const tokenFormattedValue = formatUnits(
+            tokenValue,
+            molochStatBalance.tokenDecimals
+          );
 
           const balances = (() => {
             if (
               molochStatBalance.payment === false &&
               molochStatBalance.tribute === false
             ) {
-              return {
-                in: BigNumber.from(0),
-                out: BigNumber.from(0),
-                net: BigNumber.from(0),
-                balance: calculatedTokenBalances.getBalance(
+              const balance = formatUnits(
+                calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
+                molochStatBalance.tokenDecimals
+              );
+
+              return {
+                in: 0,
+                out: 0,
+                net: 0,
+                balance,
               };
             }
             if (
@@ -114,13 +123,19 @@ const formatBalancesAsTransactions = async (
                 molochStatBalance.tokenAddress,
                 tokenValue
               );
-              return {
-                in: tokenValue,
-                out: BigNumber.from(0),
-                net: tokenValue,
-                balance: calculatedTokenBalances.getBalance(
+
+              const balance = formatUnits(
+                calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
+                molochStatBalance.tokenDecimals
+              );
+
+              return {
+                in: tokenFormattedValue,
+                out: 0,
+                net: tokenFormattedValue,
+                balance,
               };
             }
 
@@ -132,23 +147,34 @@ const formatBalancesAsTransactions = async (
                 molochStatBalance.tokenAddress,
                 tokenValue
               );
-              return {
-                in: BigNumber.from(0),
-                out: tokenValue,
-                net: BigNumber.from(0).sub(tokenValue),
-                balance: calculatedTokenBalances.getBalance(
+
+              const balance = formatUnits(
+                calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
+                molochStatBalance.tokenDecimals
+              );
+
+              return {
+                in: 0,
+                out: tokenFormattedValue,
+                net: -tokenFormattedValue,
+                balance,
               };
             }
 
-            return {
-              in: BigNumber.from(0),
-              out: BigNumber.from(0),
-              net: BigNumber.from(0),
-              balance: calculatedTokenBalances.getBalance(
+            const balance = formatUnits(
+              calculatedTokenBalances.getBalance(
                 molochStatBalance.tokenAddress
               ),
+              molochStatBalance.tokenDecimals
+            );
+
+            return {
+              in: 0,
+              out: 0,
+              net: 0,
+              balance,
             };
           })();
 
@@ -172,6 +198,7 @@ const formatBalancesAsTransactions = async (
           const elapsedDays = Math.floor(
             (Date.now() - epochTimeAtIngressMs) / MILLISECONDS_PER_DAY
           );
+          const proposal = molochStatBalance.proposalDetail;
 
           return {
             date,
@@ -182,25 +209,17 @@ const formatBalancesAsTransactions = async (
             tokenAddress: molochStatBalance.tokenAddress,
             txExplorerLink,
             counterparty: molochStatBalance.counterpartyAddress,
-            proposal: {
-              id: molochStatBalance.proposalDetail?.proposalId ?? '',
-              link: proposalLink,
-              shares: molochStatBalance.proposalDetail?.sharesRequested
-                ? BigNumber.from(
-                    molochStatBalance.proposalDetail.sharesRequested
-                  )
-                : BigNumber.from(0),
-              loot: molochStatBalance.proposalDetail?.lootRequested
-                ? BigNumber.from(molochStatBalance.proposalDetail.lootRequested)
-                : BigNumber.from(0),
-              applicant: molochStatBalance.proposalDetail?.applicant ?? '',
-              title: proposalTitle,
-            },
-            priceConversion: 0,
+            proposalId: proposal?.proposalId ?? '',
+            proposalLink,
+            proposalShares: proposal?.sharesRequested ? BigNumber.from(proposal.sharesRequested) : undefined,
+            proposalLoot: proposal?.lootRequested ? BigNumber.from(proposal.lootRequested) : undefined,
+            proposalApplicant: proposal?.applicant ?? '',
+            proposalTitle,
             ...balances,
           };
         })
       );
+
       return treasuryTransactions;
     };
 
@@ -267,7 +286,7 @@ export const useTransactions = ({ token }) => {
       if (status === 'success') {
         const formattedData = await formatBalancesAsTransactions(data.pages[0]);
         setTransactions(formattedData.transactions || []);
-      }
+      } else console.error('transactions failed with: ', status);
     })();
   }, [data, status]);
 
@@ -281,34 +300,46 @@ export const useTransactions = ({ token }) => {
   };
 };
 
+const formatUnits = (value: BigNumber, decimals: string) =>
+  Number(utils.formatUnits(value, decimals));
+
 const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   molochTokenBalances: ITokenBalance[],
   calculatedTokenBalances: ICalculatedTokenBalances
 ): Promise<ITokenBalanceLineItem[]> => {
   const tokenBalanceLineItems = await Promise.all(
     molochTokenBalances.map(async (molochTokenBalance) => {
-      const tokenValue = BigNumber.from(molochTokenBalance.tokenBalance);
       const tokenExplorerLink = `https://blockscout.com/xdai/mainnet/address/${molochTokenBalance.token.tokenAddress}`;
+      const calculatedTokenBalance =
+        calculatedTokenBalances[molochTokenBalance.token.tokenAddress];
 
       return {
         ...molochTokenBalance,
+        date: new Date(),
+        tokenSymbol: molochTokenBalance.token.symbol,
         tokenExplorerLink,
         inflow: {
-          tokenValue:
-            calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
-              ?.in || BigNumber.from(0),
+          tokenValue: formatUnits(
+            calculatedTokenBalance?.in || BigNumber.from(0),
+            molochTokenBalance.token.decimals
+          ),
         },
         outflow: {
-          tokenValue:
-            calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
-              ?.out || BigNumber.from(0),
+          tokenValue: formatUnits(
+            calculatedTokenBalance?.out || BigNumber.from(0),
+            molochTokenBalance.token.decimals
+          ),
         },
         closing: {
-          tokenValue,
+          tokenValue: formatUnits(
+            molochTokenBalance.tokenBalance,
+            molochTokenBalance.token.decimals
+          ),
         },
       };
     })
   );
+
   return tokenBalanceLineItems;
 };
 

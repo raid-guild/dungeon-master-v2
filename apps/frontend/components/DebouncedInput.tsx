@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useEffect, useState } from 'react';
+import { InputHTMLAttributes, useEffect, useState } from 'react';
 
 // A debounced input react component
 const DebouncedInput = ({

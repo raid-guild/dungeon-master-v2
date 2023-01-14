@@ -20,7 +20,7 @@ import { Flex } from '@raidguild/design-system';
 
 declare module '@tanstack/table-core' {
   interface ColumnMeta<TData extends RowData, TValue> {
-    isNumeric?: boolean;
+    dataType?: 'numeric' | 'datetime' | 'string';
     hidden?: boolean;
   }
 }
@@ -40,6 +40,13 @@ export function DataTable<Data extends object>({
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>(sort);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState(
+    Object.assign(
+      {},
+      ...columns.map((c) => ({ [c.id]: !c.meta?.hidden ?? true }))
+    )
+  );
+
   const table = useReactTable({
     columns,
     data,
@@ -51,10 +58,15 @@ export function DataTable<Data extends object>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnFilters,
+      columnVisibility,
       sorting,
     },
+    // debugTable: true,
+    // debugHeaders: true,
+    // debugColumns: true,
   });
 
   return (
@@ -62,58 +74,52 @@ export function DataTable<Data extends object>({
       <Thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <Tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => {
-              const meta = header.column.columnDef.meta;
-              return meta?.hidden ? (
-                <></>
-              ) : (
-                <Th key={header.id} isNumeric={meta?.isNumeric}>
-                  <Flex
-                    justifyContent='space-between'
-                    verticalAlign='middle'
-                    onClick={header.column.getToggleSortingHandler()}
-                    _hover={{cursor: "pointer"}}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                    {header.column.getIsSorted() ? (
-                      header.column.getIsSorted() === 'desc' ? (
-                        <FiChevronDown aria-label='sorted descending' />
-                      ) : (
-                        <FiChevronUp aria-label='sorted ascending' />
-                      )
-                    ) : null}
-                  </Flex>
-                  {header.column.getCanFilter() ? (
-                    <Box my='1'>
-                      <Filter column={header.column} table={table} />
-                    </Box>
+            {headerGroup.headers.map((header) => (
+              <Th
+                key={header.id}
+                isNumeric={header.column.columnDef.meta?.dataType === 'numeric'}
+              >
+                <Flex
+                  justifyContent='space-between'
+                  verticalAlign='middle'
+                  onClick={header.column.getToggleSortingHandler()}
+                  _hover={{ cursor: 'pointer' }}
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                  {header.column.getIsSorted() ? (
+                    header.column.getIsSorted() === 'desc' ? (
+                      <FiChevronDown aria-label='sorted descending' />
+                    ) : (
+                      <FiChevronUp aria-label='sorted ascending' />
+                    )
                   ) : null}
-                </Th>
-              );
-            })}
+                </Flex>
+                {header.column.getCanFilter() ? (
+                  <Box my='1'>
+                    <Filter column={header.column} table={table} />
+                  </Box>
+                ) : null}
+              </Th>
+            ))}
           </Tr>
         ))}
       </Thead>
       <Tbody>
         {table.getRowModel().rows.map((row) => (
           <Tr key={row.id}>
-            {row.getVisibleCells().map((cell) => {
-              const meta = cell.column.columnDef.meta;
-              return meta?.hidden ? (
-                <></>
-              ) : (
-                <Td
-                  key={cell.id}
-                  isNumeric={meta?.isNumeric}
-                  borderBlock='1px solid white'
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Td>
-              );
-            })}
+            {row.getVisibleCells().map((cell) => (
+              <Td
+                key={cell.id}
+                isNumeric={cell.column.columnDef.meta?.dataType === 'numeric'}
+                borderBlock='1px solid white'
+                overflow='clip'
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Td>
+            ))}
           </Tr>
         ))}
       </Tbody>

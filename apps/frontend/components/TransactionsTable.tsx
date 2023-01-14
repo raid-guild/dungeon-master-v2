@@ -1,40 +1,19 @@
 import { Link, TableContainer } from '@raidguild/design-system';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { BigNumber, utils } from 'ethers';
+import { createColumnHelper } from '@tanstack/react-table';
 import { IVaultTransaction } from '../types';
-import { sortNumeric, truncateAddress } from '../utils';
+import {
+  formatNumber,
+  minMaxDateFilter,
+  minMaxNumberFilter,
+  sortNumeric,
+  truncateAddress,
+} from '../utils';
 import { DataTable } from './DataTable';
+import TokenWithUsdValue from './TokenWithUsdValue';
 
-export interface TransactionsTableProps {
+interface TransactionsTableProps {
   data: IVaultTransaction[];
 }
-
-const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
-  try {
-    const n = info.getValue();
-    const decimals = Number(info.row.getValue('tokenDecimals'));
-    return Number(utils.formatUnits(n, decimals)).toLocaleString();
-  } catch (e) {
-    console.error(e);
-    return info.getValue().toString();
-  }
-};
-
-const formatTokenValue = (info: CellContext<IVaultTransaction, BigNumber>) => {
-  try {
-    const n = info.getValue();
-    const decimals = Number(info.row.getValue('tokenDecimals'));
-    const priceConversion = Number(info.row.getValue('priceConversion'));
-    if (!priceConversion) {
-      return 'Unknown value';
-    }
-    const tokenValue = Number(utils.formatUnits(n, decimals)) * priceConversion;
-    return `$${tokenValue.toLocaleString()}`;
-  } catch (e) {
-    console.error(e);
-    return info.getValue().toString();
-  }
-};
 
 const columnHelper = createColumnHelper<IVaultTransaction>();
 
@@ -42,12 +21,20 @@ const columns = [
   columnHelper.accessor('date', {
     cell: (info) => info.getValue().toLocaleString(),
     header: 'Date',
+    meta: {
+      dataType: 'datetime',
+    },
+    filterFn: minMaxDateFilter,
     sortingFn: 'datetime',
   }),
   columnHelper.accessor('elapsedDays', {
     cell: (info) =>
       info.row.getValue('net') > 0 ? info.getValue() : undefined,
     header: 'Days Held',
+    meta: {
+      dataType: 'numeric',
+    },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('type', {
@@ -59,82 +46,87 @@ const columns = [
     header: 'Token',
   }),
   columnHelper.accessor('tokenDecimals', {
+    id: 'tokenDecimals',
     cell: (info) => info.getValue(),
     header: 'Decimals',
     meta: {
+      dataType: 'numeric',
       hidden: true,
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('priceConversion', {
+    id: 'priceConversion',
     cell: (info) => info.getValue(),
     header: 'Conversion',
     meta: {
+      dataType: 'numeric',
       hidden: true,
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('net', {
-    cell: (info) => (
-      <div>
-        <p>{formatTokenAmount(info)}</p>
-        <p>{formatTokenValue(info)}</p>
-      </div>
-    ),
+    id: 'net',
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Amount',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('balance', {
-    cell: formatTokenAmount,
-    // (info) => {
-    //   const usdValue = formatTokenValue(info);
-    //   return usdValue ? (
-    //     <div>
-    //       <p>{formatTokenAmount(info)}</p>
-    //       <p>{usdValue}</p>
-    //     </div>
-    //   ) : (
-    //     formatTokenAmount(info)
-    //   );
-    // },
+    id: 'balance',
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Balance',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
-  //   columnHelper.accessor('proposal.loot', {
-  //     cell: (info) => info?.getValue()?.toString(),
-  //     header: 'Loot',
-  //     meta: {
-  //       isNumeric: true,
-  //     },
-  //    sortingFn: sortNumeric,
-  //   }),
-  columnHelper.accessor('proposal.shares', {
-    cell: (info) => info.getValue().toNumber(),
+  columnHelper.accessor('proposalLoot', {
+    id: 'proposalLoot',
+    cell: formatNumber,
+    header: 'Loot',
+    meta: {
+      dataType: 'numeric',
+      hidden: true,
+    },
+    filterFn: minMaxNumberFilter,
+    sortingFn: sortNumeric,
+  }),
+  columnHelper.accessor('proposalShares', {
+    id: 'proposalShares',
+    cell: formatNumber,
     header: 'Shares',
-    meta: { isNumeric: true },
+    meta: {
+      dataType: 'numeric',
+    },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
-  columnHelper.accessor('proposal.link', {
+  columnHelper.accessor('proposalLink', {
+    id: 'proposalLink',
     cell: (info) => info.getValue(),
     meta: { hidden: true },
-    header: 'Proposal Link',
   }),
-  columnHelper.accessor('proposal', {
+  columnHelper.accessor('proposalTitle', {
     cell: (info) => (
-      <Link href={info.getValue().link} target='_blank'>
-        {info.getValue().title}
+      <Link href={info.row.getValue('proposalLink')} target='_blank'>
+        {info.getValue()}
       </Link>
     ),
     header: 'Proposal',
   }),
   columnHelper.accessor('counterparty', {
-    cell: (info) => truncateAddress(info.getValue()),
+    cell: (info) => (
+      // <Tooltip label={info.getValue()}>
+      <>{truncateAddress(info.getValue())}</>
+      // </Tooltip>
+    ),
     header: 'Counterparty',
   }),
   columnHelper.accessor('txExplorerLink', {
@@ -149,8 +141,13 @@ const columns = [
 
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
   return (
-    <TableContainer border='1px solid grey' borderRadius='4px' maxWidth='90vw'>
-      <DataTable id="transactionsDataTable" columns={columns} data={data} />
+    <TableContainer
+      border='1px solid grey'
+      borderRadius='4px'
+      maxWidth='90vw'
+      maxHeight='60vh'
+    >
+      <DataTable id='transactionsDataTable' columns={columns} data={data} />
     </TableContainer>
   );
 };
