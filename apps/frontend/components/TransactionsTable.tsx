@@ -134,7 +134,8 @@ const columns = [
         view
       </Link>
     ),
-    header: 'Tx',
+    enableColumnFilter: false,
+    header: 'Tx'
   }),
 ];
 
@@ -144,9 +145,8 @@ const TransactionsTable = ({ data }: TransactionsTableProps) => {
       border='1px solid grey'
       borderRadius='4px'
       maxWidth='90vw'
-      maxHeight='60vh'
     >
-      <DataTable id='transactionsDataTable' columns={columns} data={data} />
+      <DataTable id='transactionsDataTable' columns={columns} data={data} size="sm" />
     </TableContainer>
   );
 };

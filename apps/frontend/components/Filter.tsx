@@ -46,35 +46,32 @@ const Filter = <TData, TValue>({
     const minMax = column.getFacetedMinMaxValues();
 
     return (
-      <div>
-        <div className='flex space-x-2'>
-          <DebouncedInput
-            type='number'
-            step='any'
-            min={Number(minMax?.[0] ?? '')}
-            max={Number(minMax?.[1] ?? '')}
-            value={(columnFilterValue as [number, number])?.[0] ?? ''}
-            onChange={handleMinChange}
-            placeholder={`min ${
-              minMax?.[0] ? minMax?.[0].toLocaleString() : ''
-            }`}
-            className='w-12 border shadow rounded'
-          />
-          <DebouncedInput
-            type='number'
-            step='any'
-            min={Number(minMax?.[0] ?? '')}
-            max={Number(minMax?.[1] ?? '')}
-            value={(columnFilterValue as [number, number])?.[1] ?? ''}
-            onChange={handleMaxChange}
-            placeholder={`max ${
-              minMax?.[1] ? minMax?.[1].toLocaleString() : ''
-            }`}
-            className='w-12 border shadow rounded'
-          />
-        </div>
-        <div className='h-1' />
-      </div>
+      <Flex direction='column'>
+        <DebouncedInput
+          type='number'
+          step='any'
+          min={Number(minMax?.[0] ?? '')}
+          max={Number(minMax?.[1] ?? '')}
+          value={(columnFilterValue as [number, number])?.[0] ?? ''}
+          onChange={handleMinChange}
+          placeholder={`min ${minMax?.[0] ? minMax?.[0].toLocaleString() : ''}`}
+          size='sm'
+          fontFamily="mono"
+          fontSize="xs"                
+        />
+        <DebouncedInput
+          type='number'
+          step='any'
+          min={Number(minMax?.[0] ?? '')}
+          max={Number(minMax?.[1] ?? '')}
+          value={(columnFilterValue as [number, number])?.[1] ?? ''}
+          onChange={handleMaxChange}
+          placeholder={`max ${minMax?.[1] ? minMax?.[1].toLocaleString() : ''}`}
+          size='sm'
+          fontFamily="mono"
+          fontSize="xs"                
+        />
+      </Flex>
     );
   }
 
@@ -83,7 +80,7 @@ const Filter = <TData, TValue>({
     const max = sortedUniqueValues[sortedUniqueValues.length - 1] as Date;
 
     return (
-      <Flex>
+      <Flex direction='column'>
         <DebouncedInput
           type='date'
           step='any'
@@ -92,7 +89,9 @@ const Filter = <TData, TValue>({
           value={(columnFilterValue as [string, string])?.[0] ?? ''}
           onChange={handleMinChange}
           placeholder={`min ${min ? min.toLocaleDateString() : ''}`}
-          className='border shadow rounded'
+          size='sm'
+          fontFamily="mono"
+          fontSize="xs"                
         />
         <DebouncedInput
           type='date'
@@ -102,14 +101,16 @@ const Filter = <TData, TValue>({
           value={(columnFilterValue as [string, string])?.[1]}
           onChange={handleMaxChange}
           placeholder={`max ${max ? max.toLocaleDateString() : ''}`}
-          className='border shadow rounded'
+          size='sm'
+          fontFamily="mono"
+          fontSize="xs"                 
         />
       </Flex>
     );
   }
 
   return (
-    <>
+    <Flex>
       <datalist id={column.id + 'list'}>
         {sortedUniqueValues.slice(0, 5000).map((value?: string | number) => {
           return value ? (
@@ -126,9 +127,11 @@ const Filter = <TData, TValue>({
         placeholder={`search... (${column.getFacetedUniqueValues().size})`}
         className='border shadow rounded'
         list={column.id + 'list'}
+        size='sm'
+        fontFamily="mono"
+        fontSize="xs"                 
       />
-      <div className='h-1' />
-    </>
+    </Flex>
   );
 };
 

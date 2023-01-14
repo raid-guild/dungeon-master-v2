@@ -62,9 +62,9 @@ export const minMaxNumberFilter = <TRow>(
   // Store the ranking info
   addMeta(itemRank);
 
-  if (columnId === 'elapsedDays') {
-    console.log("minMaxNumberFilter", min, max, value, itemRank.passed);
-  }
+  // if (columnId === 'elapsedDays') {
+  //   console.log("minMaxNumberFilter", min, max, value, itemRank.passed);
+  // }
 
   // Return if the item should be filtered in/out
   return itemRank.passed;

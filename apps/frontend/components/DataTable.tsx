@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, Box } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, Box, ThemingProps } from '@chakra-ui/react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {
   useReactTable,
@@ -25,7 +25,7 @@ declare module '@tanstack/table-core' {
   }
 }
 
-export type DataTableProps<Data extends object> = {
+export type DataTableProps<Data extends object> = ThemingProps & {
   id: string;
   data: Data[];
   columns: ColumnDef<Data, unknown>[];
@@ -37,6 +37,7 @@ export function DataTable<Data extends object>({
   data,
   columns,
   sort = [],
+  ...props
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>(sort);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -70,7 +71,7 @@ export function DataTable<Data extends object>({
   });
 
   return (
-    <Table id={id}>
+    <Table id={id} {...props}>
       <Thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <Tr key={headerGroup.id}>
@@ -78,6 +79,8 @@ export function DataTable<Data extends object>({
               <Th
                 key={header.id}
                 isNumeric={header.column.columnDef.meta?.dataType === 'numeric'}
+                verticalAlign="top"
+                borderBlock='1px solid gray'
               >
                 <Flex
                   justifyContent='space-between'
@@ -114,8 +117,8 @@ export function DataTable<Data extends object>({
               <Td
                 key={cell.id}
                 isNumeric={cell.column.columnDef.meta?.dataType === 'numeric'}
-                borderBlock='1px solid white'
-                overflow='clip'
+                borderBlock='1px solid gray'
+                fontFamily="mono"    
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Td>
