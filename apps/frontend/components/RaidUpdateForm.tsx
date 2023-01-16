@@ -31,8 +31,12 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   raid,
 }: RaidUpdateFormProps) => {
   const [sending, setSending] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(add(new Date(), { weeks: 1 }));
+  const [startDate, setStartDate] = useState(
+    new Date(raid?.startDate) ?? new Date()
+  );
+  const [endDate, setEndDate] = useState(
+    new Date(raid?.endDate) ?? add(new Date(), { weeks: 1 })
+  );
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
@@ -54,7 +58,8 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     await updateRaidStatus({
       raid_updates: {
         name: values.raidName ?? raid.raidName,
-        category_key: values.raidCategory ?? raid.raidCategory.raidCategory,
+        category_key:
+          values.raidCategory.value ?? raid.raidCategory.raidCategory,
         status_key: raid.status ?? raid.status,
         start_date: values.startDate ?? raid.startDate,
         end_date: values.endDate ?? raid.endDate,
@@ -64,51 +69,52 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     setSending(false);
   }
 
+  const selectedCategory = RAID_CATEGORY_OPTIONS.find(
+    (v) => v.value === raid?.raidCategory.raidCategory
+  );
+
   const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
-    <Button onClick={onClick} ref={ref} variant="outline">
+    <Button onClick={onClick} ref={ref} variant='outline'>
       {value}
     </Button>
   ));
+  console.log(raid);
 
   return (
-    <Box as="section">
+    <Box as='section'>
       <Box
-        bg="gray.800"
-        shadow="lg"
+        bg='gray.800'
+        shadow='lg'
         maxW={{ base: 'xl', md: '3xl' }}
-        marginX="auto"
+        marginX='auto'
         paddingX={{ base: '6', md: '8' }}
-        paddingY="6"
-        rounded="lg"
+        paddingY='6'
+        rounded='lg'
       >
-        <Box maxW="md" marginX="auto">
-          <Box marginY="6">
+        <Box maxW='md' marginX='auto'>
+          <Box marginY='6'>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
-                  id="raidName"
+                  id='raidName'
                   defaultValue={raid?.name ? raid?.name : ''}
-                  aria-label="Enter the Raid name"
-                  placeholder="Enter the Raid name"
-                  rounded="base"
-                  label="Raid Name"
+                  aria-label='Enter the Raid name'
+                  placeholder='Enter the Raid name'
+                  rounded='base'
+                  label='Raid Name'
                   localForm={localForm}
                   {...register('raidName')}
                 />
                 <FormControl>
-                  <FormLabel color="raid">Raid Category</FormLabel>
+                  <FormLabel color='raid'>Raid Category</FormLabel>
                   <Controller
-                    name="raidCategory"
-                    defaultValue={
-                      raid?.raidCategory.raidCategory
-                        ? raid?.raidCategory.raidCategory
-                        : ''
-                    }
+                    name='raidCategory'
+                    defaultValue={selectedCategory}
                     control={control}
                     render={({ field }) => (
                       <Select
                         {...field}
-                        name="raidCategory"
+                        name='raidCategory'
                         options={RAID_CATEGORY_OPTIONS}
                         localForm={localForm}
                       />
@@ -117,15 +123,15 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 </FormControl>
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
-                  alignItems="center"
-                  justifyContent="center"
+                  alignItems='center'
+                  justifyContent='center'
                 >
                   <FormControl>
-                    <FormLabel color="raid">Raid Start Date (UTC)</FormLabel>
+                    <FormLabel color='raid'>Raid Start Date (UTC)</FormLabel>
                     <DatePicker
                       isRequired
                       {...register('startDate', { valueAsDate: true })}
-                      defaultValue={raid.startDate ? raid.startDate : startDate}
+                      value={startDate}
                       selected={startDate}
                       onChange={(date) => {
                         setStartDate(date);
@@ -135,11 +141,11 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel color="raid">Raid End Date (UTC)</FormLabel>
+                    <FormLabel color='raid'>Raid End Date (UTC)</FormLabel>
                     <DatePicker
                       isRequired
                       {...register('endDate', { valueAsDate: true })}
-                      defaultValue={raid?.endDate ? raid?.endDate : endDate}
+                      value={endDate}
                       selected={endDate}
                       onChange={(date) => {
                         setEndDate(date);
@@ -151,30 +157,30 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 </Flex>
                 {raid?.invoiceAddress !== null && (
                   <Input
-                    id="invoiceAddress"
+                    id='invoiceAddress'
                     isReadOnly
                     defaultValue={
                       raid?.invoiceAddress ? raid?.invoiceAddress : ''
                     }
-                    aria-label="Enter the Invoice address"
-                    placeholder="Enter the Invoice address"
-                    rounded="base"
-                    label="Invoice Address"
+                    aria-label='Enter the Invoice address'
+                    placeholder='Enter the Invoice address'
+                    rounded='base'
+                    label='Invoice Address'
                     localForm={localForm}
                     {...register('invoiceAddress')}
                   />
                 )}
                 <Button
                   isLoading={isSubmitting || sending}
-                  type="submit"
-                  width="full"
-                  color="raid"
-                  borderColor="raid"
-                  border="1px solid"
-                  size="md"
-                  textTransform="uppercase"
-                  fontSize="sm"
-                  fontWeight="bold"
+                  type='submit'
+                  width='full'
+                  color='raid'
+                  borderColor='raid'
+                  border='1px solid'
+                  size='md'
+                  textTransform='uppercase'
+                  fontSize='sm'
+                  fontWeight='bold'
                 >
                   Update Raid
                 </Button>

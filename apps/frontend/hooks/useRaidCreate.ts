@@ -24,15 +24,13 @@ const useRaidCreate = ({ token }) => {
     {
       onSuccess: (data) => {
         console.log(data);
+        const raid = camelize(_.get(data, 'insert_raids_one'));
 
-        queryClient.invalidateQueries(['raidDetail', _.get(data, 'id')]);
+        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]);
         queryClient.invalidateQueries(['raidList']);
-        queryClient.setQueryData(
-          ['raidDetail', _.get(data, 'id')],
-          camelize(data)
-        );
+        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
 
-        router.push(`/raids/${_.get(data, 'id')}`);
+        router.push(`/raids/${_.get(raid, 'id')}`);
 
         setTimeout(() => {
           toast.success({

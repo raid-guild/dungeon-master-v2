@@ -13,6 +13,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { HiSearch } from 'react-icons/hi';
 import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
+import { useOverlay } from '../contexts/OverlayContext';
 
 const links = [
   { href: '/raids', label: 'Raids' },
@@ -28,12 +29,13 @@ interface NavItem {
 
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
+  const { setCommandPallet: setOpen } = useOverlay();
 
   return (
     <Box>
-      <Flex justify="space-between" p={8}>
+      <Flex justify='space-between' p={8}>
         <HStack>
-          <Link href="/" mr={6}>
+          <Link href='/' mr={6}>
             <Heading>🏰</Heading>
           </Link>
           <Flex display={{ base: 'none', md: 'flex' }}>
@@ -41,11 +43,16 @@ const Navbar = () => {
           </Flex>
         </HStack>
 
-        <Flex align="center">
-          <Flex cursor="pointer" mx={6} display={{ base: 'none', md: 'flex' }}>
+        <Flex align='center'>
+          <Flex
+            cursor='pointer'
+            mx={6}
+            display={{ base: 'none', md: 'flex' }}
+            onClick={() => setOpen(true)}
+          >
             <Tooltip
               label={'press CMD + K to search'}
-              placement="bottom"
+              placement='bottom'
               hasArrow
             >
               <span>
@@ -84,10 +91,10 @@ const Navbar = () => {
 
 const DesktopNav = () => {
   return (
-    <HStack align="center" spacing={4}>
+    <HStack align='center' spacing={4}>
       {_.map(links, ({ href, label }) => (
         <Link key={href} href={href}>
-          <Heading size="sm">{label}</Heading>
+          <Heading size='sm'>{label}</Heading>
         </Link>
       ))}
     </HStack>
@@ -109,7 +116,7 @@ const MobileNavItem = ({ href, label }: NavItem) => {
   return (
     <Stack spacing={4}>
       <Link key={href} href={href} py={2}>
-        <Heading size="sm">{label}</Heading>
+        <Heading size='sm'>{label}</Heading>
       </Link>
     </Stack>
   );

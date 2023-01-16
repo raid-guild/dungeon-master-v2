@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { HStack, Button, Text, Stack, Modal } from '@raidguild/design-system';
+import { HStack, Button, Text, Stack } from '@raidguild/design-system';
 import { IRaid } from '../utils';
 import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
@@ -31,18 +31,18 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
   return (
     <Stack spacing={5}>
       <HStack>
-        <Button onClick={handleShowStatusModal} w="75%">
+        <Button onClick={handleShowStatusModal} w='75%'>
           {_.get(raid, 'raidStatus.raidStatus')}
         </Button>
-        <Button variant="outline" onClick={handleShowRaidUpdatFormModal}>
+        <Button variant='outline' onClick={handleShowRaidUpdatFormModal}>
           Edit
         </Button>
       </HStack>
 
       <ModalWrapper
-        name="raidStatus"
-        size="sm"
-        title="Update Raid Status"
+        name='raidStatus'
+        size='sm'
+        title='Update Raid Status'
         localOverlay={localOverlay}
         content={
           <StatusUpdateForm
@@ -54,9 +54,9 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
         }
       />
       <ModalWrapper
-        name="raidForm"
-        size="xl"
-        title="Update Raid"
+        name='raidForm'
+        size='xl'
+        title='Update Raid'
         localOverlay={localOverlay}
         content={
           <RaidUpdateForm

@@ -115,6 +115,8 @@ export const RAID_DETAIL_QUERY = gql`
       raids_roles_required {
         role
       }
+      start_date
+      end_date
       cleric {
         eth_address
         name
