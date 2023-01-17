@@ -1,4 +1,4 @@
-import { Link, TableContainer, Tooltip } from '@raidguild/design-system';
+import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IVaultTransaction } from '../types';
 import {
@@ -28,7 +28,7 @@ const columns = [
     sortingFn: 'datetime',
   }),
   columnHelper.accessor('elapsedDays', {
-    cell: (info) => info.getValue(),      
+    cell: (info) => info.getValue(),
     header: 'Days Held',
     meta: {
       dataType: 'numeric',
@@ -142,19 +142,18 @@ const columns = [
       </Link>
     ),
     enableColumnFilter: false,
-    header: 'Tx'
+    header: 'Tx',
   }),
 ];
 
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
   return (
-    <TableContainer
-      border='1px solid grey'
-      borderRadius='4px'
-      maxWidth='90vw'
-    >
-      <DataTable id='transactionsDataTable' columns={columns} data={data} size="sm" />
-    </TableContainer>
+    <DataTable
+      id='transactionsDataTable'
+      columns={columns}
+      data={data}
+      size='sm'
+    />
   );
 };
 
