@@ -32,7 +32,10 @@ export const Accounting = () => {
   const { data: transactions, error: transactionsError } = useTransactions({
     token,
   });
-  const { data: balances, error: balancesError } = useBalances({ token });
+  const { data: balances, error: balancesError } = useBalances({
+    token,
+    startFetch: transactions.length > 0 ? true : false,
+  });
   const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({
     token,
   });
@@ -105,8 +108,8 @@ export const Accounting = () => {
       transactionsWithPrices.map((t) => {
         const ethAddress = t.proposalApplicant.toLowerCase();
         const m = members[ethAddress];
-        if (ethAddress === '0xccc9d33567912c9d4446ad2298e74084c0e356ee')
-          console.log("ethAddress:", ethAddress, "member:", m);
+        // if (ethAddress === '0xccc9d33567912c9d4446ad2298e74084c0e356ee')
+        //   console.log('ethAddress:', ethAddress, 'member:', m);
 
         return {
           ...t,
@@ -132,10 +135,14 @@ export const Accounting = () => {
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
             <Tab>
-              <Heading size='sm'>Balances</Heading>
+              <Heading size='sm' variant='noShadow'>
+                Balances
+              </Heading>
             </Tab>
             <Tab>
-              <Heading size='sm'>Transactions</Heading>
+              <Heading size='sm' variant='noShadow'>
+                Transactions
+              </Heading>
             </Tab>
           </TabList>
 

@@ -294,7 +294,7 @@ export const useTransactions = ({ token }) => {
       if (status === 'success') {
         const formattedData = await formatBalancesAsTransactions(data.pages[0]);
         setTransactions(formattedData.transactions || []);
-      } else console.error('transactions failed with: ', status);
+      } else console.error('transactions fetching failed with: ', status);
     })();
   }, [data, status]);
 
@@ -351,7 +351,7 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   return tokenBalanceLineItems;
 };
 
-export const useBalances = ({ token }) => {
+export const useBalances = ({ token, startFetch }) => {
   const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([]);
   const limit = 1000;
 
@@ -388,16 +388,16 @@ export const useBalances = ({ token }) => {
 
   useEffect(() => {
     (async () => {
-      if (status === 'success') {
+      if (status === 'success' && startFetch) {
         const tokenBalances =
           await mapMolochTokenBalancesToTokenBalanceLineItem(
             data.pages[0]?.tokenBalances || [],
             calculatedTokenBalances.getBalances()
           );
         setBalances(tokenBalances);
-      }
+      } else console.error('balances fetching failed with: ', status);
     })();
-  }, [data, status]);
+  }, [data, startFetch, status]);
 
   return {
     status,
@@ -455,7 +455,7 @@ export const useTokenPrices = ({ token }) => {
           }
         });
         setTokenPrices(mappedPrices);
-      }
+      } else console.error('token prices fetching failed with: ', status);
     })();
   }, [data, status]);
 

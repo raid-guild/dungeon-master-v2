@@ -43,11 +43,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <RGThemeProvider>
       <DefaultSeo
-        titleTemplate="%s | Dungeon Master v1.5"
-        title="Dungeon Master"
-        defaultTitle="Raid Guild | Dungeon Master v1.5"
-        description="Adventurers, come and gather around the campfire."
-        canonical="https://site-url"
+        titleTemplate='%s | Dungeon Master v1.5'
+        title='Dungeon Master'
+        defaultTitle='Raid Guild | Dungeon Master v1.5'
+        description='Adventurers, come and gather around the campfire.'
+        canonical='https://site-url'
         openGraph={{
           type: 'website',
           locale: 'en_IE',
@@ -70,7 +70,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         <SessionProvider
           session={pageProps.session}
           refetchInterval={8 * 60 * 1000}
-          refetchOnWindowFocus={true}
+          refetchOnWindowFocus={false}
         >
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>
