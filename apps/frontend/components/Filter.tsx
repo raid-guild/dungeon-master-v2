@@ -106,7 +106,6 @@ const Filter = <TData, TValue>({ column }: FilterProps<TData, TValue>) => {
   }
 
   if (columnDataType === 'enum') {
-    console.log(column.id, ': ', columnDataType, sortedUniqueValues.join(', '));
     return (
       <Flex>
         <datalist id={column.id + 'list'}>

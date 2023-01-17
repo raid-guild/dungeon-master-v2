@@ -5,8 +5,7 @@ type DebouncedInputProps<T extends string | number> = {
   value: T;
   onChange: (value: T) => void;
   debounce?: number;
-} & InputProps &
-  Omit<InputProps, 'onChange'>;
+} & Omit<InputProps, 'onChange'>;
 
 // A debounced input react component
 const DebouncedInput = <T extends string | number>({

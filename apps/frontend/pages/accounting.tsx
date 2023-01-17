@@ -31,7 +31,10 @@ export const Accounting = () => {
   const { data: transactions, error: transactionsError } = useTransactions({
     token,
   });
-  const { data: balances, error: balancesError } = useBalances({ token });
+  const { data: balances, error: balancesError } = useBalances({
+    token,
+    startFetch: transactions.length > 0 ? true : false,
+  });
   const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({
     token,
   });
@@ -100,10 +103,14 @@ export const Accounting = () => {
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
             <Tab>
-              <Heading size='sm'>Balances</Heading>
+              <Heading size='sm' variant='noShadow'>
+                Balances
+              </Heading>
             </Tab>
             <Tab>
-              <Heading size='sm'>Transactions</Heading>
+              <Heading size='sm' variant='noShadow'>
+                Transactions
+              </Heading>
             </Tab>
           </TabList>
 
