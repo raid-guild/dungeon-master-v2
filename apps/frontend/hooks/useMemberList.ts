@@ -5,12 +5,11 @@ import { camelize, IMember, SIDEBAR_ACTION_STATES } from '../utils';
 
 const useMemberList = ({
   token,
-  memberRolesFilterKey,
-  memberStatusFilterKey,
-  memberSortKey,
+  memberRolesFilterKey = 'ALL',
+  memberStatusFilterKey = 'ALL',
+  memberSortKey = 'name',
+  limit = 15,
 }) => {
-  const limit = 15;
-
   const where = {
     ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
       memberRolesFilterKey !== 'ALL' && {
@@ -32,12 +31,15 @@ const useMemberList = ({
     if (!token) return;
     // TODO handle filters
 
-    const result = await client({ token }).request(MEMBER_LIST_QUERY, {
+    const params = {
       where,
       limit,
       offset: pageParam * limit,
       order_by: orderBy,
-    });
+    };
+    const result = await client({ token }).request(MEMBER_LIST_QUERY, params);
+
+    console.log('[members query] params:', params, 'result:', result);
 
     return camelize(_.get(result, 'members'));
   };

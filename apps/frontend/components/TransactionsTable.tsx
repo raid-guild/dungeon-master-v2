@@ -28,7 +28,7 @@ const columns = [
     sortingFn: 'datetime',
   }),
   columnHelper.accessor('elapsedDays', {
-    cell: (info) => info.getValue(),      
+    cell: (info) => info.getValue(),
     header: 'Days Held',
     meta: {
       dataType: 'numeric',
@@ -127,6 +127,23 @@ const columns = [
     ),
     header: 'Proposal',
   }),
+  columnHelper.accessor('memberLink', {
+    id: 'memberLink',
+    cell: (info) => info.getValue(),
+    enableColumnFilter: false,
+    meta: { hidden: true },
+  }),
+  columnHelper.accessor('memberName', {
+    cell: (info) =>
+      info.row.getValue('memberLink') ? (
+        <Link href={info.row.getValue('memberLink')} target='_blank'>
+          {info.getValue()}
+        </Link>
+      ) : (
+        <>{info.getValue()}</>
+      ),
+    header: 'Member',
+  }),
   columnHelper.accessor('counterparty', {
     cell: (info) => (
       <Tooltip label={info.getValue()}>
@@ -142,18 +159,19 @@ const columns = [
       </Link>
     ),
     enableColumnFilter: false,
-    header: 'Tx'
+    header: 'Tx',
   }),
 ];
 
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
   return (
-    <TableContainer
-      border='1px solid grey'
-      borderRadius='4px'
-      maxWidth='90vw'
-    >
-      <DataTable id='transactionsDataTable' columns={columns} data={data} size="sm" />
+    <TableContainer border='1px solid grey' borderRadius='4px' maxWidth='90vw'>
+      <DataTable
+        id='transactionsDataTable'
+        columns={columns}
+        data={data}
+        size='sm'
+      />
     </TableContainer>
   );
 };

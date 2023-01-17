@@ -16,12 +16,13 @@ import {
   useBalances,
   useTokenPrices,
 } from '../hooks/useAccounting';
+import useMemberList from '../hooks/useMemberList';
 import Papa from 'papaparse';
 import _ from 'lodash';
 import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
 import { useCallback, useMemo } from 'react';
-import { ITokenBalanceLineItem, IVaultTransaction } from '../types';
+import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
@@ -35,6 +36,21 @@ export const Accounting = () => {
   const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({
     token,
   });
+  const { data: memberData } = useMemberList({
+    token,
+    limit: 1000,
+  });
+  const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
+  const members = useMemo(
+    () =>
+      Object.assign(
+        new Map<string, IMember>(),
+        memberArray.map((m: IMember) => ({ [m.ethAddress.toLowerCase()]: m }))
+      ),
+    [memberArray]
+  );
+
+  // console.log('members', memberArray, members);
 
   const onExportCsv = (type: 'transactions' | 'balances') => {
     let csvString = Papa.unparse(transactions);
@@ -84,15 +100,31 @@ export const Accounting = () => {
     [transactions, withPrices]
   );
 
-  // console.log(transactions, transactionsWithPrices, transactionsError);
+  const transactionsWithPricesAndMembers = useMemo(
+    () =>
+      transactionsWithPrices.map((t) => {
+        const ethAddress = t.proposalApplicant.toLowerCase();
+        const m = members[ethAddress];
+        if (ethAddress === '0xccc9d33567912c9d4446ad2298e74084c0e356ee')
+          console.log("ethAddress:", ethAddress, "member:", m);
+
+        return {
+          ...t,
+          // memberLink: m.,
+          memberName: m?.name,
+          memberEnsName: m?.ensName,
+        };
+      }),
+    [transactionsWithPrices, members]
+  );
 
   return (
     <>
       <NextSeo title='Accounting' />
 
       <SiteLayout
-        isLoading={!(transactions && balances)}
-        data={[...transactions, ...balances]}
+        isLoading={!(transactionsWithPricesAndMembers && balances)}
+        data={[...transactionsWithPricesAndMembers, ...balances]}
         subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase='No transactions'
         error={transactionsError || balancesError || tokenPricesError}
@@ -138,7 +170,7 @@ export const Accounting = () => {
                   Export Transactions
                 </Button>
               </Flex>
-              <TransactionsTable data={transactionsWithPrices} />
+              <TransactionsTable data={transactionsWithPricesAndMembers} />
             </TabPanel>
           </TabPanels>
         </Tabs>

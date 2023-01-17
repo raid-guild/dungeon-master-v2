@@ -43,6 +43,9 @@ export type IVaultTransaction = {
   proposalLoot?: BigNumber; // requested in case of proposal, ragequitted in case of rage quit
   proposalTitle?: string; // title of the proposal in details
   proposalApplicant?: string; // submitted by address
+  memberName?: string;
+  memberLink?: string;
+  escrowLink?: string;
 };
 
 export type ICalculatedTokenBalances = {
