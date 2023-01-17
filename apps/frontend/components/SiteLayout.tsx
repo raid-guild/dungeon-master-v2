@@ -100,7 +100,9 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     return (
       <GeneralLayout>
         <Flex w='100%' justify='center' pt={40}>
-          <Heading size='md'>Error loading data: {error}</Heading>
+          <Heading size='md'>
+            <>Error loading data: {error}</>
+          </Heading>
         </Flex>
       </GeneralLayout>
     );

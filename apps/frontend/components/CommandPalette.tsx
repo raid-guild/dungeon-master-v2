@@ -12,10 +12,11 @@ import 'react-cmdk/dist/cmdk.css';
 
 import useSearchResults from '../hooks/useSearchResults';
 import ChakraNextLink from './ChakraNextLink';
+import { useOverlay } from '../contexts/OverlayContext';
 
 const CommandPaletteInternalLink = ({ href, children }) => (
   <ChakraNextLink href={href}>
-    <Flex w="100%" justify="space-between" p={2}>
+    <Flex w='100%' justify='space-between' p={2}>
       {children}
     </Flex>
   </ChakraNextLink>
@@ -24,14 +25,14 @@ const CommandPaletteInternalLink = ({ href, children }) => (
 let timeout = null;
 
 const CommandPalette = () => {
-  const [page, setPage] = useState<'root' | 'projects'>('root');
-  const [open, setOpen] = useState<boolean>(false);
+  const [page] = useState<'root' | 'projects'>('root');
+  const { commandPallet: isOpen, setCommandPallet: setOpen } = useOverlay();
   const [search, setSearch] = useState('');
   const [serverSearch, setServerSearch] = useState<string | null>(null);
   const [localResults, setLocalResults] = useState<JsonStructure>(null);
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: searchData, isLoading } = useSearchResults({
+  const { data: searchData } = useSearchResults({
     token,
     search: serverSearch,
   });
@@ -141,10 +142,10 @@ const CommandPalette = () => {
       onChangeSearch={setSearchTimeout}
       onChangeOpen={handleClose}
       search={search}
-      isOpen={open}
+      isOpen={isOpen}
       page={page}
     >
-      <CmdkCommandPalette.Page id="root">
+      <CmdkCommandPalette.Page id='root'>
         {filteredItems.length ? (
           filteredItems.map((list) => (
             <CmdkCommandPalette.List key={list.id} heading={list.heading}>
@@ -180,13 +181,13 @@ const CommandPalette = () => {
             </CmdkCommandPalette.List>
           ))
         ) : (
-          <Flex justify="center" p={4}>
+          <Flex justify='center' p={4}>
             <Spinner />
           </Flex>
         )}
       </CmdkCommandPalette.Page>
 
-      <CmdkCommandPalette.Page id="projects">
+      <CmdkCommandPalette.Page id='projects'>
         {/* Projects page */}
       </CmdkCommandPalette.Page>
     </CmdkCommandPalette>
