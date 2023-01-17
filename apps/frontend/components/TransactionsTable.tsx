@@ -1,40 +1,19 @@
-import { Link, TableContainer } from '@raidguild/design-system';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { BigNumber, utils } from 'ethers';
+import { Link, TableContainer, Tooltip } from '@raidguild/design-system';
+import { createColumnHelper } from '@tanstack/react-table';
 import { IVaultTransaction } from '../types';
-import { sortNumeric, truncateAddress } from '../utils';
+import {
+  formatNumber,
+  minMaxDateFilter,
+  minMaxNumberFilter,
+  sortNumeric,
+  truncateAddress,
+} from '../utils';
 import { DataTable } from './DataTable';
+import TokenWithUsdValue from './TokenWithUsdValue';
 
-export interface TransactionsTableProps {
+interface TransactionsTableProps {
   data: IVaultTransaction[];
 }
-
-const formatTokenAmount = (info: CellContext<IVaultTransaction, BigNumber>) => {
-  try {
-    const n = info.getValue();
-    const decimals = Number(info.row.getValue('tokenDecimals'));
-    return Number(utils.formatUnits(n, decimals)).toLocaleString();
-  } catch (e) {
-    console.error(e);
-    return info.getValue().toString();
-  }
-};
-
-const formatTokenVlue = (info: CellContext<IVaultTransaction, BigNumber>) => {
-  try {
-    const n = info.getValue();
-    const decimals = Number(info.row.getValue('tokenDecimals'));
-    const priceConversion = Number(info.row.getValue('priceConversion'));
-    if (!priceConversion) {
-      return 'Unknown value';
-    }
-    const tokenValue = Number(utils.formatUnits(n, decimals)) * priceConversion;
-    return `$${tokenValue.toLocaleString()}`;
-  } catch (e) {
-    console.error(e);
-    return info.getValue().toString();
-  }
-};
 
 const columnHelper = createColumnHelper<IVaultTransaction>();
 
@@ -42,90 +21,118 @@ const columns = [
   columnHelper.accessor('date', {
     cell: (info) => info.getValue().toLocaleString(),
     header: 'Date',
+    meta: {
+      dataType: 'datetime',
+    },
+    filterFn: minMaxDateFilter,
     sortingFn: 'datetime',
   }),
   columnHelper.accessor('elapsedDays', {
-    cell: (info) =>
-      info.row.getValue('net') > 0 ? info.getValue() : undefined,
+    cell: (info) => info.getValue(),      
     header: 'Days Held',
+    meta: {
+      dataType: 'numeric',
+    },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('type', {
     cell: (info) => info.getValue(),
     header: 'Type',
+    meta: {
+      dataType: 'enum',
+    },
   }),
   columnHelper.accessor('tokenSymbol', {
     cell: (info) => info.getValue(),
     header: 'Token',
+    meta: {
+      dataType: 'enum',
+    },
   }),
   columnHelper.accessor('tokenDecimals', {
+    id: 'tokenDecimals',
     cell: (info) => info.getValue(),
     header: 'Decimals',
     meta: {
+      dataType: 'numeric',
       hidden: true,
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('priceConversion', {
+    id: 'priceConversion',
     cell: (info) => info.getValue(),
     header: 'Conversion',
     meta: {
+      dataType: 'numeric',
       hidden: true,
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('net', {
-    cell: (info) => (
-      <div>
-        <p>{formatTokenAmount(info)}</p>
-        <p>{formatTokenVlue(info)}</p>
-      </div>
-    ),
+    id: 'net',
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Amount',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('balance', {
-    cell: (info) => (
-      <div>
-        <p>{formatTokenAmount(info)}</p>
-        <p>{formatTokenVlue(info)}</p>
-      </div>
-    ),
+    id: 'balance',
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Balance',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
-  //   columnHelper.accessor('proposal.loot', {
-  //     cell: (info) => info?.getValue()?.toString(),
-  //     header: 'Loot',
-  //     meta: {
-  //       isNumeric: true,
-  //     },
-  //    sortingFn: sortNumeric,
-  //   }),
-  columnHelper.accessor('proposal.shares', {
-    cell: (info) => info.getValue().toNumber(),
+  columnHelper.accessor('proposalLoot', {
+    id: 'proposalLoot',
+    cell: formatNumber,
+    header: 'Loot',
+    meta: {
+      dataType: 'numeric',
+      hidden: true,
+    },
+    filterFn: minMaxNumberFilter,
+    sortingFn: sortNumeric,
+  }),
+  columnHelper.accessor('proposalShares', {
+    id: 'proposalShares',
+    cell: formatNumber,
     header: 'Shares',
     meta: {
-      isNumeric: true,
+      dataType: 'numeric',
     },
+    filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
-  columnHelper.accessor('proposal', {
+  columnHelper.accessor('proposalLink', {
+    id: 'proposalLink',
+    cell: (info) => info.getValue(),
+    enableColumnFilter: false,
+    meta: { hidden: true },
+  }),
+  columnHelper.accessor('proposalTitle', {
     cell: (info) => (
-      <Link href={info.getValue().link} target='_blank'>
-        {info.getValue().title}
+      <Link href={info.row.getValue('proposalLink')} target='_blank'>
+        {info.getValue()}
       </Link>
     ),
     header: 'Proposal',
   }),
   columnHelper.accessor('counterparty', {
-    cell: (info) => truncateAddress(info.getValue()),
+    cell: (info) => (
+      <Tooltip label={info.getValue()}>
+        {truncateAddress(info.getValue())}
+      </Tooltip>
+    ),
     header: 'Counterparty',
   }),
   columnHelper.accessor('txExplorerLink', {
@@ -134,14 +141,19 @@ const columns = [
         view
       </Link>
     ),
-    header: 'Tx',
+    enableColumnFilter: false,
+    header: 'Tx'
   }),
 ];
 
 const TransactionsTable = ({ data }: TransactionsTableProps) => {
   return (
-    <TableContainer border='1px solid grey' borderRadius='4px' maxWidth='90vw'>
-      <DataTable columns={columns} data={data} />
+    <TableContainer
+      border='1px solid grey'
+      borderRadius='4px'
+      maxWidth='90vw'
+    >
+      <DataTable id='transactionsDataTable' columns={columns} data={data} size="sm" />
     </TableContainer>
   );
 };

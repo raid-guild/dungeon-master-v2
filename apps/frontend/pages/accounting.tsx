@@ -20,7 +20,10 @@ import Papa from 'papaparse';
 import _ from 'lodash';
 import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { ITokenBalanceLineItem, IVaultTransaction } from '../types';
+
+const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
 export const Accounting = () => {
   const { data: session } = useSession();
@@ -28,7 +31,10 @@ export const Accounting = () => {
   const { data: transactions, error: transactionsError } = useTransactions({
     token,
   });
-  const { data: balances, error: balancesError } = useBalances({ token });
+  const { data: balances, error: balancesError } = useBalances({
+    token,
+    startFetch: transactions.length > 0 ? true : false,
+  });
   const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({
     token,
   });
@@ -47,24 +53,41 @@ export const Accounting = () => {
     link.remove();
   };
 
-  const transactionsWithPrices = useMemo(() => {
-    return transactions.map((t) => {
-      const formattedDate = t.date.toISOString().split('T')[0];
-      const tokenSymbol = t.tokenSymbol.toLowerCase();
-      if (tokenPrices[tokenSymbol] && tokenPrices[tokenSymbol][formattedDate]) {
-        return {
-          ...t,
-          priceConversion: tokenPrices[tokenSymbol][formattedDate],
-        };
-      } else if (tokenSymbol.includes('xdai')) {
-        return {
-          ...t,
-          priceConversion: 1,
-        };
-      }
-      return t;
-    });
-  }, [tokenPrices, transactions]);
+  const withPrices = useCallback(
+    <T extends ITokenBalanceLineItem | IVaultTransaction>(items: T[]) =>
+      items.map((t) => {
+        const formattedDate = formatDate(t.date);
+        const tokenSymbol = t.tokenSymbol.toLowerCase();
+        if (
+          tokenPrices[tokenSymbol] &&
+          tokenPrices[tokenSymbol][formattedDate]
+        ) {
+          return {
+            ...t,
+            priceConversion: tokenPrices[tokenSymbol][formattedDate],
+          };
+        } else if (tokenSymbol.includes('xdai')) {
+          return {
+            ...t,
+            priceConversion: 1,
+          };
+        }
+        return t;
+      }),
+    [tokenPrices]
+  );
+
+  const balancesWithPrices = useMemo(
+    () => withPrices(balances),
+    [balances, withPrices]
+  );
+
+  const transactionsWithPrices = useMemo(
+    () => withPrices(transactions),
+    [transactions, withPrices]
+  );
+
+  // console.log(transactions, transactionsWithPrices, transactionsError);
 
   return (
     <>
@@ -80,10 +103,14 @@ export const Accounting = () => {
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
             <Tab>
-              <Heading size='sm'>Balances</Heading>
+              <Heading size='sm' variant='noShadow'>
+                Balances
+              </Heading>
             </Tab>
             <Tab>
-              <Heading size='sm'>Transactions</Heading>
+              <Heading size='sm' variant='noShadow'>
+                Transactions
+              </Heading>
             </Tab>
           </TabList>
 
@@ -102,7 +129,7 @@ export const Accounting = () => {
                   Export Balances
                 </Button>
               </Flex>
-              <BalancesTable data={balances} />
+              <BalancesTable data={balancesWithPrices} />
             </TabPanel>
             <TabPanel>
               <Flex
