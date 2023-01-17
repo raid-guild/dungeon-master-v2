@@ -1,4 +1,4 @@
-import { Link, TableContainer } from '@raidguild/design-system';
+import { Link, TableContainer, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '../types';
 import { formatNumber, minMaxNumberFilter, sortNumeric } from '../utils';
@@ -24,12 +24,13 @@ const columns = [
     id: 'tokenSymbol',
     cell: (info) => (
       <Link href={info.row.getValue('tokenExplorerLink')} target='_blank'>
-        {/* <Tooltip label='view token'> */}
-          {info.getValue()}
-        {/* </Tooltip> */}
+        <Tooltip label='view token'>{info.getValue()}</Tooltip>
       </Link>
     ),
     header: 'Token',
+    meta: {
+      dataType: 'enum',
+    },
   }),
   columnHelper.accessor('inflow.tokenValue', {
     cell: formatNumber,

@@ -1,23 +1,19 @@
 import { Flex } from '@raidguild/design-system';
-import { Column, Table } from '@tanstack/react-table';
+import { Column } from '@tanstack/react-table';
 import { useCallback, useMemo } from 'react';
 import DebouncedInput from './DebouncedInput';
 
 export type FilterProps<TData, TValue> = {
   column: Column<TData, TValue>;
-  table: Table<TData>;
 };
 
-const Filter = <TData, TValue>({
-  column,
-  table,
-}: FilterProps<TData, TValue>) => {
+const Filter = <TData, TValue>({ column }: FilterProps<TData, TValue>) => {
   const columnFilterValue = column.getFilterValue();
   const columnDataType = column.columnDef.meta?.dataType ?? 'string';
 
   const sortedUniqueValues = useMemo(
     () =>
-      columnDataType === 'string'
+      columnDataType === 'enum'
         ? Array.from(column.getFacetedUniqueValues().keys()).sort()
         : [],
     [column, columnDataType]
@@ -56,8 +52,8 @@ const Filter = <TData, TValue>({
           onChange={handleMinChange}
           placeholder={`min ${minMax?.[0] ? minMax?.[0].toLocaleString() : ''}`}
           size='sm'
-          fontFamily="mono"
-          fontSize="xs"                
+          fontFamily='mono'
+          fontSize='xs'
         />
         <DebouncedInput
           type='number'
@@ -68,8 +64,8 @@ const Filter = <TData, TValue>({
           onChange={handleMaxChange}
           placeholder={`max ${minMax?.[1] ? minMax?.[1].toLocaleString() : ''}`}
           size='sm'
-          fontFamily="mono"
-          fontSize="xs"                
+          fontFamily='mono'
+          fontSize='xs'
         />
       </Flex>
     );
@@ -90,8 +86,8 @@ const Filter = <TData, TValue>({
           onChange={handleMinChange}
           placeholder={`min ${min ? min.toLocaleDateString() : ''}`}
           size='sm'
-          fontFamily="mono"
-          fontSize="xs"                
+          fontFamily='mono'
+          fontSize='xs'
         />
         <DebouncedInput
           type='date'
@@ -102,8 +98,36 @@ const Filter = <TData, TValue>({
           onChange={handleMaxChange}
           placeholder={`max ${max ? max.toLocaleDateString() : ''}`}
           size='sm'
-          fontFamily="mono"
-          fontSize="xs"                 
+          fontFamily='mono'
+          fontSize='xs'
+        />
+      </Flex>
+    );
+  }
+
+  if (columnDataType === 'enum') {
+    console.log(column.id, ': ', columnDataType, sortedUniqueValues.join(', '));
+    return (
+      <Flex>
+        <datalist id={column.id + 'list'}>
+          {sortedUniqueValues.slice(0, 5000).map((value?: string | number) => {
+            return value ? (
+              <option value={value.toString()} key={value.toString()} />
+            ) : (
+              <></>
+            );
+          })}
+        </datalist>
+        <DebouncedInput
+          type='text'
+          value={(columnFilterValue ?? '') as string}
+          onChange={handleChange}
+          placeholder={`search... (${column.getFacetedUniqueValues().size})`}
+          className='border shadow rounded'
+          list={column.id + 'list'}
+          size='sm'
+          fontFamily='mono'
+          fontSize='xs'
         />
       </Flex>
     );
@@ -111,25 +135,15 @@ const Filter = <TData, TValue>({
 
   return (
     <Flex>
-      <datalist id={column.id + 'list'}>
-        {sortedUniqueValues.slice(0, 5000).map((value?: string | number) => {
-          return value ? (
-            <option value={value.toString()} key={value.toString()} />
-          ) : (
-            <></>
-          );
-        })}
-      </datalist>
       <DebouncedInput
         type='text'
         value={(columnFilterValue ?? '') as string}
         onChange={handleChange}
         placeholder={`search... (${column.getFacetedUniqueValues().size})`}
         className='border shadow rounded'
-        list={column.id + 'list'}
         size='sm'
-        fontFamily="mono"
-        fontSize="xs"                 
+        fontFamily='mono'
+        fontSize='xs'
       />
     </Flex>
   );

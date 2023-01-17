@@ -20,7 +20,7 @@ import { Flex } from '@raidguild/design-system';
 
 declare module '@tanstack/table-core' {
   interface ColumnMeta<TData extends RowData, TValue> {
-    dataType?: 'numeric' | 'datetime' | 'string';
+    dataType?: 'numeric' | 'datetime' | 'enum' | 'string';
     hidden?: boolean;
   }
 }
@@ -102,7 +102,7 @@ export function DataTable<Data extends object>({
                 </Flex>
                 {header.column.getCanFilter() ? (
                   <Box my='1'>
-                    <Filter column={header.column} table={table} />
+                    <Filter column={header.column} />
                   </Box>
                 ) : null}
               </Th>

@@ -1,4 +1,4 @@
-import { Link, TableContainer } from '@raidguild/design-system';
+import { Link, TableContainer, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IVaultTransaction } from '../types';
 import {
@@ -39,10 +39,16 @@ const columns = [
   columnHelper.accessor('type', {
     cell: (info) => info.getValue(),
     header: 'Type',
+    meta: {
+      dataType: 'enum',
+    },
   }),
   columnHelper.accessor('tokenSymbol', {
     cell: (info) => info.getValue(),
     header: 'Token',
+    meta: {
+      dataType: 'enum',
+    },
   }),
   columnHelper.accessor('tokenDecimals', {
     id: 'tokenDecimals',
@@ -110,6 +116,7 @@ const columns = [
   columnHelper.accessor('proposalLink', {
     id: 'proposalLink',
     cell: (info) => info.getValue(),
+    enableColumnFilter: false,
     meta: { hidden: true },
   }),
   columnHelper.accessor('proposalTitle', {
@@ -122,9 +129,9 @@ const columns = [
   }),
   columnHelper.accessor('counterparty', {
     cell: (info) => (
-      // <Tooltip label={info.getValue()}>
-      <>{truncateAddress(info.getValue())}</>
-      // </Tooltip>
+      <Tooltip label={info.getValue()}>
+        {truncateAddress(info.getValue())}
+      </Tooltip>
     ),
     header: 'Counterparty',
   }),
