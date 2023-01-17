@@ -197,11 +197,11 @@ export function DataTable<Data extends object>({
           </Flex>
           <Box>|</Box>
           <Flex align='center' gap='12px'>
-            <label htmlFor='table-go-to-page'>
+            <label htmlFor={`table-go-to-page-${id}`}>
               <Text>Go to page:</Text>
             </label>
             <Input
-              id='table-go-to-page'
+              id={`table-go-to-page-${id}`}
               type='number'
               defaultValue={table.getState().pagination.pageIndex + 1}
               maxWidth='80px'
