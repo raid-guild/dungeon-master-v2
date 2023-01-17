@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+import { CONTACT_INFO_FRAGMENT, MEMBER_DETAIL_FRAGMENT } from '../fragments';
 
 export const MEMBER_LIST_QUERY = gql`
   query MemberList(
@@ -18,12 +19,7 @@ export const MEMBER_LIST_QUERY = gql`
       eth_address
       is_raiding
       contact_info {
-        id
-        email
-        discord
-        telegram
-        twitter
-        github
+        ...ContactInfo
       }
       guild_class {
         guild_class
@@ -36,64 +32,13 @@ export const MEMBER_LIST_QUERY = gql`
       }
     }
   }
+  ${CONTACT_INFO_FRAGMENT}
 `;
 
 export const MEMBER_SLIM_LIST_QUERY = gql`
   query MemberSlimList {
     members {
-      id
-      name
-      eth_address
-      is_raiding
-      contact_info {
-        telegram
-      }
-      guild_class {
-        guild_class
-      }
-    }
-  }
-`;
-
-export const MEMBER_DETAIL_FRAGMENT = gql`
-  fragment MemberDetailFragment on members {
-    id
-    name
-    eth_address
-    is_raiding
-    contact_info {
-      id
-      email
-      discord
-      twitter
-      github
-      telegram
-    }
-    guild_class {
-      guild_class
-    }
-    application {
-      introduction
-    }
-    members_skills {
-      skill {
-        skill
-      }
-      skill_type {
-        skill_type
-      }
-    }
-    member_type {
-      member_type
-    }
-    raid_parties {
-      raid {
-        name
-        id
-        raid_status {
-          raid_status
-        }
-      }
+      
     }
   }
 `;

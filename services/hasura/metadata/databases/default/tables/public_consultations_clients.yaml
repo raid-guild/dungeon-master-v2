@@ -9,6 +9,13 @@ object_relationships:
     using:
       foreign_key_constraint_on: consultation_id
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - client_id
+        - consultation_id
+        - id
   - role: member
     permission:
       check: {}
@@ -17,6 +24,13 @@ insert_permissions:
         - consultation_id
         - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - client_id
+        - consultation_id
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

@@ -30,8 +30,8 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
 
   return (
     <Stack spacing={5}>
-      <HStack>
-        <Button onClick={handleShowStatusModal} w='75%'>
+      <HStack w='100%'>
+        <Button onClick={handleShowStatusModal} flexGrow={1}>
           {_.get(raid, 'raidStatus.raidStatus')}
         </Button>
         <Button variant='outline' onClick={handleShowRaidUpdatFormModal}>

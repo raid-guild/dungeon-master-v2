@@ -49,7 +49,6 @@ const Member = () => {
   };
   const memberType = _.get(member, 'memberType.memberType');
 
-  console.log('member', member);
   return (
     <>
       <NextSeo title={_.get(member, 'name')} />
@@ -57,25 +56,25 @@ const Member = () => {
       <SiteLayout
         subheader={
           <Flex
-            justify="space-between"
-            align="center"
-            w="100%"
+            justify='space-between'
+            align='center'
+            w='100%'
             direction={['column', null, null, 'row']}
           >
             {ensAvatar ? (
-              <Avatar size="lg" bg="black" src={ensAvatar} />
+              <Avatar size='lg' bg='black' src={ensAvatar} />
             ) : (
               _.get(member, 'guildClass') && (
                 <Avatar
-                  size="lg"
-                  bg="black"
+                  size='lg'
+                  bg='black'
                   icon={
                     <RoleBadge
                       roleName={
                         GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
                       }
-                      height="64px"
-                      width="64px"
+                      height='64px'
+                      width='64px'
                     />
                   }
                 />
@@ -83,8 +82,8 @@ const Member = () => {
             )}
             <Heading>{memberDisplayName(member)}</Heading>
             <HStack>
-              <VStack align="start" mr={4}>
-                <Badge background="blackAlpha" fontSize="sm">
+              <VStack align='start' mr={4}>
+                <Badge background='blackAlpha' fontSize='sm'>
                   {_.get(member, 'isRaiding') === true ? (
                     <Text>⚔️ Raiding</Text>
                   ) : (
@@ -94,66 +93,70 @@ const Member = () => {
                 <Badge
                   marginX={1}
                   marginBottom={1}
-                  color="raid"
-                  bgColor="gray.700"
+                  color='raid'
+                  bgColor='gray.700'
                 >
                   {memberType}
                 </Badge>
               </VStack>
-              <Button variant="outline" onClick={handleShowUpdateModal}>
+              <Button variant='outline' onClick={handleShowUpdateModal}>
                 Edit
               </Button>
             </HStack>
           </Flex>
         }
       >
-        <Flex w="100%" direction={['column', null, null, 'row']} gap={4}>
+        <Flex w='100%' direction={['column', null, null, 'row']} gap={4}>
           <MemberDetailsCard
             member={member}
             application={_.get(member, 'application')}
           />
           {/* <RaidsFeed /> */}
-          <Card
-            variant="filled"
-            w={['100%', null, null, '35%']}
-          >
-            {!_.isEmpty(_.get(raids, 'active')) && (
-              <Stack mb={4} w="100%">
-                <Heading size="sm" color="white">Active Raids</Heading>
-                <Stack>
-                  {_.map(_.get(raids, 'active'), (raid) => (
-                    <MiniRaidCard
-                      key={_.get(raid, 'id')}
-                      raid={raid}
-                      noAvatar
-                      smallHeader
-                    />
-                  ))}
-                </Stack>
-              </Stack>
-            )}
-            {!_.isEmpty(_.get(raids, 'past')) && (
-              <Stack w="100%">
-                <Heading size="sm" color="white">Past Raids</Heading>
-                <Stack>
-                  {_.map(_.get(raids, 'past').slice(0, 3), (raid) => (
-                    <MiniRaidCard
-                      key={_.get(raid, 'id')}
-                      raid={raid}
-                      noAvatar
-                      smallHeader
-                    />
-                  ))}
-                </Stack>
-              </Stack>
-            )}
-          </Card>
+          {!_.isEmpty(_.get(raids, 'active')) ||
+            (!_.isEmpty(_.get(raids, 'past')) && (
+              <Card variant='filled' w={['100%', null, null, '35%']}>
+                {!_.isEmpty(_.get(raids, 'active')) && (
+                  <Stack mb={4} w='100%'>
+                    <Heading size='sm' color='white'>
+                      Active Raids
+                    </Heading>
+                    <Stack>
+                      {_.map(_.get(raids, 'active'), (raid) => (
+                        <MiniRaidCard
+                          key={_.get(raid, 'id')}
+                          raid={raid}
+                          noAvatar
+                          smallHeader
+                        />
+                      ))}
+                    </Stack>
+                  </Stack>
+                )}
+                {!_.isEmpty(_.get(raids, 'past')) && (
+                  <Stack w='100%'>
+                    <Heading size='sm' color='white'>
+                      Past Raids
+                    </Heading>
+                    <Stack>
+                      {_.map(_.get(raids, 'past').slice(0, 3), (raid) => (
+                        <MiniRaidCard
+                          key={_.get(raid, 'id')}
+                          raid={raid}
+                          noAvatar
+                          smallHeader
+                        />
+                      ))}
+                    </Stack>
+                  </Stack>
+                )}
+              </Card>
+            ))}
         </Flex>
       </SiteLayout>
       <ModalWrapper
-        name="memberForm"
-        size="xl"
-        title="Update Member Details"
+        name='memberForm'
+        size='xl'
+        title='Update Member Details'
         localOverlay={localOverlay}
         content={
           <UpdateMemberForm

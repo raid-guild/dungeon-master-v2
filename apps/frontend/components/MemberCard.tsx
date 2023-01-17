@@ -143,7 +143,8 @@ const MemberCard: React.FC<MemberProps> = ({
       <Card
         variant='withHeader'
         centerDivider={
-          member && (
+          member &&
+          _.get(member, 'guildClass.guildClass') && (
             <RoleBadge
               roleName={
                 GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]

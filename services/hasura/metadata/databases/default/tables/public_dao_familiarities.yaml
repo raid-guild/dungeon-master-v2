@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - dao_familiarity
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - dao_familiarity
+      filter: {}
   - role: member
     permission:
       columns:

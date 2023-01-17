@@ -50,6 +50,27 @@ array_relationships:
           name: raids
           schema: public
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - desired_delivery_date
+        - additional_info
+        - budget_key
+        - consultation_hash
+        - consultation_status_key
+        - delivery_priorities_key
+        - description
+        - link
+        - name
+        - specs_key
+        - submission_hash
+        - submission_type_key
+        - type_key
+        - v1_id
+        - created_at
+        - updated_at
+        - id
   - role: member
     permission:
       check: {}
@@ -71,7 +92,46 @@ insert_permissions:
         - created_at
         - updated_at
         - id
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - additional_info
+        - budget_key
+        - consultation_hash
+        - consultation_status_key
+        - delivery_priorities_key
+        - description
+        - desired_delivery_date
+        - link
+        - name
+        - specs_key
+        - submission_hash
+        - submission_type_key
+        - type_key
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - desired_delivery_date
+        - additional_info
+        - budget_key
+        - consultation_hash
+        - consultation_status_key
+        - delivery_priorities_key
+        - description
+        - link
+        - name
+        - specs_key
+        - submission_hash
+        - submission_type_key
+        - type_key
+        - v1_id
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+      allow_aggregations: true
   - role: member
     permission:
       columns:

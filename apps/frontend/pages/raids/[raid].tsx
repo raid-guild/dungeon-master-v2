@@ -33,7 +33,6 @@ const Raid = ({ raidId }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: raid } = useRaidDetail({ raidId, token });
-  console.log(raid);
 
   const startOrEnd = _.get(raid, 'startDate') || _.get(raid, 'endDate');
 
@@ -63,7 +62,7 @@ const Raid = ({ raidId }) => {
       >
         <Flex
           w='95%'
-          minW={['350px', null, null, '1200px']}
+          minW={['350px', null, null, '1000px']}
           mx='auto'
           direction={['column', null, null, 'row']}
           gap={10}

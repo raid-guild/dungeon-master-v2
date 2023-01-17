@@ -141,6 +141,7 @@ export const useRaidsCount = ({
   const { data, isLoading, error } = useQuery({
     queryKey: ['raidsCount', raidStatusFilterKey, raidRolesFilterKey],
     queryFn: raidsCountQuery,
+    enabled: Boolean(token),
   });
 
   return { data, isLoading, error };

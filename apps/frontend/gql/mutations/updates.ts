@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { RAID_DETAIL_FRAGMENT } from '../index';
+import { CONTACT_INFO_FRAGMENT, RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const STATUS_UPDATE_CREATE_MUTATION = gql`
   mutation StatusUpdateCreateMutation($update: updates_insert_input!) {
@@ -16,11 +16,11 @@ export const STATUS_UPDATE_CREATE_MUTATION = gql`
         name
         eth_address
         contact_info {
-          discord
-          telegram
+          ...ContactInfo
         }
       }
     }
   }
   ${RAID_DETAIL_FRAGMENT}
+  ${CONTACT_INFO_FRAGMENT}
 `;

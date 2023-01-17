@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - consultation_status
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - consultation_status
+      filter: {}
   - role: member
     permission:
       columns:

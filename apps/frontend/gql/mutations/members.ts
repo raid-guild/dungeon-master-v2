@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+import { CONTACT_INFO_FRAGMENT, MEMBER_DETAIL_FRAGMENT } from '../fragments';
 
 export const MEMBER_UPDATE_MUTATION = gql`
   mutation MemberUpdateMutation(
@@ -14,25 +15,9 @@ export const MEMBER_UPDATE_MUTATION = gql`
       pk_columns: { id: $contact_info_pk }
       _set: $contact_info_updates
     ) {
-      email
-      discord
-      github
-      twitter
-      telegram
+      ...ContactInfo
     }
   }
-
-  fragment MemberDetail on members {
-    id
-    name
-    primary_class_key
-    eth_address
-    contact_info {
-      id
-      discord
-      twitter
-      telegram
-      email
-    }
-  }
+  ${CONTACT_INFO_FRAGMENT}
+  ${MEMBER_DETAIL_FRAGMENT}
 `;

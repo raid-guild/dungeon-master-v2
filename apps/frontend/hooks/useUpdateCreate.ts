@@ -16,7 +16,6 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: Partial<IStatusUpdate>) => {
-      console.log(memberId, token);
       if (!memberId || !token) return;
       const result = await client({ token }).request(
         STATUS_UPDATE_CREATE_MUTATION,
@@ -34,9 +33,7 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
     },
     {
       onSuccess: (data) => {
-        console.log(data);
         const raid = camelize(_.get(data, 'insert_updates_one.raid'));
-        console.log(raid);
         queryClient.setQueryData(
           ['raidDetail', _.get(data, 'insert_updates_one.raid.id')],
           raid

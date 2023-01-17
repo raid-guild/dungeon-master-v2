@@ -64,7 +64,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
         <Stack
           spacing={8}
           align='center'
-          w={['90%', null, null, '70%']}
+          w={['90%', null, null, '80%']}
           mx='auto'
         >
           {subheader}
@@ -79,7 +79,7 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   if (!_.get(session, 'token')) {
     return (
       <GeneralLayout>
-        <Flex justify='center' align='center' minH='100vh'>
+        <Flex justify='center' align='center' minH='70vh'>
           <Heading size='md'>Connect your wallet & Sign in</Heading>
         </Flex>
       </GeneralLayout>

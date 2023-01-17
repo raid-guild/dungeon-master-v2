@@ -8,7 +8,14 @@ import {
   QueryClientProvider,
   QueryCache,
 } from '@tanstack/react-query';
-import { RGThemeProvider, useToast } from '@raidguild/design-system';
+import {
+  ChakraProvider,
+  ColorModeScript,
+  Fonts,
+  RGThemeProvider,
+  useToast,
+  defaultTheme,
+} from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -17,8 +24,6 @@ import { chains } from '../utils/chains';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
-import '@fontsource/uncial-antiqua';
-import '@fontsource/texturina';
 
 const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
@@ -41,7 +46,9 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   });
 
   return (
-    <RGThemeProvider>
+    <ChakraProvider theme={defaultTheme}>
+      <ColorModeScript initialColorMode='dark' />
+      <Fonts />
       <DefaultSeo
         titleTemplate='%s | Dungeon Master v1.5'
         title='Dungeon Master'
@@ -84,7 +91,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           </RainbowKitSiweNextAuthProvider>
         </SessionProvider>
       </WagmiConfig>
-    </RGThemeProvider>
+    </ChakraProvider>
   );
 };
 export default App;
