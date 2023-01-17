@@ -351,7 +351,7 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   return tokenBalanceLineItems;
 };
 
-export const useBalances = ({ token }) => {
+export const useBalances = ({ token, startFetch }) => {
   const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([]);
   const limit = 1000;
 
@@ -388,7 +388,7 @@ export const useBalances = ({ token }) => {
 
   useEffect(() => {
     (async () => {
-      if (status === 'success') {
+      if (status === 'success' && startFetch) {
         const tokenBalances =
           await mapMolochTokenBalancesToTokenBalanceLineItem(
             data.pages[0]?.tokenBalances || [],
@@ -397,7 +397,7 @@ export const useBalances = ({ token }) => {
         setBalances(tokenBalances);
       }
     })();
-  }, [data, status]);
+  }, [data, startFetch, status]);
 
   return {
     status,
