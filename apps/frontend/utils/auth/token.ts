@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import jwt from 'jsonwebtoken';
 import { JWT, JWTDecodeParams } from 'next-auth/jwt';
-import { Session } from 'next-auth';
+import { Session, User } from 'next-auth';
 import { CreateTokenParams, HasuraAuthToken } from '../../types';
 import { getOrCreateUser } from './queryHelpers';
 
@@ -22,7 +22,9 @@ export const createToken = ({
 }: CreateTokenParams): HasuraAuthToken => ({
   ...token,
   address: _.get(token, 'sub'),
-  id: _.get(user, 'id'),
+  user: {
+    id: _.get(user, 'id'),
+  },
   iat: Math.floor(Date.now() / 1000),
   exp: Math.floor(Date.now() / 1000) + (maxAge ?? CONFIG.defaultMaxAge),
   'https://hasura.io/jwt/claims': {
@@ -59,9 +61,11 @@ export const decodeAuth = async ({ token }: JWTDecodeParams) =>
   decodeToken(token);
 
 export const extendSessionWithUserAndToken = ({
+  user,
   session,
   token,
 }: {
+  user: User;
   session: Session;
   token: JWT;
 }): Session => ({
@@ -70,6 +74,7 @@ export const extendSessionWithUserAndToken = ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
     address: _.get(token, 'sub'),
+    id: _.get(token, 'user.id'),
   },
   token: encodeToken(token),
 });
