@@ -31,15 +31,12 @@ const useMemberList = ({
     if (!token) return;
     // TODO handle filters
 
-    const params = {
+    const result = await client({ token }).request(MEMBER_LIST_QUERY, {
       where,
       limit,
       offset: pageParam * limit,
       order_by: orderBy,
-    };
-    const result = await client({ token }).request(MEMBER_LIST_QUERY, params);
-
-    console.log('[members query] params:', params, 'result:', result);
+    });
 
     return camelize(_.get(result, 'members'));
   };
