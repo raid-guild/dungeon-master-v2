@@ -23,6 +23,7 @@ import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
 import { useCallback, useMemo } from 'react';
 import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
+import { GUILD_GNOSIS_DAO_ADDRESS, REGEX_ETH_ADDRESS } from '../utils';
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
@@ -43,15 +44,11 @@ export const Accounting = () => {
     token,
     limit: 1000,
   });
-  const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
-  const members = useMemo(
-    () =>
-      Object.assign(
-        new Map<string, IMember>(),
-        memberArray.map((m: IMember) => ({ [m.ethAddress.toLowerCase()]: m }))
-      ),
-    [memberArray]
-  );
+
+  const members = useMemo(() => {
+    const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
+    return _.keyBy(memberArray, (m: IMember) => m.ethAddress.toLowerCase());
+  }, [memberData]);
 
   // console.log('members', memberArray, members);
 
@@ -108,12 +105,13 @@ export const Accounting = () => {
       transactionsWithPrices.map((t) => {
         const ethAddress = t.proposalApplicant.toLowerCase();
         const m = members[ethAddress];
-        // if (ethAddress === '0xccc9d33567912c9d4446ad2298e74084c0e356ee')
-        //   console.log('ethAddress:', ethAddress, 'member:', m);
+        const memberLink = m?.ethAddress.match(REGEX_ETH_ADDRESS)
+          ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS}/profile/${ethAddress}`
+          : undefined;
 
         return {
           ...t,
-          // memberLink: m.,
+          memberLink,
           memberName: m?.name,
           memberEnsName: m?.ensName,
         };
