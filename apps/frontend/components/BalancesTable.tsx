@@ -23,7 +23,11 @@ const columns = [
   columnHelper.accessor('token.symbol', {
     id: 'tokenSymbol',
     cell: (info) => (
-      <Link href={info.row.getValue('tokenExplorerLink')} target='_blank'>
+      <Link
+        href={info.row.getValue('tokenExplorerLink')}
+        target='_blank'
+        aria-label='tokenExplorerLink'
+      >
         <Tooltip label='view token'>{info.getValue()}</Tooltip>
       </Link>
     ),
@@ -72,15 +76,13 @@ const columns = [
   }),
 ];
 
-const BalancesTable = ({ data }: BalancesTableProps) => {
-  return (
-    <DataTable
-      id='balancesDataTable'
-      columns={columns}
-      data={data}
-      sort={[{ id: 'tokenSymbol', desc: false }]}
-    />
-  );
-};
+const BalancesTable = ({ data }: BalancesTableProps) => (
+  <DataTable
+    id='balancesDataTable'
+    columns={columns}
+    data={data}
+    sort={[{ id: 'tokenSymbol', desc: false }]}
+  />
+);
 
 export default BalancesTable;
