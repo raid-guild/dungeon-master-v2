@@ -39,6 +39,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   const [expanded, setExpanded] = useState(false);
   const [sortedUpdates, setSortedUpdates] = useState<any[]>();
   const token: string = _.get(session, 'token', '');
+
   const { mutateAsync } = useUpdateCreate({
     token,
     memberId: _.get(session, 'user.id'),
@@ -76,22 +77,19 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   return (
-    <Card
-      variant="filled"
-      padding={2}
-    >
-      <Flex w="100%">
-        <Flex direction="row" align="center" justify="space-between" w="100%">
-          <Heading size="md" color="white">
+    <Card variant='filled' padding={2}>
+      <Flex w='100%'>
+        <Flex direction='row' align='center' justify='space-between' w='100%'>
+          <Heading size='md' color='white'>
             Status Updates
           </Heading>
           <Box>
             {addUpdate ? (
               <HStack>
-                <Button onClick={clearUpdate} variant="outline">
+                <Button onClick={clearUpdate} variant='outline'>
                   Cancel
                 </Button>
-                <Button type="submit" form="updateForm">
+                <Button type='submit' form='updateForm'>
                   Submit
                 </Button>
               </HStack>
@@ -99,7 +97,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
               <IconButton
                 icon={<Icon as={FaPlus} />}
                 onClick={showUpdateBox}
-                aria-label="Add new update"
+                aria-label='Add new update'
               />
             ) : (
               <Button onClick={showUpdateBox}>Add Update</Button>
@@ -108,21 +106,20 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
         </Flex>
       </Flex>
 
-      <Flex my={4} w="100%">
+      <Flex my={4} w='100%'>
         {addUpdate && (
           <Box
-            as="form"
-            id="updateForm"
+            as='form'
+            id='updateForm'
             onSubmit={handleSubmit(submitNewUpdate)}
-            w="100%"
+            w='100%'
           >
-            <Stack spacing={4} w="100%">
+            <Stack spacing={4} w='100%'>
               <Textarea
-                color="white"
-                name="update"
-                label="Update"
+                name='update'
+                label='Update'
                 localForm={localForm}
-                placeholder="This raid has encountered Moloch."
+                placeholder='This raid has encountered Moloch.'
               />
             </Stack>
           </Box>
@@ -132,7 +129,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
         sortedUpdates
           ?.slice(0, updatesCount > 4 ? 1 : updatesCount)
           .map((c: IStatusUpdate) => (
-            <Stack as="ul" width="100%" key={c.createdAt}>
+            <Stack as='ul' width='100%' key={c.createdAt}>
               <RaidUpdate
                 // id={c.id}
                 update={c.update}
@@ -144,10 +141,10 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
           ))}
       {updatesCount > 4 && (
         <Accordion allowMultiple onChange={() => setExpanded(!expanded)}>
-          <AccordionItem border="none" key={0}>
+          <AccordionItem border='none' key={0}>
             <h2>
-              <AccordionButton color="raid" paddingInline={0}>
-                <Box flex="1" textAlign="left" color="raid">
+              <AccordionButton color='raid' paddingInline={0}>
+                <Box flex='1' textAlign='left' color='raid'>
                   {expanded ? 'Hide' : 'Reveal'} {sortedUpdates?.length - 1}{' '}
                   Comments
                 </Box>
@@ -156,7 +153,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
             </h2>
             <AccordionPanel padding={0}>
               {sortedUpdates?.slice(1).map((c) => (
-                <Stack as="ul" width="100%" key={c.createdAt}>
+                <Stack as='ul' width='100%' key={c.createdAt}>
                   <RaidUpdate
                     // id={c.id}
                     update={c.update}
@@ -171,7 +168,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
         </Accordion>
       )}
       {!sortedUpdates?.length && (
-        <Flex align="center" justify="center" w="100%" h="100px">
+        <Flex align='center' justify='center' w='100%' h='100px'>
           <Text>Leave the first update about this raid.</Text>
         </Flex>
       )}

@@ -1,5 +1,12 @@
 import _ from 'lodash';
-import { Card, Flex, Heading, Stack, HStack, Text } from '@raidguild/design-system';
+import {
+  Card,
+  Flex,
+  Heading,
+  Stack,
+  HStack,
+  Text,
+} from '@raidguild/design-system';
 import { format } from 'date-fns';
 import { IRaid, IConsultation } from '../types';
 import ChakraNextLink from './ChakraNextLink';
@@ -28,30 +35,29 @@ const MiniRaidCard = ({
         : `/consultations/${_.get(consultation, 'id')}`
     }
   >
-    <Card
-      variant="outline"
-      width="100%"
-    >
-      <Stack spacing={2} width="100%">
-        <Heading color="white" size={smallHeader ? 'sm' : 'md'}>
-          {_.get(raid, 'name', _.get(consultation, 'name'))}
-        </Heading>
-        <HStack>
-          <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
-          {newRaid &&
-            _.get(raid, 'createdAt', _.get(consultation, 'createdAt')) && (
-              <Text>
-                {format(
-                  new Date(
-                    _.get(raid, 'createdAt', _.get(consultation, 'createdAt'))
-                  ),
-                  'Pp'
-                )}
-              </Text>
-            )}
-        </HStack>
-      </Stack>
-      {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
+    <Card variant='outline' width='100%'>
+      <Flex w='100%' justify='space-between' align='center'>
+        <Stack spacing={2}>
+          <Heading color='white' size={smallHeader ? 'sm' : 'md'}>
+            {_.get(raid, 'name', _.get(consultation, 'name'))}
+          </Heading>
+          <HStack>
+            <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
+            {newRaid &&
+              _.get(raid, 'createdAt', _.get(consultation, 'createdAt')) && (
+                <Text>
+                  {format(
+                    new Date(
+                      _.get(raid, 'createdAt', _.get(consultation, 'createdAt'))
+                    ),
+                    'Pp'
+                  )}
+                </Text>
+              )}
+          </HStack>
+        </Stack>
+        {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
+      </Flex>
     </Card>
   </ChakraNextLink>
 );

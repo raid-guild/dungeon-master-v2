@@ -15,6 +15,8 @@ export type OverlayContextType = {
   modals: IModals;
   setModals: (modals: Partial<IModals>) => void;
   closeModals: () => void;
+  commandPallet: boolean;
+  setCommandPallet: (commandPallet: boolean) => void;
 };
 
 export const OverlayContext = createContext({} as OverlayContextType);
@@ -27,6 +29,7 @@ export const OverlayContextProvider: React.FC<OverlayProviderProps> = ({
   children,
 }: OverlayProviderProps) => {
   const [modals, setModals] = useState(defaults);
+  const [commandPallet, setCommandPallet] = useState(false);
   const showModal = (modals: Partial<IModals>) => {
     // This allows to show only one modal at a time.
     // In addition, this reset any true value for other modals.
@@ -42,6 +45,8 @@ export const OverlayContextProvider: React.FC<OverlayProviderProps> = ({
         modals,
         setModals: showModal,
         closeModals,
+        commandPallet,
+        setCommandPallet,
       }}
     >
       {children}
