@@ -1,4 +1,4 @@
-import { configureChains } from 'wagmi';
+import { Chain, configureChains } from 'wagmi';
 import {
   mainnet,
   polygon,
@@ -18,8 +18,8 @@ export const { chains, provider } = configureChains(
     infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY }),
     alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
     jsonRpcProvider({
-      rpc: (localChain: any) => ({
-        http: localChain.rpcUrls.default,
+      rpc: (localChain: Chain) => ({
+        http: localChain.rpcUrls.default.http[0],
       }),
     }),
   ]
