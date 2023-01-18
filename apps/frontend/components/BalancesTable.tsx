@@ -1,4 +1,4 @@
-import { Link, TableContainer, Tooltip } from '@raidguild/design-system';
+import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '../types';
 import { formatNumber, minMaxNumberFilter, sortNumeric } from '../utils';
@@ -74,14 +74,12 @@ const columns = [
 
 const BalancesTable = ({ data }: BalancesTableProps) => {
   return (
-    <TableContainer border='1px solid grey' borderRadius='4px'>
-      <DataTable
-        id='balancesDataTable'
-        columns={columns}
-        data={data}
-        sort={[{ id: 'tokenSymbol', desc: false }]}
-      />
-    </TableContainer>
+    <DataTable
+      id='balancesDataTable'
+      columns={columns}
+      data={data}
+      sort={[{ id: 'tokenSymbol', desc: false }]}
+    />
   );
 };
 
