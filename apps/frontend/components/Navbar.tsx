@@ -20,6 +20,7 @@ const links = [
   { href: '/consultations', label: 'Consultations' },
   { href: '/members', label: 'Members' },
   { href: '/applications', label: 'Applications' },
+  { href: '/accounting', label: 'Accounting' },
 ];
 
 interface NavItem {
