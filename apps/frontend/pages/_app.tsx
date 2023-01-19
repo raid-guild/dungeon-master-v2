@@ -20,7 +20,7 @@ import { OverlayContextProvider } from '../contexts/OverlayContext';
 import '@fontsource/uncial-antiqua';
 import '@fontsource/texturina';
 
-const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
+const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -47,22 +47,22 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         title='Dungeon Master'
         defaultTitle='Raid Guild | Dungeon Master v1.5'
         description='Adventurers, come and gather around the campfire.'
-        canonical='https://site-url'
+        canonical='https://dm.raidguild.org'
         openGraph={{
           type: 'website',
           locale: 'en_IE',
-          url: 'https://site-url',
+          url: 'https://dm.raidguild.org',
           site_name: 'Site title',
           title: "Raid Guild | Dungeon Master v1.5'",
           description: 'Adventurers, come and gather around the campfire.',
-          images: [
-            {
-              url: '/raidguild-logo', // replcace with your OG image
-              width: 1200,
-              height: 630,
-              alt: "Raid Guild logo: Crossed swords with 'Raid Guild'",
-            },
-          ],
+          // images: [
+          //   {
+          //     url: '/raidguild-logo', // replcace with your OG image
+          //     width: 1200,
+          //     height: 630,
+          //     alt: "Raid Guild logo: Crossed swords with 'Raid Guild'",
+          //   },
+          // ],
         }}
       />
 
@@ -87,4 +87,4 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
     </RGThemeProvider>
   );
 };
-export default MyApp;
+export default App;

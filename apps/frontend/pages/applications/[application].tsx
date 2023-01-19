@@ -39,7 +39,7 @@ const Application = () => {
 
           <Stack>
             <Button variant='outline' onClick={handleCreateCohort}>
-              Create Cohort
+              Create Apprentice
             </Button>
             {/* <Button variant="outline">Create Member</Button> */}
           </Stack>

@@ -57,8 +57,6 @@ const RaidPartyButtons = ({
   });
   const { mutateAsync: addRaider } = useRaidPartyAdd({ token });
 
-  console.log(raiderToAdd);
-
   const submitAddRole = async () => {
     // TODO check against current localRoles
     await updateRolesRequired({
@@ -95,7 +93,7 @@ const RaidPartyButtons = ({
 
   const StartProcess = () => (
     <Button
-      variant="link"
+      variant='link'
       leftIcon={<FiPlus />}
       onClick={() => setButton(SIDEBAR_ACTION_STATES.select)}
     >
@@ -106,7 +104,7 @@ const RaidPartyButtons = ({
   const SelectRaiderOrRoleButton = () => (
     <HStack>
       <Button
-        variant="outline"
+        variant='outline'
         onClick={() => {
           setButton(SIDEBAR_ACTION_STATES.raider);
           setRaiderToAdd(_.get(_.first(localMembers), 'id'));
@@ -115,7 +113,7 @@ const RaidPartyButtons = ({
         Add Raider
       </Button>
       <Button
-        variant="outline"
+        variant='outline'
         onClick={() => {
           setButton(SIDEBAR_ACTION_STATES.role);
           setRoleToAdd(_.keys(GUILD_CLASS_DISPLAY)[0]);
@@ -127,11 +125,11 @@ const RaidPartyButtons = ({
   );
 
   const SelectRole = () => (
-    <Flex justify="space-between" gap={1} w="100%">
+    <Flex justify='space-between' gap={1} w='100%'>
       <IconButton
-        variant="outline"
-        icon={<Icon as={FiX} color="primary.500" />}
-        aria-label="Clear Set Role Required for Raid"
+        variant='outline'
+        icon={<Icon as={FiX} color='primary.500' />}
+        aria-label='Clear Set Role Required for Raid'
         onClick={() => {
           setButton(SIDEBAR_ACTION_STATES.none);
           setRoleToAdd(undefined);
@@ -153,11 +151,11 @@ const RaidPartyButtons = ({
 
   // TODO handle loading a bit better
   const SelectRaider = () => (
-    <Flex justify="space-between" gap={1} w="100%">
+    <Flex justify='space-between' gap={1} w='100%'>
       <IconButton
-        variant="outline"
-        icon={<Icon as={FiX} color="primary.500" />}
-        aria-label="Clear Set Raider for Raid"
+        variant='outline'
+        icon={<Icon as={FiX} color='primary.500' />}
+        aria-label='Clear Set Raider for Raid'
         onClick={() => {
           setButton(SIDEBAR_ACTION_STATES.none);
           setRaiderToAdd(undefined);
@@ -183,7 +181,7 @@ const RaidPartyButtons = ({
   );
 
   return (
-    <VStack align="center" width="100%" marginTop={2}>
+    <VStack align='center' width='100%' marginTop={2}>
       {(button === SIDEBAR_ACTION_STATES.none ||
         button === SIDEBAR_ACTION_STATES.cleric) && <StartProcess />}
       {button === SIDEBAR_ACTION_STATES.select && <SelectRaiderOrRoleButton />}

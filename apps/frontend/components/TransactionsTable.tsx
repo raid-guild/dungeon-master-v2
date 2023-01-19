@@ -28,10 +28,12 @@ const columns = [
     sortingFn: 'datetime',
   }),
   columnHelper.accessor('elapsedDays', {
+    id: 'elapsedDays',
     cell: (info) => info.getValue(),
     header: 'Days Held',
     meta: {
       dataType: 'numeric',
+      hidden: true,
     },
     filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
@@ -92,6 +94,49 @@ const columns = [
     filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
+  columnHelper.accessor('memberLink', {
+    id: 'memberLink',
+    cell: (info) => info.getValue(),
+    enableColumnFilter: false,
+    meta: { hidden: true },
+  }),
+  columnHelper.accessor('memberName', {
+    cell: (info) =>
+      info.row.getValue('memberLink') ? (
+        <Link
+          href={info.row.getValue('memberLink')}
+          target='_blank'
+          aria-label='memberLink'
+        >
+          <Tooltip label={`view ${info.getValue()} on DAOhaus`}>
+            <span>{info.getValue()}</span>
+          </Tooltip>
+        </Link>
+      ) : (
+        <span>{info.getValue()}</span>
+      ),
+    header: 'Member',
+  }),
+  columnHelper.accessor('proposalLink', {
+    id: 'proposalLink',
+    cell: (info) => info.getValue(),
+    enableColumnFilter: false,
+    meta: { hidden: true },
+  }),
+  columnHelper.accessor('proposalTitle', {
+    cell: (info) => (
+      <Link
+        href={info.row.getValue('proposalLink')}
+        target='_blank'
+        aria-label='proposalLink'
+      >
+        <Tooltip label='view proposal on DAOhaus'>
+          <span>{info.getValue()}</span>
+        </Tooltip>
+      </Link>
+    ),
+    header: 'Proposal',
+  }),
   columnHelper.accessor('proposalLoot', {
     id: 'proposalLoot',
     cell: formatNumber,
@@ -113,32 +158,18 @@ const columns = [
     filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
   }),
-  columnHelper.accessor('proposalLink', {
-    id: 'proposalLink',
-    cell: (info) => info.getValue(),
-    enableColumnFilter: false,
-    meta: { hidden: true },
-  }),
-  columnHelper.accessor('proposalTitle', {
-    cell: (info) => (
-      <Link href={info.row.getValue('proposalLink')} target='_blank'>
-        {info.getValue()}
-      </Link>
-    ),
-    header: 'Proposal',
-  }),
   columnHelper.accessor('counterparty', {
     cell: (info) => (
       <Tooltip label={info.getValue()}>
-        {truncateAddress(info.getValue())}
+        <span>{truncateAddress(info.getValue())}</span>
       </Tooltip>
     ),
     header: 'Counterparty',
   }),
   columnHelper.accessor('txExplorerLink', {
     cell: (info) => (
-      <Link href={info.getValue()} target='_blank'>
-        view
+      <Link href={info.getValue()} target='_blank' aria-label='txExplorerLink'>
+        <Tooltip label='view transaction explorer'>view</Tooltip>
       </Link>
     ),
     enableColumnFilter: false,
@@ -146,15 +177,13 @@ const columns = [
   }),
 ];
 
-const TransactionsTable = ({ data }: TransactionsTableProps) => {
-  return (
-    <DataTable
-      id='transactionsDataTable'
-      columns={columns}
-      data={data}
-      size='sm'
-    />
-  );
-};
+const TransactionsTable = ({ data }: TransactionsTableProps) => (
+  <DataTable
+    id='transactionsDataTable'
+    columns={columns}
+    data={data}
+    size='sm'
+  />
+);
 
 export default TransactionsTable;

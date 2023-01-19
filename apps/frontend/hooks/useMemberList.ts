@@ -5,12 +5,11 @@ import { camelize, IMember, SIDEBAR_ACTION_STATES } from '../utils';
 
 const useMemberList = ({
   token,
-  memberRolesFilterKey,
-  memberStatusFilterKey,
-  memberSortKey,
+  memberRolesFilterKey = 'ALL',
+  memberStatusFilterKey = 'ALL',
+  memberSortKey = 'name',
+  limit = 15,
 }) => {
-  const limit = 15;
-
   const where = {
     ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
       memberRolesFilterKey !== 'ALL' && {

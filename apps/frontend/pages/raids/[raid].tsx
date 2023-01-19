@@ -1,38 +1,73 @@
 import _ from 'lodash';
-import { Heading, Flex, Stack, Box } from '@raidguild/design-system';
+import { Heading, Flex, Stack, Box, Text } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
-import { useRouter } from 'next/router';
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
 import { useSession } from 'next-auth/react';
 import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
 import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
+import { displayDate } from '../../utils';
 
-const Raid = () => {
+const RaidDate = ({ startDate, endDate }) => {
+  if (endDate) {
+    return (
+      <Stack spacing={1}>
+        <Heading size='sm'>Raid Ended</Heading>
+        <Text>{displayDate(endDate)}</Text>
+      </Stack>
+    );
+  }
+  if (startDate) {
+    return (
+      <Stack spacing={1}>
+        <Heading size='sm'>Raid Started</Heading>
+        <Text>{displayDate(startDate)}</Text>
+      </Stack>
+    );
+  }
+  return null;
+};
+
+const Raid = ({ raidId }) => {
   const { data: session } = useSession();
-  const router = useRouter();
   const token = _.get(session, 'token');
-  const raidId = _.get(router, 'query.raid');
-  const { data: raid, isLoading } = useRaidDetail({ raidId, token });
-  console.log(isLoading, raid);
+  const { data: raid } = useRaidDetail({ raidId, token });
+  console.log(raid);
+
+  const startOrEnd = _.get(raid, 'startDate') || _.get(raid, 'endDate');
 
   return (
     <>
       <NextSeo title={_.get(raid, 'name')} />
 
       <SiteLayout
-        subheader={<Heading size="lg">{_.get(raid, 'name')}</Heading>}
+        subheader={
+          <Flex
+            w='100%'
+            justify={startOrEnd ? 'space-between' : 'center'}
+            align='center'
+          >
+            {startOrEnd && <Box w='15%' />}
+
+            <Heading size='lg'>{_.get(raid, 'name')}</Heading>
+
+            <RaidDate
+              startDate={_.get(raid, 'startDate')}
+              endDate={_.get(raid, 'endDate')}
+            />
+          </Flex>
+        }
         isLoading={!raid}
         data={raid}
       >
         <Flex
-          w="95%"
+          w='95%'
           minW={['350px', null, null, '1200px']}
-          mx="auto"
+          mx='auto'
           direction={['column', null, null, 'row']}
           gap={10}
-          align="flex-start"
+          align='flex-start'
         >
           <Stack w={['100%', null, null, '60%']} spacing={8}>
             <RaidDetailsCard
@@ -49,6 +84,16 @@ const Raid = () => {
       </SiteLayout>
     </>
   );
+};
+
+export const getServerSideProps = async (context) => {
+  const { raid } = context.params;
+
+  return {
+    props: {
+      raidId: raid || null,
+    },
+  };
 };
 
 export default Raid;

@@ -8,7 +8,7 @@ import {
   MOLOCH_QUERY,
   TOKEN_PRICES_QUERY,
 } from '../gql';
-import { camelize } from '../utils';
+import { camelize, GUILD_GNOSIS_DAO_ADDRESS } from '../utils';
 import { useEffect, useState } from 'react';
 import {
   ICalculatedTokenBalances,
@@ -20,7 +20,6 @@ import {
   IMappedTokenPrice,
 } from '../types';
 
-const RG_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 class CalculateTokenBalances {
@@ -190,7 +189,7 @@ const formatBalancesAsTransactions = async (
 
           const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${molochStatBalance.transactionHash}`;
           const proposalLink = molochStatBalance.proposalDetail
-            ? `https://app.daohaus.club/dao/0x64/${RG_GNOSIS_DAO_ADDRESS}/proposals/${molochStatBalance.proposalDetail.proposalId}`
+            ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS}/proposals/${molochStatBalance.proposalDetail.proposalId}`
             : '';
           const epochTimeAtIngressMs =
             Number(molochStatBalance.timestamp) * 1000;
@@ -263,7 +262,7 @@ export const useTransactions = ({ token }) => {
     const response = await client({ token }).request(TRANSACTIONS_QUERY, {
       first: limit,
       skip: pageParam * limit,
-      molochAddress: RG_GNOSIS_DAO_ADDRESS,
+      molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
     });
 
     return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
@@ -360,7 +359,7 @@ export const useBalances = ({ token, startFetch }) => {
     // TODO handle filters
 
     const response = await client({ token }).request(MOLOCH_QUERY, {
-      contractAddr: RG_GNOSIS_DAO_ADDRESS,
+      contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
     });
 
     return camelize(_.get(response, 'daohaus_xdai.moloch'));
