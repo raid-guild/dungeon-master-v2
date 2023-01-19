@@ -50,22 +50,6 @@ export const Accounting = () => {
     return _.keyBy(memberArray, (m: IMember) => m.ethAddress.toLowerCase());
   }, [memberData]);
 
-  // console.log('members', memberArray, members);
-
-  const onExportCsv = (type: 'transactions' | 'balances') => {
-    let csvString = Papa.unparse(transactions);
-    if (type === 'balances') {
-      csvString = Papa.unparse(balances);
-    }
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${type}.csv`);
-    link.click();
-    link.remove();
-  };
-
   const withPrices = useCallback(
     <T extends ITokenBalanceLineItem | IVaultTransaction>(items: T[]) =>
       items.map((t) => {
@@ -118,6 +102,67 @@ export const Accounting = () => {
       }),
     [transactionsWithPrices, members]
   );
+
+  const onExportCsv = (type: 'transactions' | 'balances') => {
+    const formattedTransactions = transactionsWithPrices.map((t) => ({
+      ['Date']: t.date,
+      ['Tx Explorer Link']: t.txExplorerLink,
+      ['Elapsed Days']: t.elapsedDays,
+      ['Type']: t.type,
+      ['Applicant']: t.proposalApplicant,
+      ['Applicant Member']:
+        members[t.proposalApplicant.toLowerCase()]?.name || '-',
+      ['Shares']: t.proposalShares,
+      ['Loot']: t.proposalLoot,
+      ['Title']: t.proposalTitle,
+      ['Counterparty']: t.counterparty,
+      ['Counterparty Member']:
+        members[t.counterparty.toLowerCase()]?.name || '-',
+      ['Token Symbol']: t.tokenSymbol,
+      ['Token Decimals']: t.tokenDecimals,
+      ['Token Address']: t.tokenAddress,
+      ['Inflow']: t.in,
+      ['Inflow USD']: t.priceConversion
+        ? `$${(t.in * t.priceConversion).toLocaleString()}`
+        : '$-',
+      ['Outflow']: t.out,
+      ['Outflow USD']: t.priceConversion
+        ? `$${(t.out * t.priceConversion).toLocaleString()}`
+        : '$-',
+      ['Balance']: t.balance,
+      ['Balance USD']: t.priceConversion
+        ? `$${(t.balance * t.priceConversion).toLocaleString()}`
+        : '$-',
+    }));
+
+    let csvString = Papa.unparse(formattedTransactions);
+    if (type === 'balances') {
+      const formattedBalances = balancesWithPrices.map((b) => ({
+        ['Token']: b.tokenSymbol,
+        ['Tx Explorer Link']: b.tokenExplorerLink,
+        ['Inflow']: b.inflow.tokenValue,
+        ['Inflow USD']: b.priceConversion
+          ? `$${(b.inflow.tokenValue * b.priceConversion).toLocaleString()}`
+          : '$-',
+        ['Outflow']: b.outflow.tokenValue,
+        ['Outflow USD']: b.priceConversion
+          ? `$${(b.outflow.tokenValue * b.priceConversion).toLocaleString()}`
+          : '$-',
+        ['Balance']: b.closing.tokenValue,
+        ['Balance USD']: b.priceConversion
+          ? `$${(b.closing.tokenValue * b.priceConversion).toLocaleString()}`
+          : '$-',
+      }));
+      csvString = Papa.unparse(formattedBalances);
+    }
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${type}.csv`);
+    link.click();
+    link.remove();
+  };
 
   return (
     <>

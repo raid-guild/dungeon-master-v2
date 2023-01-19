@@ -293,7 +293,9 @@ export const useTransactions = ({ token }) => {
       if (status === 'success') {
         const formattedData = await formatBalancesAsTransactions(data.pages[0]);
         setTransactions(formattedData.transactions || []);
-      } else console.error('transactions fetching failed with: ', status);
+      } else if (status === 'error') {
+        console.error('transactions fetching failed with: ', status);
+      }
     })();
   }, [data, status]);
 
@@ -394,7 +396,9 @@ export const useBalances = ({ token, startFetch }) => {
             calculatedTokenBalances.getBalances()
           );
         setBalances(tokenBalances);
-      } else console.error('balances fetching failed with: ', status);
+      } else if (status === 'error') {
+        console.error('balances fetching failed with: ', status);
+      }
     })();
   }, [data, startFetch, status]);
 
@@ -454,7 +458,9 @@ export const useTokenPrices = ({ token }) => {
           }
         });
         setTokenPrices(mappedPrices);
-      } else console.error('token prices fetching failed with: ', status);
+      } else if (status === 'error') {
+        console.error('token prices fetching failed with: ', status);
+      }
     })();
   }, [data, status]);
 
