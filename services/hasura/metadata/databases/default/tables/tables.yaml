@@ -13,6 +13,7 @@
 - "!include public_consultations_services_required.yaml"
 - "!include public_contact_infos.yaml"
 - "!include public_contacts.yaml"
+- "!include public_current_token_prices.yaml"
 - "!include public_dao_familiarities.yaml"
 - "!include public_delivery_priorities.yaml"
 - "!include public_guild_classes.yaml"
