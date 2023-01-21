@@ -268,14 +268,10 @@ export const useTransactions = ({ token }) => {
     return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
   };
 
-  const {
-    status,
-    error,
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery<Array<IMolochStatsBalance>, Error>(
+  const { status, error, data } = useInfiniteQuery<
+    Array<IMolochStatsBalance>,
+    Error
+  >(
     ['transactions'],
     ({ pageParam = 0 }) => transactionQueryResult(pageParam),
     {
@@ -303,9 +299,7 @@ export const useTransactions = ({ token }) => {
     status,
     error,
     data: transactions,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    loading: status === 'loading',
   };
 };
 
@@ -367,25 +361,17 @@ export const useBalances = ({ token, startFetch }) => {
     return camelize(_.get(response, 'daohaus_xdai.moloch'));
   };
 
-  const {
-    status,
-    error,
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery<{ tokenBalances: Array<ITokenBalance> }, Error>(
-    ['balances'],
-    () => balancesQueryResult(),
-    {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit);
-      },
-      enabled: Boolean(token),
-    }
-  );
+  const { status, error, data } = useInfiniteQuery<
+    { tokenBalances: Array<ITokenBalance> },
+    Error
+  >(['balances'], () => balancesQueryResult(), {
+    getNextPageParam: (lastPage, allPages) => {
+      return _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit);
+    },
+    enabled: Boolean(token),
+  });
 
   useEffect(() => {
     (async () => {
@@ -406,9 +392,7 @@ export const useBalances = ({ token, startFetch }) => {
     status,
     error,
     data: balances,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    loading: status === 'loading',
   };
 };
 
@@ -424,14 +408,7 @@ export const useTokenPrices = ({ token }) => {
     return camelize(_.get(response, 'treasury_token_history'));
   };
 
-  const {
-    status,
-    error,
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery<Array<ITokenPrice>, Error>(
+  const { status, error, data } = useInfiniteQuery<Array<ITokenPrice>, Error>(
     ['tokenPrices'],
     () => tokenPricesQueryResult(),
     {
@@ -468,8 +445,6 @@ export const useTokenPrices = ({ token }) => {
     status,
     error,
     data: tokenPrices,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    loading: status === 'loading',
   };
 };

@@ -30,14 +30,26 @@ const formatDate = (date: Date) => date.toISOString().split('T')[0];
 export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: transactions, error: transactionsError } = useTransactions({
+  const {
+    data: transactions,
+    loading: transactionsLoading,
+    error: transactionsError,
+  } = useTransactions({
     token,
   });
-  const { data: balances, error: balancesError } = useBalances({
+  const {
+    data: balances,
+    loading: balancesLoading,
+    error: balancesError,
+  } = useBalances({
     token,
     startFetch: transactions.length > 0 ? true : false,
   });
-  const { data: tokenPrices, error: tokenPricesError } = useTokenPrices({
+  const {
+    data: tokenPrices,
+    loading: tokenPricesLoading,
+    error: tokenPricesError,
+  } = useTokenPrices({
     token,
   });
   const { data: memberData } = useMemberList({
@@ -89,6 +101,7 @@ export const Accounting = () => {
       transactionsWithPrices.map((t) => {
         const ethAddress = t.proposalApplicant.toLowerCase();
         const m = members[ethAddress];
+        // TODO: Change to DungeonMaster member link once v1.5 is deployed
         const memberLink = m?.ethAddress.match(REGEX_ETH_ADDRESS)
           ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS}/profile/${ethAddress}`
           : undefined;
@@ -164,16 +177,24 @@ export const Accounting = () => {
     link.remove();
   };
 
+  const isLoading =
+    transactionsLoading || balancesLoading || tokenPricesLoading;
+  const error = transactionsError || balancesError || tokenPricesError;
+
   return (
     <>
       <NextSeo title='Accounting' />
 
       <SiteLayout
-        isLoading={!(transactionsWithPricesAndMembers && balances)}
-        data={[...transactionsWithPricesAndMembers, ...balances]}
+        isLoading={isLoading}
+        data={[
+          ...transactionsWithPricesAndMembers,
+          ...balances,
+          ...Object.values(tokenPrices),
+        ]}
         subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase='No transactions'
-        error={transactionsError || balancesError || tokenPricesError}
+        error={error}
       >
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
