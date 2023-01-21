@@ -35,6 +35,8 @@ export const RAID_STATUS = [
   'Lost',
 ];
 
+export const REGEX_ETH_ADDRESS = /^(0x[a-f0-9]{40})$/i;
+
 export const SERVICES = [
   'DAO (Design, Deployment)',
   'Development (Frontend, Backend)',
@@ -236,6 +238,8 @@ export const GUILD_CLASS_DISPLAY = {
   LEGAL: 'Rogue (Legal)',
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
 };
+
+export const GUILD_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 
 export const SIDEBAR_ACTION_STATES = {
   none: 'NONE',

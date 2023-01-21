@@ -70,7 +70,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         <SessionProvider
           session={pageProps.session}
           refetchInterval={8 * 60 * 1000}
-          refetchOnWindowFocus={true}
+          refetchOnWindowFocus={false}
         >
           <RainbowKitSiweNextAuthProvider>
             <RainbowKitProvider chains={chains} theme={darkTheme()}>

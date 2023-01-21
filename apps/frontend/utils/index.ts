@@ -3,6 +3,7 @@ export * from '../types';
 export * from './constants';
 export * from './general';
 export * from './raids';
+export * from './table';
 export * from './wagmiClient';
 
 export const camelize = (obj: any) =>
