@@ -59,14 +59,14 @@ export const Accounting = () => {
 
   const members = useMemo(() => {
     const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
-    return _.keyBy(memberArray, (m: IMember) => m.ethAddress.toLowerCase());
+    return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
   }, [memberData]);
 
   const withPrices = useCallback(
     <T extends ITokenBalanceLineItem | IVaultTransaction>(items: T[]) =>
       items.map((t) => {
         const formattedDate = formatDate(t.date);
-        const tokenSymbol = t.tokenSymbol.toLowerCase();
+        const tokenSymbol = t.tokenSymbol?.toLowerCase();
         if (
           tokenPrices[tokenSymbol] &&
           tokenPrices[tokenSymbol][formattedDate]

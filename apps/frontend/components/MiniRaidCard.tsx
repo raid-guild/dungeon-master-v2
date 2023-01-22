@@ -36,8 +36,8 @@ const MiniRaidCard = ({
     }
   >
     <Card variant='outline' width='100%'>
-      <Flex w='100%' justify='space-between' align='center'>
-        <Stack spacing={2}>
+      <Flex direction='row' alignItems={'space-between'} width='100%'>
+        <Stack spacing={2} width='100%'>
           <Heading color='white' size={smallHeader ? 'sm' : 'md'}>
             {_.get(raid, 'name', _.get(consultation, 'name'))}
           </Heading>
