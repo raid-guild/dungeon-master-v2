@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
 export const MOLOCH_QUERY = gql`
@@ -8,7 +9,7 @@ export const MOLOCH_QUERY = gql`
         minions {
           minionAddress
         }
-        tokenBalances(where: {guildBank: true}) {
+        tokenBalances(where: { guildBank: true }) {
           token {
             tokenAddress
             symbol
@@ -19,4 +20,4 @@ export const MOLOCH_QUERY = gql`
       }
     }
   }
-`
+`;

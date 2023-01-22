@@ -1,5 +1,8 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-use-before-define */
 // All credit to @midgerate, @xivanc, @daniel-ivanco, and the DAOHaus team for the original code
 import _ from 'lodash';
+import { useEffect, useState } from 'react';
 import { BigNumber, utils } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import {
@@ -9,7 +12,6 @@ import {
   TOKEN_PRICES_QUERY,
 } from '../gql';
 import { camelize, GUILD_GNOSIS_DAO_ADDRESS } from '../utils';
-import { useEffect, useState } from 'react';
 import {
   ICalculatedTokenBalances,
   IVaultTransaction,
@@ -257,7 +259,7 @@ export const useTransactions = ({ token }) => {
   const limit = 1000;
 
   const transactionQueryResult = async (pageParam: number) => {
-    if (!token) return;
+    if (!token) return null;
     // TODO handle filters
     const response = await client({ token }).request(TRANSACTIONS_QUERY, {
       first: limit,
@@ -275,21 +277,22 @@ export const useTransactions = ({ token }) => {
     ['transactions'],
     ({ pageParam = 0 }) => transactionQueryResult(pageParam),
     {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
+      getNextPageParam: (lastPage, allPages) =>
+        _.isEmpty(lastPage)
           ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit);
-      },
+          : _.divide(_.size(_.flatten(allPages)), limit),
       enabled: Boolean(token),
     }
   );
 
+  // TODO use onSuccess/onError instead of useEffect
   useEffect(() => {
     (async () => {
       if (status === 'success') {
         const formattedData = await formatBalancesAsTransactions(data.pages[0]);
         setTransactions(formattedData.transactions || []);
       } else if (status === 'error') {
+        // eslint-disable-next-line no-console
         console.error('transactions fetching failed with: ', status);
       }
     })();
@@ -303,6 +306,7 @@ export const useTransactions = ({ token }) => {
   };
 };
 
+// TODO move to utils
 const formatUnits = (value: BigNumber, decimals: string) =>
   Number(utils.formatUnits(value, decimals));
 
@@ -351,7 +355,7 @@ export const useBalances = ({ token, startFetch }) => {
   const limit = 1000;
 
   const balancesQueryResult = async () => {
-    if (!token) return;
+    if (!token) return null;
     // TODO handle filters
 
     const response = await client({ token }).request(MOLOCH_QUERY, {
@@ -365,13 +369,14 @@ export const useBalances = ({ token, startFetch }) => {
     { tokenBalances: Array<ITokenBalance> },
     Error
   >(['balances'], () => balancesQueryResult(), {
-    getNextPageParam: (lastPage, allPages) => {
-      return _.isEmpty(lastPage)
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
         ? undefined
-        : _.divide(_.size(_.flatten(allPages)), limit);
-    },
+        : _.divide(_.size(_.flatten(allPages)), limit),
     enabled: Boolean(token),
   });
+
+  // TODO use onSuccess
 
   useEffect(() => {
     (async () => {
@@ -383,6 +388,7 @@ export const useBalances = ({ token, startFetch }) => {
           );
         setBalances(tokenBalances);
       } else if (status === 'error') {
+        // eslint-disable-next-line no-console
         console.error('balances fetching failed with: ', status);
       }
     })();
@@ -396,11 +402,12 @@ export const useBalances = ({ token, startFetch }) => {
   };
 };
 
+// TODO should these be separate hooks?
 export const useTokenPrices = ({ token }) => {
   const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({});
 
   const tokenPricesQueryResult = async () => {
-    if (!token) return;
+    if (!token) return null;
     // TODO handle filters
 
     const response = await client({ token }).request(TOKEN_PRICES_QUERY);
@@ -412,15 +419,13 @@ export const useTokenPrices = ({ token }) => {
     ['tokenPrices'],
     () => tokenPricesQueryResult(),
     {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)));
-      },
+      getNextPageParam: (lastPage, allPages) =>
+        _.isEmpty(lastPage) ? undefined : _.divide(_.size(_.flatten(allPages))),
       enabled: Boolean(token),
     }
   );
 
+  // TODO use onSuccess
   useEffect(() => {
     (async () => {
       if (status === 'success') {
@@ -436,6 +441,7 @@ export const useTokenPrices = ({ token }) => {
         });
         setTokenPrices(mappedPrices);
       } else if (status === 'error') {
+        // eslint-disable-next-line no-console
         console.error('token prices fetching failed with: ', status);
       }
     })();

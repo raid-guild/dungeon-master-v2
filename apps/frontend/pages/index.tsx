@@ -9,6 +9,7 @@ import {
   TabList,
   Tab,
   TabPanel,
+  Text,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
@@ -41,58 +42,84 @@ const Home: React.FC = () => {
           w='100%'
         >
           {userRaids && (
-            <Stack w={['90%', null, null, '45%']} spacing={4}>
+            <Stack spacing={6} w={['90%', null, null, '45%']}>
               <Heading size='lg'>My Raids</Heading>
-              {!_.isEmpty(_.get(data, 'myRaids.active')) && (
-                <Stack spacing={4}>
-                  <Heading size='md'>Active Raids</Heading>
-                  <Stack spacing={4}>
-                    {_.map(_.get(data, 'myRaids.active'), (raid: IRaid) => (
-                      <MiniRaidCard key={raid.id} raid={raid} />
-                    ))}
-                  </Stack>
-                </Stack>
-              )}
-              {!_.isEmpty(_.get(data, 'myRaids.past')) && (
-                <Stack spacing={4}>
-                  <Heading size='md'>Past Raids</Heading>
-                  <Stack spacing={4}>
-                    {_.map(_.get(data, 'myRaids.past'), (raid: IRaid) => (
-                      <MiniRaidCard key={raid.id} raid={raid} />
-                    ))}
-                  </Stack>
-                </Stack>
-              )}
+              <Tabs>
+                <TabList>
+                  {!_.isEmpty(_.get(data, 'myRaids.active')) && (
+                    <Tab>
+                      <Text fontSize='xl'>Active Raids</Text>
+                    </Tab>
+                  )}
+                  {!_.isEmpty(_.get(data, 'myRaids.past')) && (
+                    <Tab>
+                      <Text fontSize='xl'>Past Raids</Text>
+                    </Tab>
+                  )}
+                </TabList>
+
+                <TabPanels>
+                  {!_.isEmpty(_.get(data, 'myRaids.active')) && (
+                    <TabPanel>
+                      <Stack spacing={4}>
+                        <Stack spacing={4}>
+                          {_.map(
+                            _.get(data, 'myRaids.active'),
+                            (raid: IRaid) => (
+                              <MiniRaidCard key={raid.id} raid={raid} />
+                            )
+                          )}
+                        </Stack>
+                      </Stack>
+                    </TabPanel>
+                  )}
+                  {!_.isEmpty(_.get(data, 'myRaids.past')) && (
+                    <TabPanel>
+                      <Stack spacing={4}>
+                        {_.map(_.get(data, 'myRaids.past'), (raid: IRaid) => (
+                          <MiniRaidCard key={raid.id} raid={raid} />
+                        ))}
+                      </Stack>
+                    </TabPanel>
+                  )}
+                </TabPanels>
+              </Tabs>
             </Stack>
           )}
 
-          <Stack w={['90%', null, null, userRaids ? '45%' : '80%']} spacing={4}>
+          <Stack w={['90%', null, null, userRaids ? '45%' : '80%']} spacing={6}>
+            <Heading size='lg'>Incoming</Heading>
             <Tabs>
               <TabList>
                 <Tab>
-                  <Heading size='md'>New Consultations</Heading>
+                  <Text fontSize='xl'>New Consultations</Text>
                 </Tab>
                 <Tab>
-                  <Heading size='md'>New Raids</Heading>
+                  <Text fontSize='xl'>New Raids</Text>
                 </Tab>
               </TabList>
 
               <TabPanels>
                 <TabPanel>
-                  {_.map(
-                    _.get(data, 'newConsultations'),
-                    (consultation: IConsultation) => (
-                      <MiniRaidCard
-                        key={consultation.id}
-                        consultation={consultation}
-                      />
-                    )
-                  )}
+                  <Stack spacing={4}>
+                    {_.map(
+                      _.get(data, 'newConsultations'),
+                      (consultation: IConsultation) => (
+                        <MiniRaidCard
+                          key={consultation.id}
+                          consultation={consultation}
+                          newRaid
+                        />
+                      )
+                    )}
+                  </Stack>
                 </TabPanel>
                 <TabPanel>
-                  {_.map(_.get(data, 'newRaids'), (raid: IRaid) => (
-                    <MiniRaidCard key={raid.id} raid={raid} newRaid />
-                  ))}
+                  <Stack spacing={4}>
+                    {_.map(_.get(data, 'newRaids'), (raid: IRaid) => (
+                      <MiniRaidCard key={raid.id} raid={raid} newRaid />
+                    ))}
+                  </Stack>
                 </TabPanel>
               </TabPanels>
             </Tabs>

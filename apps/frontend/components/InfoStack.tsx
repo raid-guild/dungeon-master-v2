@@ -1,5 +1,7 @@
+/* eslint-disable no-nested-ternary */
+// TODO fix ternary
 import React from 'react';
-import Link from './ChakraNextLink';
+
 import {
   Stack,
   Text,
@@ -7,9 +9,10 @@ import {
   HStack,
   Icon,
   Tooltip,
+  useClipboard,
 } from '@raidguild/design-system';
-import { useClipboard } from '@chakra-ui/react';
 import { FaExternalLinkAlt, FaInfoCircle, FaCopy } from 'react-icons/fa';
+import Link from './ChakraNextLink';
 
 interface InfoStackProps {
   label: string;
@@ -29,15 +32,15 @@ const InfoStack: React.FC<InfoStackProps> = ({
   const copyText = useClipboard(details);
 
   return (
-    <Stack justify="center">
+    <Stack justify='center'>
       <HStack>
-        <Text color="white" fontSize="sm">
+        <Text color='white' fontSize='sm'>
           {label}
         </Text>
         {tooltip && (
           <Tooltip label={tooltip}>
             <span>
-              <Icon as={FaInfoCircle} color="whiteAlpha.400" />
+              <Icon as={FaInfoCircle} color='whiteAlpha.400' />
             </span>
           </Tooltip>
         )}
@@ -46,7 +49,7 @@ const InfoStack: React.FC<InfoStackProps> = ({
       {link ? (
         <Link href={link} isExternal>
           <HStack>
-            <ChakraLink color="white" fontSize="lg" fontWeight="medium">
+            <ChakraLink color='white' fontSize='lg' fontWeight='medium'>
               {details}
             </ChakraLink>
             <Icon as={FaExternalLinkAlt} />
@@ -54,13 +57,13 @@ const InfoStack: React.FC<InfoStackProps> = ({
         </Link>
       ) : copy ? (
         <HStack>
-          <Text color="white" fontSize="lg" fontWeight="medium">
+          <Text color='white' fontSize='lg' fontWeight='medium'>
             {details}
           </Text>
           <Icon as={FaCopy} onClick={copyText.onCopy} />
         </HStack>
       ) : (
-        <Text color="white" fontSize="lg" fontWeight="medium">
+        <Text color='white' fontSize='lg' fontWeight='medium'>
           {details}
         </Text>
       )}

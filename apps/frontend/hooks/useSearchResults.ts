@@ -19,14 +19,12 @@ type searchQueryReturn = Promise<{
   raids: IRaid[];
 }> | null;
 
-const processForCommandPalette = (key: string, record: any) => {
-  return {
-    id: `${key}-${_.get(record, 'id')}`,
-    children: _.get(record, 'name'),
-    icon: keyIcons[key],
-    href: `/${key}/${_.get(record, key === 'members' ? 'eth_address' : 'id')}`,
-  };
-};
+const processForCommandPalette = (key: string, record: any) => ({
+  id: `${key}-${_.get(record, 'id')}`,
+  children: _.get(record, 'name'),
+  icon: keyIcons[key],
+  href: `/${key}/${_.get(record, key === 'members' ? 'eth_address' : 'id')}`,
+});
 
 const useSearchResults = ({ token, search }) => {
   const searchQueryResult = async (): searchQueryReturn => {
@@ -36,9 +34,9 @@ const useSearchResults = ({ token, search }) => {
       search: `%${search}%`,
     });
 
-    return _.mapValues(result, (o: any, k: string) => {
-      return _.map(o, (r: any) => processForCommandPalette(k, r));
-    });
+    return _.mapValues(result, (o: any, k: string) =>
+      _.map(o, (r: any) => processForCommandPalette(k, r))
+    );
   };
 
   const { status, error, data, isLoading } = useQuery<any, Error>(

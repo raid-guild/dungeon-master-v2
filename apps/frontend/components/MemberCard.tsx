@@ -15,9 +15,9 @@ import {
   Divider,
   Tooltip,
   RoleBadge,
+  useClipboard,
+  Stack,
 } from '@raidguild/design-system';
-import { useClipboard } from '@chakra-ui/react';
-import Link from './ChakraNextLink';
 import {
   FaGithub,
   FaTwitter,
@@ -25,6 +25,7 @@ import {
   FaEthereum,
   FaTelegramPlane,
 } from 'react-icons/fa';
+import Link from './ChakraNextLink';
 import {
   GUILD_CLASS_ICON,
   IApplication,
@@ -139,9 +140,11 @@ const MemberCard: React.FC<MemberProps> = ({
   const memberType = _.get(member, 'memberType.memberType');
 
   return (
-    <LinkBox>
+    <LinkBox h='100%'>
       <Card
         variant='withHeader'
+        minH='350px'
+        h='100%'
         centerDivider={
           member &&
           _.get(member, 'guildClass.guildClass') && (
@@ -172,7 +175,7 @@ const MemberCard: React.FC<MemberProps> = ({
                 >
                   {_.get(member, 'name', _.get(application, 'name'))}
                 </Heading>
-                <VStack align='start'>
+                <VStack align='end'>
                   {_.get(member, 'name') && (
                     <Badge background='blackAlpha' fontSize='sm'>
                       {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
@@ -193,13 +196,21 @@ const MemberCard: React.FC<MemberProps> = ({
         }
         width='100%'
       >
-        <VStack height='100%' align='stretch' width='100%'>
-          <Divider paddingTop={2} width='100%' alignSelf='center' />
-          <Text size='md' maxW='900px'>
-            {_.gte(_.size(_.get(application, 'introduction')), 250)
-              ? _.get(application, 'introduction').slice(0, 250) + '...'
-              : _.get(application, 'introduction')}
-          </Text>
+        <Flex
+          height='100%'
+          align='stretch'
+          width='100%'
+          direction='column'
+          justify='space-between'
+        >
+          <Stack spacing={4}>
+            <Divider paddingTop={2} width='100%' alignSelf='center' />
+            <Text size='md' maxW='900px'>
+              {_.gte(_.size(_.get(application, 'introduction')), 250)
+                ? `${_.get(application, 'introduction').slice(0, 250)}...`
+                : _.get(application, 'introduction')}
+            </Text>
+          </Stack>
 
           <Flex wrap='wrap' width='100%' maxWidth='100%'>
             {_.map(
@@ -216,7 +227,7 @@ const MemberCard: React.FC<MemberProps> = ({
               )
             )}
           </Flex>
-        </VStack>
+        </Flex>
       </Card>
     </LinkBox>
   );

@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { client, RAID_UPDATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
+
+import { client, RAID_UPDATE_MUTATION } from '../gql';
 import { IRaidUpdate, camelize } from '../utils';
 
 const useRaidUpdate = ({ token, raidId }) => {
@@ -10,7 +11,7 @@ const useRaidUpdate = ({ token, raidId }) => {
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidUpdate) => {
-      if (!raidId || !token) return;
+      if (!raidId || !token) return null;
       const result = await client({ token }).request(RAID_UPDATE_MUTATION, {
         id: raidId,
         raid_updates: args.raid_updates,
@@ -20,8 +21,7 @@ const useRaidUpdate = ({ token, raidId }) => {
     },
     {
       onSuccess: (data) => {
-        console.log(data);
-        const raid = camelize(_.get(data, 'update_raids_by_pk'));
+        const raid = camelize(_.get(data, 'raids_by_pk'));
 
         queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
         queryClient.invalidateQueries(['raidList']); // invalidate the raidList

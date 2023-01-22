@@ -2,7 +2,7 @@ import { gql } from 'graphql-request';
 import { CONTACT_INFO_FRAGMENT } from './contactInfo';
 
 export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
-  fragment SlimMemberDetailFragment on members {
+  fragment SlimMemberDetail on members {
     id
     name
     eth_address
@@ -18,7 +18,7 @@ export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
 `;
 
 const MEMBER_ENUM_FRAGMENT = gql`
-  fragment MemberEnumFragment on members {
+  fragment MemberEnum on members {
     guild_class {
       guild_class
     }
@@ -29,13 +29,13 @@ const MEMBER_ENUM_FRAGMENT = gql`
 `;
 
 export const MEMBER_DETAIL_FRAGMENT = gql`
-  fragment MemberDetailFragment on members {
+  fragment MemberDetail on members {
     id
 
     name
     eth_address
     is_raiding
-    ...MemberEnumFragment
+    ...MemberEnum
 
     contact_info {
       ...ContactInfo

@@ -5,7 +5,7 @@ import { camelize, IRaid } from '../utils';
 
 const useRaidDetail = ({ raidId, token }) => {
   const raidQueryResult = async () => {
-    if (!raidId || !token) return;
+    if (!raidId || !token) return null;
     // TODO handle filters
 
     const result = await client({ token }).request(RAID_DETAIL_QUERY, {

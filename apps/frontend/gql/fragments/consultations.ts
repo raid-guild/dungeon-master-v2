@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
 const CONSULTATION_ENUM_FRAGMENT = gql`

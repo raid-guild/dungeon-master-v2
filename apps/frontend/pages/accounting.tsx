@@ -1,4 +1,7 @@
+/* eslint-disable no-useless-computed-key */
 import { NextSeo } from 'next-seo';
+import Papa from 'papaparse';
+import _ from 'lodash';
 import {
   Heading,
   Button,
@@ -9,7 +12,8 @@ import {
   TabPanels,
   Flex,
 } from '@raidguild/design-system';
-import SiteLayout from '../components/SiteLayout';
+import { useCallback, useMemo } from 'react';
+
 import { useSession } from 'next-auth/react';
 import {
   useTransactions,
@@ -17,11 +21,11 @@ import {
   useTokenPrices,
 } from '../hooks/useAccounting';
 import useMemberList from '../hooks/useMemberList';
-import Papa from 'papaparse';
-import _ from 'lodash';
+import SiteLayout from '../components/SiteLayout';
+
 import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
-import { useCallback, useMemo } from 'react';
+
 import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
 import { GUILD_GNOSIS_DAO_ADDRESS, REGEX_ETH_ADDRESS } from '../utils';
 
@@ -43,7 +47,7 @@ export const Accounting = () => {
     error: balancesError,
   } = useBalances({
     token,
-    startFetch: transactions.length > 0 ? true : false,
+    startFetch: transactions.length > 0,
   });
   const {
     data: tokenPrices,
@@ -75,7 +79,8 @@ export const Accounting = () => {
             ...t,
             priceConversion: tokenPrices[tokenSymbol][formattedDate],
           };
-        } else if (tokenSymbol.includes('xdai')) {
+        }
+        if (tokenSymbol.includes('xdai')) {
           return {
             ...t,
             priceConversion: 1,

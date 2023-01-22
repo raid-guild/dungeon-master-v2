@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
 export const TOKEN_PRICES_QUERY = gql`

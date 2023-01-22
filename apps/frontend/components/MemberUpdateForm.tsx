@@ -10,8 +10,9 @@ import {
   Select,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
-import useMemberUpdate from '../hooks/useMemberUpdate';
 import { useForm, Controller } from 'react-hook-form';
+
+import useMemberUpdate from '../hooks/useMemberUpdate';
 import { IMember, IApplication } from '../utils';
 import {
   GUILD_CLASS_OPTIONS,
@@ -42,7 +43,6 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     mode: 'all',
   });
   const {
-    register,
     handleSubmit,
     control,
     formState: { isSubmitting },
@@ -70,104 +70,98 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   }
 
   return (
-    <Box as="section">
+    <Box as='section'>
       <Box
-        bg="gray.800"
-        shadow="lg"
+        bg='gray.800'
+        shadow='lg'
         maxW={{ base: 'xl', md: '3xl' }}
-        marginX="auto"
+        marginX='auto'
         paddingX={{ base: '6', md: '8' }}
-        paddingY="6"
-        rounded="lg"
+        paddingY='6'
+        rounded='lg'
       >
-        <Box maxW="md" marginX="auto">
-          <Box marginY="6">
+        <Box maxW='md' marginX='auto'>
+          <Box marginY='6'>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
-                  id="memberName"
+                  name='memberName'
                   defaultValue={member?.name ? member.name : ''}
-                  aria-label="Enter your name"
-                  placeholder="What is your name?"
-                  rounded="base"
-                  label="Member Name"
+                  aria-label='Enter your name'
+                  placeholder='What is your name?'
+                  rounded='base'
+                  label='Member Name'
                   localForm={localForm}
-                  {...register('memberName')}
                 />
                 <Input
-                  id="emailAddress"
+                  name='emailAddress'
                   defaultValue={
                     member?.contactInfo?.email
                       ? member?.contactInfo.email
                       : null
                   }
-                  aria-label="Enter your email address"
-                  placeholder="What is your email address?"
-                  rounded="base"
-                  label="Email Address"
+                  aria-label='Enter your email address'
+                  placeholder='What is your email address?'
+                  rounded='base'
+                  label='Email Address'
                   localForm={localForm}
-                  {...register('emailAddress')}
                 />
                 <Input
-                  id="githubHandle"
+                  name='githubHandle'
                   defaultValue={
                     member?.contactInfo?.github
                       ? member?.contactInfo.github
                       : null
                   }
-                  aria-label="Enter your GitHub handle"
-                  placeholder="What is your GitHub handle?"
-                  rounded="base"
-                  label="GitHub Handle"
+                  aria-label='Enter your GitHub handle'
+                  placeholder='What is your GitHub handle?'
+                  rounded='base'
+                  label='GitHub Handle'
                   localForm={localForm}
-                  {...register('githubHandle')}
                 />
                 <Input
-                  id="discordHandle"
+                  name='discordHandle'
                   defaultValue={
                     member?.contactInfo?.discord
                       ? member?.contactInfo.discord
                       : null
                   }
-                  aria-label="Enter your Discord handle"
-                  placeholder="What is your Discord handle?"
-                  rounded="base"
-                  label="Discord Handle"
+                  aria-label='Enter your Discord handle'
+                  placeholder='What is your Discord handle?'
+                  rounded='base'
+                  label='Discord Handle'
                   localForm={localForm}
-                  {...register('discordHandle')}
                 />
                 <Input
-                  id="telegramHandle"
+                  name='telegramHandle'
                   defaultValue={
                     member?.contactInfo?.telegram
                       ? member?.contactInfo.telegram
                       : null
                   }
-                  aria-label="Enter your Telegram handle"
-                  placeholder="What is your Telegram handle?"
-                  rounded="base"
-                  label="Telegram Handle"
+                  aria-label='Enter your Telegram handle'
+                  placeholder='What is your Telegram handle?'
+                  rounded='base'
+                  label='Telegram Handle'
                   localForm={localForm}
-                  {...register('telegramHandle')}
                 />
                 <Input
-                  id="twitterHandle"
+                  name='twitterHandle'
                   defaultValue={
                     member?.contactInfo?.twitter
                       ? member?.contactInfo.twitter
                       : null
                   }
-                  aria-label="Enter your Twitter handle"
-                  placeholder="What is your Twitter handle?"
-                  rounded="base"
-                  label="Twitter Handle"
+                  aria-label='Enter your Twitter handle'
+                  placeholder='What is your Twitter handle?'
+                  rounded='base'
+                  label='Twitter Handle'
                   localForm={localForm}
-                  {...register('twitterHandle')}
                 />
                 <FormControl>
-                  <FormLabel color="raid">Guild Class</FormLabel>
+                  <FormLabel color='raid'>Guild Class</FormLabel>
                   <Controller
-                    name="guildClass"
+                    name='guildClass'
                     defaultValue={
                       member?.guildClass?.guildClass
                         ? member?.guildClass?.guildClass
@@ -176,6 +170,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={GUILD_CLASS_OPTIONS}
                         localForm={localForm}
@@ -184,13 +179,14 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="raid">Primary Skills</FormLabel>
+                  <FormLabel color='raid'>Primary Skills</FormLabel>
                   <Controller
-                    name="primarySkills"
+                    name='primarySkills'
                     control={control}
                     render={({ field }) => (
                       <Select
                         isDisabled
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
                         localForm={localForm}
@@ -199,13 +195,14 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel color="raid">Secondary Skills</FormLabel>
+                  <FormLabel color='raid'>Secondary Skills</FormLabel>
                   <Controller
-                    name="secondarySkil"
+                    name='secondarySkil'
                     control={control}
                     render={({ field }) => (
                       <Select
                         isDisabled
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
                         localForm={localForm}
@@ -215,15 +212,15 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 </FormControl>
                 <Button
                   isLoading={isSubmitting || sending}
-                  type="submit"
-                  width="full"
-                  color="raid"
-                  borderColor="raid"
-                  border="1px solid"
-                  size="md"
-                  textTransform="uppercase"
-                  fontSize="sm"
-                  fontWeight="bold"
+                  type='submit'
+                  width='full'
+                  color='raid'
+                  borderColor='raid'
+                  border='1px solid'
+                  size='md'
+                  textTransform='uppercase'
+                  fontSize='sm'
+                  fontWeight='bold'
                 >
                   Update Profile
                 </Button>

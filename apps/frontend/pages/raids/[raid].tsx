@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import { Heading, Flex, Stack, Box, Text } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import { useSession } from 'next-auth/react';
+
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
-import { useSession } from 'next-auth/react';
 import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
 import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
 import { displayDate } from '../../utils';

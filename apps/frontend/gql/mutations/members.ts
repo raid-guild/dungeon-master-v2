@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 import { CONTACT_INFO_FRAGMENT, MEMBER_DETAIL_FRAGMENT } from '../fragments';
 

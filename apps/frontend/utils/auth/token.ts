@@ -5,7 +5,7 @@ import { Session, User } from 'next-auth';
 import { CreateTokenParams, HasuraAuthToken } from '../../types';
 import { getOrCreateUser } from './queryHelpers';
 
-const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+const { NEXTAUTH_SECRET } = process.env;
 
 export const CONFIG = {
   encodingAlgorithm: 'HS256',

@@ -10,7 +10,7 @@ import {
   CONFIG,
 } from '../../../utils/auth';
 
-const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
+const { NEXTAUTH_SECRET } = process.env;
 
 const siweProvider = CredentialsProvider({
   name: 'Ethereum',
@@ -29,7 +29,7 @@ const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
     callbacks: { session: extendSessionWithUserAndToken },
   };
 
-  return await NextAuth(req, res, options);
+  return NextAuth(req, res, options);
 };
 
 export default Auth;

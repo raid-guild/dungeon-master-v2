@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState, useEffect, useMemo } from 'react';
 import _ from 'lodash';
 import {
@@ -17,14 +18,14 @@ import {
   AccordionPanel,
   IconButton,
   Icon,
+  useMediaQuery,
 } from '@raidguild/design-system';
-import { useMediaQuery } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
+import { useSession } from 'next-auth/react';
+import { FaPlus } from 'react-icons/fa';
 import { IStatusUpdate, IRaid } from '../utils';
 import RaidUpdate from './RaidUpdates';
-import { FaPlus } from 'react-icons/fa';
 import useUpdateCreate from '../hooks/useUpdateCreate';
-import { useSession } from 'next-auth/react';
 
 interface UpdatesProps {
   raid: IRaid;
@@ -37,7 +38,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   const { handleSubmit, setValue } = localForm;
   const [addUpdate, setAddUpdate] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
-  const [sortedUpdates, setSortedUpdates] = useState<any[]>();
+  const [sortedUpdates, setSortedUpdates] = useState<IStatusUpdate[]>();
   const token: string = _.get(session, 'token', '');
 
   const { mutateAsync } = useUpdateCreate({
@@ -65,6 +66,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
     setValue('update', '');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const submitNewUpdate = async (values: any) => {
     mutateAsync({
       update: values.update,
@@ -75,6 +77,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
   };
 
   const [upTo780] = useMediaQuery('(max-width: 780px)');
+  const count = _.size(sortedUpdates);
 
   return (
     <Card variant='filled' padding={2}>
@@ -145,8 +148,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
             <h2>
               <AccordionButton color='raid' paddingInline={0}>
                 <Box flex='1' textAlign='left' color='raid'>
-                  {expanded ? 'Hide' : 'Reveal'} {sortedUpdates?.length - 1}{' '}
-                  Comments
+                  {expanded ? 'Hide' : 'Reveal'} {count - 1} Comments
                 </Box>
                 <AccordionIcon />
               </AccordionButton>

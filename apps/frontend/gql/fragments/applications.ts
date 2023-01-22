@@ -1,5 +1,6 @@
 import { gql } from 'graphql-request';
 import { CONTACT_INFO_FRAGMENT } from './contactInfo';
+import { SLIM_MEMBER_DETAIL_FRAGMENT } from './members';
 
 const APPLICATION_ENUM_FRAGMENT = gql`
   fragment ApplicationEnumFragment on applications {
@@ -13,7 +14,7 @@ const APPLICATION_ENUM_FRAGMENT = gql`
 `;
 
 export const APPLICATION_DETAIL_FRAGMENT = gql`
-  fragment ApplicationDetailFragment on applications {
+  fragment ApplicationDetail on applications {
     id
     v1_id
 
@@ -53,20 +54,15 @@ export const APPLICATION_DETAIL_FRAGMENT = gql`
     }
   }
   ${APPLICATION_ENUM_FRAGMENT}
-  ${CONTACT_INFO_FRAGMENT}
+  ${SLIM_MEMBER_DETAIL_FRAGMENT}
 `;
 
 export const SLIM_APPLICATION_DETAIL_FRAGMENT = gql`
-  fragment SlimApplicationDetailFragment on applications {
+  fragment SlimApplicationDetail on applications {
     id
     name
     contact_info {
-      id
-      email
-      discord
-      telegram
-      twitter
-      github
+      ...ContactInfo
     }
     eth_address
     introduction
@@ -75,4 +71,5 @@ export const SLIM_APPLICATION_DETAIL_FRAGMENT = gql`
     created_at
     updated_at
   }
+  ${CONTACT_INFO_FRAGMENT}
 `;

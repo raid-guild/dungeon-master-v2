@@ -14,8 +14,8 @@ import {
   VStack,
   Stack,
   Heading,
+  Collapse,
 } from '@raidguild/design-system';
-import { Collapse } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import {
   IConsultation,

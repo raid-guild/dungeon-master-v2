@@ -1,5 +1,6 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
-import { CONTACT_INFO_FRAGMENT, RAID_DETAIL_FRAGMENT } from '../fragments';
+import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const STATUS_UPDATE_CREATE_MUTATION = gql`
   mutation StatusUpdateCreateMutation($update: updates_insert_input!) {
@@ -22,5 +23,4 @@ export const STATUS_UPDATE_CREATE_MUTATION = gql`
     }
   }
   ${RAID_DETAIL_FRAGMENT}
-  ${CONTACT_INFO_FRAGMENT}
 `;

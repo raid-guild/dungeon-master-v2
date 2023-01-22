@@ -8,7 +8,7 @@ import {
   sortNumeric,
   truncateAddress,
 } from '../utils';
-import { DataTable } from './DataTable';
+import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 
 interface TransactionsTableProps {
@@ -180,6 +180,8 @@ const columns = [
 const TransactionsTable = ({ data }: TransactionsTableProps) => (
   <DataTable
     id='transactionsDataTable'
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     columns={columns}
     data={data}
     size='sm'

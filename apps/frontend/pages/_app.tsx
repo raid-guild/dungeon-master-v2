@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { AppProps } from 'next/app';
 import { DefaultSeo } from 'next-seo';
@@ -8,14 +9,7 @@ import {
   QueryClientProvider,
   QueryCache,
 } from '@tanstack/react-query';
-import {
-  ChakraProvider,
-  ColorModeScript,
-  Fonts,
-  RGThemeProvider,
-  useToast,
-  defaultTheme,
-} from '@raidguild/design-system';
+import { useToast, RGThemeProvider } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -46,9 +40,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   });
 
   return (
-    <ChakraProvider theme={defaultTheme}>
-      <ColorModeScript initialColorMode='dark' />
-      <Fonts />
+    <RGThemeProvider>
       <DefaultSeo
         titleTemplate='%s | Dungeon Master v1.5'
         title='Dungeon Master'
@@ -91,7 +83,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           </RainbowKitSiweNextAuthProvider>
         </SessionProvider>
       </WagmiConfig>
-    </ChakraProvider>
+    </RGThemeProvider>
   );
 };
 export default App;

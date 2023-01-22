@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
@@ -13,12 +14,12 @@ import {
   Flex,
   Image,
   Text,
+  Button,
 } from '@raidguild/design-system';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
-import { Button } from '@raidguild/design-system';
 import { truncateAddress } from '../utils/general';
 
-export const ConnectWallet: React.FC = () => {
+const ConnectWallet: React.FC = () => {
   const { isConnecting } = useAccount();
   const { disconnect } = useDisconnect();
   const showNetwork = false; // maybe unhide, in some cases
@@ -56,14 +57,13 @@ export const ConnectWallet: React.FC = () => {
               if (!connected) {
                 return (
                   <Button
-                    variant="outline"
-                    transition="all 100ms ease-in-out"
+                    variant='outline'
+                    transition='all 100ms ease-in-out'
                     leftIcon={
-                      <Icon as={FiKey} color="primary.500" w="20px" h="20px" />
+                      <Icon as={FiKey} color='primary.500' w='20px' h='20px' />
                     }
-                    isDisabled={isConnecting}
                     onClick={openConnectModal}
-                    data-cy="connect-wallet"
+                    data-cy='connect-wallet'
                   >
                     Connect
                   </Button>
@@ -72,7 +72,7 @@ export const ConnectWallet: React.FC = () => {
 
               if (chain.unsupported) {
                 return (
-                  <Button onClick={openChainModal} variant="outline">
+                  <Button onClick={openChainModal} variant='outline'>
                     Unsupported network
                   </Button>
                 );
@@ -82,13 +82,13 @@ export const ConnectWallet: React.FC = () => {
                 <Flex gap={3}>
                   <Menu
                     offset={[0, 4]}
-                    placement="bottom-end"
+                    placement='bottom-end'
                     autoSelect={false}
                   >
                     {showNetwork && (
                       <Button
-                        variant="outline"
-                        width="fit"
+                        variant='outline'
+                        width='fit'
                         onClick={openChainModal}
                       >
                         <Image
@@ -102,24 +102,24 @@ export const ConnectWallet: React.FC = () => {
                       </Button>
                     )}
 
-                    <MenuButton as={Button} variant="outline" width="fit">
+                    <MenuButton as={Button} variant='outline' width='fit'>
                       <HStack spacing={3}>
-                        <Text color="white">
+                        <Text color='white'>
                           {account.ensName
                             ? account.ensName
                             : truncateAddress(account.address)}
                         </Text>
-                        <Icon as={FiChevronDown} color="primary.500" />
+                        <Icon as={FiChevronDown} color='primary.500' />
                       </HStack>
                     </MenuButton>
-                    <MenuList minWidth="none">
+                    <MenuList minWidth='none'>
                       <MenuItem
                         onClick={() => openAccountModal()}
                         _hover={{ backgroundColor: 'gray.600' }}
                       >
                         <HStack>
-                          <Icon as={FiKey} color="white" />
-                          <Box color="white">Wallet</Box>
+                          <Icon as={FiKey} color='white' />
+                          <Box color='white'>Wallet</Box>
                         </HStack>
                       </MenuItem>
                       <MenuItem
@@ -127,8 +127,8 @@ export const ConnectWallet: React.FC = () => {
                         _hover={{ backgroundColor: 'gray.600' }}
                       >
                         <HStack spacing={2}>
-                          <Icon as={FiXCircle} color="primary.500" />
-                          <Box color="primary.500">Sign Out</Box>
+                          <Icon as={FiXCircle} color='primary.500' />
+                          <Box color='primary.500'>Sign Out</Box>
                         </HStack>
                       </MenuItem>
                     </MenuList>

@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { client, CONSULTATION_UPDATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
+
+import { client, CONSULTATION_UPDATE_MUTATION } from '../gql';
 import { IConsultationUpdate, camelize } from '../utils';
 
 const useConsultationUpdate = ({ token }) => {
@@ -10,7 +11,7 @@ const useConsultationUpdate = ({ token }) => {
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IConsultationUpdate) => {
-      if (!token) return;
+      if (!token) return null;
       const result = await client({ token }).request(
         CONSULTATION_UPDATE_MUTATION,
         {
@@ -23,8 +24,6 @@ const useConsultationUpdate = ({ token }) => {
     },
     {
       onSuccess: (data) => {
-        console.log(data);
-
         queryClient.invalidateQueries([
           'consultationDetail',
           _.get(data, 'id'),

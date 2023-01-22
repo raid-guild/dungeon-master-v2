@@ -16,7 +16,7 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: Partial<IStatusUpdate>) => {
-      if (!memberId || !token) return;
+      if (!memberId || !token) return null;
       const result = await client({ token }).request(
         STATUS_UPDATE_CREATE_MUTATION,
         {

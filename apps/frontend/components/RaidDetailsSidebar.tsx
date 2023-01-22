@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { HStack, Button, Text, Stack } from '@raidguild/design-system';
+import { HStack, Button, Stack } from '@raidguild/design-system';
 import { IRaid } from '../utils';
 import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
@@ -18,7 +18,7 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
 }: RaidDetailsSidebarProps) => {
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
-  const relatedRaids = _.get(raid, 'raidByRelatedRaids');
+  // const relatedRaids = _.get(raid, 'raidByRelatedRaids');
 
   const handleShowStatusModal = () => {
     setModals({ raidStatus: true });
@@ -68,10 +68,12 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
       />
 
       <RaidPartyInfo raid={raid} />
+      {/* RAID TAGS */}
       {/* <RaidTags raid={raid} /> */}
-      {_.map(relatedRaids, (raid: IRaid) => (
+      {/* RELATED RAIDS */}
+      {/* {_.map(relatedRaids, (raid: IRaid) => (
         <Text key={1}>Related Raid 1</Text>
-      ))}
+      ))} */}
     </Stack>
   );
 };
