@@ -98,6 +98,16 @@ export const CONSULTATION_LIST_QUERY = gql`
   }
 `;
 
+export const CONSULTATIONS_COUNT_QUERY = gql`
+  query ConsultationsCountQuery($where: consultations_bool_exp) {
+    consultations_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 export const CONSULTATION_DETAIL_QUERY = gql`
   query ConsultationDetail($id: uuid!) {
     consultations_by_pk(id: $id) {

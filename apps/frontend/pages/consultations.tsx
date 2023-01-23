@@ -8,10 +8,13 @@ import {
   ChakraSelect,
   Spinner,
   Spacer,
+  Text,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import useConsultationList from '../hooks/useConsultationList';
+import useConsultationList, {
+  useConsultationsCount,
+} from '../hooks/useConsultationList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import RaidCard from '../components/RaidCard';
 import { IConsultation } from '../utils';
@@ -62,9 +65,16 @@ const ConsultationList = () => {
     consultationSubmissionFilterKey: consultationSubmissionFilter,
     consultationSortKey: consultationSort,
   });
+
+  const { data: count } = useConsultationsCount({
+    token,
+    consultationTypeFilterKey: consultationTypeFilter,
+    consultationBudgetFilterKey: consultationBudgetFilter,
+    consultationSubmissionFilterKey: consultationSubmissionFilter,
+  });
+
   const consultations = _.flatten(_.get(data, 'pages'));
 
-  console.log('consultations', consultations);
   // TODO: generalize these and share code
   const handleConsultationTypeFilterChange = async (filterOption: string) => {
     setConsultationTypeFilter(filterOption);
@@ -194,9 +204,6 @@ const ConsultationList = () => {
           defaultValue={consultationSort['Name']}
           onChange={(e) => {
             handleConsultationSortChange(e.target.value);
-            // if (e.target.value === 'oldestComment') {
-            //   handleRaidStatusFilterChange('ACTIVE');
-            // }
           }}
         >
           {consultationSortOptions.map((sortOption) => (
@@ -222,11 +229,11 @@ const ConsultationList = () => {
               <Spacer />
               <Heading>{title} List</Heading>
               <Spacer />
-              {/* {count > 0 && (
+              {count > 0 && (
                 <Text fontSize='3xl' fontWeight={800}>
                   {count}
                 </Text>
-              )} */}
+              )}
             </Flex>
             <ConsultationControls />
           </>
