@@ -52,8 +52,14 @@ export const APPLICATION_LIST_QUERY = gql`
     $offset: Int!
     $limit: Int!
     $where: applications_bool_exp
+    $order_by: [applications_order_by!]
   ) {
-    applications(limit: $limit, offset: $offset, where: $where) {
+    applications(
+      limit: $limit
+      offset: $offset
+      where: $where
+      order_by: $order_by
+    ) {
       id
       name
       contact_info {

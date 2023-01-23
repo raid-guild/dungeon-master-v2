@@ -105,7 +105,7 @@ const ConsultationList = () => {
     >
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='raidStatus'
+          htmlFor='consultationType'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'

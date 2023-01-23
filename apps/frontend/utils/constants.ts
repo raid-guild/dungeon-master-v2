@@ -1,5 +1,10 @@
 import _ from 'lodash';
 
+export const APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS = [
+  { label: 'Technical', value: 'TECHNICAL' },
+  { label: 'Non-Technical', value: 'NON-TECHNICAL' },
+];
+
 export const RAID_CATEGORY = [
   'DESIGN_SPRINT',
   'FULL_STACK',

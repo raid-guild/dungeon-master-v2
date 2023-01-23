@@ -3,7 +3,17 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, APPLICATION_LIST_QUERY } from '../gql';
 import { camelize, IApplication } from '../utils';
 
-const useApplicationList = ({ token }) => {
+const where = (applicationSkillTypeFilterKey: string) => ({
+  _not: { member: {} },
+  ...(applicationSkillTypeFilterKey !== 'ALL' && {
+    skill_type: { skill_type: { _eq: applicationSkillTypeFilterKey } },
+  }),
+});
+
+const useApplicationList = ({
+  token,
+  applicationSkillTypeFilterKey = 'ALL',
+}) => {
   const limit = 15;
 
   const applicationQueryResult = async (pageParam: number) => {
@@ -13,7 +23,7 @@ const useApplicationList = ({ token }) => {
     const result = await client({ token }).request(APPLICATION_LIST_QUERY, {
       limit,
       offset: pageParam * limit,
-      where: { _not: { member: {} } },
+      where: where(applicationSkillTypeFilterKey),
     });
 
     return camelize(_.get(result, 'applications'));
@@ -28,7 +38,7 @@ const useApplicationList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IApplication>>, Error>(
-    ['applicationList'],
+    ['applicationList', applicationSkillTypeFilterKey],
     ({ pageParam = 0 }) => applicationQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
