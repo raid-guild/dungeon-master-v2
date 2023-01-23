@@ -12,8 +12,7 @@ type consultationSortKeys = 'name' | 'recentlyAdded';
 const where = (
   consultationTypeFilterKey: string,
   consultationSubmissionFilterKey: string,
-  consultationBudgetFilterKey: string,
-  consultationSortKey: consultationSortKeys
+  consultationBudgetFilterKey: string
 ) => ({
   _and: {
     _not: { raids: {} },
@@ -60,8 +59,7 @@ const useConsultationList = ({
       where: where(
         consultationTypeFilterKey,
         consultationSubmissionFilterKey,
-        consultationBudgetFilterKey,
-        consultationSortKey
+        consultationBudgetFilterKey
       ),
       order_by: orderBy(consultationSortKey),
     });
