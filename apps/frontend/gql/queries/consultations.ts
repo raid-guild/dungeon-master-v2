@@ -48,8 +48,14 @@ export const CONSULTATION_LIST_QUERY = gql`
     $offset: Int!
     $limit: Int!
     $where: consultations_bool_exp
+    $order_by: [consultations_order_by!]
   ) {
-    consultations(limit: $limit, offset: $offset, where: $where) {
+    consultations(
+      limit: $limit
+      offset: $offset
+      where: $where
+      order_by: $order_by
+    ) {
       id
       budget_option {
         budget_option

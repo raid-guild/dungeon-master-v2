@@ -3,12 +3,22 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, CONSULTATION_LIST_QUERY } from '../gql';
 import { camelize, IConsultation } from '../utils';
 
-const useConsultationList = ({ token }) => {
-  const limit = 15;
+type consultationSortKeys = 'name' | 'recentlyAdded';
 
+const orderBy = (consultationSortKey: consultationSortKeys) => ({
+  ...(consultationSortKey === 'name' && {
+    name: 'asc',
+  }),
+  ...(consultationSortKey === 'recentlyAdded' && {
+    created_at: 'desc',
+  }),
+});
+
+const useConsultationList = ({ token, consultationSortKey }) => {
+  const limit = 15;
+  console.log('sort key', consultationSortKey);
   const consultationQueryResult = async (pageParam: number) => {
     if (!token) return;
-    // TODO handle filters
 
     const result = await client({ token }).request(CONSULTATION_LIST_QUERY, {
       limit,
@@ -19,6 +29,7 @@ const useConsultationList = ({ token }) => {
           consultation_status_key: { _neq: 'CANCELLED' },
         },
       },
+      order_by: orderBy(consultationSortKey),
     });
 
     return camelize(_.get(result, 'consultations'));
@@ -32,7 +43,7 @@ const useConsultationList = ({ token }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IConsultation>>, Error>(
-    ['consultationList'],
+    ['consultationList', consultationSortKey],
     ({ pageParam = 0 }) => consultationQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {
