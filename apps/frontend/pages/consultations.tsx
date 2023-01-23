@@ -17,23 +17,30 @@ import RaidCard from '../components/RaidCard';
 import { IConsultation } from '../utils';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
+import { BUDGET_DISPLAY_OPTIONS } from '../utils';
+
+const consultationTypeOptions = [
+  { label: 'Show All', value: 'ALL' },
+  { label: 'New', value: 'NEW' },
+  { label: 'Existing', value: 'EXISTING' },
+];
+
+const consultationBudgetOptions = [
+  { label: 'Show All', value: 'ALL' },
+  ...BUDGET_DISPLAY_OPTIONS,
+];
 
 const consultationSortOptions = [
   { label: 'Name', value: 'name' },
   { label: 'Recently Added', value: 'recentlyAdded' },
 ];
 
-const consultationTypeOptions = [
-  { label: 'New', value: 'NEW' },
-  { label: 'Existing', value: 'EXISTING' },
-];
-
 const ConsultationList = () => {
   const [consultationTypeFilter, setConsultationTypeFilter] =
-    useState<string>('NEW');
-  const [consultationSort, setConsultationSort] = useState<string>('name');
+    useState<string>('ALL');
   const [consultationBudgetFilter, setConsultationBudgetFilter] =
     useState<string>('ALL');
+  const [consultationSort, setConsultationSort] = useState<string>('name');
   const [sortChanged, setSortChanged] = useState(false);
   const title = useDefaultTitle();
   const { data: session } = useSession();
@@ -42,20 +49,21 @@ const ConsultationList = () => {
     token,
     consultationTypeFilterKey: consultationTypeFilter,
     consultationSortKey: consultationSort,
+    consultationBudgetFilterKey: consultationBudgetFilter,
   });
   const consultations = _.flatten(_.get(data, 'pages'));
-  console.log('consultations', consultations);
+
+  const handleConsultationTypeFilterChange = async (filterOption: string) => {
+    setConsultationTypeFilter(filterOption);
+  };
+
+  const handleConsultationBudgetFilterChange = async (filterOption: string) => {
+    setConsultationBudgetFilter(filterOption);
+  };
 
   const handleConsultationSortChange = async (sortOption: string) => {
     setConsultationSort(sortOption);
     setSortChanged(true);
-    // if (sortOption === 'oldestComment') {
-    //   setRaidStatusFilter('ACTIVE');
-    // }
-  };
-
-  const handleConsultationTypeFilterChange = async (filterOption: string) => {
-    setConsultationTypeFilter(filterOption);
   };
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
@@ -81,7 +89,7 @@ const ConsultationList = () => {
           width='100%'
           name='consultationType'
           value={consultationTypeFilter}
-          defaultValue={consultationTypeOptions['New']}
+          defaultValue={consultationTypeOptions['Show All']}
           onChange={(e) => {
             handleConsultationTypeFilterChange(e.target.value);
           }}
@@ -95,34 +103,31 @@ const ConsultationList = () => {
       </Flex>
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='raidRoles'
+          htmlFor='consultationBudget'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'
           color='white'
           textAlign='left'
         >
-          Raid Roles
+          Budget
         </FormLabel>
-        {/* <ChakraSelect
+        <ChakraSelect
           width='100%'
-          name='raidRoles'
-          id='raidRoles'
-          value={raidRolesFilter}
-          defaultValue={raidRolesOptions['Show All']}
+          name='consultationBudget'
+          id='consultationBudget'
+          value={consultationBudgetFilter}
+          defaultValue={consultationBudgetOptions['Show All']}
           onChange={(e) => {
-            handleRaidRolesFilterChange(e.target.value);
-            if (sortChanged === true && raidSort === 'oldestComment') {
-              setRaidStatusFilter('ACTIVE');
-            }
+            handleConsultationBudgetFilterChange(e.target.value);
           }}
         >
-          {raidRolesOptions.map((role) => (
+          {consultationBudgetOptions.map((role) => (
             <option key={role.value} value={role.value}>
               {role.label}
             </option>
           ))}
-        </ChakraSelect> */}
+        </ChakraSelect>
       </Flex>
       <Flex direction='column' flexBasis='25%'>
         <FormLabel

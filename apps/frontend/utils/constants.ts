@@ -97,6 +97,14 @@ export const BUDGET_DISPLAY = {
   NOT_SURE: 'Not Sure',
 };
 
+export const BUDGET_DISPLAY_OPTIONS = [
+  { label: '< $5k', value: 'LESS_THAN_FIVE_THOUSAND' },
+  { label: '$5k - $20k', value: 'FIVE_TO_TWENTY_THOUSAND' },
+  { label: '$20k - $50k', value: 'TWENTY_TO_FIFTY_THOUSAND' },
+  { label: '$50k +', value: 'MORE_THAN_FIFTY_THOUSAND' },
+  { label: 'Not Sure', value: 'NOT_SURE' },
+];
+
 export const DELIVERY_PRIORITIES = [
   'Fast & Polished',
   'Fast & Inexpensive',
@@ -239,7 +247,8 @@ export const GUILD_CLASS_DISPLAY = {
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
 };
 
-export const GUILD_GNOSIS_DAO_ADDRESS = '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
+export const GUILD_GNOSIS_DAO_ADDRESS =
+  '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 
 export const SIDEBAR_ACTION_STATES = {
   none: 'NONE',
