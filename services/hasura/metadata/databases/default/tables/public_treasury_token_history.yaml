@@ -1,3 +1,24 @@
 table:
   name: treasury_token_history
   schema: public
+select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - date
+        - id
+        - price_usd
+        - symbol
+        - token_name
+        - txnID
+      filter: {}
+  - role: member
+    permission:
+      columns:
+        - date
+        - id
+        - price_usd
+        - symbol
+        - token_name
+        - txnID
+      filter: {}
