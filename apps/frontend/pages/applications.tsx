@@ -18,11 +18,24 @@ import useDefaultTitle from '../hooks/useDefaultTitle';
 import { IApplication } from '../utils';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
-import { APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS } from '../utils/constants';
+import {
+  APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS,
+  SKILLS_DISPLAY_OPTIONS,
+} from '../utils/constants';
 
 const applicationSkillTypeOptions = [
   { label: 'Show All', value: 'ALL' },
   ...APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS,
+];
+
+const applicationSkillOptions = [
+  { label: 'Show All', value: 'ALL' },
+  ...SKILLS_DISPLAY_OPTIONS,
+];
+
+const applicationSortOptions = [
+  { label: 'Name', value: 'name' },
+  { label: 'Created', value: 'createdAt' },
 ];
 
 const ApplicationList = () => {
@@ -94,37 +107,36 @@ const ApplicationList = () => {
           ))}
         </ChakraSelect>
       </Flex>
-      {/* <Flex direction='column' flexBasis='25%'>
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='consultationBudget'
+          htmlFor='applicationSkill'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'
           color='white'
           textAlign='left'
         >
-          Budget
+          Skill Type
         </FormLabel>
         <ChakraSelect
           width='100%'
-          name='consultationBudget'
-          id='consultationBudget'
-          value={consultationBudgetFilter}
-          defaultValue={consultationBudgetOptions['Show All']}
+          name='applicationSkill'
+          value={applicationSkillFilter}
+          defaultValue={applicationSkillOptions['Show All']}
           onChange={(e) => {
-            handleConsultationBudgetFilterChange(e.target.value);
+            handleApplicationSkillFilterChange(e.target.value);
           }}
         >
-          {consultationBudgetOptions.map((role) => (
-            <option key={role.value} value={role.value}>
-              {role.label}
+          {applicationSkillOptions.map((applicationSkill) => (
+            <option key={applicationSkill.value} value={applicationSkill.value}>
+              {applicationSkill.label}
             </option>
           ))}
         </ChakraSelect>
-      </Flex> */}
-      {/* <Flex direction='column' flexBasis='25%'>
+      </Flex>
+      <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='consultationSort'
+          htmlFor='applicationSort'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'
@@ -135,20 +147,20 @@ const ApplicationList = () => {
         </FormLabel>
         <ChakraSelect
           width='100%'
-          name='consultationSort'
-          value={consultationSort}
-          defaultValue={consultationSort['Name']}
+          name='applicationSort'
+          value={applicationSort}
+          defaultValue={applicationSort['Name']}
           onChange={(e) => {
-            handleConsultationSortChange(e.target.value);
+            handleApplicationSortChange(e.target.value);
           }}
         >
-          {consultationSortOptions.map((sortOption) => (
+          {applicationSortOptions.map((sortOption) => (
             <option key={sortOption.value} value={sortOption.value}>
               {sortOption.label}
             </option>
           ))}
         </ChakraSelect>
-      </Flex> */}
+      </Flex>
     </Flex>
   );
 
