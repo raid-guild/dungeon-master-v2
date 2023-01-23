@@ -2,6 +2,7 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "calculator": "apps/cleric-calculator",
     "common-utilities": "libs/common-utilities",
     "hasura": "services/hasura",
     "frontend": "apps/frontend",
