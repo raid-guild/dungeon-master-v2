@@ -1,3 +1,18 @@
 table:
   name: current_token_prices
   schema: public
+select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - id
+        - price_usd
+        - token_name
+      filter: {}
+  - role: member
+    permission:
+      columns:
+        - id
+        - price_usd
+        - token_name
+      filter: {}
