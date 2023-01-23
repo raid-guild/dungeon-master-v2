@@ -17,12 +17,20 @@ import RaidCard from '../components/RaidCard';
 import { IConsultation } from '../utils';
 import SiteLayout from '../components/SiteLayout';
 import { useSession } from 'next-auth/react';
-import { BUDGET_DISPLAY_OPTIONS } from '../utils';
+import {
+  BUDGET_DISPLAY_OPTIONS,
+  SUBMISSION_TYPE_DISPLAY_OPTIONS,
+} from '../utils';
 
 const consultationTypeOptions = [
   { label: 'Show All', value: 'ALL' },
   { label: 'New', value: 'NEW' },
   { label: 'Existing', value: 'EXISTING' },
+];
+
+const consultationSubmissionOptions = [
+  { label: 'Show All', value: 'ALL' },
+  ...SUBMISSION_TYPE_DISPLAY_OPTIONS,
 ];
 
 const consultationBudgetOptions = [
@@ -40,6 +48,8 @@ const ConsultationList = () => {
     useState<string>('ALL');
   const [consultationBudgetFilter, setConsultationBudgetFilter] =
     useState<string>('ALL');
+  const [consultationSubmissionFilter, setConsultationSubmissionFilter] =
+    useState<string>('ALL');
   const [consultationSort, setConsultationSort] = useState<string>('name');
   const [sortChanged, setSortChanged] = useState(false);
   const title = useDefaultTitle();
@@ -48,17 +58,26 @@ const ConsultationList = () => {
   const { data, error, hasNextPage, fetchNextPage } = useConsultationList({
     token,
     consultationTypeFilterKey: consultationTypeFilter,
-    consultationSortKey: consultationSort,
     consultationBudgetFilterKey: consultationBudgetFilter,
+    consultationSubmissionFilterKey: consultationSubmissionFilter,
+    consultationSortKey: consultationSort,
   });
   const consultations = _.flatten(_.get(data, 'pages'));
 
+  console.log('consultations', consultations);
+  // TODO: generalize these and share code
   const handleConsultationTypeFilterChange = async (filterOption: string) => {
     setConsultationTypeFilter(filterOption);
   };
 
   const handleConsultationBudgetFilterChange = async (filterOption: string) => {
     setConsultationBudgetFilter(filterOption);
+  };
+
+  const handleConsultationSubmissionFilterChange = async (
+    filterOption: string
+  ) => {
+    setConsultationSubmissionFilter(filterOption);
   };
 
   const handleConsultationSortChange = async (sortOption: string) => {
@@ -83,7 +102,7 @@ const ConsultationList = () => {
           color='white'
           textAlign='left'
         >
-          Consultation Type
+          Project Type
         </FormLabel>
         <ChakraSelect
           width='100%'
@@ -123,6 +142,34 @@ const ConsultationList = () => {
           }}
         >
           {consultationBudgetOptions.map((role) => (
+            <option key={role.value} value={role.value}>
+              {role.label}
+            </option>
+          ))}
+        </ChakraSelect>
+      </Flex>
+      <Flex direction='column' flexBasis='25%'>
+        <FormLabel
+          htmlFor='consultationSubmission'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
+        >
+          Submission
+        </FormLabel>
+        <ChakraSelect
+          width='100%'
+          name='consultationSubmission'
+          id='consultationSubmission'
+          value={consultationSubmissionFilter}
+          defaultValue={consultationSubmissionOptions['Show All']}
+          onChange={(e) => {
+            handleConsultationSubmissionFilterChange(e.target.value);
+          }}
+        >
+          {consultationSubmissionOptions.map((role) => (
             <option key={role.value} value={role.value}>
               {role.label}
             </option>

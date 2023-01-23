@@ -16,13 +16,16 @@ const orderBy = (consultationSortKey: consultationSortKeys) => ({
 
 const useConsultationList = ({
   token,
-  consultationTypeFilterKey = 'NEW',
+  consultationTypeFilterKey = 'ALL',
+  consultationSubmissionFilterKey = 'ALL',
   consultationBudgetFilterKey = 'ALL',
   consultationSortKey,
 }) => {
   const limit = 15;
   const consultationQueryResult = async (pageParam: number) => {
     if (!token) return;
+
+    console.log('submission key', consultationSubmissionFilterKey);
 
     const result = await client({ token }).request(CONSULTATION_LIST_QUERY, {
       limit,
@@ -37,6 +40,11 @@ const useConsultationList = ({
           ...(consultationBudgetFilterKey !== 'ALL' && {
             budget_option: {
               budget_option: { _eq: consultationBudgetFilterKey },
+            },
+          }),
+          ...(consultationSubmissionFilterKey !== 'ALL' && {
+            submission_type: {
+              submission_type: { _eq: consultationSubmissionFilterKey },
             },
           }),
         },
@@ -59,6 +67,7 @@ const useConsultationList = ({
       'consultationList',
       consultationTypeFilterKey,
       consultationBudgetFilterKey,
+      consultationSubmissionFilterKey,
       consultationSortKey,
     ],
     ({ pageParam = 0 }) => consultationQueryResult(pageParam),

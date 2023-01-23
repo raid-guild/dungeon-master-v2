@@ -105,6 +105,11 @@ export const BUDGET_DISPLAY_OPTIONS = [
   { label: 'Not Sure', value: 'NOT_SURE' },
 ];
 
+export const SUBMISSION_TYPE_DISPLAY_OPTIONS = [
+  { label: 'Paid', value: 'PAID' },
+  { label: 'Unpaid', value: 'UNPAID' },
+];
+
 export const DELIVERY_PRIORITIES = [
   'Fast & Polished',
   'Fast & Inexpensive',
