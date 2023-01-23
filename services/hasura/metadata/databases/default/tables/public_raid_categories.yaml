@@ -24,6 +24,11 @@ insert_permissions:
       columns:
         - raid_category
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - raid_category
+      filter: {}
   - role: member
     permission:
       columns:

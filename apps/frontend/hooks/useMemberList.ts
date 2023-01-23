@@ -8,7 +8,7 @@ const useMemberList = ({
   memberRolesFilterKey = 'ALL',
   memberStatusFilterKey = 'ALL',
   memberSortKey = 'name',
-  limit = 15,
+  limit = 16,
 }) => {
   const where = {
     ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
@@ -28,7 +28,7 @@ const useMemberList = ({
   };
 
   const memberQueryResult = async (pageParam: number) => {
-    if (!token) return;
+    if (!token) return null;
     // TODO handle filters
 
     const result = await client({ token }).request(MEMBER_LIST_QUERY, {
@@ -52,11 +52,10 @@ const useMemberList = ({
     ['memberList', memberRolesFilterKey, memberStatusFilterKey, memberSortKey],
     ({ pageParam = 0 }) => memberQueryResult(pageParam),
     {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
+      getNextPageParam: (lastPage, allPages) =>
+        _.isEmpty(lastPage)
           ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit);
-      },
+          : _.divide(_.size(_.flatten(allPages)), limit),
       enabled: !!token,
     }
   );
@@ -75,7 +74,7 @@ export default useMemberList;
 
 export const useSlimMemberList = ({ token, button }) => {
   const memberSlimListQueryResult = async () => {
-    if (!token) return;
+    if (!token) return null;
 
     const result = await client({ token }).request(MEMBER_SLIM_LIST_QUERY);
 

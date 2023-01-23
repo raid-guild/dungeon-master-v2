@@ -1,20 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { client, MEMBER_CREATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
-import { IMemberCreate, camelize } from '../utils';
 import { useRouter } from 'next/router';
 
-const useMemberCreate = ({ token }) => {
-  console.log('useMemberCreate');
+import { client, MEMBER_CREATE_MUTATION } from '../gql';
+import { IMemberCreate, camelize } from '../utils';
 
+const useMemberCreate = ({ token }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberCreate) => {
-      if (!token) return;
+      if (!token) return null;
       const result = await client({ token }).request(MEMBER_CREATE_MUTATION, {
         member: { ...args },
       });
@@ -23,7 +22,6 @@ const useMemberCreate = ({ token }) => {
     },
     {
       onSuccess: (data) => {
-        console.log(data);
         queryClient.setQueryData(
           ['memberDetail', _.get(data, 'insert_members_one.id')],
           camelize(_.get(data, 'insert_members_one'))

@@ -1,16 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useState } from 'react';
-import {
-  Box,
-  Input,
-  Select,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  ThemingProps,
-  Tr,
-} from '@chakra-ui/react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {
   useReactTable,
@@ -27,10 +16,27 @@ import {
   getFacetedUniqueValues,
   getPaginationRowModel,
 } from '@tanstack/react-table';
+import {
+  Flex,
+  FormLabel,
+  Button,
+  Text,
+  TableContainer,
+  Box,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  ThemingProps,
+  Tr,
+  ChakraSelect,
+  ChakraInput,
+} from '@raidguild/design-system';
 import Filter from './Filter';
-import { Flex, Button, Text, TableContainer } from '@raidguild/design-system';
 
 declare module '@tanstack/table-core' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     dataType?: 'numeric' | 'datetime' | 'enum' | 'string';
     hidden?: boolean;
@@ -44,13 +50,13 @@ export type DataTableProps<Data extends object> = ThemingProps & {
   sort?: SortingState;
 };
 
-export function DataTable<Data extends object>({
+const DataTable = ({
   id,
   data,
   columns,
   sort = [],
   ...props
-}: DataTableProps<Data>) {
+}: DataTableProps<object>) => {
   const [sorting, setSorting] = useState<SortingState>(sort);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState(
@@ -115,6 +121,7 @@ export function DataTable<Data extends object>({
                         header.column.columnDef.header,
                         header.getContext()
                       )}
+                      {/* eslint-disable-next-line no-nested-ternary */}
                       {header.column.getIsSorted() ? (
                         header.column.getIsSorted() === 'desc' ? (
                           <FiChevronDown aria-label='sorted descending' />
@@ -197,10 +204,10 @@ export function DataTable<Data extends object>({
           </Flex>
           <Box>|</Box>
           <Flex align='center' gap='12px'>
-            <label htmlFor={`table-go-to-page-${id}`}>
+            <FormLabel htmlFor={`table-go-to-page-${id}`}>
               <Text>Go to page:</Text>
-            </label>
-            <Input
+            </FormLabel>
+            <ChakraInput
               id={`table-go-to-page-${id}`}
               type='number'
               defaultValue={table.getState().pagination.pageIndex + 1}
@@ -212,7 +219,7 @@ export function DataTable<Data extends object>({
             />
           </Flex>
         </Flex>
-        <Select
+        <ChakraSelect
           value={table.getState().pagination.pageSize}
           onChange={(e) => {
             table.setPageSize(Number(e.target.value));
@@ -224,8 +231,10 @@ export function DataTable<Data extends object>({
               Show {pageSize}
             </option>
           ))}
-        </Select>
+        </ChakraSelect>
       </Flex>
     </Box>
   );
-}
+};
+
+export default DataTable;

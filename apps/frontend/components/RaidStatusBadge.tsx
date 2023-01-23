@@ -1,4 +1,4 @@
-import { Badge } from '@chakra-ui/react';
+import { Badge } from '@raidguild/design-system';
 
 const statusColorScheme = {
   PREPARING: 'yellow',

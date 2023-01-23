@@ -17,6 +17,13 @@ insert_permissions:
         - contact_id
         - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - client_id
+        - contact_id
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

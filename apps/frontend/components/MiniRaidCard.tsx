@@ -35,17 +35,20 @@ const MiniRaidCard = ({
         : `/consultations/${_.get(consultation, 'id')}`
     }
   >
-    <Card variant='outline' width='100%'>
-      <Flex w='100%' justify='space-between' align='center'>
-        <Stack spacing={2}>
+    <Card variant='outline' width='100%' minH='100px'>
+      <Flex alignItems='center' width='100%' h='100%'>
+        <Stack spacing={2} width='100%'>
           <Heading color='white' size={smallHeader ? 'sm' : 'md'}>
             {_.get(raid, 'name', _.get(consultation, 'name'))}
           </Heading>
           <HStack>
-            <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
+            {_.get(raid, 'raidStatus.raidStatus') && (
+              <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
+            )}
             {newRaid &&
               _.get(raid, 'createdAt', _.get(consultation, 'createdAt')) && (
                 <Text>
+                  {!raid && 'Created: '}
                   {format(
                     new Date(
                       _.get(raid, 'createdAt', _.get(consultation, 'createdAt'))

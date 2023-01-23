@@ -3,11 +3,9 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, APPLICATION_LIST_QUERY } from '../gql';
 import { camelize, IApplication } from '../utils';
 
-const useApplicationList = ({ token }) => {
-  const limit = 15;
-
+const useApplicationList = ({ token, limit = 16 }) => {
   const applicationQueryResult = async (pageParam: number) => {
-    if (!token) return;
+    if (!token) return null;
     // TODO handle filters
 
     const result = await client({ token }).request(APPLICATION_LIST_QUERY, {
@@ -31,11 +29,10 @@ const useApplicationList = ({ token }) => {
     ['applicationList'],
     ({ pageParam = 0 }) => applicationQueryResult(pageParam),
     {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
+      getNextPageParam: (lastPage, allPages) =>
+        _.isEmpty(lastPage)
           ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit);
-      },
+          : _.divide(_.size(_.flatten(allPages)), limit),
       enabled: Boolean(token),
     }
   );

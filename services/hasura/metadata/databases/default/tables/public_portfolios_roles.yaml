@@ -21,6 +21,14 @@ insert_permissions:
         - member_id
         - portfolio_id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - role
+        - id
+        - member_id
+        - portfolio_id
+      filter: {}
   - role: member
     permission:
       columns:

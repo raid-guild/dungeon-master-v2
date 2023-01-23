@@ -1,13 +1,14 @@
 import _ from 'lodash';
 import { Stack, Heading, Flex, Spinner } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import { useSession } from 'next-auth/react';
 import InfiniteScroll from 'react-infinite-scroller';
+
 import useConsultationList from '../hooks/useConsultationList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import RaidCard from '../components/RaidCard';
 import { IConsultation } from '../utils';
 import SiteLayout from '../components/SiteLayout';
-import { useSession } from 'next-auth/react';
 
 const ConsultationList = () => {
   const title = useDefaultTitle();
@@ -20,7 +21,7 @@ const ConsultationList = () => {
 
   return (
     <>
-      <NextSeo title="Consultations" />
+      <NextSeo title='Consultations' />
 
       <SiteLayout
         isLoading={!data}
@@ -33,12 +34,12 @@ const ConsultationList = () => {
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
-            <Flex my={25} w="100%" justify="center">
-              <Spinner size="xl" />
+            <Flex my={25} w='100%' justify='center'>
+              <Spinner size='xl' />
             </Flex>
           }
         >
-          <Stack spacing={4} mx="auto">
+          <Stack spacing={4} mx='auto'>
             {_.map(consultations, (consultation: IConsultation) => (
               <RaidCard
                 consultation={consultation}

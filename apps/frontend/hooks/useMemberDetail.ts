@@ -8,7 +8,7 @@ const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 
 const useMemberDetail = ({ token, memberAddress }) => {
   const memberQueryResult = async () => {
-    if (!memberAddress || !token) return;
+    if (!memberAddress || !token) return null;
     // TODO handle filters
 
     const result = await client({ token }).request(

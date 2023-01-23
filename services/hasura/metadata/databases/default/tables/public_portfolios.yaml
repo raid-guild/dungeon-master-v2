@@ -30,6 +30,18 @@ insert_permissions:
         - id
         - raid_id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - case_study
+        - category
+        - description
+        - name
+        - repo_link
+        - result_link
+        - id
+        - raid_id
+      filter: {}
   - role: member
     permission:
       columns:
@@ -44,6 +56,19 @@ select_permissions:
       filter: {}
       allow_aggregations: true
 update_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - case_study
+        - category
+        - description
+        - name
+        - repo_link
+        - result_link
+        - id
+        - raid_id
+      filter: {}
+      check: null
   - role: member
     permission:
       columns:

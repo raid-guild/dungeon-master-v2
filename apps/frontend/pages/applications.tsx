@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { Stack, Heading, Flex, Spinner } from '@raidguild/design-system';
+import { Heading, Flex, Spinner, SimpleGrid } from '@raidguild/design-system';
+import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import useApplicationList from '../hooks/useApplicationList';
 import MemberCard from '../components/MemberCard';
 import { IApplication } from '../utils';
 import SiteLayout from '../components/SiteLayout';
-import { useSession } from 'next-auth/react';
 
 const ApplicationList = () => {
   const { data: session } = useSession();
@@ -18,7 +18,7 @@ const ApplicationList = () => {
 
   return (
     <>
-      <NextSeo title="Applications" />
+      <NextSeo title='Applications' />
 
       <SiteLayout
         isLoading={!data}
@@ -31,16 +31,16 @@ const ApplicationList = () => {
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
-            <Flex my={25} w="100%" justify="center">
-              <Spinner size="xl" />
+            <Flex my={25} w='100%' justify='center'>
+              <Spinner size='xl' />
             </Flex>
           }
         >
-          <Stack spacing={4}>
+          <SimpleGrid gap={4} columns={[1, null, null, 2]}>
             {_.map(applications, (application: IApplication) => (
               <MemberCard application={application} />
             ))}
-          </Stack>
+          </SimpleGrid>
         </InfiniteScroll>
       </SiteLayout>
     </>

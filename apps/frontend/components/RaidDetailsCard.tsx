@@ -14,8 +14,8 @@ import {
   VStack,
   Stack,
   Heading,
+  Collapse,
 } from '@raidguild/design-system';
-import { Collapse } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import {
   IConsultation,
@@ -40,21 +40,21 @@ const Description = ({ description }: { description: string }) => {
   const handleToggleDesc = () => setShowFullDescription(!showFullDescription);
 
   return (
-    <VStack align="flex-start">
+    <VStack align='flex-start'>
       <Collapse startingHeight={25} in={showFullDescription}>
-        <Text color="white" fontSize="md">
+        <Text color='white' fontSize='md'>
           {description !== null
             ? description
             : 'There is no project description.'}
         </Text>
       </Collapse>
-      {description !== null && description?.length > 150 && (
+      {description !== null && description?.length > 100 && (
         <Button
           onClick={handleToggleDesc}
-          color="gray.400"
-          size="sm"
-          fontWeight="normal"
-          variant="link"
+          color='gray.400'
+          size='sm'
+          fontWeight='normal'
+          variant='link'
         >
           {showFullDescription === true ? 'Show Less' : 'Show More'}
         </Button>
@@ -68,29 +68,29 @@ const Bio = ({ bio }: { bio: string }) => {
   const handleToggleBio = () => setShowFullBio(!showFullBio);
 
   return (
-    <VStack align="flex-start">
-      <Text color="white" fontSize="sm">
+    <VStack align='flex-start'>
+      <Text color='white' fontSize='sm'>
         Bio
       </Text>
       {bio?.length > 300 ? (
         <>
           <Collapse startingHeight={50} in={showFullBio}>
-            <Text color="white" fontSize="md">
+            <Text color='white' fontSize='md'>
               {bio}
             </Text>
           </Collapse>
           <Button
             onClick={handleToggleBio}
-            color="gray.400"
-            size="sm"
-            fontWeight="normal"
-            variant="link"
+            color='gray.400'
+            size='sm'
+            fontWeight='normal'
+            variant='link'
           >
             {showFullBio === true ? 'Show Less' : 'Show More'}
           </Button>
         </>
       ) : (
-        <Text color="white" fontSize="md">
+        <Text color='white' fontSize='md'>
           {bio}
         </Text>
       )}
@@ -256,18 +256,15 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <Card
-      variant="filled"
-      padding={2}
-    >
-      <Accordion defaultIndex={[0]} allowMultiple w="100%">
+    <Card variant='filled' padding={2}>
+      <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;
           return (
             <AccordionItem key={index}>
-              <AccordionButton color="raid">
-                <Flex justify="space-between" w="100%">
-                  <Heading size="sm" as="h2">
+              <AccordionButton color='raid'>
+                <Flex justify='space-between' w='100%'>
+                  <Heading size='sm' as='h2'>
                     {_.get(panel, 'title')}
                   </Heading>
                   <AccordionIcon />
@@ -283,10 +280,10 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                       'repeat(3, 1fr)',
                     ]}
                     gap={6}
-                    alignItems="center"
-                    justifyContent="space-between"
-                    width="90%"
-                    autoFlow="wrap"
+                    alignItems='center'
+                    justifyContent='space-between'
+                    width='90%'
+                    autoFlow='wrap'
                   >
                     {_.map(_.get(panel, 'items'), (item) => (
                       <InfoStack

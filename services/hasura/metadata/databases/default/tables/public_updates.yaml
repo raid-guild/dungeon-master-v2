@@ -9,6 +9,16 @@ object_relationships:
     using:
       foreign_key_constraint_on: raid_id
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - update
+        - created_at
+        - updated_at
+        - id
+        - member_id
+        - raid_id
   - role: member
     permission:
       check: {}
@@ -20,6 +30,16 @@ insert_permissions:
         - member_id
         - raid_id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - update
+        - created_at
+        - updated_at
+        - id
+        - member_id
+        - raid_id
+      filter: {}
   - role: member
     permission:
       columns:

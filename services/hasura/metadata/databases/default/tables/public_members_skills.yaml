@@ -12,6 +12,14 @@ object_relationships:
     using:
       foreign_key_constraint_on: skill_type_key
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - skill_key
+        - skill_type_key
+        - id
+        - member_id
   - role: member
     permission:
       check: {}
@@ -21,6 +29,14 @@ insert_permissions:
         - id
         - member_id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - skill_key
+        - skill_type_key
+        - id
+        - member_id
+      filter: {}
   - role: member
     permission:
       columns:
@@ -31,6 +47,15 @@ select_permissions:
       filter: {}
       allow_aggregations: true
 update_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - skill_key
+        - skill_type_key
+        - id
+        - member_id
+      filter: {}
+      check: null
   - role: member
     permission:
       columns:

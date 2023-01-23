@@ -9,6 +9,13 @@ object_relationships:
     using:
       foreign_key_constraint_on: guild_service_key
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - guild_service_key
+        - consultation_id
+        - id
   - role: member
     permission:
       check: {}
@@ -16,7 +23,21 @@ insert_permissions:
         - guild_service_key
         - consultation_id
         - id
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - id
+        - consultation_id
+        - guild_service_key
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - guild_service_key
+        - consultation_id
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

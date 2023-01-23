@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - raid_status
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - raid_status
+      filter: {}
   - role: member
     permission:
       columns:

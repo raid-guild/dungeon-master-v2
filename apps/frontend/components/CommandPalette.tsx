@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable no-nested-ternary */
+// TODO fix
 import { useEffect, useState } from 'react';
 import CmdkCommandPalette, {
   filterItems,
@@ -55,7 +58,7 @@ const CommandPalette = () => {
   };
 
   const handleClose = () => {
-    if (open) {
+    if (isOpen) {
       setOpen(false);
       setTimeout(() => {
         setServerSearch(null);

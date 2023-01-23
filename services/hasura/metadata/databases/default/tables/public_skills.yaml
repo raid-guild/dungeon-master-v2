@@ -24,6 +24,11 @@ insert_permissions:
       columns:
         - skill
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - skill
+      filter: {}
   - role: member
     permission:
       columns:
