@@ -14,11 +14,16 @@ const orderBy = (consultationSortKey: consultationSortKeys) => ({
   }),
 });
 
-const useConsultationList = ({ token, consultationSortKey }) => {
+const useConsultationList = ({
+  token,
+  consultationTypeFilterKey = 'NEW',
+  consultationSortKey,
+}) => {
   const limit = 15;
-  console.log('sort key', consultationSortKey);
   const consultationQueryResult = async (pageParam: number) => {
     if (!token) return;
+
+    console.log('type filter key', consultationTypeFilterKey);
 
     const result = await client({ token }).request(CONSULTATION_LIST_QUERY, {
       limit,
@@ -27,6 +32,9 @@ const useConsultationList = ({ token, consultationSortKey }) => {
         _and: {
           _not: { raids: {} },
           consultation_status_key: { _neq: 'CANCELLED' },
+          ...(consultationTypeFilterKey && {
+            project_type: { project_type: { _eq: consultationTypeFilterKey } },
+          }),
         },
       },
       order_by: orderBy(consultationSortKey),
@@ -43,7 +51,7 @@ const useConsultationList = ({ token, consultationSortKey }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IConsultation>>, Error>(
-    ['consultationList', consultationSortKey],
+    ['consultationList', consultationTypeFilterKey, consultationSortKey],
     ({ pageParam = 0 }) => consultationQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {

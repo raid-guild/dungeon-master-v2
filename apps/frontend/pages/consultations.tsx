@@ -23,9 +23,14 @@ const consultationSortOptions = [
   { label: 'Recently Added', value: 'recentlyAdded' },
 ];
 
+const consultationTypeOptions = [
+  { label: 'New', value: 'NEW' },
+  { label: 'Existing', value: 'EXISTING' },
+];
+
 const ConsultationList = () => {
   const [consultationTypeFilter, setConsultationTypeFilter] =
-    useState<string>('ACTIVE');
+    useState<string>('NEW');
   const [consultationSort, setConsultationSort] = useState<string>('name');
   const [consultationBudgetFilter, setConsultationBudgetFilter] =
     useState<string>('ALL');
@@ -35,9 +40,11 @@ const ConsultationList = () => {
   const token = _.get(session, 'token');
   const { data, error, hasNextPage, fetchNextPage } = useConsultationList({
     token,
+    consultationTypeFilterKey: consultationTypeFilter,
     consultationSortKey: consultationSort,
   });
   const consultations = _.flatten(_.get(data, 'pages'));
+  console.log('consultations', consultations);
 
   const handleConsultationSortChange = async (sortOption: string) => {
     setConsultationSort(sortOption);
@@ -45,6 +52,10 @@ const ConsultationList = () => {
     // if (sortOption === 'oldestComment') {
     //   setRaidStatusFilter('ACTIVE');
     // }
+  };
+
+  const handleConsultationTypeFilterChange = async (filterOption: string) => {
+    setConsultationTypeFilter(filterOption);
   };
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
@@ -64,26 +75,23 @@ const ConsultationList = () => {
           color='white'
           textAlign='left'
         >
-          Raid Status
+          Consultation Type
         </FormLabel>
-        {/* <ChakraSelect
+        <ChakraSelect
           width='100%'
-          name='raidStatus'
-          value={raidStatusFilter}
-          defaultValue={raidStatusOptions['Active']}
+          name='consultationType'
+          value={consultationTypeFilter}
+          defaultValue={consultationTypeOptions['New']}
           onChange={(e) => {
-            handleRaidStatusFilterChange(e.target.value);
-            if (raidSort === 'oldestComment') {
-              handleRaidStatusFilterChange('ACTIVE');
-            }
+            handleConsultationTypeFilterChange(e.target.value);
           }}
         >
-          {raidStatusOptions.map((status) => (
-            <option key={status.value} value={status.value}>
-              {status.label}
+          {consultationTypeOptions.map((consultationType) => (
+            <option key={consultationType.value} value={consultationType.value}>
+              {consultationType.label}
             </option>
           ))}
-        </ChakraSelect> */}
+        </ChakraSelect>
       </Flex>
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
