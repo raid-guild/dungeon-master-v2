@@ -2,7 +2,7 @@ import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '../types';
 import { formatNumber, minMaxNumberFilter, sortNumeric } from '../utils';
-import { DataTable } from './DataTable';
+import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 
 interface BalancesTableProps {
@@ -79,6 +79,8 @@ const columns = [
 const BalancesTable = ({ data }: BalancesTableProps) => (
   <DataTable
     id='balancesDataTable'
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     columns={columns}
     data={data}
     sort={[{ id: 'tokenSymbol', desc: false }]}

@@ -5,7 +5,7 @@ import { camelize, IConsultation } from '../utils';
 
 const useConsultationDetail = ({ token, consultationId }) => {
   const consultationQueryResult = async () => {
-    if (!consultationId) return;
+    if (!consultationId) return null;
     // TODO handle filters
 
     const result = await client({ token }).request(CONSULTATION_DETAIL_QUERY, {

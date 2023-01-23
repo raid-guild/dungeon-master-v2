@@ -1,8 +1,9 @@
 import _ from 'lodash';
+import { useEffect, useState } from 'react';
 import { Avatar, Tooltip } from '@raidguild/design-system';
 import { useEnsAvatar, useEnsName, mainnet } from 'wagmi';
-import { IMember, memberDisplayName } from '../utils';
 import * as blockies from 'blockies-ts';
+import { IMember, memberDisplayName } from '../utils';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
@@ -10,20 +11,24 @@ type MemberAvatarProps = {
 
 const MemberAvatar = ({ member }: MemberAvatarProps) => {
   const address = _.get(member, 'ethAddress');
+  const [avatarSrc, setAvatarSrc] = useState<string>('');
   const { data: ensName } = useEnsName({
     address,
     chainId: mainnet.id,
     enabled: !!address,
   });
-  let { data: avatarSrc } = useEnsAvatar({
+  const { data: ensAvatar, isFetched } = useEnsAvatar({
     address,
     chainId: mainnet.id,
     enabled: !!address,
-    cacheTime: 360_000,
+    cacheTime: 60_000,
   });
-  if (!avatarSrc) {
-    avatarSrc = blockies.create({ seed: address }).toDataURL();
-  }
+
+  useEffect(() => {
+    if (avatarSrc === '' && !ensAvatar && isFetched) {
+      setAvatarSrc(blockies.create({ seed: address }).toDataURL());
+    }
+  }, [avatarSrc, ensAvatar, isFetched, address]);
 
   if (!address) {
     return (
@@ -39,7 +44,7 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
       placement='left'
       hasArrow
     >
-      <Avatar src={avatarSrc} />
+      <Avatar src={ensAvatar || avatarSrc} />
     </Tooltip>
   );
 };

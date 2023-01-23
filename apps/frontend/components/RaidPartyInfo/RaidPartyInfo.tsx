@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { Flex, Stack, Box, Card, Heading } from '@raidguild/design-system';
+import { Flex, Stack, Divider, Card, Heading } from '@raidguild/design-system';
 import {
   IMember,
   IRaid,
-  IConsultation,
+  // IConsultation,
   SIDEBAR_ACTION_STATES,
 } from '../../utils';
 import { useSlimMemberList } from '../../hooks';
@@ -16,7 +16,7 @@ import RaidPartyCard from './RaidPartyCard';
 
 interface RaidInfoProps {
   raid?: Partial<IRaid>;
-  consultation?: IConsultation;
+  // consultation?: IConsultation;
 }
 
 const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
@@ -34,23 +34,17 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
   const cleric = _.get(raid, 'cleric');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
 
-  const Divider = () => (
-    <Box
-      borderBottomColor="whiteAlpha.400"
-      borderBottomStyle="solid"
-      borderBottomWidth="1px"
-    />
-  );
-
   return (
     <Stack spacing={3}>
-      <Heading size="md">Raid Party</Heading>
+      <Heading size='md'>Raid Party</Heading>
       <Stack spacing={5}>
-        <Card variant="filled">
-          <Stack width="100%">
-            <Flex direction="column" py={2}>
+        <Card variant='filled'>
+          <Stack width='100%'>
+            <Flex direction='column' py={2}>
               <Stack>
-                <Heading color="white" size="sm">Cleric</Heading>
+                <Heading color='white' size='sm'>
+                  Cleric
+                </Heading>
                 <RaidPartyCard
                   raid={raid}
                   member={cleric}
@@ -63,7 +57,9 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
             {!_.isEmpty(raidParty) && (
               <Stack spacing={4}>
                 <Divider />
-                <Heading color="white" size="sm">Raiders</Heading>
+                <Heading color='white' size='sm'>
+                  Raiders
+                </Heading>
                 {_.map(raidParty, (member: Partial<IMember>) => (
                   <RaidPartyCard
                     raid={raid}
@@ -76,7 +72,9 @@ const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
             {!_.isEmpty(localRoles) && (
               <Stack spacing={2}>
                 <Divider />
-                <Heading color="white" size="sm">Recruiting</Heading>
+                <Heading color='white' size='sm'>
+                  Recruiting
+                </Heading>
                 <RaidPartyCard roles={localRoles} isRole />
               </Stack>
             )}

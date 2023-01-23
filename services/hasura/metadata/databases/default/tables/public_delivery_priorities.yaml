@@ -17,7 +17,17 @@ insert_permissions:
       columns:
         - delivery_priority
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - delivery_priority
+      filter: {}
   - role: member
+    permission:
+      columns:
+        - delivery_priority
+      filter: {}
+  - role: user
     permission:
       columns:
         - delivery_priority

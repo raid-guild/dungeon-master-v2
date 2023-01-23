@@ -17,7 +17,17 @@ insert_permissions:
       columns:
         - available_project_spec
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - available_project_spec
+      filter: {}
   - role: member
+    permission:
+      columns:
+        - available_project_spec
+      filter: {}
+  - role: user
     permission:
       columns:
         - available_project_spec

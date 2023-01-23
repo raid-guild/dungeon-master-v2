@@ -17,6 +17,13 @@ insert_permissions:
         - raid_id
         - related_raid_id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - id
+        - raid_id
+        - related_raid_id
+      filter: {}
   - role: member
     permission:
       columns:

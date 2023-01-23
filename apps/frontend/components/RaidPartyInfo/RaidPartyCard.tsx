@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+// TODO don't nest this component
 import _ from 'lodash';
 import { ReactNode, useState } from 'react';
 import {
@@ -52,7 +54,6 @@ type RaidPartyCardProps = {
   isCleric?: boolean;
   isRole?: boolean;
   // update fns
-  buttonSelection?: typeof SIDEBAR_ACTION_STATES;
   setButtonSelection?: (buttonSelection: string) => void;
 };
 
@@ -88,20 +89,18 @@ const RaidPartyCard = ({
 
   // * fallback to current user
   const submitUpdatedCleric = async () => {
-    const raid_updates = {
+    const raidUpdates = {
       cleric_id: clericToAdd || _.get(session, 'user.id'),
     };
 
     await updateRaid({
       id: _.get(raid, 'id'),
-      raid_updates,
+      raid_updates: raidUpdates,
     });
     setTimeout(() => {
       setUpdateCleric(false);
       setClericToAdd(undefined);
     }, 250);
-
-    console.log('submit updated cleric');
   };
 
   const handleSwitchCleric = () => {
@@ -132,8 +131,8 @@ const RaidPartyCard = ({
   // TODO holy refactor
   const saveUpdatedRoles = async () => {
     const rolesRemoved = _.difference(roles, localRoles);
-    const rolesAdded = _.difference(localRoles, roles);
-    console.log(rolesRemoved, rolesAdded);
+    // const rolesAdded = _.difference(localRoles, roles);
+
     let rolesRemovedWhere = null;
     // setClearRoles(false);
     if (!_.isEmpty(rolesRemoved)) {
@@ -157,7 +156,7 @@ const RaidPartyCard = ({
       }
       if (!rolesRemovedWhere) return;
 
-      console.log('remove roles');
+      // console.log('remove roles');
       await removeRolesRequired({
         where: rolesRemovedWhere,
       });
@@ -187,7 +186,44 @@ const RaidPartyCard = ({
     </Flex>
   );
 
-  if (updateCleric && isCleric) {
+  if (member && isCleric) {
+    return (
+      <GeneralCard
+        button={
+          <IconButton
+            icon={
+              <Icon
+                as={HiSwitchVertical}
+                color='whiteAlpha.600'
+                fontSize='1.5rem'
+              />
+            }
+            aria-label='Switch Cleric'
+            variant='outline'
+            onClick={handleSwitchCleric}
+          />
+        }
+      >
+        <HStack
+          spacing={4}
+          _hover={{ cursor: 'pointer', color: 'red.100' }}
+          transition='all ease-in-out 0.25'
+        >
+          {member && <MemberAvatar member={member} />}
+
+          <Flex direction='column'>
+            <Text as='span' color='white' fontSize='md'>
+              {_.get(member, 'name')}
+            </Text>
+            <Text color='primary.500' fontSize='sm'>
+              {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
+            </Text>
+          </Flex>
+        </HStack>
+      </GeneralCard>
+    );
+  }
+  if (isCleric) {
     return (
       <GeneralCard
         button={
@@ -228,44 +264,6 @@ const RaidPartyCard = ({
             </Flex>
           )}
         </Flex>
-      </GeneralCard>
-    );
-  }
-
-  if (member && isCleric) {
-    return (
-      <GeneralCard
-        button={
-          <IconButton
-            icon={
-              <Icon
-                as={HiSwitchVertical}
-                color='whiteAlpha.600'
-                fontSize='1.5rem'
-              />
-            }
-            aria-label='Switch Cleric'
-            variant='outline'
-            onClick={handleSwitchCleric}
-          />
-        }
-      >
-        <HStack
-          spacing={4}
-          _hover={{ cursor: 'pointer', color: 'red.100' }}
-          transition='all ease-in-out 0.25'
-        >
-          {member && <MemberAvatar member={member} />}
-
-          <Flex direction='column'>
-            <Text as='span' color='white' fontSize='md'>
-              {_.get(member, 'name')}
-            </Text>
-            <Text color='primary.500' fontSize='sm'>
-              {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
-            </Text>
-          </Flex>
-        </HStack>
       </GeneralCard>
     );
   }

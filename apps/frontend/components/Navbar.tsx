@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import _ from 'lodash';
 import {
   Box,
@@ -6,8 +7,11 @@ import {
   HStack,
   Tooltip,
   Icon,
+  Stack,
+  Collapse,
+  useDisclosure,
+  IconButton,
 } from '@raidguild/design-system';
-import { Stack, Collapse, useDisclosure, IconButton } from '@chakra-ui/react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { AiOutlineClose } from 'react-icons/ai';
 import { HiSearch } from 'react-icons/hi';
@@ -52,7 +56,7 @@ const Navbar = () => {
             onClick={() => setOpen(true)}
           >
             <Tooltip
-              label={'press CMD + K to search'}
+              label='press CMD + K to search'
               placement='bottom'
               hasArrow
             >
@@ -78,7 +82,7 @@ const Navbar = () => {
                   <GiHamburgerMenu width={5} height={5} />
                 )
               }
-              aria-label={'Toggle Navigation'}
+              aria-label='Toggle Navigation'
             />
           </Flex>
         </Flex>
@@ -90,37 +94,31 @@ const Navbar = () => {
   );
 };
 
-const DesktopNav = () => {
-  return (
-    <HStack align='center' spacing={4}>
-      {_.map(links, ({ href, label }) => (
-        <Link key={href} href={href}>
-          <Heading size='sm'>{label}</Heading>
-        </Link>
-      ))}
-    </HStack>
-  );
-};
-
-const MobileNav = () => {
-  return (
-    <Stack p={4} display={{ md: 'none' }}>
-      {_.map(links, ({ href, label }) => (
-        <MobileNavItem key={href} href={href} label={label} />
-      ))}
-      <ConnectWallet />
-    </Stack>
-  );
-};
-
-const MobileNavItem = ({ href, label }: NavItem) => {
-  return (
-    <Stack spacing={4}>
-      <Link key={href} href={href} py={2}>
+const DesktopNav = () => (
+  <HStack align='center' spacing={4}>
+    {_.map(links, ({ href, label }) => (
+      <Link key={href} href={href}>
         <Heading size='sm'>{label}</Heading>
       </Link>
-    </Stack>
-  );
-};
+    ))}
+  </HStack>
+);
+
+const MobileNav = () => (
+  <Stack p={4} display={{ md: 'none' }}>
+    {_.map(links, ({ href, label }) => (
+      <MobileNavItem key={href} href={href} label={label} />
+    ))}
+    <ConnectWallet />
+  </Stack>
+);
+
+const MobileNavItem = ({ href, label }: NavItem) => (
+  <Stack spacing={4}>
+    <Link key={href} href={href} py={2}>
+      <Heading size='sm'>{label}</Heading>
+    </Link>
+  </Stack>
+);
 
 export default Navbar;

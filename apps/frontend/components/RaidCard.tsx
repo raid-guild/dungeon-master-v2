@@ -14,10 +14,11 @@ import {
   AvatarGroup,
   RoleBadge,
   Avatar,
+  useMediaQuery,
 } from '@raidguild/design-system';
-import { useMediaQuery } from '@chakra-ui/react';
-import MemberAvatar from './MemberAvatar';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
+
+import MemberAvatar from './MemberAvatar';
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
 import {

@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+/* eslint-disable react/no-unstable-nested-components */
 import { useState } from 'react';
 import _ from 'lodash';
 import {
@@ -10,15 +12,14 @@ import {
   Text,
   Spacer,
 } from '@raidguild/design-system';
+import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import useRaidList, { useRaidsCount } from '../hooks/useRaidList';
 import RaidCard from '../components/RaidCard';
-import { IRaid } from '../utils';
+import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '../utils';
 import SiteLayout from '../components/SiteLayout';
-import { useSession } from 'next-auth/react';
-import { RAID_STATUS, GUILD_CLASS_OPTIONS } from '../utils';
 
 const raidStatusMapped = RAID_STATUS.map((status) => ({
   label: status,
@@ -95,7 +96,7 @@ const RaidList = () => {
           width='100%'
           name='raidStatus'
           value={raidStatusFilter}
-          defaultValue={raidStatusOptions['Active']}
+          defaultValue='Active'
           onChange={(e) => {
             handleRaidStatusFilterChange(e.target.value);
             if (raidSort === 'oldestComment') {
@@ -126,7 +127,7 @@ const RaidList = () => {
           name='raidRoles'
           id='raidRoles'
           value={raidRolesFilter}
-          defaultValue={raidRolesOptions['Show All']}
+          defaultValue='Show All'
           onChange={(e) => {
             handleRaidRolesFilterChange(e.target.value);
             if (sortChanged === true && raidSort === 'oldestComment') {
@@ -156,7 +157,7 @@ const RaidList = () => {
           width='100%'
           name='raidSort'
           value={raidSort}
-          defaultValue={raidSortOptions['Name']}
+          defaultValue='Name'
           onChange={(e) => {
             handleRaidSortChange(e.target.value);
             if (e.target.value === 'oldestComment') {

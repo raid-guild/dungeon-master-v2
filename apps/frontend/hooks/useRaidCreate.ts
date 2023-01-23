@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { client, RAID_CREATE_MUTATION } from '../gql';
 import { useToast } from '@raidguild/design-system';
+
+import { client, RAID_CREATE_MUTATION } from '../gql';
 import { IRaidCreate, camelize } from '../utils';
 
 const useRaidCreate = ({ token }) => {
@@ -12,7 +13,7 @@ const useRaidCreate = ({ token }) => {
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidCreate) => {
-      if (!token) return;
+      if (!token) return null;
       const result = await client({ token }).request(RAID_CREATE_MUTATION, {
         raid: {
           ...args,
@@ -23,7 +24,6 @@ const useRaidCreate = ({ token }) => {
     },
     {
       onSuccess: (data) => {
-        console.log(data);
         const raid = camelize(_.get(data, 'insert_raids_one'));
 
         queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]);

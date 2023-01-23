@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - submission_type
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - submission_type
+      filter: {}
   - role: member
     permission:
       columns:

@@ -33,6 +33,31 @@ array_relationships:
           name: members
           schema: public
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - handbook_read
+        - pledge_readiness
+        - availability_key
+        - comments
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity_key
+        - eth_address
+        - favorite_media
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - technical_skill_type_key
+        - v1_id
+        - why_raidguild
+        - created_at
+        - updated_at
+        - contact_info_id
+        - id
+        - referred_by_id
   - role: member
     permission:
       check: {}
@@ -58,7 +83,55 @@ insert_permissions:
         - contact_info_id
         - created_at
         - updated_at
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - availability_key
+        - comments
+        - contact_info_id
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity_key
+        - eth_address
+        - favorite_media
+        - handbook_read
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - pledge_readiness
+        - referred_by_id
+        - technical_skill_type_key
+        - v1_id
+        - why_raidguild
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - handbook_read
+        - pledge_readiness
+        - availability_key
+        - comments
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity_key
+        - eth_address
+        - favorite_media
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - technical_skill_type_key
+        - v1_id
+        - why_raidguild
+        - created_at
+        - updated_at
+        - contact_info_id
+        - id
+        - referred_by_id
+      filter: {}
+      allow_aggregations: true
   - role: member
     permission:
       columns:
@@ -85,6 +158,31 @@ select_permissions:
         - referred_by_id
       filter: {}
       allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+        - handbook_read
+        - pledge_readiness
+        - availability_key
+        - comments
+        - crypto_experience
+        - crypto_thrills
+        - dao_familiarity_key
+        - eth_address
+        - favorite_media
+        - introduction
+        - learning_goals
+        - name
+        - passion
+        - technical_skill_type_key
+        - v1_id
+        - why_raidguild
+        - created_at
+        - updated_at
+        - contact_info_id
+        - id
+        - referred_by_id
+      filter: {}
 update_permissions:
   - role: member
     permission:

@@ -1,7 +1,16 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
+const DASHBOARD_CONSULTATION_FRAGMENT = gql`
+  fragment DashboardConsultation on consultations {
+    id
+    name
+    created_at
+  }
+`;
+
 const DASHBOARD_RAID_FRAGMENT = gql`
-  fragment DashboardRaidFragment on raids {
+  fragment DashboardRaid on raids {
     id
     name
     cleric {
@@ -10,14 +19,9 @@ const DASHBOARD_RAID_FRAGMENT = gql`
     raid_status {
       raid_status
     }
-    created_at
-  }
-`;
-
-const DASHBOARD_CONSULTATION_FRAGMENT = gql`
-  fragment DashboardConsultationFragment on consultations {
-    id
-    name
+    consultation {
+      ...DashboardConsultation
+    }
     created_at
   }
 `;
@@ -27,13 +31,13 @@ export const DASHBOARD_QUERY = gql`
     raid_party_raids: raids(
       where: { raid_parties: { member: { eth_address: { _eq: $address } } } }
     ) {
-      ...DashboardRaidFragment
+      ...DashboardRaid
     }
     cleric_raids: raids(where: { cleric: { eth_address: { _eq: $address } } }) {
-      ...DashboardRaidFragment
+      ...DashboardRaid
     }
     new_raids: raids(order_by: { created_at: desc }, limit: 5) {
-      ...DashboardRaidFragment
+      ...DashboardRaid
     }
     new_consultations: consultations(
       order_by: { created_at: desc }
@@ -45,7 +49,7 @@ export const DASHBOARD_QUERY = gql`
         }
       }
     ) {
-      ...DashboardConsultationFragment
+      ...DashboardConsultation
     }
   }
   ${DASHBOARD_RAID_FRAGMENT}

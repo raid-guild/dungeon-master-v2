@@ -9,8 +9,9 @@ import {
   Input,
   Select,
   Flex,
+  forwardRef,
 } from '@raidguild/design-system';
-import { forwardRef } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import { add } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -18,7 +19,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
 import { RAID_CATEGORY_OPTIONS } from '../utils/constants';
 import useRaidUpdate from '../hooks/useRaidUpdate';
-import { useSession } from 'next-auth/react';
 
 interface RaidUpdateFormProps {
   raidId?: string;
@@ -78,7 +78,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       {value}
     </Button>
   ));
-  console.log(raid);
 
   return (
     <Box as='section'>
@@ -96,14 +95,13 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
-                  id='raidName'
+                  name='raidName'
                   defaultValue={raid?.name ? raid?.name : ''}
                   aria-label='Enter the Raid name'
                   placeholder='Enter the Raid name'
                   rounded='base'
                   label='Raid Name'
                   localForm={localForm}
-                  {...register('raidName')}
                 />
                 <FormControl>
                   <FormLabel color='raid'>Raid Category</FormLabel>
@@ -113,6 +111,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         name='raidCategory'
                         options={RAID_CATEGORY_OPTIONS}
@@ -124,14 +123,15 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   alignItems='center'
-                  justifyContent='center'
+                  justifyContent='space-between'
                 >
                   <FormControl>
                     <FormLabel color='raid'>Raid Start Date (UTC)</FormLabel>
                     <DatePicker
-                      isRequired
+                      // isRequired
+                      // eslint-disable-next-line react/jsx-props-no-spreading
                       {...register('startDate', { valueAsDate: true })}
-                      value={startDate}
+                      value={startDate.toISOString()}
                       selected={startDate}
                       onChange={(date) => {
                         setStartDate(date);
@@ -143,9 +143,10 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   <FormControl>
                     <FormLabel color='raid'>Raid End Date (UTC)</FormLabel>
                     <DatePicker
-                      isRequired
+                      // isRequired
+                      // eslint-disable-next-line react/jsx-props-no-spreading
                       {...register('endDate', { valueAsDate: true })}
-                      value={endDate}
+                      value={endDate.toISOString()}
                       selected={endDate}
                       onChange={(date) => {
                         setEndDate(date);
@@ -157,7 +158,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 </Flex>
                 {raid?.invoiceAddress !== null && (
                   <Input
-                    id='invoiceAddress'
+                    name='invoiceAddress'
                     isReadOnly
                     defaultValue={
                       raid?.invoiceAddress ? raid?.invoiceAddress : ''
@@ -167,7 +168,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     rounded='base'
                     label='Invoice Address'
                     localForm={localForm}
-                    {...register('invoiceAddress')}
                   />
                 )}
                 <Button
