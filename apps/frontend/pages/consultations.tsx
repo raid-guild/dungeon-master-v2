@@ -20,7 +20,6 @@ import useDefaultTitle from '../hooks/useDefaultTitle';
 import RaidCard from '../components/RaidCard';
 import { IConsultation } from '../utils';
 import SiteLayout from '../components/SiteLayout';
-import { useSession } from 'next-auth/react';
 import {
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
