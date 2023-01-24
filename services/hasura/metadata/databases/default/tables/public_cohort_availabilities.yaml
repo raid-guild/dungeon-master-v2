@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - cohort_availability
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - cohort_availability
+      filter: {}
   - role: member
     permission:
       columns:

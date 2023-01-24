@@ -108,14 +108,17 @@ const Filter = <TData, TValue>({ column }: FilterProps<TData, TValue>) => {
   if (columnDataType === 'enum') {
     return (
       <Flex>
-        <datalist id={column.id + 'list'}>
-          {sortedUniqueValues.slice(0, 5000).map((value?: string | number) => {
-            return value ? (
-              <option value={value.toString()} key={value.toString()} />
+        <datalist id={`${column.id}list`}>
+          {sortedUniqueValues.slice(0, 5000).map((value?: string | number) =>
+            value ? (
+              <option value={value.toString()} key={value.toString()}>
+                {value.toString()}
+              </option>
             ) : (
+              // eslint-disable-next-line react/jsx-no-useless-fragment
               <></>
-            );
-          })}
+            )
+          )}
         </datalist>
         <DebouncedInput
           type='text'
@@ -123,7 +126,7 @@ const Filter = <TData, TValue>({ column }: FilterProps<TData, TValue>) => {
           onChange={handleChange}
           placeholder={`search... (${column.getFacetedUniqueValues().size})`}
           className='border shadow rounded'
-          list={column.id + 'list'}
+          list={`${column.id}list`}
           size='sm'
           fontFamily='mono'
           fontSize='xs'

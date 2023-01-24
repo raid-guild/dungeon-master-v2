@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { RAID_DETAIL_FRAGMENT } from '../queries';
+import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAID_UPDATE_MUTATION = gql`
   mutation RaidUpdateMutation($id: uuid!, $raid_updates: raids_set_input!) {
@@ -23,10 +23,10 @@ export const ROLES_REQUIRED_FRAGMENT = gql`
   fragment RolesRequired on raids_roles_required {
     id
     raid_id
+    role
     raid {
       ...RaidDetail
     }
-    role
   }
   ${RAID_DETAIL_FRAGMENT}
 `;
@@ -59,10 +59,10 @@ export const RAID_PARTY_FRAGMENT = gql`
   fragment RaidParty on raid_parties {
     id
     raid_id
+    member_id
     raid {
       ...RaidDetail
     }
-    member_id
   }
   ${RAID_DETAIL_FRAGMENT}
 `;

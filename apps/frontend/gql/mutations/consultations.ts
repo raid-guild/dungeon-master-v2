@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
 import { CONSULTATION_DETAIL_FRAGMENT } from '../queries/consultations';

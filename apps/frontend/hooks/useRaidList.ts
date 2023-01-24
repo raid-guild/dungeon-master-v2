@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import _ from 'lodash';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { client, RAIDS_LIST_QUERY, RAIDS_COUNT_QUERY } from '../gql';
@@ -77,7 +78,7 @@ const useRaidList = ({
   const limit = 15;
 
   const raidQueryResult = async (pageParam: number) => {
-    if (!token) return;
+    if (!token) return null;
 
     const result = await client({ token }).request(RAIDS_LIST_QUERY, {
       where: where(raidStatusFilterKey, raidRolesFilterKey, raidSortKey),
@@ -104,11 +105,10 @@ const useRaidList = ({
       raidSortKey,
     ],
     queryFn: ({ pageParam = 0 }) => raidQueryResult(pageParam),
-    getNextPageParam: (lastPage, allPages) => {
-      return _.isEmpty(lastPage)
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
         ? undefined
-        : _.divide(_.size(_.flatten(allPages)), limit);
-    },
+        : _.divide(_.size(_.flatten(allPages)), limit),
     enabled: Boolean(token),
   });
 
@@ -141,6 +141,7 @@ export const useRaidsCount = ({
   const { data, isLoading, error } = useQuery({
     queryKey: ['raidsCount', raidStatusFilterKey, raidRolesFilterKey],
     queryFn: raidsCountQuery,
+    enabled: Boolean(token),
   });
 
   return { data, isLoading, error };

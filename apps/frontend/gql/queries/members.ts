@@ -1,4 +1,9 @@
 import { gql } from 'graphql-request';
+import {
+  CONTACT_INFO_FRAGMENT,
+  MEMBER_DETAIL_FRAGMENT,
+  SLIM_MEMBER_DETAIL_FRAGMENT,
+} from '../fragments';
 
 export const MEMBER_LIST_QUERY = gql`
   query MemberList(
@@ -18,12 +23,7 @@ export const MEMBER_LIST_QUERY = gql`
       eth_address
       is_raiding
       contact_info {
-        id
-        email
-        discord
-        telegram
-        twitter
-        github
+        ...ContactInfo
       }
       guild_class {
         guild_class
@@ -36,72 +36,22 @@ export const MEMBER_LIST_QUERY = gql`
       }
     }
   }
+  ${CONTACT_INFO_FRAGMENT}
 `;
 
 export const MEMBER_SLIM_LIST_QUERY = gql`
   query MemberSlimList {
     members {
-      id
-      name
-      eth_address
-      is_raiding
-      contact_info {
-        telegram
-      }
-      guild_class {
-        guild_class
-      }
+      ...SlimMemberDetail
     }
   }
-`;
-
-export const MEMBER_DETAIL_FRAGMENT = gql`
-  fragment MemberDetailFragment on members {
-    id
-    name
-    eth_address
-    is_raiding
-    contact_info {
-      id
-      email
-      discord
-      twitter
-      github
-      telegram
-    }
-    guild_class {
-      guild_class
-    }
-    application {
-      introduction
-    }
-    members_skills {
-      skill {
-        skill
-      }
-      skill_type {
-        skill_type
-      }
-    }
-    member_type {
-      member_type
-    }
-    raid_parties {
-      raid {
-        name
-        id
-        raid_status {
-          raid_status
-        }
-      }
-    }
-  }
+  ${SLIM_MEMBER_DETAIL_FRAGMENT}
 `;
 
 export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
   query MemberAddressLookup($address: String!) {
     members(where: { eth_address: { _eq: $address } }) {
-      ...MemberDetailFragment
+      ...MemberDetail
     }
     cleric_raids: raids(where: { cleric: { eth_address: { _eq: $address } } }) {
       id
@@ -128,7 +78,7 @@ export const MEMBERS_COUNT_QUERY = gql`
 export const MEMBER_DETAIL_QUERY = gql`
   query MemberDetail($id: uuid!) {
     members_by_pk(id: $id) {
-      ...MemberDetailFragment
+      ...MemberDetail
     }
   }
   ${MEMBER_DETAIL_FRAGMENT}
@@ -137,7 +87,7 @@ export const MEMBER_DETAIL_QUERY = gql`
 export const MEMBER_CREATE_MUTATION = gql`
   mutation MemberCreate($member: members_insert_input!) {
     insert_members_one(object: $member) {
-      ...MemberDetailFragment
+      ...MemberDetail
     }
   }
   ${MEMBER_DETAIL_FRAGMENT}

@@ -21,6 +21,15 @@ array_relationships:
           name: consultations_contacts
           schema: public
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - bio
+        - eth_address
+        - name
+        - contact_info_id
+        - id
   - role: member
     permission:
       check: {}
@@ -30,7 +39,23 @@ insert_permissions:
         - name
         - contact_info_id
         - id
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - bio
+        - eth_address
+        - name
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - bio
+        - eth_address
+        - name
+        - contact_info_id
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

@@ -17,6 +17,20 @@ insert_permissions:
         - updated_at
         - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - tags
+        - author
+        - content
+        - description
+        - image
+        - slug
+        - title
+        - created_at
+        - updated_at
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

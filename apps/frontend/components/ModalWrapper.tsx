@@ -1,17 +1,18 @@
+import React from 'react';
 import {
-  Modal,
+  Heading,
+  ChakraModal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-  BoxProps,
-} from '@chakra-ui/react';
-import { Heading } from '@raidguild/design-system';
+  ChakraBoxProps,
+} from '@raidguild/design-system';
 import { OverlayContextType, IModals } from '../contexts/OverlayContext';
-import React from 'react';
+// TODO replace this modal with the one from design-system
 
-export interface ModalWrapperProps extends BoxProps {
+export interface ModalWrapperProps extends ChakraBoxProps {
   name: keyof IModals;
   title: string;
   content: React.ReactNode;
@@ -36,20 +37,24 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   const { modals, closeModals } = localOverlay;
 
   return (
-    <Modal isOpen={modals[name]} onClose={closeModals} size={size || '2xl'}>
+    <ChakraModal
+      isOpen={modals[name]}
+      onClose={closeModals}
+      size={size || '2xl'}
+    >
       <ModalOverlay />
       <ModalContent
         background={props.bgColor ? props.bgColor : 'gray.800'}
-        minWidth="20vw"
+        minWidth='20vw'
         paddingY={8}
       >
         <ModalHeader>
           <Heading>{title}</Heading>
         </ModalHeader>
-        <ModalCloseButton color="whiteAlpha.700" />
+        <ModalCloseButton color='whiteAlpha.700' />
         <ModalBody>{content}</ModalBody>
       </ModalContent>
-    </Modal>
+    </ChakraModal>
   );
 };
 

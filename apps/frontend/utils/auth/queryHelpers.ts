@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import _ from 'lodash';
 import { isAddress } from '@ethersproject/address';
 import {
@@ -9,7 +10,7 @@ import { IUser } from '../../types';
 
 const fetchExistingUser = async (address: string): Promise<IUser | null> =>
   client({})
-    .request(MEMBER_ADDRESS_LOOKUP_QUERY, { address }) // { address: _.toLower(address) })
+    .request(MEMBER_ADDRESS_LOOKUP_QUERY, { address: _.toLower(address) })
     .then((res) => {
       if (!_.isEmpty(_.get(res, 'members'))) {
         return Promise.resolve(_.first(_.get(res, 'members')));
@@ -17,6 +18,7 @@ const fetchExistingUser = async (address: string): Promise<IUser | null> =>
       return Promise.resolve(null);
     })
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.log(error);
       return Promise.reject(error);
     });
@@ -49,6 +51,6 @@ export const getOrCreateUser = async (address: string): Promise<IUser> => {
     //   }
     //   return Promise.reject('Could not create user');
     // });
-    return Promise.reject('Could not find user');
+    return Promise.reject(Error('Could not find user'));
   });
 };

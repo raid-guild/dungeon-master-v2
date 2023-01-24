@@ -24,6 +24,16 @@ array_relationships:
           name: members
           schema: public
 insert_permissions:
+  - role: cohort
+    permission:
+      check: {}
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
   - role: member
     permission:
       check: {}
@@ -34,7 +44,27 @@ insert_permissions:
         - telegram
         - twitter
         - id
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - discord
+        - email
+        - github
+        - telegram
+        - twitter
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

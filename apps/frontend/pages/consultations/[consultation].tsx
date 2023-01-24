@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+// TODO fix nested component
 import _ from 'lodash';
 import {
   Flex,
@@ -7,11 +9,12 @@ import {
   Spacer,
   Badge,
   Box,
+  useMediaQuery,
 } from '@raidguild/design-system';
-import { useMediaQuery } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+
 import useConsultationDetail from '../../hooks/useConsultationDetail';
 import useConsultationUpdate from '../../hooks/useConsultationUpdate';
 import SiteLayout from '../../components/SiteLayout';
@@ -31,10 +34,8 @@ const Consultation = () => {
   const { mutateAsync: createRaid } = useRaidCreate({ token });
 
   const [upTo780] = useMediaQuery('(max-width: 780px)');
-  console.log(consultation);
 
   const handleCreateRaid = async () => {
-    console.log('Create Raid');
     await createRaid({
       consultation_id: _.get(consultation, 'id'),
       name: _.get(consultation, 'name'),
@@ -44,7 +45,6 @@ const Consultation = () => {
   };
 
   const handleCancelConsultation = async () => {
-    console.log('Cancel Consultation');
     await updateConsultation({
       id: _.get(consultation, 'id'),
       update: {
@@ -83,7 +83,6 @@ const Consultation = () => {
       >
         <Flex
           align='flex-start'
-          width='100%'
           direction={['column', null, null, 'row']}
           gap={6}
         >

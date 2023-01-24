@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import _ from 'lodash';
+
 export * from '../types';
 export * from './constants';
 export * from './general';

@@ -1,16 +1,18 @@
 import _ from 'lodash';
-import { Heading, Flex, Button, Stack, HStack } from '@raidguild/design-system';
+import { Heading, Flex, Button, Stack } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
+import { GetServerSidePropsContext } from 'next';
+
 import useApplicationDetail from '../../hooks/useApplicationDetail';
 import useMemberCreate from '../../hooks/useMemberCreate';
 import SiteLayout from '../../components/SiteLayout';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
 
-const Application = () => {
+const Application = ({ applicationId }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: application } = useApplicationDetail({ token });
+  const { data: application } = useApplicationDetail({ token, applicationId });
   const { mutateAsync: createCohortMember } = useMemberCreate({ token });
 
   const handleCreateCohort = async () => {
@@ -34,7 +36,7 @@ const Application = () => {
           </Flex>
         }
       >
-        <HStack align='flex-start' spacing={6}>
+        <Flex justify='center' gap={6}>
           <MemberDetailsCard application={application} />
 
           <Stack>
@@ -43,10 +45,20 @@ const Application = () => {
             </Button>
             {/* <Button variant="outline">Create Member</Button> */}
           </Stack>
-        </HStack>
+        </Flex>
       </SiteLayout>
     </>
   );
+};
+
+export const getServerSideProps = (context: GetServerSidePropsContext) => {
+  const { application } = context.query;
+
+  return {
+    props: {
+      applicationId: application || null,
+    },
+  };
 };
 
 export default Application;

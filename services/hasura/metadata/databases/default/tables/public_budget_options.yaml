@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - budget_option
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - budget_option
+      filter: {}
   - role: member
     permission:
       columns:

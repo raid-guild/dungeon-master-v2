@@ -88,6 +88,26 @@ insert_permissions:
         - contact_info_id
         - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - is_raiding
+        - membership_date
+        - application_v1
+        - eth_address
+        - legacy_id
+        - member_type_key
+        - name
+        - primary_class_key
+        - v1_id
+        - created_at
+        - updated_at
+        - application_id
+        - championed_by_id
+        - contact_info_id
+        - id
+      filter: {}
+      allow_aggregations: true
   - role: member
     permission:
       columns:
@@ -109,6 +129,17 @@ select_permissions:
       filter: {}
       allow_aggregations: true
 update_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - championed_by_id
+        - eth_address
+        - is_raiding
+        - membership_date
+        - name
+        - primary_class_key
+      filter: {}
+      check: null
   - role: member
     permission:
       columns:

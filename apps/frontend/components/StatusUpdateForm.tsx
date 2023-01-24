@@ -1,8 +1,9 @@
 import React from 'react';
 import _ from 'lodash';
-import { Stack, Button } from '@raidguild/design-system';
-import useRaidUpdate from '../hooks/useRaidUpdate';
 import { useSession } from 'next-auth/react';
+import { Stack, Button } from '@raidguild/design-system';
+
+import useRaidUpdate from '../hooks/useRaidUpdate';
 import { IRaid } from '../utils';
 
 const statusOptions = ['AWAITING', 'PREPARING', 'RAIDING', 'LOST', 'SHIPPED'];

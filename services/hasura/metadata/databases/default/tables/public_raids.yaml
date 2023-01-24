@@ -78,6 +78,25 @@ insert_permissions:
         - consultation_id
         - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - escrow_index
+        - airtable_id
+        - category_key
+        - invoice_address
+        - locker_hash
+        - name
+        - status_key
+        - v1_id
+        - created_at
+        - end_date
+        - start_date
+        - updated_at
+        - cleric_id
+        - consultation_id
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

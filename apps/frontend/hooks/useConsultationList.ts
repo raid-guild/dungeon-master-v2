@@ -84,11 +84,10 @@ const useConsultationList = ({
     ],
     ({ pageParam = 0 }) => consultationQueryResult(pageParam),
     {
-      getNextPageParam: (lastPage, allPages) => {
-        return _.isEmpty(lastPage)
+      getNextPageParam: (lastPage, allPages) =>
+        _.isEmpty(lastPage)
           ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit);
-      },
+          : _.divide(_.size(_.flatten(allPages)), limit),
       enabled: Boolean(token),
     }
   );

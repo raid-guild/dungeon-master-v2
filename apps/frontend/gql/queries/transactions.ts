@@ -1,7 +1,12 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
 export const TRANSACTIONS_QUERY = gql`
-  query MolochBalances($molochAddress: daohaus_stats_xdaiBytes!, $first: Int, $skip: Int) {
+  query MolochBalances(
+    $molochAddress: daohaus_stats_xdaiBytes!
+    $first: Int
+    $skip: Int
+  ) {
     daohaus_stats_xdai {
       balances(
         first: $first

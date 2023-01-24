@@ -13,6 +13,7 @@ const ScrollToTopButton = () => {
 
   useEffect(() => {
     const buttonVisibility = () => {
+      // eslint-disable-next-line no-unused-expressions
       window.scrollY > 100 ? setVisible(true) : setVisible(false);
     };
     window.addEventListener('scroll', buttonVisibility);
@@ -23,19 +24,19 @@ const ScrollToTopButton = () => {
 
   return (
     <Box
-      position="fixed"
-      bottom="100px"
+      position='fixed'
+      bottom='100px'
       right={['16px', '84px']}
       zIndex={1}
       display={visible ? 'block' : 'none'}
     >
       <IconButton
-        aria-label="Scroll to Top of Page Button"
-        size="lg"
+        aria-label='Scroll to Top of Page Button'
+        size='lg'
         fontSize={{ base: 'xl', lg: '2xl' }}
-        borderRadius="9999px"
-        boxShadow="xl"
-        transition="all 100ms ease-in-out transform 250ms ease-in-out"
+        borderRadius='9999px'
+        boxShadow='xl'
+        transition='all 100ms ease-in-out transform 250ms ease-in-out'
         _hover={{
           transform: 'translateY(-4px)',
         }}

@@ -8,7 +8,7 @@ const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 const useDashboardList = ({ token, address }) => {
   const dashboardQueryResult = async () => {
     const result = await client({ token }).request(DASHBOARD_QUERY, {
-      address,
+      address: _.toLower(address),
     });
 
     const resultData = camelize(result);

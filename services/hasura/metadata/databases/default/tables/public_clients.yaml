@@ -25,6 +25,13 @@ insert_permissions:
         - website
         - id
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - name
+        - website
+        - id
+      filter: {}
   - role: member
     permission:
       columns:

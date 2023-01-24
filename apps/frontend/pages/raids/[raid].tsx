@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import { Heading, Flex, Stack, Box, Text } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import { useSession } from 'next-auth/react';
+
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
-import { useSession } from 'next-auth/react';
 import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
 import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
 import { displayDate } from '../../utils';
@@ -33,7 +34,6 @@ const Raid = ({ raidId }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: raid } = useRaidDetail({ raidId, token });
-  console.log(raid);
 
   const startOrEnd = _.get(raid, 'startDate') || _.get(raid, 'endDate');
 
@@ -63,7 +63,7 @@ const Raid = ({ raidId }) => {
       >
         <Flex
           w='95%'
-          minW={['350px', null, null, '1200px']}
+          minW={['350px', null, null, '1000px']}
           mx='auto'
           direction={['column', null, null, 'row']}
           gap={10}

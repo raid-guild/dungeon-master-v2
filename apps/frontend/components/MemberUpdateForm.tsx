@@ -10,8 +10,9 @@ import {
   Select,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
-import useMemberUpdate from '../hooks/useMemberUpdate';
 import { useForm, Controller } from 'react-hook-form';
+
+import useMemberUpdate from '../hooks/useMemberUpdate';
 import { IMember, IApplication } from '../utils';
 import {
   GUILD_CLASS_OPTIONS,
@@ -42,7 +43,6 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     mode: 'all',
   });
   const {
-    register,
     handleSubmit,
     control,
     formState: { isSubmitting },
@@ -85,17 +85,16 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <Input
-                  id='memberName'
+                  name='memberName'
                   defaultValue={member?.name ? member.name : ''}
                   aria-label='Enter your name'
                   placeholder='What is your name?'
                   rounded='base'
                   label='Member Name'
                   localForm={localForm}
-                  {...register('memberName')}
                 />
                 <Input
-                  id='emailAddress'
+                  name='emailAddress'
                   defaultValue={
                     member?.contactInfo?.email
                       ? member?.contactInfo.email
@@ -106,10 +105,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   rounded='base'
                   label='Email Address'
                   localForm={localForm}
-                  {...register('emailAddress')}
                 />
                 <Input
-                  id='githubHandle'
+                  name='githubHandle'
                   defaultValue={
                     member?.contactInfo?.github
                       ? member?.contactInfo.github
@@ -120,10 +118,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   rounded='base'
                   label='GitHub Handle'
                   localForm={localForm}
-                  {...register('githubHandle')}
                 />
                 <Input
-                  id='discordHandle'
+                  name='discordHandle'
                   defaultValue={
                     member?.contactInfo?.discord
                       ? member?.contactInfo.discord
@@ -134,10 +131,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   rounded='base'
                   label='Discord Handle'
                   localForm={localForm}
-                  {...register('discordHandle')}
                 />
                 <Input
-                  id='telegramHandle'
+                  name='telegramHandle'
                   defaultValue={
                     member?.contactInfo?.telegram
                       ? member?.contactInfo.telegram
@@ -148,10 +144,9 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   rounded='base'
                   label='Telegram Handle'
                   localForm={localForm}
-                  {...register('telegramHandle')}
                 />
                 <Input
-                  id='twitterHandle'
+                  name='twitterHandle'
                   defaultValue={
                     member?.contactInfo?.twitter
                       ? member?.contactInfo.twitter
@@ -162,7 +157,6 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   rounded='base'
                   label='Twitter Handle'
                   localForm={localForm}
-                  {...register('twitterHandle')}
                 />
                 <FormControl>
                   <FormLabel color='raid'>Guild Class</FormLabel>
@@ -176,6 +170,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={GUILD_CLASS_OPTIONS}
                         localForm={localForm}
@@ -191,6 +186,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     render={({ field }) => (
                       <Select
                         isDisabled
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
                         localForm={localForm}
@@ -201,11 +197,12 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <FormControl>
                   <FormLabel color='raid'>Secondary Skills</FormLabel>
                   <Controller
-                    name='secondarySkilLs'
+                    name='secondarySkil'
                     control={control}
                     render={({ field }) => (
                       <Select
                         isDisabled
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
                         localForm={localForm}

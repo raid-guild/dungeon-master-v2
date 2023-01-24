@@ -31,7 +31,17 @@ insert_permissions:
       columns:
         - guild_class
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - guild_class
+      filter: {}
   - role: member
+    permission:
+      columns:
+        - guild_class
+      filter: {}
+  - role: user
     permission:
       columns:
         - guild_class

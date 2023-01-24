@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+/* eslint-disable react/no-unstable-nested-components */
 import { useState } from 'react';
 import _ from 'lodash';
 import {
@@ -8,38 +10,40 @@ import {
   Spinner,
   Spacer,
   Text,
+  ChakraSelect,
+  SimpleGrid,
 } from '@raidguild/design-system';
-import { Select as ChakraSelect } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import useMemberList, { useMembersCount } from '../hooks/useMemberList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import MemberCard from '../components/MemberCard';
 import SiteLayout from '../components/SiteLayout';
-import { useSession } from 'next-auth/react';
+
 import { IMember } from '../types';
 import { GUILD_CLASS_OPTIONS } from '../utils';
+
+const memberStatusOptions = [
+  { label: 'Show All', value: 'ALL' },
+  { label: 'Is Raiding', value: 'true' },
+  { label: 'Is Not Raiding', value: 'false' },
+];
+
+const memberRolesOptions = [
+  { label: 'Show All', value: 'ALL' },
+  ...GUILD_CLASS_OPTIONS,
+];
+
+const memberSortOptions = [{ label: 'Name', value: 'name' }];
 
 const MemberList = () => {
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('true');
-  const [memberSort, setMemberSort] = useState<string>('name');
-  const [memberRolesFilter, setMemberRolesFilter] = useState<string>('ALL');
-
-  const memberStatusOptions = [
-    ...[{ label: 'Show All', value: 'ALL' }],
-    ...[{ label: 'Is Raiding', value: 'true' }],
-    ...[{ label: 'Is Not Raiding', value: 'false' }],
-  ];
-
-  const memberRolesOptions = [
-    ...[{ label: 'Show All', value: 'ALL' }],
-    ...GUILD_CLASS_OPTIONS,
-  ];
-
-  const memberSortOptions = [{ label: 'Name', value: 'name' }];
+  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('ALL'); // Is Raiding
+  const [memberSort, setMemberSort] = useState<string>('name'); // Name
+  const [memberRolesFilter, setMemberRolesFilter] = useState<string>('ALL'); // All Roles
 
   const handleMemberRolesFilterChange = async (role: string) => {
     setMemberRolesFilter(role);
@@ -101,11 +105,11 @@ const MemberList = () => {
           Member Status
         </FormLabel>
         <ChakraSelect
-          width='100%'
+          // width='100%'
           name='memberStatus'
           id='raidRoles'
           value={memberStatusFilter}
-          defaultValue={memberStatusOptions['Show All']}
+          defaultValue='ALL'
           onChange={(e) => {
             handleMemberStatusFilterChange(e.target.value);
           }}
@@ -197,7 +201,7 @@ const MemberList = () => {
             </Flex>
           }
         >
-          <Stack spacing={4}>
+          <SimpleGrid gap={4} columns={[1, null, null, 2]}>
             {_.map(members, (member: IMember) => (
               <MemberCard
                 member={member}
@@ -205,7 +209,7 @@ const MemberList = () => {
                 key={_.get(member, 'id')}
               />
             ))}
-          </Stack>
+          </SimpleGrid>
         </InfiniteScroll>
       </SiteLayout>
     </>

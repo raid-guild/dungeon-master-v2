@@ -17,6 +17,11 @@ insert_permissions:
       columns:
         - guild_service
 select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - guild_service
+      filter: {}
   - role: member
     permission:
       columns:

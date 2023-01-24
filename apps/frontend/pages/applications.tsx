@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import _ from 'lodash';
 import {
-  Stack,
+
   Heading,
   Flex,
   FormLabel,
   ChakraSelect,
   Spinner,
   Spacer,
-  Text,
+ , SimpleGrid, Text,
+
 } from '@raidguild/design-system';
+import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import useApplicationList, {
@@ -210,11 +212,11 @@ const ApplicationList = () => {
             </Flex>
           }
         >
-          <Stack spacing={4}>
+          <SimpleGrid gap={4} columns={[1, null, null, 2]}>
             {_.map(applications, (application: IApplication) => (
               <MemberCard application={application} />
             ))}
-          </Stack>
+          </SimpleGrid>
         </InfiniteScroll>
       </SiteLayout>
     </>

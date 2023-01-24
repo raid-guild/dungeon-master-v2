@@ -67,7 +67,7 @@ export const PROJECT_TYPE_DISPLAY = (projectType: string) => {
     EXISTING: 'Existing',
   };
 
-  if (!_.includes(_.keys(projectTypeMap), projectType)) return;
+  if (!_.includes(_.keys(projectTypeMap), projectType)) return null;
 
   return projectTypeMap[projectType];
 };
@@ -81,7 +81,7 @@ export const AVAILABLE_PROJECT_SPECS_DISPLAY = (spec: string) => {
     NONE: 'None',
   };
 
-  if (!_.includes(_.keys(specsMap), spec)) return;
+  if (!_.includes(_.keys(specsMap), spec)) return null;
 
   return specsMap[spec];
 };
@@ -128,7 +128,7 @@ export const DELIVERY_PRIORITIES_DISPLAY = (priority: string) => {
     POLISHED_AND_INEXPENSIVE: 'Polished & Inexpensive',
   };
 
-  if (!_.includes(_.keys(deliveryPrioritiesMap), priority)) return;
+  if (!_.includes(_.keys(deliveryPrioritiesMap), priority)) return null;
 
   return deliveryPrioritiesMap[priority];
 };
@@ -198,7 +198,7 @@ export const SKILLS_DISPLAY = (skill: string) => {
     ACCOUNTING: 'Accounting',
   };
 
-  if (!_.includes(_.keys(skillsMap), skill)) return;
+  if (!_.includes(_.keys(skillsMap), skill)) return null;
 
   return skillsMap[skill];
 };

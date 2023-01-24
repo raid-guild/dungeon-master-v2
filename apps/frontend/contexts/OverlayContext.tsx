@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useMemo,
+} from 'react';
 
 export type IModals = {
   raidStatus: boolean;
@@ -30,25 +36,30 @@ export const OverlayContextProvider: React.FC<OverlayProviderProps> = ({
 }: OverlayProviderProps) => {
   const [modals, setModals] = useState(defaults);
   const [commandPallet, setCommandPallet] = useState(false);
-  const showModal = (modals: Partial<IModals>) => {
+
+  const showModal = (m: Partial<IModals>) => {
     // This allows to show only one modal at a time.
     // In addition, this reset any true value for other modals.
-    setModals({ ...defaults, ...modals });
+    setModals({ ...defaults, ...m });
   };
+
   const closeModals = () => {
     setModals(defaults);
   };
 
+  const returnValue = useMemo(
+    () => ({
+      modals,
+      setModals: showModal,
+      closeModals,
+      commandPallet,
+      setCommandPallet,
+    }),
+    [modals, commandPallet]
+  );
+
   return (
-    <OverlayContext.Provider
-      value={{
-        modals,
-        setModals: showModal,
-        closeModals,
-        commandPallet,
-        setCommandPallet,
-      }}
-    >
+    <OverlayContext.Provider value={returnValue}>
       {children}
     </OverlayContext.Provider>
   );

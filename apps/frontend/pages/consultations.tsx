@@ -11,6 +11,7 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
+import { useSession } from 'next-auth/react';
 import InfiniteScroll from 'react-infinite-scroller';
 import useConsultationList, {
   useConsultationsCount,

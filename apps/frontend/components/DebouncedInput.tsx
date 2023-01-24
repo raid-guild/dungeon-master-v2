@@ -1,11 +1,12 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState } from 'react';
-import { Input, InputProps } from '@chakra-ui/react';
+import { ChakraInput, ChakraInputProps } from '@raidguild/design-system';
 
 type DebouncedInputProps<T extends string | number> = {
   value: T;
   onChange: (value: T) => void;
   debounce?: number;
-} & Omit<InputProps, 'onChange'>;
+} & Omit<ChakraInputProps, 'onChange'>;
 
 // A debounced input react component
 const DebouncedInput = <T extends string | number>({
@@ -29,7 +30,7 @@ const DebouncedInput = <T extends string | number>({
   }, [debounce, onChange, value]);
 
   return (
-    <Input
+    <ChakraInput
       {...props}
       value={value}
       onChange={(e) => setValue(e.target.value as T)}

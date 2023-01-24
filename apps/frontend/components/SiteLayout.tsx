@@ -20,9 +20,50 @@ interface SiteLayoutProps {
 }
 
 type GeneralLayoutProps = {
-  other?: ReactNode;
+  minHeight?: string;
+  subheader?: ReactNode;
+  showScrollToTopButton?: boolean;
   children?: ReactNode;
 };
+
+const GeneralLayout = ({
+  minHeight,
+  subheader,
+  showScrollToTopButton,
+  children,
+}: GeneralLayoutProps) => (
+  <Flex
+    direction='column'
+    overflowX='hidden'
+    margin='0 auto'
+    minHeight={minHeight || '100vh'}
+    minWidth={['100%', null, null, '100vw']}
+    position='relative'
+    background='gray.700'
+  >
+    <Navbar />
+    <CommandPalette />
+    <Flex
+      direction='column'
+      justify='flex-start'
+      flex='1'
+      align='center'
+      minHeight={['100vh', '100vh', '0', '0']}
+    >
+      <Stack
+        spacing={8}
+        align='center'
+        w={['90%', null, null, '80%']}
+        mx='auto'
+      >
+        {subheader}
+        {children}
+      </Stack>
+    </Flex>
+    {showScrollToTopButton && <ScrollToTopButton />}
+    <Footer />
+  </Flex>
+);
 
 const SiteLayout: React.FC<SiteLayoutProps> = ({
   isLoading,
@@ -42,44 +83,14 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
     pathname === '/members' ||
     pathname === '/applications';
 
-  const GeneralLayout = ({ children }: GeneralLayoutProps) => (
-    <Flex
-      direction='column'
-      overflowX='hidden'
-      margin='0 auto'
-      minHeight={minHeight || '100vh'}
-      minWidth={['100%', null, null, '100vw']}
-      position='relative'
-      background='gray.700'
-    >
-      <Navbar />
-      <CommandPalette />
-      <Flex
-        direction='column'
-        justify='flex-start'
-        flex='1'
-        align='center'
-        minHeight={['100vh', '100vh', '0', '0']}
-      >
-        <Stack
-          spacing={8}
-          align='center'
-          w={['90%', null, null, '70%']}
-          mx='auto'
-        >
-          {subheader}
-          {children}
-        </Stack>
-      </Flex>
-      {showScrollToTopButton && <ScrollToTopButton />}
-      <Footer />
-    </Flex>
-  );
-
   if (!_.get(session, 'token')) {
     return (
-      <GeneralLayout>
-        <Flex justify='center' align='center' minH='100vh'>
+      <GeneralLayout
+        showScrollToTopButton={showScrollToTopButton}
+        subheader={subheader}
+        minHeight={minHeight}
+      >
+        <Flex justify='center' align='center' minH='70vh'>
           <Heading size='md'>Connect your wallet & Sign in</Heading>
         </Flex>
       </GeneralLayout>
@@ -88,7 +99,11 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
 
   if (isLoading) {
     return (
-      <GeneralLayout>
+      <GeneralLayout
+        showScrollToTopButton={showScrollToTopButton}
+        subheader={subheader}
+        minHeight={minHeight}
+      >
         <Flex w='100%' justify='center' alignItems='center' py={60}>
           <Spinner size='xl' />
         </Flex>
@@ -98,7 +113,11 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
 
   if (error) {
     return (
-      <GeneralLayout>
+      <GeneralLayout
+        showScrollToTopButton={showScrollToTopButton}
+        subheader={subheader}
+        minHeight={minHeight}
+      >
         <Flex w='100%' justify='center' pt={40}>
           <Heading size='md'>Error loading data: {error.message}</Heading>
         </Flex>
@@ -107,13 +126,23 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
   }
 
   return data && _.isEmpty(data) ? (
-    <GeneralLayout>
+    <GeneralLayout
+      showScrollToTopButton={showScrollToTopButton}
+      subheader={subheader}
+      minHeight={minHeight}
+    >
       <Flex justify='center' align='center' minH='50vh'>
         <Heading size='md'>{emptyDataPhrase || 'No raids found!'}</Heading>
       </Flex>
     </GeneralLayout>
   ) : (
-    <GeneralLayout>{children}</GeneralLayout>
+    <GeneralLayout
+      showScrollToTopButton={showScrollToTopButton}
+      subheader={subheader}
+      minHeight={minHeight}
+    >
+      {children}
+    </GeneralLayout>
   );
 };
 
