@@ -1,6 +1,10 @@
 import _ from 'lodash';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { client, APPLICATION_LIST_QUERY } from '../gql';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  client,
+  APPLICATION_LIST_QUERY,
+  APPLICATIONS_LIST_COUNT_QUERY,
+} from '../gql';
 import { camelize, IApplication } from '../utils';
 
 const where = (
@@ -34,7 +38,7 @@ const orderBy = (applicationSortKey: string) => ({
 const useApplicationList = ({
   token,
   applicationSkillTypeFilterKey = 'ALL',
-  applicationSkillFilterKey,
+  applicationSkillFilterKey = 'ALL',
   applicationSortKey = 'name',
 }) => {
   const limit = 15;
@@ -90,3 +94,31 @@ const useApplicationList = ({
 };
 
 export default useApplicationList;
+
+export const useApplicationsCount = ({
+  token,
+  applicationSkillTypeFilterKey = 'ALL',
+  applicationSkillFilterKey = 'ALL',
+}) => {
+  const applicationsCountQuery = async () => {
+    const result = await client({ token }).request(
+      APPLICATIONS_LIST_COUNT_QUERY,
+      {
+        where: where(applicationSkillTypeFilterKey, applicationSkillFilterKey),
+      }
+    );
+
+    return _.get(result, 'applications_aggregate.aggregate.count', 0);
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: [
+      'applicationsCount',
+      applicationSkillTypeFilterKey,
+      applicationSkillFilterKey,
+    ],
+    queryFn: applicationsCountQuery,
+  });
+
+  return { data, isLoading, error };
+};

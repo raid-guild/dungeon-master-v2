@@ -12,7 +12,9 @@ import {
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import useApplicationList from '../hooks/useApplicationList';
+import useApplicationList, {
+  useApplicationsCount,
+} from '../hooks/useApplicationList';
 import MemberCard from '../components/MemberCard';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import { IApplication } from '../utils';
@@ -53,6 +55,13 @@ const ApplicationList = () => {
     applicationSkillFilterKey: applicationSkillFilter,
     applicationSortKey: applicationSort,
   });
+
+  const { data: count } = useApplicationsCount({
+    token,
+    applicationSkillTypeFilterKey: applicationSkillTypeFilter,
+    applicationSkillFilterKey: applicationSkillFilter,
+  });
+
   const applications = _.flatten(_.get(data, 'pages'));
 
   // TODO: generalize these and share code
@@ -179,11 +188,11 @@ const ApplicationList = () => {
               <Spacer />
               <Heading>{title} List</Heading>
               <Spacer />
-              {/* {count > 0 && (
+              {count > 0 && (
                 <Text fontSize='3xl' fontWeight={800}>
                   {count}
                 </Text>
-              )} */}
+              )}
             </Flex>
             <ApplicationControls />
           </>
