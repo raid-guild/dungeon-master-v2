@@ -1,6 +1,11 @@
 import _ from 'lodash';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { client, MEMBER_LIST_QUERY, MEMBER_SLIM_LIST_QUERY } from '../gql';
+import {
+  client,
+  MEMBER_LIST_QUERY,
+  MEMBER_SLIM_LIST_QUERY,
+  MEMBERS_COUNT_QUERY,
+} from '../gql';
 import { camelize, IMember, SIDEBAR_ACTION_STATES } from '../utils';
 
 const useMemberList = ({
@@ -98,4 +103,35 @@ export const useSlimMemberList = ({ token, button }) => {
     data,
     isLoading,
   };
+};
+
+export const useMembersCount = ({
+  token,
+  consultationTypeFilterKey = 'ALL',
+  consultationSubmissionFilterKey = 'ALL',
+  consultationBudgetFilterKey = 'ALL',
+}) => {
+  const consultationsCountQuery = async () => {
+    const result = await client({ token }).request(MEMBERS_COUNT_QUERY, {
+      where: where(
+        consultationTypeFilterKey,
+        consultationBudgetFilterKey,
+        consultationSubmissionFilterKey
+      ),
+    });
+
+    return _.get(result, 'consultations_aggregate.aggregate.count', 0);
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: [
+      'consultationsCount',
+      consultationTypeFilterKey,
+      consultationBudgetFilterKey,
+      consultationSubmissionFilterKey,
+    ],
+    queryFn: consultationsCountQuery,
+  });
+
+  return { data, isLoading, error };
 };
