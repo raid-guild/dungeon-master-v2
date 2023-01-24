@@ -238,6 +238,7 @@ const ConsultationList = () => {
             <ConsultationControls />
           </>
         }
+        emptyDataPhrase='No consultations found'
         error={error}
       >
         <InfiniteScroll

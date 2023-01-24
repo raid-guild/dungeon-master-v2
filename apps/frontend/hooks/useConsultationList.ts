@@ -107,9 +107,9 @@ export default useConsultationList;
 
 export const useConsultationsCount = ({
   token,
-  consultationTypeFilterKey = 'ALL',
-  consultationSubmissionFilterKey = 'ALL',
-  consultationBudgetFilterKey = 'ALL',
+  consultationTypeFilterKey,
+  consultationSubmissionFilterKey,
+  consultationBudgetFilterKey,
 }) => {
   const consultationsCountQuery = async () => {
     const result = await client({ token }).request(CONSULTATIONS_COUNT_QUERY, {

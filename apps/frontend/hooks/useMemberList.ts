@@ -112,18 +112,17 @@ export const useMembersCount = ({
   token,
   memberRolesFilterKey = 'ALL',
   memberStatusFilterKey = 'ALL',
-  memberSortKey = 'name',
 }) => {
   const membersCountQuery = async () => {
     const result = await client({ token }).request(MEMBERS_COUNT_QUERY, {
       where: where(memberRolesFilterKey, memberStatusFilterKey),
     });
 
-    return _.get(result, 'consultations_aggregate.aggregate.count', 0);
+    return _.get(result, 'members_aggregate.aggregate.count', 0);
   };
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['membersCount', memberRolesFilterKey, memberStatusKey],
+    queryKey: ['membersCount', memberRolesFilterKey, memberStatusFilterKey],
     queryFn: membersCountQuery,
   });
 

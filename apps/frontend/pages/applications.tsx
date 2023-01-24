@@ -197,6 +197,7 @@ const ApplicationList = () => {
             <ApplicationControls />
           </>
         }
+        emptyDataPhrase='No applications found'
         error={error}
       >
         <InfiniteScroll
