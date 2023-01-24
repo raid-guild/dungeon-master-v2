@@ -3,27 +3,55 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, APPLICATION_LIST_QUERY } from '../gql';
 import { camelize, IApplication } from '../utils';
 
-const where = (applicationSkillTypeFilterKey: string) => ({
+const where = (
+  applicationSkillTypeFilterKey: string,
+  applicationSkillFilterKey: string
+) => ({
   _not: { member: {} },
   ...(applicationSkillTypeFilterKey !== 'ALL' && {
-    skill_type: { skill_type: { _eq: applicationSkillTypeFilterKey } },
+    technical_skill_type: {
+      skill_type: { _eq: applicationSkillTypeFilterKey },
+    },
+  }),
+  ...(applicationSkillFilterKey !== 'ALL' && {
+    applications_skills: { skill: { skill: { _in: 'UX_RESEARCH' } } },
+  }),
+  // ...(applicationSkillFilterKey !== 'ALL' && {
+  //   application_skills: {
+  //     skill: {
+  //       skill: { _in: applicationSkillFilterKey },
+  //     },
+  //   },
+  // }),
+});
+
+const orderBy = (applicationSortKey: string) => ({
+  ...(applicationSortKey === 'name' && {
+    name: 'asc',
+  }),
+  ...(applicationSortKey === 'createdAt' && {
+    created_at: 'desc',
   }),
 });
 
 const useApplicationList = ({
   token,
   applicationSkillTypeFilterKey = 'ALL',
+  applicationSkillFilterKey,
+  applicationSortKey = 'name',
 }) => {
   const limit = 15;
 
+  console.log('applicationSkillFilterKey', applicationSkillFilterKey);
+
   const applicationQueryResult = async (pageParam: number) => {
     if (!token) return;
-    // TODO handle filters
 
     const result = await client({ token }).request(APPLICATION_LIST_QUERY, {
       limit,
       offset: pageParam * limit,
-      where: where(applicationSkillTypeFilterKey),
+      where: where(applicationSkillTypeFilterKey, applicationSkillFilterKey),
+      order_by: orderBy(applicationSortKey),
     });
 
     return camelize(_.get(result, 'applications'));
@@ -38,7 +66,12 @@ const useApplicationList = ({
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<Array<Array<IApplication>>, Error>(
-    ['applicationList', applicationSkillTypeFilterKey],
+    [
+      'applicationList',
+      applicationSkillTypeFilterKey,
+      applicationSkillFilterKey,
+      applicationSortKey,
+    ],
     ({ pageParam = 0 }) => applicationQueryResult(pageParam),
     {
       getNextPageParam: (lastPage, allPages) => {

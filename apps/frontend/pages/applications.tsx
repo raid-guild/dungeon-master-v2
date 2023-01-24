@@ -50,8 +50,11 @@ const ApplicationList = () => {
   const { data, error, hasNextPage, fetchNextPage } = useApplicationList({
     token,
     applicationSkillTypeFilterKey: applicationSkillTypeFilter,
+    applicationSkillFilterKey: applicationSkillFilter,
+    applicationSortKey: applicationSort,
   });
   const applications = _.flatten(_.get(data, 'pages'));
+  console.log('applications', applications);
 
   // TODO: generalize these and share code
   const handleApplicationSkillTypeFilterChange = async (
@@ -116,7 +119,7 @@ const ApplicationList = () => {
           color='white'
           textAlign='left'
         >
-          Skill Type
+          Skill
         </FormLabel>
         <ChakraSelect
           width='100%'
