@@ -8,6 +8,26 @@ import {
 } from '../gql';
 import { camelize, IMember, SIDEBAR_ACTION_STATES } from '../utils';
 
+const where = (
+  memberRolesFilterKey: string,
+  memberStatusFilterKey: string
+) => ({
+  ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
+    memberRolesFilterKey !== 'ALL' && {
+      guild_class: { guild_class: { _in: memberRolesFilterKey } },
+    }),
+  ...(memberStatusFilterKey === 'ALL' && {}),
+  ...(memberStatusFilterKey !== 'ALL' && {
+    is_raiding: { _eq: memberStatusFilterKey },
+  }),
+});
+
+const orderBy = (memberSortKey: string) => ({
+  ...(memberSortKey === 'name' && {
+    name: 'asc',
+  }),
+});
+
 const useMemberList = ({
   token,
   memberRolesFilterKey = 'ALL',
@@ -15,32 +35,15 @@ const useMemberList = ({
   memberSortKey = 'name',
   limit = 15,
 }) => {
-  const where = {
-    ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
-      memberRolesFilterKey !== 'ALL' && {
-        guild_class: { guild_class: { _in: memberRolesFilterKey } },
-      }),
-    ...(memberStatusFilterKey === 'ALL' && {}),
-    ...(memberStatusFilterKey !== 'ALL' && {
-      is_raiding: { _eq: memberStatusFilterKey },
-    }),
-  };
-
-  const orderBy = {
-    ...(memberSortKey === 'name' && {
-      name: 'asc',
-    }),
-  };
-
   const memberQueryResult = async (pageParam: number) => {
     if (!token) return;
     // TODO handle filters
 
     const result = await client({ token }).request(MEMBER_LIST_QUERY, {
-      where,
       limit,
       offset: pageParam * limit,
-      order_by: orderBy,
+      where: where(memberRolesFilterKey, memberStatusFilterKey),
+      order_by: orderBy(memberSortKey),
     });
 
     return camelize(_.get(result, 'members'));
@@ -107,30 +110,21 @@ export const useSlimMemberList = ({ token, button }) => {
 
 export const useMembersCount = ({
   token,
-  consultationTypeFilterKey = 'ALL',
-  consultationSubmissionFilterKey = 'ALL',
-  consultationBudgetFilterKey = 'ALL',
+  memberRolesFilterKey = 'ALL',
+  memberStatusFilterKey = 'ALL',
+  memberSortKey = 'name',
 }) => {
-  const consultationsCountQuery = async () => {
+  const membersCountQuery = async () => {
     const result = await client({ token }).request(MEMBERS_COUNT_QUERY, {
-      where: where(
-        consultationTypeFilterKey,
-        consultationBudgetFilterKey,
-        consultationSubmissionFilterKey
-      ),
+      where: where(memberRolesFilterKey, memberStatusFilterKey),
     });
 
     return _.get(result, 'consultations_aggregate.aggregate.count', 0);
   };
 
   const { data, isLoading, error } = useQuery({
-    queryKey: [
-      'consultationsCount',
-      consultationTypeFilterKey,
-      consultationBudgetFilterKey,
-      consultationSubmissionFilterKey,
-    ],
-    queryFn: consultationsCountQuery,
+    queryKey: ['membersCount', memberRolesFilterKey, memberStatusKey],
+    queryFn: membersCountQuery,
   });
 
   return { data, isLoading, error };
