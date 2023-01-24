@@ -1,15 +1,17 @@
+/* eslint-disable dot-notation */
+/* eslint-disable react/no-unstable-nested-components */
+
 import { useState } from 'react';
 import _ from 'lodash';
 import {
-
   Heading,
   Flex,
   FormLabel,
   ChakraSelect,
   Spinner,
   Spacer,
- , SimpleGrid, Text,
-
+  SimpleGrid,
+  Text,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -19,13 +21,12 @@ import useApplicationList, {
 } from '../hooks/useApplicationList';
 import MemberCard from '../components/MemberCard';
 import useDefaultTitle from '../hooks/useDefaultTitle';
-import { IApplication } from '../utils';
-import SiteLayout from '../components/SiteLayout';
-import { useSession } from 'next-auth/react';
 import {
+  IApplication,
   APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
-} from '../utils/constants';
+} from '../utils';
+import SiteLayout from '../components/SiteLayout';
 
 const applicationSkillTypeOptions = [
   { label: 'Show All', value: 'ALL' },

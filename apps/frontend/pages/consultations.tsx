@@ -1,3 +1,6 @@
+/* eslint-disable dot-notation */
+/* eslint-disable react/no-unstable-nested-components */
+
 import { useState } from 'react';
 import _ from 'lodash';
 import {
@@ -18,9 +21,9 @@ import useConsultationList, {
 } from '../hooks/useConsultationList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import RaidCard from '../components/RaidCard';
-import { IConsultation } from '../utils';
 import SiteLayout from '../components/SiteLayout';
 import {
+  IConsultation,
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
 } from '../utils';
