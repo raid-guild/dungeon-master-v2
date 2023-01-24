@@ -76,6 +76,17 @@ export const APPLICATION_LIST_QUERY = gql`
       why_raidguild
       created_at
       updated_at
+      technical_skill_type {
+        skill_type
+      }
+      applications_skills {
+        skill {
+          skill
+        }
+        skill_type {
+          skill_type
+        }
+      }
     }
   }
 `;

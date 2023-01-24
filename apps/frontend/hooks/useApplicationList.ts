@@ -14,15 +14,12 @@ const where = (
     },
   }),
   ...(applicationSkillFilterKey !== 'ALL' && {
-    applications_skills: { skill: { skill: { _in: 'UX_RESEARCH' } } },
+    applications_skills: {
+      skill: {
+        skill: { _in: applicationSkillFilterKey },
+      },
+    },
   }),
-  // ...(applicationSkillFilterKey !== 'ALL' && {
-  //   application_skills: {
-  //     skill: {
-  //       skill: { _in: applicationSkillFilterKey },
-  //     },
-  //   },
-  // }),
 });
 
 const orderBy = (applicationSortKey: string) => ({
@@ -41,8 +38,6 @@ const useApplicationList = ({
   applicationSortKey = 'name',
 }) => {
   const limit = 15;
-
-  console.log('applicationSkillFilterKey', applicationSkillFilterKey);
 
   const applicationQueryResult = async (pageParam: number) => {
     if (!token) return;

@@ -54,7 +54,6 @@ const ApplicationList = () => {
     applicationSortKey: applicationSort,
   });
   const applications = _.flatten(_.get(data, 'pages'));
-  console.log('applications', applications);
 
   // TODO: generalize these and share code
   const handleApplicationSkillTypeFilterChange = async (
