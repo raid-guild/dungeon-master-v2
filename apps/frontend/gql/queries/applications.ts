@@ -19,8 +19,8 @@ export const APPLICATION_LIST_QUERY = gql`
     ) {
       ...SlimApplicationDetail
     }
-    ${SLIM_APPLICATION_DETAIL_FRAGMENT}
   }
+  ${SLIM_APPLICATION_DETAIL_FRAGMENT}
 `;
 
 export const APPLICATIONS_LIST_COUNT_QUERY = gql`
