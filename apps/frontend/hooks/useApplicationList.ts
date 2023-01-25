@@ -44,7 +44,7 @@ const useApplicationList = ({
   const limit = 15;
 
   const applicationQueryResult = async (pageParam: number) => {
-    if (!token) return;
+    if (!token) return null;
 
     const result = await client({ token }).request(APPLICATION_LIST_QUERY, {
       limit,

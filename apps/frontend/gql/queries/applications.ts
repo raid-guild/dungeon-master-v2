@@ -19,7 +19,7 @@ export const APPLICATION_LIST_QUERY = gql`
     ) {
       ...SlimApplicationDetail
     }
-    ${APPLICATION_DETAIL_FRAGMENT}
+    ${SLIM_APPLICATION_DETAIL_FRAGMENT}
   }
 `;
 
@@ -30,6 +30,7 @@ export const APPLICATIONS_LIST_COUNT_QUERY = gql`
         count
       }
     }
+  }
 `;
 
 export const APPLICATION_DETAIL_QUERY = gql`

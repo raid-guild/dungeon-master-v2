@@ -17,7 +17,6 @@ export const APPLICATION_DETAIL_FRAGMENT = gql`
   fragment ApplicationDetail on applications {
     id
     v1_id
-
     name
     introduction
     learning_goals
@@ -32,15 +31,12 @@ export const APPLICATION_DETAIL_FRAGMENT = gql`
     comments
     created_at
     updated_at
-
     contact_info {
       ...ContactInfo
     }
-
     referred_by {
       ...SlimMemberDetail
     }
-
     technical_skill_type {
       skill_type
     }

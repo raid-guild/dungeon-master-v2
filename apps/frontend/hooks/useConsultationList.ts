@@ -51,7 +51,7 @@ const useConsultationList = ({
 }) => {
   const limit = 15;
   const consultationQueryResult = async (pageParam: number) => {
-    if (!token) return;
+    if (!token) return null;
 
     const result = await client({ token }).request(CONSULTATION_LIST_QUERY, {
       limit,
