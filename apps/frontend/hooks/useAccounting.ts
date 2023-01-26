@@ -3,10 +3,14 @@
 // All credit to @midgerate, @xivanc, @daniel-ivanco, and the DAOHaus team for the original code
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, TRANSACTIONS_QUERY } from '../gql';
-import { camelize, GUILD_GNOSIS_DAO_ADDRESS } from '../utils';
+import {
+  camelize,
+  GUILD_GNOSIS_DAO_ADDRESS,
+  formatUnitsAsNumber,
+} from '../utils';
 import {
   ICalculatedTokenBalances,
   IVaultTransaction,
@@ -87,7 +91,7 @@ const formatBalancesAsTransactions = async (
             .getBalance(molochStatBalance.tokenAddress)
             .sub(BigNumber.from(molochStatBalance.balance))
             .abs();
-          const tokenFormattedValue = formatUnits(
+          const tokenFormattedValue = formatUnitsAsNumber(
             tokenValue,
             molochStatBalance.tokenDecimals
           );
@@ -97,7 +101,7 @@ const formatBalancesAsTransactions = async (
               molochStatBalance.payment === false &&
               molochStatBalance.tribute === false
             ) {
-              const balance = formatUnits(
+              const balance = formatUnitsAsNumber(
                 calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
@@ -120,7 +124,7 @@ const formatBalancesAsTransactions = async (
                 tokenValue
               );
 
-              const balance = formatUnits(
+              const balance = formatUnitsAsNumber(
                 calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
@@ -144,7 +148,7 @@ const formatBalancesAsTransactions = async (
                 tokenValue
               );
 
-              const balance = formatUnits(
+              const balance = formatUnitsAsNumber(
                 calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
@@ -159,7 +163,7 @@ const formatBalancesAsTransactions = async (
               };
             }
 
-            const balance = formatUnits(
+            const balance = formatUnitsAsNumber(
               calculatedTokenBalances.getBalance(
                 molochStatBalance.tokenAddress
               ),
@@ -247,10 +251,6 @@ const formatBalancesAsTransactions = async (
   }
 };
 
-// TODO move to utils
-const formatUnits = (value: BigNumber, decimals: string) =>
-  Number(utils.formatUnits(value, decimals));
-
 const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   molochTokenBalances: ITokenBalance[],
   calculatedTokenBalances: ICalculatedTokenBalances
@@ -267,19 +267,19 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
         tokenSymbol: molochTokenBalance.token.symbol,
         tokenExplorerLink,
         inflow: {
-          tokenValue: formatUnits(
+          tokenValue: formatUnitsAsNumber(
             calculatedTokenBalance?.in || BigNumber.from(0),
             molochTokenBalance.token.decimals
           ),
         },
         outflow: {
-          tokenValue: formatUnits(
+          tokenValue: formatUnitsAsNumber(
             calculatedTokenBalance?.out || BigNumber.from(0),
             molochTokenBalance.token.decimals
           ),
         },
         closing: {
-          tokenValue: formatUnits(
+          tokenValue: formatUnitsAsNumber(
             molochTokenBalance.tokenBalance,
             molochTokenBalance.token.decimals
           ),
