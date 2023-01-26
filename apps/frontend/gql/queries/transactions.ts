@@ -2,10 +2,11 @@
 import { gql } from 'graphql-request';
 
 export const TRANSACTIONS_QUERY = gql`
-  query MolochBalances(
+  query AccountingQuery(
     $molochAddress: daohaus_stats_xdaiBytes!
     $first: Int
     $skip: Int
+    $contractAddr: ID!
   ) {
     daohaus_stats_xdai {
       balances(
@@ -35,6 +36,28 @@ export const TRANSACTIONS_QUERY = gql`
           lootRequested
         }
       }
+    }
+    daohaus_xdai {
+      moloch(id: $contractAddr) {
+        id
+        minions {
+          minionAddress
+        }
+        tokenBalances(where: { guildBank: true }) {
+          token {
+            tokenAddress
+            symbol
+            decimals
+          }
+          tokenBalance
+        }
+      }
+    }
+    treasury_token_history {
+      id
+      date
+      price_usd
+      symbol
     }
   }
 `;

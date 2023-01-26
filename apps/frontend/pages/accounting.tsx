@@ -15,11 +15,7 @@ import {
 import { useCallback, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
-import {
-  useTransactions,
-  useBalances,
-  useTokenPrices,
-} from '../hooks/useAccounting';
+import { useTransactions } from '../hooks/useAccounting';
 import useMemberList from '../hooks/useMemberList';
 import SiteLayout from '../components/SiteLayout';
 
@@ -34,32 +30,15 @@ const formatDate = (date: Date) => date.toISOString().split('T')[0];
 export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const {
-    data: transactions,
-    loading: transactionsLoading,
-    error: transactionsError,
-  } = useTransactions({
-    token,
-  });
-  const {
-    data: balances,
-    loading: balancesLoading,
-    error: balancesError,
-  } = useBalances({
-    token,
-    startFetch: transactions.length > 0,
-  });
-  const {
-    data: tokenPrices,
-    loading: tokenPricesLoading,
-    error: tokenPricesError,
-  } = useTokenPrices({
+  const { data, loading, error } = useTransactions({
     token,
   });
   const { data: memberData } = useMemberList({
     token,
     limit: 1000,
   });
+
+  const { balances, transactions, tokenPrices } = data;
 
   const members = useMemo(() => {
     const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
@@ -182,16 +161,12 @@ export const Accounting = () => {
     link.remove();
   };
 
-  const isLoading =
-    transactionsLoading || balancesLoading || tokenPricesLoading;
-  const error = transactionsError || balancesError || tokenPricesError;
-
   return (
     <>
       <NextSeo title='Accounting' />
 
       <SiteLayout
-        isLoading={isLoading}
+        isLoading={loading}
         data={[
           ...transactionsWithPricesAndMembers,
           ...balances,
