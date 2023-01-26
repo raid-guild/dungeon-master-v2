@@ -291,7 +291,7 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   return tokenBalanceLineItems;
 };
 
-export const useTransactions = ({ token }) => {
+export const useAccounting = ({ token }) => {
   const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
     []
   );
@@ -300,7 +300,7 @@ export const useTransactions = ({ token }) => {
 
   const limit = 1000;
 
-  const transactionQueryResult = async (pageParam: number) => {
+  const accountingQueryResult = async (pageParam: number) => {
     if (!token) return null;
     // TODO handle filters
     const response = await client({ token }).request(TRANSACTIONS_QUERY, {
@@ -324,17 +324,13 @@ export const useTransactions = ({ token }) => {
       tokenPrices: Array<ITokenPrice>;
     },
     Error
-  >(
-    ['transactions'],
-    ({ pageParam = 0 }) => transactionQueryResult(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit),
-      enabled: Boolean(token),
-    }
-  );
+  >(['accounting'], ({ pageParam = 0 }) => accountingQueryResult(pageParam), {
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit),
+    enabled: Boolean(token),
+  });
 
   // TODO use onSuccess/onError instead of useEffect
   useEffect(() => {
@@ -363,7 +359,7 @@ export const useTransactions = ({ token }) => {
         setTokenPrices(mappedPrices);
       } else if (status === 'error') {
         // eslint-disable-next-line no-console
-        console.error('transactions fetching failed with: ', status);
+        console.error('accounting data fetching failed with: ', status);
       }
     })();
   }, [data, status]);
@@ -380,4 +376,4 @@ export const useTransactions = ({ token }) => {
   };
 };
 
-export default useTransactions;
+export default useAccounting;

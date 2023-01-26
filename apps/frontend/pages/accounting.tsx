@@ -15,7 +15,7 @@ import {
 import { useCallback, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
-import { useTransactions } from '../hooks/useAccounting';
+import { useAccounting } from '../hooks/useAccounting';
 import useMemberList from '../hooks/useMemberList';
 import SiteLayout from '../components/SiteLayout';
 
@@ -30,7 +30,7 @@ const formatDate = (date: Date) => date.toISOString().split('T')[0];
 export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data, loading, error } = useTransactions({
+  const { data, loading, error } = useAccounting({
     token,
   });
   const { data: memberData } = useMemberList({
