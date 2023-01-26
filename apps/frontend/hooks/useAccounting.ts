@@ -3,15 +3,14 @@
 // All credit to @midgerate, @xivanc, @daniel-ivanco, and the DAOHaus team for the original code
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { client, TRANSACTIONS_QUERY } from '../gql';
 import {
-  client,
-  TRANSACTIONS_QUERY,
-  MOLOCH_QUERY,
-  TOKEN_PRICES_QUERY,
-} from '../gql';
-import { camelize, GUILD_GNOSIS_DAO_ADDRESS } from '../utils';
+  camelize,
+  GUILD_GNOSIS_DAO_ADDRESS,
+  formatUnitsAsNumber,
+} from '../utils';
 import {
   ICalculatedTokenBalances,
   IVaultTransaction,
@@ -92,7 +91,7 @@ const formatBalancesAsTransactions = async (
             .getBalance(molochStatBalance.tokenAddress)
             .sub(BigNumber.from(molochStatBalance.balance))
             .abs();
-          const tokenFormattedValue = formatUnits(
+          const tokenFormattedValue = formatUnitsAsNumber(
             tokenValue,
             molochStatBalance.tokenDecimals
           );
@@ -102,7 +101,7 @@ const formatBalancesAsTransactions = async (
               molochStatBalance.payment === false &&
               molochStatBalance.tribute === false
             ) {
-              const balance = formatUnits(
+              const balance = formatUnitsAsNumber(
                 calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
@@ -125,7 +124,7 @@ const formatBalancesAsTransactions = async (
                 tokenValue
               );
 
-              const balance = formatUnits(
+              const balance = formatUnitsAsNumber(
                 calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
@@ -149,7 +148,7 @@ const formatBalancesAsTransactions = async (
                 tokenValue
               );
 
-              const balance = formatUnits(
+              const balance = formatUnitsAsNumber(
                 calculatedTokenBalances.getBalance(
                   molochStatBalance.tokenAddress
                 ),
@@ -164,7 +163,7 @@ const formatBalancesAsTransactions = async (
               };
             }
 
-            const balance = formatUnits(
+            const balance = formatUnitsAsNumber(
               calculatedTokenBalances.getBalance(
                 molochStatBalance.tokenAddress
               ),
@@ -252,64 +251,6 @@ const formatBalancesAsTransactions = async (
   }
 };
 
-export const useTransactions = ({ token }) => {
-  const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
-    []
-  );
-  const limit = 1000;
-
-  const transactionQueryResult = async (pageParam: number) => {
-    if (!token) return null;
-    // TODO handle filters
-    const response = await client({ token }).request(TRANSACTIONS_QUERY, {
-      first: limit,
-      skip: pageParam * limit,
-      molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
-    });
-
-    return camelize(_.get(response, 'daohaus_stats_xdai.balances'));
-  };
-
-  const { status, error, data } = useInfiniteQuery<
-    Array<IMolochStatsBalance>,
-    Error
-  >(
-    ['transactions'],
-    ({ pageParam = 0 }) => transactionQueryResult(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit),
-      enabled: Boolean(token),
-    }
-  );
-
-  // TODO use onSuccess/onError instead of useEffect
-  useEffect(() => {
-    (async () => {
-      if (status === 'success') {
-        const formattedData = await formatBalancesAsTransactions(data.pages[0]);
-        setTransactions(formattedData.transactions || []);
-      } else if (status === 'error') {
-        // eslint-disable-next-line no-console
-        console.error('transactions fetching failed with: ', status);
-      }
-    })();
-  }, [data, status]);
-
-  return {
-    status,
-    error,
-    data: transactions,
-    loading: status === 'loading',
-  };
-};
-
-// TODO move to utils
-const formatUnits = (value: BigNumber, decimals: string) =>
-  Number(utils.formatUnits(value, decimals));
-
 const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   molochTokenBalances: ITokenBalance[],
   calculatedTokenBalances: ICalculatedTokenBalances
@@ -326,19 +267,19 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
         tokenSymbol: molochTokenBalance.token.symbol,
         tokenExplorerLink,
         inflow: {
-          tokenValue: formatUnits(
+          tokenValue: formatUnitsAsNumber(
             calculatedTokenBalance?.in || BigNumber.from(0),
             molochTokenBalance.token.decimals
           ),
         },
         outflow: {
-          tokenValue: formatUnits(
+          tokenValue: formatUnitsAsNumber(
             calculatedTokenBalance?.out || BigNumber.from(0),
             molochTokenBalance.token.decimals
           ),
         },
         closing: {
-          tokenValue: formatUnits(
+          tokenValue: formatUnitsAsNumber(
             molochTokenBalance.tokenBalance,
             molochTokenBalance.token.decimals
           ),
@@ -350,25 +291,40 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   return tokenBalanceLineItems;
 };
 
-export const useBalances = ({ token, startFetch }) => {
+export const useAccounting = ({ token }) => {
+  const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
+    []
+  );
   const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([]);
+  const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({});
+
   const limit = 1000;
 
-  const balancesQueryResult = async () => {
+  const accountingQueryResult = async (pageParam: number) => {
     if (!token) return null;
     // TODO handle filters
-
-    const response = await client({ token }).request(MOLOCH_QUERY, {
+    const response = await client({ token }).request(TRANSACTIONS_QUERY, {
+      first: limit,
+      skip: pageParam * limit,
+      molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
       contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
     });
 
-    return camelize(_.get(response, 'daohaus_xdai.moloch'));
+    return {
+      transactions: camelize(_.get(response, 'daohaus_stats_xdai.balances')),
+      balances: camelize(_.get(response, 'daohaus_xdai.moloch.tokenBalances')),
+      tokenPrices: camelize(_.get(response, 'treasury_token_history')),
+    };
   };
 
   const { status, error, data } = useInfiniteQuery<
-    { tokenBalances: Array<ITokenBalance> },
+    {
+      transactions: Array<IMolochStatsBalance>;
+      balances: Array<ITokenBalance>;
+      tokenPrices: Array<ITokenPrice>;
+    },
     Error
-  >(['balances'], () => balancesQueryResult(), {
+  >(['accounting'], ({ pageParam = 0 }) => accountingQueryResult(pageParam), {
     getNextPageParam: (lastPage, allPages) =>
       _.isEmpty(lastPage)
         ? undefined
@@ -376,60 +332,19 @@ export const useBalances = ({ token, startFetch }) => {
     enabled: Boolean(token),
   });
 
-  // TODO use onSuccess
-
-  useEffect(() => {
-    (async () => {
-      if (status === 'success' && startFetch) {
-        const tokenBalances =
-          await mapMolochTokenBalancesToTokenBalanceLineItem(
-            data.pages[0]?.tokenBalances || [],
-            calculatedTokenBalances.getBalances()
-          );
-        setBalances(tokenBalances);
-      } else if (status === 'error') {
-        // eslint-disable-next-line no-console
-        console.error('balances fetching failed with: ', status);
-      }
-    })();
-  }, [data, startFetch, status]);
-
-  return {
-    status,
-    error,
-    data: balances,
-    loading: status === 'loading',
-  };
-};
-
-// TODO should these be separate hooks?
-export const useTokenPrices = ({ token }) => {
-  const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({});
-
-  const tokenPricesQueryResult = async () => {
-    if (!token) return null;
-    // TODO handle filters
-
-    const response = await client({ token }).request(TOKEN_PRICES_QUERY);
-
-    return camelize(_.get(response, 'treasury_token_history'));
-  };
-
-  const { status, error, data } = useInfiniteQuery<Array<ITokenPrice>, Error>(
-    ['tokenPrices'],
-    () => tokenPricesQueryResult(),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        _.isEmpty(lastPage) ? undefined : _.divide(_.size(_.flatten(allPages))),
-      enabled: Boolean(token),
-    }
-  );
-
-  // TODO use onSuccess
+  // TODO use onSuccess/onError instead of useEffect
   useEffect(() => {
     (async () => {
       if (status === 'success') {
-        const prices = data.pages[0];
+        const formattedData = await formatBalancesAsTransactions(
+          data.pages[0].transactions
+        );
+        const tokenBalances =
+          await mapMolochTokenBalancesToTokenBalanceLineItem(
+            data.pages[0].balances,
+            calculatedTokenBalances.getBalances()
+          );
+        const prices = data.pages[0].tokenPrices;
         const mappedPrices = {};
         prices.forEach((price) => {
           if (!mappedPrices[price.symbol]) {
@@ -439,10 +354,12 @@ export const useTokenPrices = ({ token }) => {
             mappedPrices[price.symbol][price.date] = price.priceUsd;
           }
         });
+        setTransactions(formattedData.transactions || []);
+        setBalances(tokenBalances);
         setTokenPrices(mappedPrices);
       } else if (status === 'error') {
         // eslint-disable-next-line no-console
-        console.error('token prices fetching failed with: ', status);
+        console.error('accounting data fetching failed with: ', status);
       }
     })();
   }, [data, status]);
@@ -450,7 +367,13 @@ export const useTokenPrices = ({ token }) => {
   return {
     status,
     error,
-    data: tokenPrices,
+    data: {
+      transactions,
+      balances,
+      tokenPrices,
+    },
     loading: status === 'loading',
   };
 };
+
+export default useAccounting;
