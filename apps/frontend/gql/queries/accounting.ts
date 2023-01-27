@@ -54,8 +54,11 @@ export const TRANSACTIONS_QUERY = gql`
       }
     }
     treasury_token_history {
-      id
       date
+      price_usd
+      symbol
+    }
+    current_token_prices {
       price_usd
       symbol
     }

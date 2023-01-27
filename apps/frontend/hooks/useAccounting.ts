@@ -10,6 +10,7 @@ import {
   camelize,
   GUILD_GNOSIS_DAO_ADDRESS,
   formatUnitsAsNumber,
+  formatDate,
 } from '../utils';
 import {
   ICalculatedTokenBalances,
@@ -313,7 +314,8 @@ export const useAccounting = ({ token }) => {
     return {
       transactions: camelize(_.get(response, 'daohaus_stats_xdai.balances')),
       balances: camelize(_.get(response, 'daohaus_xdai.moloch.tokenBalances')),
-      tokenPrices: camelize(_.get(response, 'treasury_token_history')),
+      historicalPrices: camelize(_.get(response, 'treasury_token_history')),
+      currentPrices: camelize(_.get(response, 'current_token_prices')),
     };
   };
 
@@ -321,7 +323,8 @@ export const useAccounting = ({ token }) => {
     {
       transactions: Array<IMolochStatsBalance>;
       balances: Array<ITokenBalance>;
-      tokenPrices: Array<ITokenPrice>;
+      historicalPrices: Array<ITokenPrice>;
+      currentPrices: Array<ITokenPrice>;
     },
     Error
   >(['accounting'], ({ pageParam = 0 }) => accountingQueryResult(pageParam), {
@@ -344,14 +347,23 @@ export const useAccounting = ({ token }) => {
             data.pages[0].balances,
             calculatedTokenBalances.getBalances()
           );
-        const prices = data.pages[0].tokenPrices;
+        const { historicalPrices, currentPrices } = data.pages[0];
         const mappedPrices = {};
-        prices.forEach((price) => {
+        historicalPrices.forEach((price) => {
           if (!mappedPrices[price.symbol]) {
             mappedPrices[price.symbol] = {};
             mappedPrices[price.symbol][price.date] = price.priceUsd;
           } else {
             mappedPrices[price.symbol][price.date] = price.priceUsd;
+          }
+        });
+        currentPrices.forEach((price) => {
+          const date = new Date();
+          if (!mappedPrices[price.symbol]) {
+            mappedPrices[price.symbol] = {};
+            mappedPrices[price.symbol][formatDate(date)] = price.priceUsd;
+          } else {
+            mappedPrices[price.symbol][formatDate(date)] = price.priceUsd;
           }
         });
         setTransactions(formattedData.transactions || []);
