@@ -1,4 +1,4 @@
-export { useBalances, useTokenPrices, useTransactions } from './useAccounting';
+export { default as useAccounting } from './useAccounting';
 export { default as useApplicationDetail } from './useApplicationDetail';
 export { default as useApplicationList } from './useApplicationList';
 export { default as useConsultationDetail } from './useConsultationDetail';
