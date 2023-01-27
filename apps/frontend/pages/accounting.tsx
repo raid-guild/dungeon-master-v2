@@ -23,11 +23,7 @@ import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
 
 import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
-import {
-  GUILD_GNOSIS_DAO_ADDRESS,
-  REGEX_ETH_ADDRESS,
-  exportToCsv,
-} from '../utils';
+import { REGEX_ETH_ADDRESS, exportToCsv } from '../utils';
 
 const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
@@ -91,7 +87,7 @@ export const Accounting = () => {
         const m = members[ethAddress];
         // TODO: Change to DungeonMaster member link once v1.5 is deployed
         const memberLink = m?.ethAddress.match(REGEX_ETH_ADDRESS)
-          ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS}/profile/${ethAddress}`
+          ? `/members/${ethAddress}`
           : undefined;
 
         return {
