@@ -108,7 +108,7 @@ const columns = [
           target='_blank'
           aria-label='memberLink'
         >
-          <Tooltip label={`view ${info.getValue()} on DAOhaus`}>
+          <Tooltip label={`view ${info.getValue()}'s profile`}>
             <span>{info.getValue()}</span>
           </Tooltip>
         </Link>
