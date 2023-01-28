@@ -16,10 +16,11 @@ const TotalsRow: React.FC<TotalsRowProps> = ({ options }) => {
     ...options.development,
   };
   const allActiveOptions = _.filter(flatOptions, ['active', true]);
-  const totalSum = _.multiply(
+
+  const totalSum = Math.trunc(_.divide(
     _.sum(_.map(allActiveOptions, (o: any) => o.hours * o.hourly)),
-    1.3 // TODO this is pretty rudimentary for cleric/guild/pm calc
-  );
+    0.7
+  ));
 
   const totalValue = (column: string) => {
     if (column === 'total') return totalSum;
@@ -54,7 +55,7 @@ const TotalsRow: React.FC<TotalsRowProps> = ({ options }) => {
           <Flex justify='center' key={column.name}>
             <Heading size='sm'>
               {`${column.name} => ${column.percent}% ($${commify(
-                totalValue('total') * (column.percent / 100)
+                Math.trunc(totalValue('total') * (column.percent / 100))
               )})`}
             </Heading>
           </Flex>
