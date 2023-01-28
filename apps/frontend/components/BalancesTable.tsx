@@ -1,7 +1,7 @@
 import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '../types';
-import { formatNumber, minMaxNumberFilter, sortNumeric } from '../utils';
+import { minMaxNumberFilter, sortNumeric } from '../utils';
 import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 
@@ -36,8 +36,19 @@ const columns = [
       dataType: 'enum',
     },
   }),
+  columnHelper.accessor('priceConversion', {
+    id: 'priceConversion',
+    cell: (info) => info.getValue(),
+    header: 'Conversion',
+    meta: {
+      dataType: 'numeric',
+      hidden: true,
+    },
+    filterFn: minMaxNumberFilter,
+    sortingFn: sortNumeric,
+  }),
   columnHelper.accessor('inflow.tokenValue', {
-    cell: formatNumber,
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Inflow',
     meta: {
       dataType: 'numeric',
@@ -46,21 +57,10 @@ const columns = [
     sortingFn: sortNumeric,
   }),
   columnHelper.accessor('outflow.tokenValue', {
-    cell: formatNumber,
+    cell: (info) => <TokenWithUsdValue info={info} />,
     header: 'Outflow',
     meta: {
       dataType: 'numeric',
-    },
-    filterFn: minMaxNumberFilter,
-    sortingFn: sortNumeric,
-  }),
-  columnHelper.accessor('priceConversion', {
-    id: 'priceConversion',
-    cell: (info) => info.getValue(),
-    header: 'Conversion',
-    meta: {
-      dataType: 'numeric',
-      hidden: true,
     },
     filterFn: minMaxNumberFilter,
     sortingFn: sortNumeric,
