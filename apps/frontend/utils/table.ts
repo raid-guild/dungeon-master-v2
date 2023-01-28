@@ -14,6 +14,8 @@ export const exportToCsv = (csvString: string, fileName: string) => {
   link.remove();
 };
 
+export const formatDate = (date: Date) => date.toISOString().split('T')[0];
+
 export const formatUnitsAsNumber = (value: BigNumber, decimals: string) =>
   Number(utils.formatUnits(value, decimals));
 

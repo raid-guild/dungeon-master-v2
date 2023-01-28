@@ -23,9 +23,7 @@ import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
 
 import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
-import { REGEX_ETH_ADDRESS, exportToCsv } from '../utils';
-
-const formatDate = (date: Date) => date.toISOString().split('T')[0];
+import { REGEX_ETH_ADDRESS, exportToCsv, formatDate } from '../utils';
 
 export const Accounting = () => {
   const { data: session } = useSession();
@@ -85,7 +83,6 @@ export const Accounting = () => {
       transactionsWithPrices.map((t) => {
         const ethAddress = t.proposalApplicant.toLowerCase();
         const m = members[ethAddress];
-        // TODO: Change to DungeonMaster member link once v1.5 is deployed
         const memberLink = m?.ethAddress.match(REGEX_ETH_ADDRESS)
           ? `/members/${ethAddress}`
           : undefined;
