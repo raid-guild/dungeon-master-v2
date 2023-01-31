@@ -215,7 +215,7 @@ const ApplicationList = () => {
         >
           <SimpleGrid gap={4} columns={[1, null, null, 2]}>
             {_.map(applications, (application: IApplication) => (
-              <MemberCard application={application} />
+              <MemberCard application={application} key={application.id} />
             ))}
           </SimpleGrid>
         </InfiniteScroll>

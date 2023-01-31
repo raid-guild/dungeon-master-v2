@@ -103,6 +103,8 @@ const RaidPartyCard = ({
     }, 250);
   };
 
+  console.log(updateCleric);
+
   const handleSwitchCleric = () => {
     setButtonSelection(SIDEBAR_ACTION_STATES.cleric);
     setUpdateCleric(true);
@@ -186,7 +188,7 @@ const RaidPartyCard = ({
     </Flex>
   );
 
-  if (member && isCleric) {
+  if ((member && !updateCleric) || (isCleric && !updateCleric)) {
     return (
       <GeneralCard
         button={

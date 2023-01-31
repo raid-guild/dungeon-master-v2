@@ -25,17 +25,17 @@ export const useRaidPartyAdd = ({ token }) => {
     },
     {
       onSuccess: (data) => {
-        queryClient.invalidateQueries([
-          'raidDetail',
-          _.get(data, 'insert_raid_parties.returning.0.raid_id'),
-        ]); // invalidate raidDetail with id from the successful mutation response
-        queryClient.setQueryData(
-          [
-            'raidDetail',
-            _.get(data, 'insert_raid_parties.returning.0.raid_id'),
-          ],
-          camelize(_.get(data, 'insert_raid_parties.returning.0.raid'))
+        const raid = camelize(
+          _.get(
+            data,
+            'insert_raid_parties.returning.0.raid',
+            _.get(data, 'update_raids_by_pk.returning.0.raid')
+          )
         );
+        console.log(raid);
+        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
+        queryClient.invalidateQueries(['raidList']);
+        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
 
         toast.success({
           title: 'Raid Party Updated',

@@ -13,9 +13,7 @@ const useMemberDetail = ({ token, memberAddress }) => {
 
     const result = await client({ token }).request(
       MEMBER_ADDRESS_LOOKUP_QUERY,
-      {
-        address: memberAddress,
-      }
+      { address: _.toLower(memberAddress) }
     );
 
     const member = camelize(_.first(_.get(result, 'members')));

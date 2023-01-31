@@ -34,6 +34,9 @@ export const APPLICATION_DETAIL_FRAGMENT = gql`
     contact_info {
       ...ContactInfo
     }
+    member {
+      ...SlimMemberDetail
+    }
     referred_by {
       ...SlimMemberDetail
     }
