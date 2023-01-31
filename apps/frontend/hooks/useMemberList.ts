@@ -123,6 +123,7 @@ export const useMembersCount = ({
   const { data, isLoading, error } = useQuery({
     queryKey: ['membersCount', memberRolesFilterKey, memberStatusFilterKey],
     queryFn: membersCountQuery,
+    enabled: Boolean(token),
   });
 
   return { data, isLoading, error };

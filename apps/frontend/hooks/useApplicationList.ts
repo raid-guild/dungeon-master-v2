@@ -117,6 +117,7 @@ export const useApplicationsCount = ({
       applicationSkillFilterKey,
     ],
     queryFn: applicationsCountQuery,
+    enabled: Boolean(token),
   });
 
   return { data, isLoading, error };
