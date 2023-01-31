@@ -1,8 +1,23 @@
 import { CellContext, Row } from '@tanstack/react-table';
 import { rankings, RankingInfo } from '@tanstack/match-sorter-utils';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;
+
+export const exportToCsv = (csvString: string, fileName: string) => {
+  const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${fileName}.csv`);
+  link.click();
+  link.remove();
+};
+
+export const formatDate = (date: Date) => date.toISOString().split('T')[0];
+
+export const formatUnitsAsNumber = (value: BigNumber, decimals: string) =>
+  Number(utils.formatUnits(value, decimals));
 
 export const formatNumber = <TRow>(
   info: CellContext<TRow, number | BigNumber>

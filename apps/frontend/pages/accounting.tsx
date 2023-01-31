@@ -15,11 +15,7 @@ import {
 import { useCallback, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
-import {
-  useTransactions,
-  useBalances,
-  useTokenPrices,
-} from '../hooks/useAccounting';
+import { useAccounting } from '../hooks/useAccounting';
 import useMemberList from '../hooks/useMemberList';
 import SiteLayout from '../components/SiteLayout';
 
@@ -27,39 +23,20 @@ import TransactionsTable from '../components/TransactionsTable';
 import BalancesTable from '../components/BalancesTable';
 
 import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
-import { GUILD_GNOSIS_DAO_ADDRESS, REGEX_ETH_ADDRESS } from '../utils';
-
-const formatDate = (date: Date) => date.toISOString().split('T')[0];
+import { REGEX_ETH_ADDRESS, exportToCsv, formatDate } from '../utils';
 
 export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const {
-    data: transactions,
-    loading: transactionsLoading,
-    error: transactionsError,
-  } = useTransactions({
-    token,
-  });
-  const {
-    data: balances,
-    loading: balancesLoading,
-    error: balancesError,
-  } = useBalances({
-    token,
-    startFetch: transactions.length > 0,
-  });
-  const {
-    data: tokenPrices,
-    loading: tokenPricesLoading,
-    error: tokenPricesError,
-  } = useTokenPrices({
+  const { data, loading, error } = useAccounting({
     token,
   });
   const { data: memberData } = useMemberList({
     token,
     limit: 1000,
   });
+
+  const { balances, transactions, tokenPrices } = data;
 
   const members = useMemo(() => {
     const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
@@ -106,9 +83,8 @@ export const Accounting = () => {
       transactionsWithPrices.map((t) => {
         const ethAddress = t.proposalApplicant.toLowerCase();
         const m = members[ethAddress];
-        // TODO: Change to DungeonMaster member link once v1.5 is deployed
         const memberLink = m?.ethAddress.match(REGEX_ETH_ADDRESS)
-          ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS}/profile/${ethAddress}`
+          ? `/members/${ethAddress}`
           : undefined;
 
         return {
@@ -121,77 +97,70 @@ export const Accounting = () => {
     [transactionsWithPrices, members]
   );
 
-  const onExportCsv = (type: 'transactions' | 'balances') => {
-    const formattedTransactions = transactionsWithPrices.map((t) => ({
-      ['Date']: t.date,
-      ['Tx Explorer Link']: t.txExplorerLink,
-      ['Elapsed Days']: t.elapsedDays,
-      ['Type']: t.type,
-      ['Applicant']: t.proposalApplicant,
-      ['Applicant Member']:
-        members[t.proposalApplicant.toLowerCase()]?.name || '-',
-      ['Shares']: t.proposalShares,
-      ['Loot']: t.proposalLoot,
-      ['Title']: t.proposalTitle,
-      ['Counterparty']: t.counterparty,
-      ['Counterparty Member']:
-        members[t.counterparty.toLowerCase()]?.name || '-',
-      ['Token Symbol']: t.tokenSymbol,
-      ['Token Decimals']: t.tokenDecimals,
-      ['Token Address']: t.tokenAddress,
-      ['Inflow']: t.in,
-      ['Inflow USD']: t.priceConversion
-        ? `$${(t.in * t.priceConversion).toLocaleString()}`
-        : '$-',
-      ['Outflow']: t.out,
-      ['Outflow USD']: t.priceConversion
-        ? `$${(t.out * t.priceConversion).toLocaleString()}`
-        : '$-',
-      ['Balance']: t.balance,
-      ['Balance USD']: t.priceConversion
-        ? `$${(t.balance * t.priceConversion).toLocaleString()}`
-        : '$-',
-    }));
-
-    let csvString = Papa.unparse(formattedTransactions);
-    if (type === 'balances') {
-      const formattedBalances = balancesWithPrices.map((b) => ({
-        ['Token']: b.tokenSymbol,
-        ['Tx Explorer Link']: b.tokenExplorerLink,
-        ['Inflow']: b.inflow.tokenValue,
-        ['Inflow USD']: b.priceConversion
-          ? `$${(b.inflow.tokenValue * b.priceConversion).toLocaleString()}`
+  const onExportCsv = useCallback(
+    (type: 'transactions' | 'balances') => {
+      const formattedTransactions = transactionsWithPrices.map((t) => ({
+        ['Date']: t.date,
+        ['Tx Explorer Link']: t.txExplorerLink,
+        ['Elapsed Days']: t.elapsedDays,
+        ['Type']: t.type,
+        ['Applicant']: t.proposalApplicant,
+        ['Applicant Member']:
+          members[t.proposalApplicant.toLowerCase()]?.name || '-',
+        ['Shares']: t.proposalShares,
+        ['Loot']: t.proposalLoot,
+        ['Title']: t.proposalTitle,
+        ['Counterparty']: t.counterparty,
+        ['Counterparty Member']:
+          members[t.counterparty.toLowerCase()]?.name || '-',
+        ['Token Symbol']: t.tokenSymbol,
+        ['Token Decimals']: t.tokenDecimals,
+        ['Token Address']: t.tokenAddress,
+        ['Inflow']: t.in,
+        ['Inflow USD']: t.priceConversion
+          ? `$${(t.in * t.priceConversion).toLocaleString()}`
           : '$-',
-        ['Outflow']: b.outflow.tokenValue,
-        ['Outflow USD']: b.priceConversion
-          ? `$${(b.outflow.tokenValue * b.priceConversion).toLocaleString()}`
+        ['Outflow']: t.out,
+        ['Outflow USD']: t.priceConversion
+          ? `$${(t.out * t.priceConversion).toLocaleString()}`
           : '$-',
-        ['Balance']: b.closing.tokenValue,
-        ['Balance USD']: b.priceConversion
-          ? `$${(b.closing.tokenValue * b.priceConversion).toLocaleString()}`
+        ['Balance']: t.balance,
+        ['Balance USD']: t.priceConversion
+          ? `$${(t.balance * t.priceConversion).toLocaleString()}`
           : '$-',
       }));
-      csvString = Papa.unparse(formattedBalances);
-    }
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${type}.csv`);
-    link.click();
-    link.remove();
-  };
 
-  const isLoading =
-    transactionsLoading || balancesLoading || tokenPricesLoading;
-  const error = transactionsError || balancesError || tokenPricesError;
+      let csvString = Papa.unparse(formattedTransactions);
+      if (type === 'balances') {
+        const formattedBalances = balancesWithPrices.map((b) => ({
+          ['Token']: b.tokenSymbol,
+          ['Tx Explorer Link']: b.tokenExplorerLink,
+          ['Inflow']: b.inflow.tokenValue,
+          ['Inflow USD']: b.priceConversion
+            ? `$${(b.inflow.tokenValue * b.priceConversion).toLocaleString()}`
+            : '$-',
+          ['Outflow']: b.outflow.tokenValue,
+          ['Outflow USD']: b.priceConversion
+            ? `$${(b.outflow.tokenValue * b.priceConversion).toLocaleString()}`
+            : '$-',
+          ['Balance']: b.closing.tokenValue,
+          ['Balance USD']: b.priceConversion
+            ? `$${(b.closing.tokenValue * b.priceConversion).toLocaleString()}`
+            : '$-',
+        }));
+        csvString = Papa.unparse(formattedBalances);
+      }
+      exportToCsv(csvString, `raidguild-treasury-${type}`);
+    },
+    [balancesWithPrices, members, transactionsWithPrices]
+  );
 
   return (
     <>
       <NextSeo title='Accounting' />
 
       <SiteLayout
-        isLoading={isLoading}
+        isLoading={loading}
         data={[
           ...transactionsWithPricesAndMembers,
           ...balances,
