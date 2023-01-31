@@ -130,6 +130,7 @@ export const useConsultationsCount = ({
       consultationSubmissionFilterKey,
     ],
     queryFn: consultationsCountQuery,
+    enabled: Boolean(token),
   });
 
   return { data, isLoading, error };
