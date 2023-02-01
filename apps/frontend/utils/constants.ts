@@ -1,5 +1,10 @@
 import _ from 'lodash';
 
+export const APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS = [
+  { label: 'Technical', value: 'TECHNICAL' },
+  { label: 'Non-Technical', value: 'NON_TECHNICAL' },
+];
+
 export const RAID_CATEGORY = [
   'DESIGN_SPRINT',
   'FULL_STACK',
@@ -97,6 +102,19 @@ export const BUDGET_DISPLAY = {
   NOT_SURE: 'Not Sure',
 };
 
+export const BUDGET_DISPLAY_OPTIONS = [
+  { label: '< $5k', value: 'LESS_THAN_FIVE_THOUSAND' },
+  { label: '$5k - $20k', value: 'FIVE_TO_TWENTY_THOUSAND' },
+  { label: '$20k - $50k', value: 'TWENTY_TO_FIFTY_THOUSAND' },
+  { label: '$50k +', value: 'MORE_THAN_FIFTY_THOUSAND' },
+  { label: 'Not Sure', value: 'NOT_SURE' },
+];
+
+export const SUBMISSION_TYPE_DISPLAY_OPTIONS = [
+  { label: 'Paid', value: 'PAID' },
+  { label: 'Unpaid', value: 'UNPAID' },
+];
+
 export const DELIVERY_PRIORITIES = [
   'Fast & Polished',
   'Fast & Inexpensive',
@@ -138,20 +156,23 @@ export const SKILLS_DISPLAY_OPTIONS = [
     label: 'Community',
     value: 'COMMUNITY',
   },
-  // {PROJECT_MANAGEMENT: 'Project Management',}
-  // {FINANCE: 'Finance'},
-  // {PRODUCT_DESIGN: 'Product Design'},
-  // UX_RESEARCH: 'UX Research',
-  // GAME_THEORY: 'Game Theory',
-  // DEVOPS: 'DevOps',
-  // TOKENOMICS: 'Tokenomics',
-  // CONTENT: 'Content',
-  // MEMES: 'Memes',
-  // VISUAL_DESIGN: 'Visual Design',
-  // UI_DESIGN: 'UI Design',
-  // ILLUSTRATION: 'Illustration',
-  // LEGAL: 'Legal',
-  // ACCOUNTING: 'Accounting',
+  {
+    label: 'Project Management',
+    value: 'PROJECT_MANAGEMENT',
+  },
+  { label: 'Finance', value: 'FINANCE' },
+  { label: 'Product Design', value: 'PRODUCT_DESIGN' },
+  { label: 'UX Research', value: 'UX_RESEARCH' },
+  { label: 'Game Theory', value: 'GAME_THEORY' },
+  { label: 'DevOps', value: 'DEVOPS' },
+  { label: 'Tokenomics', value: 'TOKENOMICS' },
+  { label: 'Content', value: 'CONTENT' },
+  { label: 'Memes', value: 'MEMES' },
+  { label: 'Visual Design', value: 'VISUAL_DESIGN' },
+  { label: 'UI Design', value: 'UI_DESIGN' },
+  { label: 'Illustration', value: 'ILLUSTRATION' },
+  { label: 'Legal', value: 'LEGAL' },
+  { label: 'Accounting', value: 'ACCOUNTING' },
 ];
 
 export const SKILLS_DISPLAY = (skill: string) => {

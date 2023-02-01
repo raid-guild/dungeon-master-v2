@@ -21,7 +21,7 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
     address,
     chainId: mainnet.id,
     enabled: !!address,
-    cacheTime: 60_000,
+    cacheTime: 6_000,
   });
 
   useEffect(() => {

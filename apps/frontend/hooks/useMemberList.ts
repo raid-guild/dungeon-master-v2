@@ -1,7 +1,32 @@
 import _ from 'lodash';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { client, MEMBER_LIST_QUERY, MEMBER_SLIM_LIST_QUERY } from '../gql';
+import {
+  client,
+  MEMBER_LIST_QUERY,
+  MEMBER_SLIM_LIST_QUERY,
+  MEMBERS_COUNT_QUERY,
+} from '../gql';
 import { camelize, IMember, SIDEBAR_ACTION_STATES } from '../utils';
+
+const where = (
+  memberRolesFilterKey: string,
+  memberStatusFilterKey: string
+) => ({
+  ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
+    memberRolesFilterKey !== 'ALL' && {
+      guild_class: { guild_class: { _in: memberRolesFilterKey } },
+    }),
+  ...(memberStatusFilterKey === 'ALL' && {}),
+  ...(memberStatusFilterKey !== 'ALL' && {
+    is_raiding: { _eq: memberStatusFilterKey },
+  }),
+});
+
+const orderBy = (memberSortKey: string) => ({
+  ...(memberSortKey === 'name' && {
+    name: 'asc',
+  }),
+});
 
 const useMemberList = ({
   token,
@@ -10,32 +35,15 @@ const useMemberList = ({
   memberSortKey = 'name',
   limit = 16,
 }) => {
-  const where = {
-    ...(memberRolesFilterKey !== 'ANY_ROLE_SET' &&
-      memberRolesFilterKey !== 'ALL' && {
-        guild_class: { guild_class: { _in: memberRolesFilterKey } },
-      }),
-    ...(memberStatusFilterKey === 'ALL' && {}),
-    ...(memberStatusFilterKey !== 'ALL' && {
-      is_raiding: { _eq: memberStatusFilterKey },
-    }),
-  };
-
-  const orderBy = {
-    ...(memberSortKey === 'name' && {
-      name: 'asc',
-    }),
-  };
-
   const memberQueryResult = async (pageParam: number) => {
     if (!token) return null;
     // TODO handle filters
 
     const result = await client({ token }).request(MEMBER_LIST_QUERY, {
-      where,
       limit,
       offset: pageParam * limit,
-      order_by: orderBy,
+      where: where(memberRolesFilterKey, memberStatusFilterKey),
+      order_by: orderBy(memberSortKey),
     });
 
     return camelize(_.get(result, 'members'));
@@ -97,4 +105,26 @@ export const useSlimMemberList = ({ token, button }) => {
     data,
     isLoading,
   };
+};
+
+export const useMembersCount = ({
+  token,
+  memberRolesFilterKey = 'ALL',
+  memberStatusFilterKey = 'ALL',
+}) => {
+  const membersCountQuery = async () => {
+    const result = await client({ token }).request(MEMBERS_COUNT_QUERY, {
+      where: where(memberRolesFilterKey, memberStatusFilterKey),
+    });
+
+    return _.get(result, 'members_aggregate.aggregate.count', 0);
+  };
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['membersCount', memberRolesFilterKey, memberStatusFilterKey],
+    queryFn: membersCountQuery,
+    enabled: Boolean(token),
+  });
+
+  return { data, isLoading, error };
 };

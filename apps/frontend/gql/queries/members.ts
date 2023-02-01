@@ -64,6 +64,16 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
   ${MEMBER_DETAIL_FRAGMENT}
 `;
 
+export const MEMBERS_COUNT_QUERY = gql`
+  query MembersCountQuery($where: members_bool_exp) {
+    members_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
 // ! use MEMBER_ADDRESS_LOOKUP_QUERY so we can use `address` as the slug
 export const MEMBER_DETAIL_QUERY = gql`
   query MemberDetail($id: uuid!) {

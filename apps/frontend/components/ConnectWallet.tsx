@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
+import _ from 'lodash';
 import { useAccount, useDisconnect } from 'wagmi';
 import {
   Menu,
@@ -16,11 +16,13 @@ import {
   Text,
   Button,
 } from '@raidguild/design-system';
+import { CgProfile } from 'react-icons/cg';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from '../utils/general';
+import Link from './ChakraNextLink';
 
 const ConnectWallet: React.FC = () => {
-  const { isConnecting } = useAccount();
+  const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const showNetwork = false; // maybe unhide, in some cases
 
@@ -113,6 +115,15 @@ const ConnectWallet: React.FC = () => {
                       </HStack>
                     </MenuButton>
                     <MenuList minWidth='none'>
+                      <Link href={`/members/${_.toLower(address)}`}>
+                        <MenuItem _hover={{ backgroundColor: 'gray.600' }}>
+                          <HStack>
+                            <Icon as={CgProfile} color='white' />
+                            <Box color='white'>Profile</Box>
+                          </HStack>
+                        </MenuItem>
+                      </Link>
+
                       <MenuItem
                         onClick={() => openAccountModal()}
                         _hover={{ backgroundColor: 'gray.600' }}
