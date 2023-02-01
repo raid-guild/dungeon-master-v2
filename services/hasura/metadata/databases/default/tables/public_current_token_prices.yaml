@@ -1,6 +1,21 @@
 table:
   name: current_token_prices
   schema: public
+array_relationships:
+  - name: milestones
+    using:
+      foreign_key_constraint_on:
+        column: token
+        table:
+          name: milestones
+          schema: public
+  - name: proposals
+    using:
+      foreign_key_constraint_on:
+        column: token
+        table:
+          name: proposals
+          schema: public
 select_permissions:
   - role: cohort
     permission:

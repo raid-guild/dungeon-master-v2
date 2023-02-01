@@ -1,0 +1,2 @@
+CREATE TABLE "public"."proposal_options" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "description" text NOT NULL, "category" text NOT NULL, "hours" numeric NOT NULL, "hourly" numeric NOT NULL, "min_weeks" numeric NOT NULL, "max_weeks" numeric NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("category") REFERENCES "public"."proposal_categories"("category") ON UPDATE restrict ON DELETE restrict, UNIQUE ("id"));COMMENT ON TABLE "public"."proposal_options" IS E'default options for proposals';
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

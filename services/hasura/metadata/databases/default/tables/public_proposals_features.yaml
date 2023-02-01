@@ -1,0 +1,10 @@
+table:
+  name: proposals_features
+  schema: public
+object_relationships:
+  - name: featureByFeature
+    using:
+      foreign_key_constraint_on: feature
+  - name: proposalByProposal
+    using:
+      foreign_key_constraint_on: proposal

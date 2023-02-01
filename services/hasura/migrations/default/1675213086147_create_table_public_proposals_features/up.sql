@@ -1,0 +1,2 @@
+CREATE TABLE "public"."proposals_features" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "proposal" uuid NOT NULL, "feature" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("proposal") REFERENCES "public"."proposals"("id") ON UPDATE restrict ON DELETE cascade, FOREIGN KEY ("feature") REFERENCES "public"."features"("id") ON UPDATE restrict ON DELETE cascade);
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

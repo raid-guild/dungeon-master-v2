@@ -1,0 +1,12 @@
+table:
+  name: proposal_types
+  schema: public
+is_enum: true
+array_relationships:
+  - name: proposals
+    using:
+      foreign_key_constraint_on:
+        column: proposal_type
+        table:
+          name: proposals
+          schema: public

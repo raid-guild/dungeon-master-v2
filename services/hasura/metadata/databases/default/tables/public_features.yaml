@@ -1,0 +1,18 @@
+table:
+  name: features
+  schema: public
+array_relationships:
+  - name: milestones_features
+    using:
+      foreign_key_constraint_on:
+        column: feature
+        table:
+          name: milestones_features
+          schema: public
+  - name: proposals_features
+    using:
+      foreign_key_constraint_on:
+        column: feature
+        table:
+          name: proposals_features
+          schema: public

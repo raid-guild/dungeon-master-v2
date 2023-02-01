@@ -1,0 +1,1 @@
+CREATE TABLE "public"."proposal_types" ("type" text NOT NULL, PRIMARY KEY ("type") );COMMENT ON TABLE "public"."proposal_types" IS E'types of proposal configurations, client facing is largely the same regardless';

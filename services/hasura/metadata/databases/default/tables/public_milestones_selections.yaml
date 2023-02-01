@@ -1,0 +1,10 @@
+table:
+  name: milestones_selections
+  schema: public
+object_relationships:
+  - name: milestoneByMilestone
+    using:
+      foreign_key_constraint_on: milestone
+  - name: proposal_option
+    using:
+      foreign_key_constraint_on: option

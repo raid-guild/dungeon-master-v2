@@ -1,0 +1,25 @@
+table:
+  name: milestones
+  schema: public
+object_relationships:
+  - name: current_token_price
+    using:
+      foreign_key_constraint_on: token
+  - name: proposalByProposal
+    using:
+      foreign_key_constraint_on: proposal
+array_relationships:
+  - name: milestones_features
+    using:
+      foreign_key_constraint_on:
+        column: milestone
+        table:
+          name: milestones_features
+          schema: public
+  - name: milestones_selections
+    using:
+      foreign_key_constraint_on:
+        column: milestone
+        table:
+          name: milestones_selections
+          schema: public

@@ -1,0 +1,15 @@
+table:
+  name: proposal_options
+  schema: public
+object_relationships:
+  - name: proposal_category
+    using:
+      foreign_key_constraint_on: category
+array_relationships:
+  - name: milestones_selections
+    using:
+      foreign_key_constraint_on:
+        column: option
+        table:
+          name: milestones_selections
+          schema: public
