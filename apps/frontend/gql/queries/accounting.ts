@@ -7,6 +7,7 @@ export const TRANSACTIONS_QUERY = gql`
     $first: Int
     $skip: Int
     $contractAddr: ID!
+    $escrowParentAddress: gnosis_smart_escrowsBytes!
   ) {
     daohaus_stats_xdai {
       balances(
@@ -52,6 +53,22 @@ export const TRANSACTIONS_QUERY = gql`
           tokenBalance
         }
       }
+    }
+    gnosis_smart_escrows {
+      wrappedInvoices(first: $first, where: { parent: $escrowParentAddress }) {
+        id
+        withdraws {
+          childShare
+          parentShare
+          timestamp
+          token
+        }
+      }
+    }
+    raids {
+      id
+      invoice_address
+      name
     }
     treasury_token_history {
       date
