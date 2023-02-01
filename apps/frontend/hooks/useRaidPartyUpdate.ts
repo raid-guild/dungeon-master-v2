@@ -32,7 +32,6 @@ export const useRaidPartyAdd = ({ token }) => {
             _.get(data, 'update_raids_by_pk.returning.0.raid')
           )
         );
-        console.log(raid);
         queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
         queryClient.invalidateQueries(['raidList']);
         queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
