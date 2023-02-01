@@ -24,6 +24,7 @@ import BalancesTable from '../components/BalancesTable';
 
 import { IMember, ITokenBalanceLineItem, IVaultTransaction } from '../types';
 import { REGEX_ETH_ADDRESS, exportToCsv, formatDate } from '../utils';
+import SpoilsTable from '../components/SpoilsTable';
 
 export const Accounting = () => {
   const { data: session } = useSession();
@@ -36,7 +37,7 @@ export const Accounting = () => {
     limit: 1000,
   });
 
-  const { balances, transactions, tokenPrices } = data;
+  const { balances, spoils, transactions, tokenPrices } = data;
 
   const members = useMemo(() => {
     const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
@@ -98,61 +99,78 @@ export const Accounting = () => {
   );
 
   const onExportCsv = useCallback(
-    (type: 'transactions' | 'balances') => {
-      const formattedTransactions = transactionsWithPrices.map((t) => ({
-        ['Date']: t.date,
-        ['Tx Explorer Link']: t.txExplorerLink,
-        ['Elapsed Days']: t.elapsedDays,
-        ['Type']: t.type,
-        ['Applicant']: t.proposalApplicant,
-        ['Applicant Member']:
-          members[t.proposalApplicant.toLowerCase()]?.name || '-',
-        ['Shares']: t.proposalShares,
-        ['Loot']: t.proposalLoot,
-        ['Title']: t.proposalTitle,
-        ['Counterparty']: t.counterparty,
-        ['Counterparty Member']:
-          members[t.counterparty.toLowerCase()]?.name || '-',
-        ['Token Symbol']: t.tokenSymbol,
-        ['Token Decimals']: t.tokenDecimals,
-        ['Token Address']: t.tokenAddress,
-        ['Inflow']: t.in,
-        ['Inflow USD']: t.priceConversion
-          ? `$${(t.in * t.priceConversion).toLocaleString()}`
-          : '$-',
-        ['Outflow']: t.out,
-        ['Outflow USD']: t.priceConversion
-          ? `$${(t.out * t.priceConversion).toLocaleString()}`
-          : '$-',
-        ['Balance']: t.balance,
-        ['Balance USD']: t.priceConversion
-          ? `$${(t.balance * t.priceConversion).toLocaleString()}`
-          : '$-',
-      }));
-
-      let csvString = Papa.unparse(formattedTransactions);
-      if (type === 'balances') {
-        const formattedBalances = balancesWithPrices.map((b) => ({
-          ['Token']: b.tokenSymbol,
-          ['Tx Explorer Link']: b.tokenExplorerLink,
-          ['Inflow']: b.inflow.tokenValue,
-          ['Inflow USD']: b.priceConversion
-            ? `$${(b.inflow.tokenValue * b.priceConversion).toLocaleString()}`
+    (type: 'transactions' | 'balances' | 'spoils') => {
+      let csvString = '';
+      if (type === 'transactions') {
+        const formattedTransactions = transactionsWithPrices.map((t) => ({
+          ['Date']: t.date,
+          ['Tx Explorer Link']: t.txExplorerLink,
+          ['Elapsed Days']: t.elapsedDays,
+          ['Type']: t.type,
+          ['Applicant']: t.proposalApplicant,
+          ['Applicant Member']:
+            members[t.proposalApplicant.toLowerCase()]?.name || '-',
+          ['Shares']: t.proposalShares,
+          ['Loot']: t.proposalLoot,
+          ['Title']: t.proposalTitle,
+          ['Counterparty']: t.counterparty,
+          ['Counterparty Member']:
+            members[t.counterparty.toLowerCase()]?.name || '-',
+          ['Token Symbol']: t.tokenSymbol,
+          ['Token Decimals']: t.tokenDecimals,
+          ['Token Address']: t.tokenAddress,
+          ['Inflow']: t.in,
+          ['Inflow USD']: t.priceConversion
+            ? `$${(t.in * t.priceConversion).toLocaleString()}`
             : '$-',
-          ['Outflow']: b.outflow.tokenValue,
-          ['Outflow USD']: b.priceConversion
-            ? `$${(b.outflow.tokenValue * b.priceConversion).toLocaleString()}`
+          ['Outflow']: t.out,
+          ['Outflow USD']: t.priceConversion
+            ? `$${(t.out * t.priceConversion).toLocaleString()}`
             : '$-',
-          ['Balance']: b.closing.tokenValue,
-          ['Balance USD']: b.priceConversion
-            ? `$${(b.closing.tokenValue * b.priceConversion).toLocaleString()}`
+          ['Balance']: t.balance,
+          ['Balance USD']: t.priceConversion
+            ? `$${(t.balance * t.priceConversion).toLocaleString()}`
             : '$-',
         }));
-        csvString = Papa.unparse(formattedBalances);
+        csvString = Papa.unparse(formattedTransactions);
+      } else if (type === 'balances') {
+        if (type === 'balances') {
+          const formattedBalances = balancesWithPrices.map((b) => ({
+            ['Token']: b.tokenSymbol,
+            ['Tx Explorer Link']: b.tokenExplorerLink,
+            ['Inflow']: b.inflow.tokenValue,
+            ['Inflow USD']: b.priceConversion
+              ? `$${(b.inflow.tokenValue * b.priceConversion).toLocaleString()}`
+              : '$-',
+            ['Outflow']: b.outflow.tokenValue,
+            ['Outflow USD']: b.priceConversion
+              ? `$${(
+                  b.outflow.tokenValue * b.priceConversion
+                ).toLocaleString()}`
+              : '$-',
+            ['Balance']: b.closing.tokenValue,
+            ['Balance USD']: b.priceConversion
+              ? `$${(
+                  b.closing.tokenValue * b.priceConversion
+                ).toLocaleString()}`
+              : '$-',
+          }));
+          csvString = Papa.unparse(formattedBalances);
+        }
+      } else if (type === 'spoils') {
+        const formattedSpoils = spoils.map((s) => ({
+          ['Date']: s.date,
+          ['Raid']: s.raidName,
+          // TODO: Get this dynamically from the subgraph
+          ['Token Symbol']: 'wxDAI',
+          ['To DAO Treasury']: `$${s.parentShare.toLocaleString()}`,
+          ['To Raid Party']: `$${s.childShare.toLocaleString()}`,
+        }));
+        csvString = Papa.unparse(formattedSpoils);
       }
       exportToCsv(csvString, `raidguild-treasury-${type}`);
     },
-    [balancesWithPrices, members, transactionsWithPrices]
+    [balancesWithPrices, members, spoils, transactionsWithPrices]
   );
 
   return (
@@ -180,6 +198,11 @@ export const Accounting = () => {
             <Tab>
               <Heading size='sm' variant='noShadow'>
                 Transactions
+              </Heading>
+            </Tab>
+            <Tab>
+              <Heading size='sm' variant='noShadow'>
+                Spoils
               </Heading>
             </Tab>
           </TabList>
@@ -216,6 +239,22 @@ export const Accounting = () => {
                 </Button>
               </Flex>
               <TransactionsTable data={transactionsWithPricesAndMembers} />
+            </TabPanel>
+            <TabPanel>
+              <Flex
+                alignItems='right'
+                justifyContent='right'
+                marginBlock='20px'
+              >
+                <Button
+                  onClick={() => onExportCsv('spoils')}
+                  size='sm'
+                  fontWeight='normal'
+                >
+                  Export Spoils
+                </Button>
+              </Flex>
+              <SpoilsTable data={spoils} />
             </TabPanel>
           </TabPanels>
         </Tabs>
