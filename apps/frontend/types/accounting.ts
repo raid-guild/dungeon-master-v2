@@ -56,6 +56,36 @@ export type ICalculatedTokenBalances = {
   };
 };
 
+export type ISmartEscrowWithdrawal = {
+  escrowId?: string;
+  childShare: BigNumber;
+  parentShare: BigNumber;
+  timestamp: string;
+  token: string;
+};
+
+export type ISmartEscrow = {
+  id: string;
+  parent: string;
+  withdraws: ISmartEscrowWithdrawal[];
+};
+
+export type IAccountingRaid = {
+  id: string;
+  invoiceAddress: string;
+  name: string;
+};
+
+export type ISpoils = {
+  date: Date;
+  raidLink: string;
+  raidName: string;
+  childShare: number;
+  parentShare: number;
+  priceConversion: number;
+  tokenSymbol: string;
+};
+
 export type IToken = {
   tokenAddress: string;
   decimals: string;
