@@ -8,7 +8,15 @@ export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
     eth_address
     is_raiding
     contact_info {
-      ...ContactInfo
+      id
+      email
+      discord
+      github
+      telegram
+      twitter
+    }
+    member_type {
+      member_type
     }
     guild_class {
       guild_class
@@ -38,7 +46,12 @@ export const MEMBER_DETAIL_FRAGMENT = gql`
     ...MemberEnum
 
     contact_info {
-      ...ContactInfo
+      id
+      email
+      discord
+      github
+      telegram
+      twitter
     }
 
     application {

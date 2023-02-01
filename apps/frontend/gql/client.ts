@@ -9,7 +9,7 @@ type ClientParams = {
 };
 
 const client = ({ token, userId }: ClientParams) => {
-  const headers = { authorization: null };
+  const headers: { authorization?: string } = {};
 
   if (token) {
     headers.authorization = `Bearer ${token}`;

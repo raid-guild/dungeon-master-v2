@@ -9,12 +9,28 @@ export const APPLICATION_LIST_QUERY = gql`
     $offset: Int!
     $limit: Int!
     $where: applications_bool_exp
+    $order_by: [applications_order_by!]
   ) {
-    applications(limit: $limit, offset: $offset, where: $where) {
+    applications(
+      limit: $limit
+      offset: $offset
+      where: $where
+      order_by: $order_by
+    ) {
       ...SlimApplicationDetail
     }
   }
   ${SLIM_APPLICATION_DETAIL_FRAGMENT}
+`;
+
+export const APPLICATIONS_LIST_COUNT_QUERY = gql`
+  query AppplicationsCountQuery($where: applications_bool_exp) {
+    applications_aggregate(where: $where) {
+      aggregate {
+        count
+      }
+    }
+  }
 `;
 
 export const APPLICATION_DETAIL_QUERY = gql`

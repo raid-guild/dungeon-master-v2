@@ -8,6 +8,7 @@ import useApplicationDetail from '../../hooks/useApplicationDetail';
 import useMemberCreate from '../../hooks/useMemberCreate';
 import SiteLayout from '../../components/SiteLayout';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
+import Link from '../../components/ChakraNextLink';
 
 const Application = ({ applicationId }) => {
   const { data: session } = useSession();
@@ -24,6 +25,8 @@ const Application = ({ applicationId }) => {
       member_type_key: 'COHORT',
     });
   };
+  const member = _.get(application, 'member.0');
+  console.log(member?.memberType?.memberType);
 
   return (
     <>
@@ -40,10 +43,23 @@ const Application = ({ applicationId }) => {
           <MemberDetailsCard application={application} />
 
           <Stack>
-            <Button variant='outline' onClick={handleCreateCohort}>
+            {_.get(member, 'memberType.memberType') !== 'MEMBER' ? (
+              <Button variant='outline'>Create Member</Button>
+            ) : (
+              <Link href={`/members/${_.get(member, 'ethAddress')}`} w='100%'>
+                <Button variant='outline' w='100%'>
+                  Member
+                </Button>
+              </Link>
+            )}
+
+            <Button
+              variant='outline'
+              onClick={handleCreateCohort}
+              isDisabled={!_.isEmpty(_.get(application, 'member'))}
+            >
               Create Apprentice
             </Button>
-            {/* <Button variant="outline">Create Member</Button> */}
           </Stack>
         </Flex>
       </SiteLayout>

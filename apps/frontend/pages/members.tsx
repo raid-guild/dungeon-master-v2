@@ -8,14 +8,15 @@ import {
   Flex,
   FormLabel,
   Spinner,
+  Spacer,
+  Text,
   ChakraSelect,
   SimpleGrid,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-
-import useMemberList from '../hooks/useMemberList';
+import useMemberList, { useMembersCount } from '../hooks/useMemberList';
 import useDefaultTitle from '../hooks/useDefaultTitle';
 import MemberCard from '../components/MemberCard';
 import SiteLayout from '../components/SiteLayout';
@@ -156,6 +157,13 @@ const MemberList = () => {
     memberStatusFilterKey: memberStatusFilter,
     memberSortKey: memberSort,
   });
+
+  const { data: count } = useMembersCount({
+    token,
+    memberRolesFilterKey: memberRolesFilter,
+    memberStatusFilterKey: memberStatusFilter,
+  });
+
   const members = _.flatten(_.get(data, 'pages'));
 
   return (
@@ -167,7 +175,16 @@ const MemberList = () => {
         data={members}
         subheader={
           <>
-            <Heading>{title} List</Heading>
+            <Flex w='100%' align='center'>
+              <Spacer />
+              <Heading>{title} List</Heading>
+              <Spacer />
+              {count > 0 && (
+                <Text fontSize='3xl' fontWeight={800}>
+                  {count}
+                </Text>
+              )}
+            </Flex>
             <MemberControls />
           </>
         }

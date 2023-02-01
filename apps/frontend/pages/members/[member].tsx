@@ -19,6 +19,7 @@ import {
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 
 import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
@@ -34,6 +35,7 @@ import MemberAvatar from '../../components/MemberAvatar';
 
 const Member = () => {
   const router = useRouter();
+  const { address } = useAccount();
   const memberAddress = _.get(router, 'query.member');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -48,6 +50,7 @@ const Member = () => {
     setModals({ memberForm: true });
   };
 
+  const userProfile = _.toLower(address) === _.toLower(memberAddress);
   const memberType = _.get(member, 'memberType.memberType');
   const roleIcon = GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')];
 
@@ -86,14 +89,21 @@ const Member = () => {
               {roleIcon && (
                 <RoleBadge roleName={roleIcon} height='55px' width='55px' />
               )}
-              <Button variant='outline' onClick={handleShowUpdateModal}>
-                Edit
-              </Button>
+              {userProfile && (
+                <Button variant='outline' onClick={handleShowUpdateModal}>
+                  Edit
+                </Button>
+              )}
             </HStack>
           </Flex>
         }
       >
-        <Flex w='100%' direction={['column', null, null, 'row']} gap={4}>
+        <Flex
+          w='100%'
+          direction={['column', null, null, 'row']}
+          gap={4}
+          justify='center'
+        >
           <MemberDetailsCard
             member={member}
             application={_.get(member, 'application')}
@@ -102,14 +112,13 @@ const Member = () => {
           {(!_.isEmpty(_.get(raids, 'active')) ||
             !_.isEmpty(_.get(raids, 'past'))) && (
             <Card variant='filled' w={['100%', null, null, '35%']}>
-              <Tabs>
+              <Tabs w='100%'>
                 <TabList>
-                  {!_.isEmpty(_.get(raids, 'past')) && <Tab>Active</Tab>}
-
+                  {!_.isEmpty(_.get(raids, 'active')) && <Tab>Active</Tab>}
                   {!_.isEmpty(_.get(raids, 'past')) && <Tab>Past</Tab>}
                 </TabList>
                 <TabPanels>
-                  {!_.isEmpty(_.get(raids, 'past')) && (
+                  {!_.isEmpty(_.get(raids, 'active')) && (
                     <TabPanel>
                       <Stack spacing={4}>
                         {_.map(_.get(raids, 'active'), (raid) => (
