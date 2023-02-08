@@ -7,7 +7,7 @@
       type_names:
         mapping: {}
         prefix: daohaus_stats_xdai
-  comment: ""
+  comment: ''
 - name: DaoHaus-xDai
   definition:
     url: https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai
@@ -17,13 +17,13 @@
       type_names:
         mapping: {}
         prefix: daohaus_xdai
-  comment: ""
-- name: Smart-Escrow-xDai
+  comment: ''
+- name: Gnosis-Smart-Escrows
   definition:
-    url: https://api.thegraph.com/subgraphs/name/dan13ram/xdai-smart-invoices
+    url: https://api.thegraph.com/subgraphs/name/ecwireless/gnosis-smart-escrows
     timeout_seconds: 40
     customization:
-      root_fields_namespace: smart_escrow_xdai
+      root_fields_namespace: gnosis_smart_escrows
       type_names:
         mapping: {}
-        prefix: smart_escrow_xdai
+        prefix: gnosis_smart_escrows

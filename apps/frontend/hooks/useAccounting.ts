@@ -16,6 +16,10 @@ import {
   ICalculatedTokenBalances,
   IVaultTransaction,
   IMolochStatsBalance,
+  ISmartEscrow,
+  ISmartEscrowWithdrawal,
+  IAccountingRaid,
+  ISpoils,
   ITokenBalance,
   ITokenBalanceLineItem,
   ITokenPrice,
@@ -292,12 +296,57 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
   return tokenBalanceLineItems;
 };
 
+const formatSpoils = async (
+  smartEscrows: ISmartEscrow[],
+  raids: IAccountingRaid[]
+): Promise<ISpoils[]> => {
+  const withdrawals: ISmartEscrowWithdrawal[] = [];
+  await Promise.all(
+    smartEscrows.map(async (escrow) => {
+      await Promise.all(
+        escrow.withdraws.map(async (withdrawal) => {
+          withdrawals.push({
+            ...withdrawal,
+            escrowId: escrow.id,
+          });
+        })
+      );
+    })
+  );
+
+  const spoils: ISpoils[] = [];
+  await Promise.all(
+    withdrawals.map(async (withdrawal) => {
+      const raid = raids.find(
+        (raid) => raid.invoiceAddress === withdrawal.escrowId
+      );
+      if (!raid) return;
+
+      // TODO: The is a temporary way of removing non-wxDai spoils from the list
+      const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
+      if (withdrawal.token !== wxDAI) return;
+      spoils.push({
+        raidLink: `/raids/${raid.id}`,
+        raidName: raid.name,
+        // TODO: This will probably always be wxDAI, but we should update subgraph to index decimals and token symbol
+        childShare: formatUnitsAsNumber(withdrawal.childShare, '18'),
+        parentShare: formatUnitsAsNumber(withdrawal.parentShare, '18'),
+        priceConversion: 1,
+        date: new Date(Number(withdrawal.timestamp) * 1000),
+        tokenSymbol: 'wxDAI',
+      });
+    })
+  );
+  return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
+};
+
 export const useAccounting = ({ token }) => {
   const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
     []
   );
   const [balances, setBalances] = useState<Array<ITokenBalanceLineItem>>([]);
   const [tokenPrices, setTokenPrices] = useState<IMappedTokenPrice>({});
+  const [spoils, setSpoils] = useState<ISpoils[]>([]);
 
   const limit = 1000;
 
@@ -309,11 +358,16 @@ export const useAccounting = ({ token }) => {
       skip: pageParam * limit,
       molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
       contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
+      escrowParentAddress: GUILD_GNOSIS_DAO_ADDRESS,
     });
 
     return {
       transactions: camelize(_.get(response, 'daohaus_stats_xdai.balances')),
       balances: camelize(_.get(response, 'daohaus_xdai.moloch.tokenBalances')),
+      smartEscrows: camelize(
+        _.get(response, 'gnosis_smart_escrows.wrappedInvoices')
+      ),
+      raids: camelize(_.get(response, 'raids')),
       historicalPrices: camelize(_.get(response, 'treasury_token_history')),
       currentPrices: camelize(_.get(response, 'current_token_prices')),
     };
@@ -323,6 +377,8 @@ export const useAccounting = ({ token }) => {
     {
       transactions: Array<IMolochStatsBalance>;
       balances: Array<ITokenBalance>;
+      smartEscrows: Array<ISmartEscrow>;
+      raids: Array<IAccountingRaid>;
       historicalPrices: Array<ITokenPrice>;
       currentPrices: Array<ITokenPrice>;
     },
@@ -347,6 +403,10 @@ export const useAccounting = ({ token }) => {
             data.pages[0].balances,
             calculatedTokenBalances.getBalances()
           );
+        const spoils = await formatSpoils(
+          data.pages[0].smartEscrows,
+          data.pages[0].raids
+        );
         const { historicalPrices, currentPrices } = data.pages[0];
         const mappedPrices = {};
         historicalPrices.forEach((price) => {
@@ -368,6 +428,7 @@ export const useAccounting = ({ token }) => {
         });
         setTransactions(formattedData.transactions || []);
         setBalances(tokenBalances);
+        setSpoils(spoils);
         setTokenPrices(mappedPrices);
       } else if (status === 'error') {
         // eslint-disable-next-line no-console
@@ -382,6 +443,7 @@ export const useAccounting = ({ token }) => {
     data: {
       transactions,
       balances,
+      spoils,
       tokenPrices,
     },
     loading: status === 'loading',
