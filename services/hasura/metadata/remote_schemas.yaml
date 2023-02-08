@@ -7,7 +7,7 @@
       type_names:
         mapping: {}
         prefix: daohaus_stats_xdai
-  comment: ''
+  comment: ""
 - name: DaoHaus-xDai
   definition:
     url: https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai
@@ -17,7 +17,7 @@
       type_names:
         mapping: {}
         prefix: daohaus_xdai
-  comment: ''
+  comment: ""
 - name: Gnosis-Smart-Escrows
   definition:
     url: https://api.thegraph.com/subgraphs/name/ecwireless/gnosis-smart-escrows
