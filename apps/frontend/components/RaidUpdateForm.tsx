@@ -14,8 +14,6 @@ import {
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { add } from 'date-fns';
-// import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
 import { RAID_CATEGORY_OPTIONS } from '../utils/constants';
@@ -54,7 +52,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
-    console.log('values', values);
     await updateRaidStatus({
       raid_updates: {
         name: values.raidName ?? raid.raidName,
@@ -127,8 +124,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 >
                   <DatePicker
                     name='startDate'
-                    // isRequired
-                    // eslint-disable-next-line react/jsx-props-no-spreading
                     label='Raid Start Date (UTC)'
                     selected={startDate}
                     onChange={(date) => {
@@ -142,8 +137,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     localForm={localForm}
                   />
                   <DatePicker
-                    // isRequired
-                    // eslint-disable-next-line react/jsx-props-no-spreading
                     name='endDate'
                     label='Raid End Date (UTC)'
                     selected={endDate}
