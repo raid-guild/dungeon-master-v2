@@ -6,7 +6,7 @@ import { camelize, IMember, IRaid } from '../utils';
 
 const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 
-const useMemberDetail = ({ token, memberAddress }) => {
+const useMemberDetail = ({ memberAddress, token }) => {
   const memberQueryResult = async () => {
     if (!memberAddress || !token) return null;
     // TODO handle filters
@@ -42,7 +42,9 @@ const useMemberDetail = ({ token, memberAddress }) => {
   const { isLoading, isFetching, isError, error, data } = useQuery<
     { member: IMember; raids: { active: IRaid[]; past: IRaid[] } },
     Error
-  >(['memberDetail', memberAddress], memberQueryResult, {
+  >({
+    queryKey: ['memberDetail', memberAddress],
+    queryFn: memberQueryResult,
     enabled: Boolean(token) && Boolean(memberAddress),
   });
 

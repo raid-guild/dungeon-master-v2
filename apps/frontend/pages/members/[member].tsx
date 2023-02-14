@@ -38,7 +38,7 @@ const Member = () => {
   const memberAddress = _.get(router, 'query.member');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data } = useMemberDetail({ token, memberAddress });
+  const { data } = useMemberDetail({ memberAddress, token });
   const member = _.get(data, 'member');
   const raids = _.get(data, 'raids');
 
