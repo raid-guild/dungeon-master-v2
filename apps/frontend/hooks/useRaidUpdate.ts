@@ -24,7 +24,6 @@ const useRaidUpdate = ({ token, raidId }) => {
         const raid = camelize(
           _.get(data, 'raids_by_pk', _.get(data, 'update_raids_by_pk'))
         );
-        console.log(raid);
 
         queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
         queryClient.invalidateQueries(['raidList']); // invalidate the raidList

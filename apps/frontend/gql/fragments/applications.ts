@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { CONTACT_INFO_FRAGMENT } from './contactInfo';
+import { CONTACT_INFOS_FRAGMENT } from './contactInfo';
 import { SLIM_MEMBER_DETAIL_FRAGMENT } from './members';
 
 const APPLICATION_ENUM_FRAGMENT = gql`
@@ -32,7 +32,7 @@ export const APPLICATION_DETAIL_FRAGMENT = gql`
     created_at
     updated_at
     contact_info {
-      ...ContactInfo
+      ...ContactInfos
     }
     member {
       ...SlimMemberDetail
@@ -70,5 +70,5 @@ export const SLIM_APPLICATION_DETAIL_FRAGMENT = gql`
     created_at
     updated_at
   }
-  ${CONTACT_INFO_FRAGMENT}
+  ${CONTACT_INFOS_FRAGMENT}
 `;
