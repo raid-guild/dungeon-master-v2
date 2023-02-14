@@ -10,7 +10,6 @@ const useMemberUpdate = ({ token, memberId, memberAddress }) => {
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IMemberUpdate) => {
-      console.log('args', args);
       if (!memberId || !token) return null;
       const result = await client({ token }).request(MEMBER_UPDATE_MUTATION, {
         id: memberId,
@@ -22,13 +21,9 @@ const useMemberUpdate = ({ token, memberId, memberAddress }) => {
       return result;
     },
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(['memberDetail', memberAddress]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
+      onSuccess: () => {
+        queryClient.invalidateQueries(['memberDetail', memberAddress]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response. should be the same as the memberAddress passed in to ensure consistency due to the lowercase
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
-        // queryClient.setQueryData(
-        //   ['memberDetail', _.get(member, _.toLower('eth_address'))],
-        //   member
-        // );
 
         toast.success({
           title: 'Member Info Updated',
