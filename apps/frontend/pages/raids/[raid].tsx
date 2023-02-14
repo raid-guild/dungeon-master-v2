@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { Heading, Flex, Stack, Box, Text } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
+import { GetServerSidePropsContext } from 'next';
 
 import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
@@ -86,7 +87,10 @@ const Raid = ({ raidId }) => {
   );
 };
 
-export const getServerSideProps = async (context) => {
+// * use SSR to fetch query params for RQ invalidation
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   const { raid } = context.params;
 
   return {

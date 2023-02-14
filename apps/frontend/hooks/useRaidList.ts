@@ -42,6 +42,7 @@ const where = (
 
 type raidSortKeys =
   | 'oldestComment'
+  | 'recentComment'
   | 'name'
   | 'createDate'
   | 'startDate'
@@ -50,7 +51,18 @@ type raidSortKeys =
 
 const orderBy = (raidSortKey: raidSortKeys) => ({
   ...(raidSortKey === 'oldestComment' && {
-    updated_at: 'desc',
+    updates_aggregate: {
+      min: {
+        created_at: 'asc_nulls_first',
+      },
+    },
+  }),
+  ...(raidSortKey === 'recentComment' && {
+    updates_aggregate: {
+      min: {
+        created_at: 'desc_nulls_last',
+      },
+    },
   }),
   ...(raidSortKey === 'name' && {
     name: 'asc',

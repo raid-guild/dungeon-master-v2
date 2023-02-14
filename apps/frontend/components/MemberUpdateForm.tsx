@@ -11,7 +11,6 @@ import {
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { useForm, Controller } from 'react-hook-form';
-
 import useMemberUpdate from '../hooks/useMemberUpdate';
 import { IMember, IApplication } from '../utils';
 import {
@@ -21,12 +20,14 @@ import {
 
 interface UpdateMemberFormProps {
   memberId?: string;
+  memberAddress?: string;
   closeModal?: () => void;
   member: IMember;
   application?: IApplication;
 }
 const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   memberId,
+  memberAddress,
   member,
   application,
   closeModal,
@@ -37,6 +38,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   const { mutateAsync: updateMemberStatus } = useMemberUpdate({
     token,
     memberId,
+    memberAddress,
   });
 
   const localForm = useForm({
@@ -50,11 +52,11 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
-
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
-        primary_class_key: values.guildClass ?? member.guildClass.guildClass,
+        primary_class_key:
+          values.guildClass?.value ?? member.guildClass.guildClass,
       },
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
@@ -162,17 +164,18 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                   <FormLabel color='raid'>Guild Class</FormLabel>
                   <Controller
                     name='guildClass'
-                    defaultValue={
-                      member?.guildClass?.guildClass
-                        ? member?.guildClass?.guildClass
-                        : ''
-                    }
                     control={control}
                     render={({ field }) => (
                       <Select
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={GUILD_CLASS_OPTIONS}
+                        defaultValue={
+                          GUILD_CLASS_OPTIONS.find(
+                            (option) =>
+                              option.value === member?.guildClass?.guildClass
+                          ) ?? null
+                        }
                         localForm={localForm}
                       />
                     )}
@@ -197,7 +200,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                 <FormControl>
                   <FormLabel color='raid'>Secondary Skills</FormLabel>
                   <Controller
-                    name='secondarySkil'
+                    name='secondarySkills'
                     control={control}
                     render={({ field }) => (
                       <Select
