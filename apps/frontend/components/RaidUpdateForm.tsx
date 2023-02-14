@@ -10,10 +10,11 @@ import {
   Select,
   Flex,
   forwardRef,
+  DatePicker,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { add } from 'date-fns';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm, Controller } from 'react-hook-form';
 import { IRaid } from '../utils';
@@ -31,10 +32,10 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   raid,
 }: RaidUpdateFormProps) => {
   const [sending, setSending] = useState(false);
-  const [startDate, setStartDate] = useState(
+  const [startDate, setStartDate] = useState<Date | null>(
     new Date(raid?.startDate) ?? new Date()
   );
-  const [endDate, setEndDate] = useState(
+  const [endDate, setEndDate] = useState<Date | null>(
     new Date(raid?.endDate) ?? add(new Date(), { weeks: 1 })
   );
   const { data: session } = useSession();
@@ -45,7 +46,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     mode: 'all',
   });
   const {
-    register,
     handleSubmit,
     setValue,
     control,
@@ -54,7 +54,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
-
+    console.log('values', values);
     await updateRaidStatus({
       raid_updates: {
         name: values.raidName ?? raid.raidName,
@@ -125,36 +125,38 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   alignItems='center'
                   justifyContent='space-between'
                 >
-                  <FormControl>
-                    <FormLabel color='raid'>Raid Start Date (UTC)</FormLabel>
-                    <DatePicker
-                      // isRequired
-                      // eslint-disable-next-line react/jsx-props-no-spreading
-                      {...register('startDate', { valueAsDate: true })}
-                      value={startDate.toISOString()}
-                      selected={startDate}
-                      onChange={(date) => {
-                        setStartDate(date);
-                        setValue('startDate', date);
-                      }}
-                      customInput={<CustomCalInput />}
-                    />
-                  </FormControl>
-                  <FormControl>
-                    <FormLabel color='raid'>Raid End Date (UTC)</FormLabel>
-                    <DatePicker
-                      // isRequired
-                      // eslint-disable-next-line react/jsx-props-no-spreading
-                      {...register('endDate', { valueAsDate: true })}
-                      value={endDate.toISOString()}
-                      selected={endDate}
-                      onChange={(date) => {
-                        setEndDate(date);
-                        setValue('endDate', date);
-                      }}
-                      customInput={<CustomCalInput />}
-                    />
-                  </FormControl>
+                  <DatePicker
+                    name='startDate'
+                    // isRequired
+                    // eslint-disable-next-line react/jsx-props-no-spreading
+                    label='Raid Start Date (UTC)'
+                    selected={startDate}
+                    onChange={(date) => {
+                      if (Array.isArray(date)) {
+                        return;
+                      }
+                      setStartDate(date);
+                      setValue('startDate', date);
+                    }}
+                    customInput={<CustomCalInput />}
+                    localForm={localForm}
+                  />
+                  <DatePicker
+                    // isRequired
+                    // eslint-disable-next-line react/jsx-props-no-spreading
+                    name='endDate'
+                    label='Raid End Date (UTC)'
+                    selected={endDate}
+                    onChange={(date) => {
+                      if (Array.isArray(date)) {
+                        return;
+                      }
+                      setEndDate(date);
+                      setValue('endDate', date);
+                    }}
+                    customInput={<CustomCalInput />}
+                    localForm={localForm}
+                  />
                 </Flex>
                 {raid?.invoiceAddress !== null && (
                   <Input
