@@ -161,6 +161,7 @@ const Member = () => {
         content={
           <UpdateMemberForm
             memberId={_.get(member, 'id')}
+            memberAddress={memberAddress}
             member={member}
             application={_.get(member, 'application')}
             closeModal={closeModals}

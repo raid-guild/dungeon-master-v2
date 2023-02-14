@@ -20,12 +20,14 @@ import {
 
 interface UpdateMemberFormProps {
   memberId?: string;
+  memberAddress?: string;
   closeModal?: () => void;
   member: IMember;
   application?: IApplication;
 }
 const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   memberId,
+  memberAddress,
   member,
   application,
   closeModal,
@@ -36,6 +38,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
   const { mutateAsync: updateMemberStatus } = useMemberUpdate({
     token,
     memberId,
+    memberAddress,
   });
 
   const localForm = useForm({

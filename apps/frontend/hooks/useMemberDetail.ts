@@ -43,7 +43,7 @@ const useMemberDetail = ({ memberAddress, token }) => {
     { member: IMember; raids: { active: IRaid[]; past: IRaid[] } },
     Error
   >({
-    queryKey: ['memberDetail', 'asdf'],
+    queryKey: ['memberDetail', memberAddress],
     queryFn: memberQueryResult,
     enabled: Boolean(token) && Boolean(memberAddress),
   });

@@ -4,7 +4,7 @@ import { useToast } from '@raidguild/design-system';
 import { client, MEMBER_UPDATE_MUTATION } from '../gql';
 import { IMemberUpdate } from '../utils';
 
-const useMemberUpdate = ({ token, memberId }) => {
+const useMemberUpdate = ({ token, memberId, memberAddress }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -23,8 +23,7 @@ const useMemberUpdate = ({ token, memberId }) => {
     },
     {
       onSuccess: (data, variables) => {
-        const member = _.get(data, 'update_members_by_pk');
-        queryClient.invalidateQueries(['memberDetail', 'asdf']); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
+        queryClient.invalidateQueries(['memberDetail', memberAddress]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
         // queryClient.setQueryData(
         //   ['memberDetail', _.get(member, _.toLower('eth_address'))],
