@@ -52,7 +52,8 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
-        primary_class_key: values.guildClass.value,
+        primary_class_key:
+          values.guildClass?.value ?? member.guildClass.guildClass,
       },
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
