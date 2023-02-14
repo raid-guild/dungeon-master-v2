@@ -53,7 +53,7 @@ const orderBy = (raidSortKey: raidSortKeys) => ({
   ...(raidSortKey === 'oldestComment' && {
     updates_aggregate: {
       min: {
-        created_at: 'asc_nulls_last',
+        created_at: 'asc_nulls_first',
       },
     },
   }),
