@@ -12,8 +12,8 @@ import {
   useMediaQuery,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { GetServerSidePropsContext } from 'next';
 
 import useConsultationDetail from '../../hooks/useConsultationDetail';
 import useConsultationUpdate from '../../hooks/useConsultationUpdate';
@@ -21,14 +21,17 @@ import SiteLayout from '../../components/SiteLayout';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import useRaidCreate from '../../hooks/useRaidCreate';
 
-const Consultation = () => {
+type Props = {
+  consultationId: string;
+};
+
+const Consultation = ({ consultationId }: Props) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const router = useRouter();
 
   const { data: consultation } = useConsultationDetail({
     token,
-    consultationId: _.get(router, 'query.consultation'),
+    consultationId,
   });
   const { mutateAsync: updateConsultation } = useConsultationUpdate({ token });
   const { mutateAsync: createRaid } = useRaidCreate({ token });
@@ -93,6 +96,19 @@ const Consultation = () => {
       </SiteLayout>
     </>
   );
+};
+
+// * use SSR to fetch query params for RQ invalidation
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { consultation } = context.params;
+
+  return {
+    props: {
+      consultationId: consultation || null,
+    },
+  };
 };
 
 export default Consultation;

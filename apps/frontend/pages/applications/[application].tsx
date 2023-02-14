@@ -26,7 +26,6 @@ const Application = ({ applicationId }) => {
     });
   };
   const member = _.get(application, 'member.0');
-  console.log(member?.memberType?.memberType);
 
   return (
     <>
@@ -67,6 +66,7 @@ const Application = ({ applicationId }) => {
   );
 };
 
+// * use SSR to fetch query params for RQ invalidation
 export const getServerSideProps = (context: GetServerSidePropsContext) => {
   const { application } = context.query;
 
