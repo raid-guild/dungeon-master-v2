@@ -1,7 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
-import { CONTACT_INFO_FRAGMENT, MEMBER_DETAIL_FRAGMENT } from '../fragments';
+import { MEMBER_DETAIL_FRAGMENT } from '../fragments';
 
+// contact infos fragment defined in the member detail fragment
 export const MEMBER_UPDATE_MUTATION = gql`
   mutation MemberUpdateMutation(
     $id: uuid!
@@ -16,9 +17,8 @@ export const MEMBER_UPDATE_MUTATION = gql`
       pk_columns: { id: $contact_info_pk }
       _set: $contact_info_updates
     ) {
-      ...ContactInfo
+      ...ContactInfos
     }
   }
-  ${CONTACT_INFO_FRAGMENT}
   ${MEMBER_DETAIL_FRAGMENT}
 `;

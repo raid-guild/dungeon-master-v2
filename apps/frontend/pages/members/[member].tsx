@@ -18,8 +18,8 @@ import {
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
+import { GetServerSidePropsContext } from 'next';
 
 import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
@@ -33,13 +33,16 @@ import MemberAvatar from '../../components/MemberAvatar';
 
 // TODO remove hardcoded limits on past and active raids
 
-const Member = () => {
-  const router = useRouter();
+type Props = {
+  memberAddress: string;
+};
+
+const Member = ({ memberAddress }: Props) => {
   const { address } = useAccount();
-  const memberAddress = _.get(router, 'query.member');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data } = useMemberDetail({ token, memberAddress });
+
+  const { data } = useMemberDetail({ memberAddress, token });
   const member = _.get(data, 'member');
   const raids = _.get(data, 'raids');
 
@@ -161,6 +164,7 @@ const Member = () => {
         content={
           <UpdateMemberForm
             memberId={_.get(member, 'id')}
+            memberAddress={memberAddress}
             member={member}
             application={_.get(member, 'application')}
             closeModal={closeModals}
@@ -169,6 +173,19 @@ const Member = () => {
       />
     </>
   );
+};
+
+// * use SSR to fetch query params for RQ invalidation
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { member } = context.params;
+
+  return {
+    props: {
+      memberAddress: member || null,
+    },
+  };
 };
 
 export default Member;

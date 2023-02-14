@@ -11,3 +11,14 @@ export const CONTACT_INFO_FRAGMENT = gql`
     twitter
   }
 `;
+
+export const CONTACT_INFOS_FRAGMENT = gql`
+  fragment ContactInfos on contact_infos {
+    id
+    email
+    discord
+    github
+    telegram
+    twitter
+  }
+`;
