@@ -20,7 +20,6 @@ import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useAccount } from 'wagmi';
-
 import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
 import ModalWrapper from '../../components/ModalWrapper';

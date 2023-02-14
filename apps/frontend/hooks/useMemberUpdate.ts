@@ -20,7 +20,8 @@ const useMemberUpdate = ({ token, memberId }) => {
       return result;
     },
     {
-      onSuccess: (data) => {
+      onSuccess: (data, variables) => {
+        console.log('success vars', variables);
         queryClient.invalidateQueries([
           'memberDetail',
           data.update_members_by_pk?.eth_address,
