@@ -14,7 +14,7 @@ const useRaidDetail = ({ raidId, token }) => {
 
     return camelize(_.get(result, 'raids_by_pk'));
   };
-  console.log('enabled?', Boolean(token) && Boolean(raidId));
+
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IRaid,
     Error
