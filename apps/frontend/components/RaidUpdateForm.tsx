@@ -31,10 +31,10 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
 }: RaidUpdateFormProps) => {
   const [sending, setSending] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date(raid?.startDate) ?? new Date()
+    raid?.startDate ? new Date(raid?.startDate) : new Date()
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    new Date(raid?.endDate) ?? add(new Date(), { weeks: 1 })
+    raid?.endDate ? new Date(raid?.endDate) : add(new Date(), { weeks: 1 })
   );
   const { data: session } = useSession();
   const token = _.get(session, 'token');
