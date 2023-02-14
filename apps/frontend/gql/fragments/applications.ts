@@ -61,7 +61,7 @@ export const SLIM_APPLICATION_DETAIL_FRAGMENT = gql`
     id
     name
     contact_info {
-      ...ContactInfo
+      ...ContactInfos
     }
     eth_address
     introduction
