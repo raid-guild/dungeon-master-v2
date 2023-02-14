@@ -23,7 +23,7 @@ export const MEMBER_LIST_QUERY = gql`
       eth_address
       is_raiding
       contact_info {
-        ...ContactInfo
+        ...ContactInfos
       }
       guild_class {
         guild_class
