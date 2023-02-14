@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import _ from 'lodash';
 import { useToast } from '@raidguild/design-system';
 import { client, MEMBER_UPDATE_MUTATION } from '../gql';
 import { IMemberUpdate } from '../utils';
 
-const useMemberUpdate = ({ token, memberId }) => {
+const useMemberUpdate = ({ token, memberId, memberAddress }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -20,11 +21,8 @@ const useMemberUpdate = ({ token, memberId }) => {
       return result;
     },
     {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries([
-          'memberDetail',
-          data.update_members_by_pk?.eth_address,
-        ]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response
+      onSuccess: () => {
+        queryClient.invalidateQueries(['memberDetail', memberAddress]); // invalidate memberDetail with eth_address (used in the query) from the successful mutation response. should be the same as the memberAddress passed in to ensure consistency due to the lowercase
         queryClient.invalidateQueries(['memberList']); // invalidate the memberList
 
         toast.success({

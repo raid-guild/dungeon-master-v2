@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { CONTACT_INFO_FRAGMENT } from './contactInfo';
+import { CONTACT_INFOS_FRAGMENT } from './contactInfo';
 
 export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
   fragment SlimMemberDetail on members {
@@ -8,12 +8,7 @@ export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
     eth_address
     is_raiding
     contact_info {
-      id
-      email
-      discord
-      github
-      telegram
-      twitter
+      ...ContactInfos
     }
     member_type {
       member_type
@@ -22,7 +17,7 @@ export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
       guild_class
     }
   }
-  ${CONTACT_INFO_FRAGMENT}
+  ${CONTACT_INFOS_FRAGMENT}
 `;
 
 const MEMBER_ENUM_FRAGMENT = gql`
@@ -46,12 +41,7 @@ export const MEMBER_DETAIL_FRAGMENT = gql`
     ...MemberEnum
 
     contact_info {
-      id
-      email
-      discord
-      github
-      telegram
-      twitter
+      ...ContactInfos
     }
 
     application {
@@ -78,5 +68,5 @@ export const MEMBER_DETAIL_FRAGMENT = gql`
     }
   }
   ${MEMBER_ENUM_FRAGMENT}
-  ${CONTACT_INFO_FRAGMENT}
+  # ${CONTACT_INFOS_FRAGMENT}
 `;
