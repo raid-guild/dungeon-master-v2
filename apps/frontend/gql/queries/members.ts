@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 import {
-  CONTACT_INFO_FRAGMENT,
+  CONTACT_INFOS_FRAGMENT,
   MEMBER_DETAIL_FRAGMENT,
   SLIM_MEMBER_DETAIL_FRAGMENT,
 } from '../fragments';
@@ -36,7 +36,7 @@ export const MEMBER_LIST_QUERY = gql`
       }
     }
   }
-  ${CONTACT_INFO_FRAGMENT}
+  ${CONTACT_INFOS_FRAGMENT}
 `;
 
 export const MEMBER_SLIM_LIST_QUERY = gql`
