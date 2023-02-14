@@ -50,7 +50,7 @@ const raidSortOptions = [
 
 const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
-  const [raidSort, setRaidSort] = useState<string>('name');
+  const [raidSort, setRaidSort] = useState<string>('oldestComment');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
   const [sortChanged, setSortChanged] = useState(false);
   const title = useDefaultTitle();

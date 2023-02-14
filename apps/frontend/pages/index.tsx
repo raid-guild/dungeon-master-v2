@@ -92,25 +92,33 @@ const Home: React.FC = () => {
             <Tabs>
               <TabList>
                 <Tab>
-                  <Text fontSize='xl'>New Consultations</Text>
+                  <Text fontSize='xl'>Pending Consultations</Text>
                 </Tab>
                 <Tab>
-                  <Text fontSize='xl'>New Raids</Text>
+                  <Text fontSize='xl'>Recent Raids</Text>
                 </Tab>
               </TabList>
 
               <TabPanels>
                 <TabPanel>
                   <Stack spacing={4}>
-                    {_.map(
-                      _.get(data, 'newConsultations'),
-                      (consultation: IConsultation) => (
-                        <MiniRaidCard
-                          key={consultation.id}
-                          consultation={consultation}
-                          newRaid
-                        />
+                    {!_.isEmpty(_.get(data, 'newConsultations')) ? (
+                      _.map(
+                        _.get(data, 'newConsultations'),
+                        (consultation: IConsultation) => (
+                          <MiniRaidCard
+                            key={consultation.id}
+                            consultation={consultation}
+                            newRaid
+                          />
+                        )
                       )
+                    ) : (
+                      <Flex justify='center'>
+                        <Text fontSize='xl' my={10}>
+                          No pending consultations
+                        </Text>
+                      </Flex>
                     )}
                   </Stack>
                 </TabPanel>

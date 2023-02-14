@@ -17,7 +17,7 @@ export const STATUS_UPDATE_CREATE_MUTATION = gql`
         name
         eth_address
         contact_info {
-          ...ContactInfo
+          ...ContactInfos
         }
       }
     }
