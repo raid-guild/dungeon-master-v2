@@ -109,8 +109,8 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
         </Flex>
       </Flex>
 
-      <Flex my={4} w='100%'>
-        {addUpdate && (
+      {addUpdate && (
+        <Flex my={4} w='100%'>
           <Box
             as='form'
             id='updateForm'
@@ -126,8 +126,8 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
               />
             </Stack>
           </Box>
-        )}
-      </Flex>
+        </Flex>
+      )}
       {updatesCount > 0 &&
         sortedUpdates
           ?.slice(0, updatesCount > 4 ? 1 : updatesCount)
