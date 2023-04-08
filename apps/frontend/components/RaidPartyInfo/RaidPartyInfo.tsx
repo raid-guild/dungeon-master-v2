@@ -7,8 +7,8 @@ import {
   IRaid,
   // IConsultation,
   SIDEBAR_ACTION_STATES,
-} from '../../utils';
-import { useSlimMemberList } from '../../hooks';
+} from '@raidguild/dm-utils';
+import { useSlimMemberList } from '@raidguild/dm-hooks';
 
 import RaidPartyButtons from './RaidPartyButtons';
 // import MemberAvatar from '../MemberAvatar';

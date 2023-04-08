@@ -18,7 +18,7 @@ import {
 } from '@raidguild/design-system';
 import { CgProfile } from 'react-icons/cg';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
-import { truncateAddress } from '../utils/general';
+import { truncateAddress } from '@raidguild/dm-utils';
 import Link from './ChakraNextLink';
 
 const ConnectWallet: React.FC = () => {

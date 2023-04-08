@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
+import { isEven } from '@dm/is-even';
 import {
   Accordion,
   AccordionItem,
@@ -22,13 +23,13 @@ import {
   IRaid,
   BUDGET_DISPLAY,
   truncateAddress,
-} from '../utils';
+} from '@raidguild/dm-utils';
 import InfoStack from './InfoStack';
 import {
   DELIVERY_PRIORITIES_DISPLAY,
   AVAILABLE_PROJECT_SPECS_DISPLAY,
   PROJECT_TYPE_DISPLAY,
-} from '../utils/constants';
+} from '@raidguild/dm-utils';
 
 interface RaidProps {
   raid?: IRaid;
@@ -255,8 +256,12 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     },
   ];
 
+  const displayEven = typeof isEven;
+  console.log(`displayEven: ${displayEven}`);
+
   return (
     <Card variant='filled' padding={2}>
+      <h1>raid detail card {displayEven}</h1>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;

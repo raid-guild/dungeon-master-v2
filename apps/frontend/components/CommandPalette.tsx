@@ -11,9 +11,9 @@ import CmdkCommandPalette, {
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { Flex, Spinner } from '@raidguild/design-system';
+import { useSearchResults } from '@raidguild/dm-hooks';
 import 'react-cmdk/dist/cmdk.css';
 
-import useSearchResults from '../hooks/useSearchResults';
 import ChakraNextLink from './ChakraNextLink';
 import { useOverlay } from '../contexts/OverlayContext';
 
