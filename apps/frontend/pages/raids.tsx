@@ -15,10 +15,9 @@ import {
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import useDefaultTitle from '../hooks/useDefaultTitle';
-import useRaidList, { useRaidsCount } from '../hooks/useRaidList';
+import { useDefaultTitle, useRaidList, useRaidsCount } from '@raidguild/dm-hooks';
+import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
 import RaidCard from '../components/RaidCard';
-import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '../utils';
 import SiteLayout from '../components/SiteLayout';
 
 const raidStatusMapped = RAID_STATUS.map((status) => ({

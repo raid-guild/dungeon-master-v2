@@ -4,8 +4,6 @@ import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { GetServerSidePropsContext } from 'next';
 
-import useApplicationDetail from '../../hooks/useApplicationDetail';
-import useMemberCreate from '../../hooks/useMemberCreate';
 import SiteLayout from '../../components/SiteLayout';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
 import Link from '../../components/ChakraNextLink';

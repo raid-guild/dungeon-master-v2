@@ -14,12 +14,10 @@ import {
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { GetServerSidePropsContext } from 'next';
+import { useConsultationDetail, useConsultationUpdate, useRaidCreate } from '@raidguild/dm-hooks';
 
-import useConsultationDetail from '../../hooks/useConsultationDetail';
-import useConsultationUpdate from '../../hooks/useConsultationUpdate';
 import SiteLayout from '../../components/SiteLayout';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
-import useRaidCreate from '../../hooks/useRaidCreate';
 
 type Props = {
   consultationId: string;

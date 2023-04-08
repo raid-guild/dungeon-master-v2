@@ -3,8 +3,8 @@ import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { Stack, Button } from '@raidguild/design-system';
 
-import useRaidUpdate from '../hooks/useRaidUpdate';
-import { IRaid } from '../utils';
+import { useRaidUpdate } from '@raidguild/dm-hooks';
+import { IRaid } from '@raidguild/dm-utils';
 
 const statusOptions = ['AWAITING', 'PREPARING', 'RAIDING', 'LOST', 'SHIPPED'];
 

@@ -8,7 +8,7 @@ import {
   encodeAuth,
   decodeAuth,
   CONFIG,
-} from '../../../utils/auth';
+} from '@raidguild/dm-utils';
 
 const { NEXTAUTH_SECRET } = process.env;
 

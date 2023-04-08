@@ -32,7 +32,7 @@ import {
   IMember,
   truncateAddress,
   clearNonObjects,
-} from '../utils';
+} from '@raidguild/dm-utils';
 
 // unused props are commented out for now
 interface MemberProps {

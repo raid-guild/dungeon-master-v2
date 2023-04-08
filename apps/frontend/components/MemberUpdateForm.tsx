@@ -11,12 +11,12 @@ import {
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { useForm, Controller } from 'react-hook-form';
-import useMemberUpdate from '../hooks/useMemberUpdate';
-import { IMember, IApplication } from '../utils';
+import { useMemberUpdate } from '@raidguild/dm-hooks'
+import { IMember, IApplication } from '@raidguild/dm-utils';
 import {
   GUILD_CLASS_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
-} from '../utils/constants';
+} from '@raidguild/dm-utils';
 
 interface UpdateMemberFormProps {
   memberId?: string;

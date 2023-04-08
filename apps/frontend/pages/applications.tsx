@@ -16,16 +16,17 @@ import {
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import useApplicationList, {
+import {
   useApplicationsCount,
-} from '../hooks/useApplicationList';
+  useApplicationList,
+  useDefaultTitle,
+} from '@raidguild/dm-hooks';
 import MemberCard from '../components/MemberCard';
-import useDefaultTitle from '../hooks/useDefaultTitle';
 import {
   IApplication,
   APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
-} from '../utils';
+} from '@raidguild/dm-utils';
 import SiteLayout from '../components/SiteLayout';
 
 const applicationSkillTypeOptions = [

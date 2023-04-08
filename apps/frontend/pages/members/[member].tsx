@@ -20,11 +20,11 @@ import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { useAccount } from 'wagmi';
 import { GetServerSidePropsContext } from 'next';
+import { useMemberDetail } from '@raidguild/dm-hooks';
+import { memberDisplayName, GUILD_CLASS_ICON } from '@raidguild/dm-utils';
 
-import useMemberDetail from '../../hooks/useMemberDetail';
 import SiteLayout from '../../components/SiteLayout';
 import ModalWrapper from '../../components/ModalWrapper';
-import { memberDisplayName, GUILD_CLASS_ICON } from '../../utils';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
 import MiniRaidCard from '../../components/MiniRaidCard';
 import { useOverlay } from '../../contexts/OverlayContext';

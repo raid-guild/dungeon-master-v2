@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Avatar, Tooltip } from '@raidguild/design-system';
 import { useEnsAvatar, useEnsName, mainnet } from 'wagmi';
 import * as blockies from 'blockies-ts';
-import { IMember, memberDisplayName } from '../utils';
+import { IMember, memberDisplayName } from '@raidguild/dm-utils';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
