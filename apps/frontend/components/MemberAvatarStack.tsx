@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Stack, HStack } from '@raidguild/design-system';
 import MemberAvatar from './MemberAvatar';
-import { IMember } from '../utils';
+import { IMember } from '@raidguild/dm-utils';
 
 type MemberAvatarStackProps = {
   members: IMember[];
@@ -27,7 +27,7 @@ const MemberAvatarStack = ({
   }
 
   return (
-    <Stack align="center" spacing={4}>
+    <Stack align='center' spacing={4}>
       {_.map(members, (member: IMember) => (
         <MemberAvatar member={member} key={_.get(member, 'id')} />
       ))}

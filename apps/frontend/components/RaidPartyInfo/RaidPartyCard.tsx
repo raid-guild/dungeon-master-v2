@@ -26,12 +26,12 @@ import {
   memberDisplayName,
   SIDEBAR_ACTION_STATES,
   IRaid,
-} from '../../utils';
+} from '@raidguild/dm-utils';
 import {
   useRaidUpdate,
   useRaidPartyRemove,
   useRemoveRolesRequired,
-} from '../../hooks';
+} from '@raidguild/dm-hooks';
 import MemberAvatar from '../MemberAvatar';
 
 type RaidPartyCardProps = {

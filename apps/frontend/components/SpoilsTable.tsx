@@ -1,7 +1,11 @@
 import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ISpoils } from '../types';
-import { minMaxDateFilter, minMaxNumberFilter, sortNumeric } from '../utils';
+import { ISpoils } from '@dungeon-master/dm-types';
+import {
+  minMaxDateFilter,
+  minMaxNumberFilter,
+  sortNumeric,
+} from '@raidguild/dm-utils';
 import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 

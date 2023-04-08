@@ -16,17 +16,18 @@ import {
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import InfiniteScroll from 'react-infinite-scroller';
-import useConsultationList, {
+import {
+  useConsultationList,
   useConsultationsCount,
-} from '../hooks/useConsultationList';
-import useDefaultTitle from '../hooks/useDefaultTitle';
-import RaidCard from '../components/RaidCard';
-import SiteLayout from '../components/SiteLayout';
+  useDefaultTitle
+} from '@raidguild/dm-hooks';
 import {
   IConsultation,
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
-} from '../utils';
+} from '@raidguild/dm-utils';
+import RaidCard from '../components/RaidCard';
+import SiteLayout from '../components/SiteLayout';
 
 const consultationTypeOptions = [
   { label: 'Show All', value: 'ALL' },

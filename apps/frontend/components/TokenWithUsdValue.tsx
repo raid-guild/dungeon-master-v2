@@ -1,5 +1,5 @@
 import { CellContext } from '@tanstack/react-table';
-import { formatNumber, getUsdValue } from '../utils';
+import { formatNumber, getUsdValue } from '@raidguild/dm-utils';
 
 interface TokenWithUsdValueProps<TRow extends { priceConversion?: number }> {
   info: CellContext<TRow, number>;

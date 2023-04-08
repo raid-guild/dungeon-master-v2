@@ -15,9 +15,9 @@ import {
 import { useSession } from 'next-auth/react';
 import { add } from 'date-fns';
 import { useForm, Controller } from 'react-hook-form';
-import { IRaid } from '../utils';
-import { RAID_CATEGORY_OPTIONS } from '../utils/constants';
-import useRaidUpdate from '../hooks/useRaidUpdate';
+import { IRaid } from '@raidguild/dm-utils';
+import { RAID_CATEGORY_OPTIONS } from '@raidguild/dm-utils';
+import { useRaidUpdate } from '@raidguild/dm-hooks';
 
 interface RaidUpdateFormProps {
   raidId?: string;

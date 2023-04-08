@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { HStack, Button, Stack } from '@raidguild/design-system';
-import { IRaid } from '../utils';
+import { IRaid } from '@raidguild/dm-utils';
 import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
 import ModalWrapper from './ModalWrapper';

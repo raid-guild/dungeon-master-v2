@@ -23,9 +23,9 @@ import {
 import { useForm } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import { FaPlus } from 'react-icons/fa';
-import { IStatusUpdate, IRaid } from '../utils';
+import { IStatusUpdate, IRaid } from '@raidguild/dm-utils';
+import { useUpdateCreate } from '@raidguild/dm-hooks';
 import RaidUpdate from './RaidUpdates';
-import useUpdateCreate from '../hooks/useUpdateCreate';
 
 interface UpdatesProps {
   raid: IRaid;

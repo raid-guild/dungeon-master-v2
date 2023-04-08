@@ -3,13 +3,13 @@ import { Heading, Flex, Stack, Box, Text } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { GetServerSidePropsContext } from 'next';
+import { useRaidDetail } from '@raidguild/dm-hooks';
+import { displayDate } from '@raidguild/dm-utils';
 
-import useRaidDetail from '../../hooks/useRaidDetail';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
 import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
 import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
-import { displayDate } from '../../utils';
 
 const RaidDate = ({ startDate, endDate }) => {
   if (endDate) {
