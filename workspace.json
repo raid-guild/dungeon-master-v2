@@ -2,9 +2,13 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
-    "common-utilities": "libs/common-utilities",
-    "hasura": "services/hasura",
+    "dm-graphql": "libs/dm-graphql",
+    "dm-hooks": "libs/dm-hooks",
+    "dm-types": "libs/dm-types",
+    "dm-utils": "libs/dm-utils",
     "frontend": "apps/frontend",
-    "frontend-e2e": "apps/frontend-e2e"
+    "frontend-e2e": "apps/frontend-e2e",
+    "hasura": "services/hasura",
+    "is-even": "libs/is-even"
   }
 }

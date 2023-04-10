@@ -15,7 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@dmv2/common-utilities": ["libs/common-utilities/src/index.ts"]
+      "@dm/is-even": ["libs/is-even/src/index.ts"],
+      "@raidguild/dm-graphql": ["libs/dm-graphql/src/index.ts"],
+      "@raidguild/dm-hooks": ["libs/dm-hooks/src/index.ts"],
+      "@raidguild/dm-types": ["libs/dm-types/src/index.ts"],
+      "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
