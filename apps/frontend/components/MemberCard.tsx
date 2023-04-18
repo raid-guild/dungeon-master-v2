@@ -25,7 +25,6 @@ import {
   FaEthereum,
   FaTelegramPlane,
 } from 'react-icons/fa';
-import Link from './ChakraNextLink';
 import {
   GUILD_CLASS_ICON,
   IApplication,
@@ -33,6 +32,7 @@ import {
   truncateAddress,
   clearNonObjects,
 } from '@raidguild/dm-utils';
+import Link from './ChakraNextLink';
 
 // unused props are commented out for now
 interface MemberProps {
@@ -222,9 +222,9 @@ const MemberCard: React.FC<MemberProps> = ({
           <Flex wrap='wrap' width='100%' maxWidth='100%'>
             {_.map(
               clearNonObjects(socials),
-              ({ href, icon, label, tooltip, onClick }) => (
+              ({ href, icon, label, tooltip, onClick }, i: number) => (
                 <SocialButton
-                  key={`${label}-${href}`}
+                  key={`${label}-${href}-${i}`}
                   href={href}
                   icon={icon}
                   label={label}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { isEven } from '@dm/is-even';
 import {
   Accordion,
   AccordionItem,
@@ -256,12 +255,8 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     },
   ];
 
-  const displayEven = typeof isEven;
-  console.log(`displayEven: ${displayEven}`);
-
   return (
     <Card variant='filled' padding={2}>
-      <h1>raid detail card {displayEven}</h1>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;
