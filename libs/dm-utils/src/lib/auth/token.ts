@@ -35,7 +35,9 @@ export const createToken = ({
   },
 });
 
-export const encodeToken = (token: object) =>
+export const encodeToken = (token: HasuraAuthToken | undefined) =>
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   jwt.sign(token, NEXTAUTH_SECRET, { algorithm: CONFIG.encodingAlgorithm });
 
 export const encodeAuth = async ({
@@ -52,9 +54,9 @@ export const encodeAuth = async ({
   return encodeToken(createToken({ user, token, maxAge }));
 };
 
-export const decodeToken = (token: string) =>
-  jwt.verify(token, NEXTAUTH_SECRET, {
-    algorithms: [CONFIG.encodingAlgorithm],
+export const decodeToken = (token: string | undefined) =>
+  jwt.verify(token as string, NEXTAUTH_SECRET as string, {
+    algorithms: [CONFIG.encodingAlgorithm as any],
   });
 
 export const decodeAuth = async ({ token }: JWTDecodeParams) =>

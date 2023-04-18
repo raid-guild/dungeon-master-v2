@@ -27,7 +27,7 @@ const checkNonce = async ({
   credentials,
   req,
 }: SiweMessageAuthorizeParams) =>
-  getCsrfToken({ req }).then((nonce: string) => {
+  getCsrfToken({ req }).then((nonce: string | undefined) => {
     if (!_.eq(_.get(siwe, 'nonce'), nonce)) {
       return Promise.reject(Error('Invalid nonce'));
     }
@@ -62,7 +62,7 @@ const checkSignature = ({
 
 export const authorizeSiweMessage = (
   data: SiweAuthorizeParams
-): Promise<User> =>
+): Promise<User | null> =>
   parseCredentials(data)
     .then((d) => checkNonce(d))
     .then((d) => checkDomain(d))

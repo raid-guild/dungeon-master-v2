@@ -27,7 +27,7 @@ export interface IContractCreate {
 
 export type CreateTokenParams = {
   user: IUser;
-  token: JWT;
+  token?: JWT;
   maxAge?: number;
   roles?: string[];
 };
@@ -44,7 +44,7 @@ export type HasuraAuthToken = {
     'x-hasura-allowed-roles': string[];
     'x-hasura-default-role'?: string;
     'x-hasura-role'?: string;
-    'x-hasura-user-id': string;
+    'x-hasura-user-id'?: string;
   };
 };
 
