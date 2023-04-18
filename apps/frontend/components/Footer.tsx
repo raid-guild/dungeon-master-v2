@@ -7,7 +7,7 @@ import {
 } from '@raidguild/design-system';
 
 const links = [
-  { label: 'Consultation Queue', link: 'https://hireus.raidguild.org/bids' },
+  { label: 'Consultation Queue', link: 'https://www.raidguild.org/hire/1' },
   { label: 'Smart Invoice', link: 'https://smartinvoice.xyz' },
 ];
 

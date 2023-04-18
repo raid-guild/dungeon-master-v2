@@ -13,8 +13,7 @@ import { useToast, RGThemeProvider } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { wagmiClient } from '@raidguild/dm-utils';
-import { chains } from '@raidguild/dm-utils';
+import { wagmiClient, chains } from '@raidguild/dm-utils';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
