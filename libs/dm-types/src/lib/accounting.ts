@@ -25,7 +25,7 @@ export type IMolochStatsBalance = {
 
 export type IVaultTransaction = {
   date: Date;
-  elapsedDays: number;
+  elapsedDays: number | undefined;
   txExplorerLink: string;
   type: string;
   tokenSymbol: string;
