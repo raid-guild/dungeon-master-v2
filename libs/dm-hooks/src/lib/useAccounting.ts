@@ -340,7 +340,7 @@ const formatSpoils = async (
   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
 
-export const useAccounting = ({ token }) => {
+export const useAccounting = ({ token } ) => {
   const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
     []
   );
