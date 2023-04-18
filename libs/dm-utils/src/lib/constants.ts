@@ -61,7 +61,7 @@ export const PREFERRED_CONTACT = ['Discord', 'Email', 'Telegram'];
 
 export const PROJECT_TYPE = ['New', 'Existing'];
 
-export const PROJECT_TYPE_DISPLAY = (projectType: string) => {
+export const PROJECT_TYPE_DISPLAY = (projectType: 'NEW' | 'EXISTING') => {
   const projectTypeMap = {
     NEW: 'New',
     EXISTING: 'Existing',
@@ -74,7 +74,9 @@ export const PROJECT_TYPE_DISPLAY = (projectType: string) => {
 
 export const AVAILABLE_PROJECT_SPECS = ['Yes', 'Partial', 'None'];
 
-export const AVAILABLE_PROJECT_SPECS_DISPLAY = (spec: string) => {
+export const AVAILABLE_PROJECT_SPECS_DISPLAY = (
+  spec: 'YES' | 'PARTIAL' | 'NONE'
+) => {
   const specsMap = {
     YES: 'Yes',
     PARTIAL: 'Partial',
@@ -121,7 +123,11 @@ export const DELIVERY_PRIORITIES = [
   'Polished & Inexpensive',
 ];
 
-export const DELIVERY_PRIORITIES_DISPLAY = (priority: string) => {
+type priorityString =
+  | 'FAST_AND_POLISHED'
+  | 'FAST_AND_INEXPENSIVE'
+  | 'POLISHED_AND_INEXPENSIVE';
+export const DELIVERY_PRIORITIES_DISPLAY = (priority: priorityString) => {
   const deliveryPrioritiesMap = {
     FAST_AND_POLISHED: 'Fast & Polished',
     FAST_AND_INEXPENSIVE: 'Fast & Inexpensive',
@@ -176,7 +182,7 @@ export const SKILLS_DISPLAY_OPTIONS = [
 ];
 
 export const SKILLS_DISPLAY = (skill: string) => {
-  const skillsMap = {
+  const skillsMap: { [key: string]: string } = {
     FRONTEND: 'Frontend Dev',
     BACKEND: 'Backend Dev',
     SOLIDITY: 'Solidity',

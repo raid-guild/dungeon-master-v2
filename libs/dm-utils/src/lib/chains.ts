@@ -15,8 +15,8 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 export const { chains, provider } = configureChains(
   [mainnet, gnosis, polygon, arbitrum, optimism, goerli, sepolia],
   [
-    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY }),
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),
     jsonRpcProvider({
       rpc: (localChain: Chain) => ({
         http: localChain.rpcUrls.default.http[0],
