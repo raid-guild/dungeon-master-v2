@@ -9,20 +9,20 @@ export const membersExceptRaidParty = (
 ): IMember[] | null => {
   if (!members) return null;
   let filteredMembers = members;
-  let raidPartyIds = [];
+  let raidPartyIds: string[] = [];
 
   if (raidParty) {
     raidPartyIds = _.map(raidParty, (m: any) => _.get(m, 'id'));
   }
   if (cleric) {
-    raidPartyIds = _.concat(raidPartyIds, _.get(cleric, 'id'));
+    raidPartyIds = _.concat(raidPartyIds, _.get(cleric, 'id')) as string[];
   }
   filteredMembers = _.filter(
     members,
     (m: IMember) => !_.includes(raidPartyIds, _.get(m, 'id'))
-  );
+  ) as IMember[];
 
-  return _.orderBy(filteredMembers, 'name');
+  return _.orderBy(filteredMembers, 'name') as IMember[];
 };
 
 export const rolesExceptRequiredRoles = (

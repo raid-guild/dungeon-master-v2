@@ -4362,6 +4362,13 @@
   "resolved" "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   "version" "0.0.29"
 
+"@types/jsonwebtoken@^9.0.1":
+  "integrity" "sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw=="
+  "resolved" "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.1.tgz"
+  "version" "9.0.1"
+  dependencies:
+    "@types/node" "*"
+
 "@types/lodash.mergewith@4.6.6":
   "integrity" "sha512-RY/8IaVENjG19rxTZu9Nukqh0W2UrYgmBj5sdns4hWRZaV8PqR7wIKHFKzvOTjo4zVRV7sVI+yFhAJql12Kfqg=="
   "resolved" "https://registry.npmjs.org/@types/lodash.mergewith/-/lodash.mergewith-4.6.6.tgz"
@@ -10625,21 +10632,15 @@
     "jsonparse" "^1.2.0"
     "through" ">=2.2.7 <3"
 
-"jsonwebtoken@^8.5.1":
-  "integrity" "sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w=="
-  "resolved" "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz"
-  "version" "8.5.1"
+"jsonwebtoken@^9.0.0":
+  "integrity" "sha512-tuGfYXxkQGDPnLJ7SibiQgVgeDgfbPq2k2ICcbgqW8WxWLBAxKQM/ZCu/IT8SOSwmaYl4dpTFCW5xZv7YbbWUw=="
+  "resolved" "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-9.0.0.tgz"
+  "version" "9.0.0"
   dependencies:
     "jws" "^3.2.2"
-    "lodash.includes" "^4.3.0"
-    "lodash.isboolean" "^3.0.3"
-    "lodash.isinteger" "^4.0.4"
-    "lodash.isnumber" "^3.0.3"
-    "lodash.isplainobject" "^4.0.6"
-    "lodash.isstring" "^4.0.1"
-    "lodash.once" "^4.0.0"
+    "lodash" "^4.17.21"
     "ms" "^2.1.1"
-    "semver" "^5.6.0"
+    "semver" "^7.3.8"
 
 "jsprim@^2.0.2":
   "integrity" "sha512-gqXddjPqQ6G40VdnI6T6yObEC+pDNvyP95wdQhkWkg7crHH3km5qP1FsOXEkzEQwnz6gz5qGTn1c2Y52wP3OyQ=="
@@ -10872,40 +10873,10 @@
   "resolved" "https://registry.npmjs.org/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
   "version" "4.0.8"
 
-"lodash.includes@^4.3.0":
-  "integrity" "sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w=="
-  "resolved" "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz"
-  "version" "4.3.0"
-
-"lodash.isboolean@^3.0.3":
-  "integrity" "sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg=="
-  "resolved" "https://registry.npmjs.org/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz"
-  "version" "3.0.3"
-
 "lodash.isequal@4.5.0":
   "integrity" "sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ=="
   "resolved" "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
   "version" "4.5.0"
-
-"lodash.isinteger@^4.0.4":
-  "integrity" "sha512-DBwtEWN2caHQ9/imiNeEA5ys1JoRtRfY3d7V9wkqtbycnAmTvRRmbHKDV4a0EYc678/dia0jrte4tjYwVBaZUA=="
-  "resolved" "https://registry.npmjs.org/lodash.isinteger/-/lodash.isinteger-4.0.4.tgz"
-  "version" "4.0.4"
-
-"lodash.isnumber@^3.0.3":
-  "integrity" "sha512-QYqzpfwO3/CWf3XP+Z+tkQsfaLL/EnUlXWVkIk5FUPc4sBdTehEqZONuyRt2P67PXAk+NXmTBcc97zw9t1FQrw=="
-  "resolved" "https://registry.npmjs.org/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz"
-  "version" "3.0.3"
-
-"lodash.isplainobject@^4.0.6":
-  "integrity" "sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA=="
-  "resolved" "https://registry.npmjs.org/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz"
-  "version" "4.0.6"
-
-"lodash.isstring@^4.0.1":
-  "integrity" "sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw=="
-  "resolved" "https://registry.npmjs.org/lodash.isstring/-/lodash.isstring-4.0.1.tgz"
-  "version" "4.0.1"
 
 "lodash.memoize@^4.1.2", "lodash.memoize@4.x":
   "integrity" "sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag=="
@@ -10922,7 +10893,7 @@
   "resolved" "https://registry.npmjs.org/lodash.mergewith/-/lodash.mergewith-4.6.2.tgz"
   "version" "4.6.2"
 
-"lodash.once@^4.0.0", "lodash.once@^4.1.1":
+"lodash.once@^4.1.1":
   "integrity" "sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg=="
   "resolved" "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz"
   "version" "4.1.1"

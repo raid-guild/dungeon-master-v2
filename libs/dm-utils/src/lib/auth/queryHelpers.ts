@@ -13,7 +13,7 @@ const fetchExistingUser = async (address: string): Promise<IUser | null> =>
     .request(MEMBER_ADDRESS_LOOKUP_QUERY, { address: _.toLower(address) })
     .then((res) => {
       if (!_.isEmpty(_.get(res, 'members'))) {
-        return Promise.resolve(_.first(_.get(res, 'members')));
+        return Promise.resolve(_.first(_.get(res, 'members')) as IUser);
       }
       return Promise.resolve(null);
     })
@@ -37,11 +37,13 @@ const fetchExistingUser = async (address: string): Promise<IUser | null> =>
 //       return Promise.reject(error);
 //     });
 
-export const getOrCreateUser = async (address: string): Promise<IUser> => {
+export const getOrCreateUser = async (
+  address: string | undefined
+): Promise<IUser> => {
   if (!address || !isAddress(address)) {
     throw new Error('No address provided');
   }
-  return fetchExistingUser(address).then((existingUser: IUser) => {
+  return fetchExistingUser(address).then((existingUser: IUser | null) => {
     if (existingUser) {
       return Promise.resolve(existingUser);
     }
