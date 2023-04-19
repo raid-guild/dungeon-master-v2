@@ -28,13 +28,21 @@ const orderBy = (memberSortKey: string) => ({
   }),
 });
 
+type memberListType = {
+  token: string;
+  memberRolesFilterKey?: string;
+  memberStatusFilterKey?: string;
+  memberSortKey?: string;
+  limit?: number;
+};
+
 const useMemberList = ({
   token,
   memberRolesFilterKey = 'ALL',
   memberStatusFilterKey = 'ALL',
   memberSortKey = 'name',
   limit = 16,
-}) => {
+}: memberListType) => {
   const memberQueryResult = async (pageParam: number) => {
     if (!token) return null;
     // TODO handle filters
@@ -80,7 +88,13 @@ const useMemberList = ({
 
 export default useMemberList;
 
-export const useSlimMemberList = ({ token, button }) => {
+export const useSlimMemberList = ({
+  token,
+  button,
+}: {
+  token: string;
+  button: string;
+}) => {
   const memberSlimListQueryResult = async () => {
     if (!token) return null;
 
@@ -107,11 +121,17 @@ export const useSlimMemberList = ({ token, button }) => {
   };
 };
 
+type MembersCountType = {
+  token: string;
+  memberRolesFilterKey?: string;
+  memberStatusFilterKey?: string;
+};
+
 export const useMembersCount = ({
   token,
   memberRolesFilterKey = 'ALL',
   memberStatusFilterKey = 'ALL',
-}) => {
+}: MembersCountType) => {
   const membersCountQuery = async () => {
     const result = await client({ token }).request(MEMBERS_COUNT_QUERY, {
       where: where(memberRolesFilterKey, memberStatusFilterKey),

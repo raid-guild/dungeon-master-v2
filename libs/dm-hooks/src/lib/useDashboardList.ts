@@ -5,7 +5,7 @@ import { camelize, IRaid } from '@raidguild/dm-utils';
 
 const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 
-const useDashboardList = ({ token, address }) => {
+const useDashboardList = ({ token, address }: { token: string, address: string }) => {
   const dashboardQueryResult = async () => {
     const result = await client({ token }).request(DASHBOARD_QUERY, {
       address: _.toLower(address),

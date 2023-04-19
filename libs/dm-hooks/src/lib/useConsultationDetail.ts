@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { client, CONSULTATION_DETAIL_QUERY } from '@raidguild/dm-graphql';
 import { camelize, IConsultation } from '@raidguild/dm-utils';
 
-const useConsultationDetail = ({ token, consultationId }) => {
+const useConsultationDetail = ({ token, consultationId }: { token: string, consultationId: string}) => {
   const consultationQueryResult = async () => {
     if (!consultationId) return null;
     // TODO handle filters
