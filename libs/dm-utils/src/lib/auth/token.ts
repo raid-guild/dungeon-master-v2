@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import jwt from 'jsonwebtoken';
-import { JWT, JWTDecodeParams } from 'next-auth/jwt';
+import { JWT } from 'next-auth/jwt';
 import { Session, User } from 'next-auth';
 import { CreateTokenParams, HasuraAuthToken } from '@raidguild/dm-types';
 import { getOrCreateUser } from './queryHelpers';
@@ -54,12 +54,12 @@ export const encodeAuth = async ({
   return encodeToken(createToken({ user, token, maxAge }));
 };
 
-export const decodeToken = (token: string | undefined) =>
+export const decodeToken = (token: string) =>
   jwt.verify(token as string, NEXTAUTH_SECRET as string, {
     algorithms: [CONFIG.encodingAlgorithm as any],
   });
 
-export const decodeAuth = async ({ token }: JWTDecodeParams) =>
+export const decodeAuth = async ({ token }: { token: string }) =>
   decodeToken(token);
 
 export const extendSessionWithUserAndToken = ({

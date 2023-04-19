@@ -15,8 +15,13 @@ import {
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import { useDefaultTitle, useRaidList, useRaidsCount } from '@raidguild/dm-hooks';
+import {
+  useDefaultTitle,
+  useRaidList,
+  useRaidsCount,
+} from '@raidguild/dm-hooks';
 import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
+import { raidSortKeys } from '@raidguild/dm-types';
 import RaidCard from '../components/RaidCard';
 import SiteLayout from '../components/SiteLayout';
 
@@ -49,7 +54,7 @@ const raidSortOptions = [
 
 const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
-  const [raidSort, setRaidSort] = useState<string>('oldestComment');
+  const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
   const [sortChanged, setSortChanged] = useState(false);
   const title = useDefaultTitle();
@@ -64,7 +69,7 @@ const RaidList = () => {
     setRaidRolesFilter(role);
   };
 
-  const handleRaidSortChange = async (sortOption: string) => {
+  const handleRaidSortChange = async (sortOption: raidSortKeys) => {
     setRaidSort(sortOption);
     setSortChanged(true);
     if (sortOption === 'oldestComment') {
@@ -158,7 +163,7 @@ const RaidList = () => {
           value={raidSort}
           defaultValue='Name'
           onChange={(e) => {
-            handleRaidSortChange(e.target.value);
+            handleRaidSortChange(e.target.value as raidSortKeys);
             if (e.target.value === 'oldestComment') {
               handleRaidStatusFilterChange('ACTIVE');
             }

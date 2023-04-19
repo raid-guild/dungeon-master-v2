@@ -1,6 +1,6 @@
 import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ISpoils } from '@dungeon-master/dm-types';
+import { ISpoils } from '@raidguild/dm-types';
 import {
   minMaxDateFilter,
   minMaxNumberFilter,

@@ -1,6 +1,6 @@
 import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IVaultTransaction } from '@dungeon-master/dm-types';
+import { IVaultTransaction } from '@raidguild/dm-types';
 import {
   formatNumber,
   minMaxDateFilter,

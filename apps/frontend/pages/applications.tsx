@@ -21,12 +21,12 @@ import {
   useApplicationList,
   useDefaultTitle,
 } from '@raidguild/dm-hooks';
-import MemberCard from '../components/MemberCard';
 import {
   IApplication,
   APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
+import MemberCard from '../components/MemberCard';
 import SiteLayout from '../components/SiteLayout';
 
 const applicationSkillTypeOptions = [

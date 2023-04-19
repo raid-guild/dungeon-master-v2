@@ -96,7 +96,9 @@ const ConsultationList = () => {
     setConsultationSubmissionFilter(filterOption);
   };
 
-  const handleConsultationSortChange = async (sortOption: string) => {
+  const handleConsultationSortChange = async (
+    sortOption: consultationSortKeys
+  ) => {
     setConsultationSort(sortOption);
     setSortChanged(true);
   };
@@ -209,7 +211,9 @@ const ConsultationList = () => {
           value={consultationSort}
           defaultValue={consultationSort['Name']}
           onChange={(e) => {
-            handleConsultationSortChange(e.target.value);
+            handleConsultationSortChange(
+              e.target.value as consultationSortKeys
+            );
           }}
         >
           {consultationSortOptions.map((sortOption) => (
