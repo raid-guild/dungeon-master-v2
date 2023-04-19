@@ -85,12 +85,19 @@ const orderBy = (raidSortKey: raidSortKeys) => ({
   }),
 });
 
+type RaidListType = {
+  token: string;
+  raidStatusFilterKey: string;
+  raidRolesFilterKey: string;
+  raidSortKey: raidSortKeys;
+};
+
 const useRaidList = ({
   token,
   raidStatusFilterKey,
   raidRolesFilterKey,
   raidSortKey,
-}) => {
+}: RaidListType) => {
   const limit = 15;
 
   const raidQueryResult = async (pageParam: number) => {
@@ -140,12 +147,19 @@ const useRaidList = ({
 
 export default useRaidList;
 
+type RaidsCountType = {
+  token: string;
+  raidStatusFilterKey: string;
+  raidRolesFilterKey: string;
+  raidSortKey: raidSortKeys;
+};
+
 export const useRaidsCount = ({
   token,
   raidStatusFilterKey,
   raidRolesFilterKey,
   raidSortKey,
-}) => {
+}: RaidsCountType) => {
   const raidsCountQuery = async () => {
     const result = await client({ token }).request(RAIDS_COUNT_QUERY, {
       where: where(raidStatusFilterKey, raidRolesFilterKey, raidSortKey),

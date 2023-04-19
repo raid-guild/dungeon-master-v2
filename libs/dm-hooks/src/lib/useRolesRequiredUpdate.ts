@@ -12,7 +12,7 @@ import {
   camelize,
 } from '@raidguild/dm-utils';
 
-export const useAddRolesRequired = ({ token }) => {
+export const useAddRolesRequired = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -57,7 +57,7 @@ export const useAddRolesRequired = ({ token }) => {
   return { mutateAsync, isLoading, isError, isSuccess };
 };
 
-export const useRemoveRolesRequired = ({ token }) => {
+export const useRemoveRolesRequired = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 

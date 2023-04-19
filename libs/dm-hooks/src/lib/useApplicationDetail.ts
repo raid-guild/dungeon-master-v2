@@ -3,7 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { client, APPLICATION_DETAIL_QUERY } from '@raidguild/dm-graphql';
 import { camelize, IApplication } from '@raidguild/dm-utils';
 
-const useApplicationDetail = ({ token, applicationId }) => {
+const useApplicationDetail = ({
+  token,
+  applicationId,
+}: {
+  token?: string;
+  applicationId?: string;
+}) => {
   const applicationQueryResult = async () => {
     if (!applicationId || !token) return null;
     // TODO handle filters

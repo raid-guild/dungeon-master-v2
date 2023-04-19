@@ -5,7 +5,7 @@ import { useToast } from '@raidguild/design-system';
 import { client, CONSULTATION_UPDATE_MUTATION } from '@raidguild/dm-graphql';
 import { IConsultationUpdate, camelize } from '@raidguild/dm-utils';
 
-const useConsultationUpdate = ({ token }) => {
+const useConsultationUpdate = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
