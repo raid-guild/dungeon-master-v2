@@ -2,6 +2,15 @@ import { IMember } from './members';
 import { IConsultation } from './consultations';
 import { IStatusUpdate } from './statusUpdates';
 
+export type raidSortKeys =
+  | 'oldestComment'
+  | 'recentComment'
+  | 'name'
+  | 'createDate'
+  | 'startDate'
+  | 'endDate'
+  | 'recentlyUpdated';
+
 export interface IRaid {
   id: string;
   name: string;

@@ -8,7 +8,7 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { format } from 'date-fns';
-import { IRaid, IConsultation } from '@dungeon-master/dm-types';
+import { IRaid, IConsultation } from '@raidguild/dm-types';
 import ChakraNextLink from './ChakraNextLink';
 import MemberAvatar from './MemberAvatar';
 import RaidStatusBadge from './RaidStatusBadge';

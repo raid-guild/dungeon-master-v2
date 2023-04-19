@@ -6,6 +6,7 @@ import {
   RAIDS_LIST_QUERY,
   RAIDS_COUNT_QUERY,
 } from '@raidguild/dm-graphql';
+import { raidSortKeys } from '@raidguild/dm-types';
 import { camelize, IRaid } from '@raidguild/dm-utils';
 
 const where = (
@@ -43,15 +44,6 @@ const where = (
   }),
   ...(raidRolesFilterKey === 'ALL' && {}),
 });
-
-type raidSortKeys =
-  | 'oldestComment'
-  | 'recentComment'
-  | 'name'
-  | 'createDate'
-  | 'startDate'
-  | 'endDate'
-  | 'recentlyUpdated';
 
 const orderBy = (raidSortKey: raidSortKeys) => ({
   ...(raidSortKey === 'oldestComment' && {

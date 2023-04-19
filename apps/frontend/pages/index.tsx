@@ -14,7 +14,7 @@ import {
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { useAccount } from 'wagmi';
-import { IConsultation, IRaid } from '@dungeon-master/dm-types';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import { useDashboardList } from '@raidguild/dm-hooks';
 import SiteLayout from '../components/SiteLayout';
 import MiniRaidCard from '../components/MiniRaidCard';

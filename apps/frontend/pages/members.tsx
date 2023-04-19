@@ -15,12 +15,15 @@ import {
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import { IMember } from '@dungeon-master/dm-types';
-import { useMembersCount, useMemberList, useDefaultTitle } from '@raidguild/dm-hooks';
+import { IMember } from '@raidguild/dm-types';
+import {
+  useMembersCount,
+  useMemberList,
+  useDefaultTitle,
+} from '@raidguild/dm-hooks';
+import { GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
 import MemberCard from '../components/MemberCard';
 import SiteLayout from '../components/SiteLayout';
-
-import { GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
 
 const memberStatusOptions = [
   { label: 'Show All', value: 'ALL' },
