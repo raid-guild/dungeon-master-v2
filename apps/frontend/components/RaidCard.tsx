@@ -16,21 +16,22 @@ import {
   Avatar,
   useMediaQuery,
 } from '@raidguild/design-system';
-import { AiOutlineDollarCircle } from 'react-icons/ai';
-
-import MemberAvatar from './MemberAvatar';
-import Link from './ChakraNextLink';
-import InfoStack from './InfoStack';
 import {
   PROJECT_TYPE_DISPLAY,
   RAID_CATEGORY_DISPLAY,
   BUDGET_DISPLAY,
   GUILD_CLASS_ICON,
+  displayDate,
+  IConsultation,
+  IRaid,
 } from '@raidguild/dm-utils';
-import { displayDate } from '@raidguild/dm-utils';
+import { AiOutlineDollarCircle } from 'react-icons/ai';
+
+import MemberAvatar from './MemberAvatar';
+import Link from './ChakraNextLink';
+import InfoStack from './InfoStack';
 import MemberAvatarStack from './MemberAvatarStack';
 import RaidStatusBadge from './RaidStatusBadge';
-import { IConsultation, IRaid } from '@raidguild/dm-utils';
 
 interface RaidProps {
   raid?: IRaid;

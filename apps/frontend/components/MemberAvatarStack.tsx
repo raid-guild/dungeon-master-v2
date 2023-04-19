@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Stack, HStack } from '@raidguild/design-system';
-import MemberAvatar from './MemberAvatar';
 import { IMember } from '@raidguild/dm-utils';
+import MemberAvatar from './MemberAvatar';
 
 type MemberAvatarStackProps = {
   members: IMember[];

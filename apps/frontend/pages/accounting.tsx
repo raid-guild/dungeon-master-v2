@@ -17,7 +17,7 @@ import {
   IMember,
   ITokenBalanceLineItem,
   IVaultTransaction,
-} from '@dungeon-master/dm-types';
+} from '@raidguild/dm-types';
 import {
   REGEX_ETH_ADDRESS,
   exportToCsv,

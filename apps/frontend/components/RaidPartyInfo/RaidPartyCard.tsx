@@ -15,10 +15,6 @@ import {
   Button,
   Box,
 } from '@raidguild/design-system';
-import { useSession } from 'next-auth/react';
-import { FiX, FiCheck } from 'react-icons/fi';
-import { HiSwitchVertical } from 'react-icons/hi';
-import ChakraNextLink from '../ChakraNextLink';
 import {
   GUILD_CLASS_ICON,
   GUILD_CLASS_DISPLAY,
@@ -32,6 +28,10 @@ import {
   useRaidPartyRemove,
   useRemoveRolesRequired,
 } from '@raidguild/dm-hooks';
+import { useSession } from 'next-auth/react';
+import { FiX, FiCheck } from 'react-icons/fi';
+import { HiSwitchVertical } from 'react-icons/hi';
+import ChakraNextLink from '../ChakraNextLink';
 import MemberAvatar from '../MemberAvatar';
 
 type RaidPartyCardProps = {

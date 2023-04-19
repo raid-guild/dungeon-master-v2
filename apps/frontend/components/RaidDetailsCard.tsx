@@ -22,13 +22,11 @@ import {
   IRaid,
   BUDGET_DISPLAY,
   truncateAddress,
-} from '@raidguild/dm-utils';
-import InfoStack from './InfoStack';
-import {
   DELIVERY_PRIORITIES_DISPLAY,
   AVAILABLE_PROJECT_SPECS_DISPLAY,
   PROJECT_TYPE_DISPLAY,
 } from '@raidguild/dm-utils';
+import InfoStack from './InfoStack';
 
 interface RaidProps {
   raid?: IRaid;
