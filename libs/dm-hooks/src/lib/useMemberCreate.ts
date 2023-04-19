@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { client, MEMBER_CREATE_MUTATION } from '@raidguild/dm-graphql';
 import { IMemberCreate, camelize } from '@raidguild/dm-utils';
 
-const useMemberCreate = ({ token }) => {
+const useMemberCreate = ({ token }: { token: string }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const toast = useToast();

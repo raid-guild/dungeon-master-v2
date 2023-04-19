@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { client, RAID_DETAIL_QUERY } from '@raidguild/dm-graphql';
 import { camelize, IRaid } from '@raidguild/dm-utils';
 
-const useRaidDetail = ({ raidId, token }) => {
+const useRaidDetail = ({ raidId, token }: { raidId: string, token: string }) => {
   const raidQueryResult = async () => {
     if (!raidId || !token) return null;
     // TODO handle filters

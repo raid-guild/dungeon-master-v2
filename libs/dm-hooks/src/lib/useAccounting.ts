@@ -340,7 +340,7 @@ const formatSpoils = async (
   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
 
-export const useAccounting = ({ token } ) => {
+export const useAccounting = ({ token }: { token: string }) => {
   const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
     []
   );
@@ -351,7 +351,6 @@ export const useAccounting = ({ token } ) => {
   const limit = 1000;
 
   const accountingQueryResult = async (pageParam: number) => {
-    if (!token) return null;
     // TODO handle filters
     const response = await client({ token }).request(TRANSACTIONS_QUERY, {
       first: limit,
@@ -408,7 +407,8 @@ export const useAccounting = ({ token } ) => {
           data.pages[0].raids
         );
         const { historicalPrices, currentPrices } = data.pages[0];
-        const mappedPrices = {};
+        // using any because not sure how to type this
+        const mappedPrices: { [key: string]: any } = {};
         historicalPrices.forEach((price) => {
           if (!mappedPrices[price.symbol]) {
             mappedPrices[price.symbol] = {};

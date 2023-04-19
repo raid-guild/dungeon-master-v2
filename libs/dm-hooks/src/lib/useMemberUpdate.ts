@@ -4,7 +4,16 @@ import { useToast } from '@raidguild/design-system';
 import { client, MEMBER_UPDATE_MUTATION } from '@raidguild/dm-graphql';
 import { IMemberUpdate } from '@raidguild/dm-utils';
 
-const useMemberUpdate = ({ token, memberId, memberAddress }) => {
+type MemberUpdateType = {
+  token: string;
+  memberId: string;
+  memberAddress: string;
+};
+const useMemberUpdate = ({
+  token,
+  memberId,
+  memberAddress,
+}: MemberUpdateType) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 

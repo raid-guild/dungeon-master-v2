@@ -42,13 +42,21 @@ const orderBy = (consultationSortKey: consultationSortKeys) => ({
   }),
 });
 
+type ConsultationListType = {
+  token: string;
+  consultationTypeFilterKey?: string;
+  consultationSubmissionFilterKey?: string;
+  consultationBudgetFilterKey?: string;
+  consultationSortKey: consultationSortKeys;
+};
+
 const useConsultationList = ({
   token,
   consultationTypeFilterKey = 'ALL',
   consultationSubmissionFilterKey = 'ALL',
   consultationBudgetFilterKey = 'ALL',
   consultationSortKey,
-}) => {
+}: ConsultationListType) => {
   const limit = 15;
   const consultationQueryResult = async (pageParam: number) => {
     if (!token) return null;
@@ -104,12 +112,19 @@ const useConsultationList = ({
 
 export default useConsultationList;
 
+type consultationCountPrams = {
+  token: string;
+  consultationTypeFilterKey: string;
+  consultationSubmissionFilterKey: string;
+  consultationBudgetFilterKey: string;
+};
+
 export const useConsultationsCount = ({
   token,
   consultationTypeFilterKey,
   consultationSubmissionFilterKey,
   consultationBudgetFilterKey,
-}) => {
+}: consultationCountPrams) => {
   const consultationsCountQuery = async () => {
     const result = await client({ token }).request(CONSULTATIONS_COUNT_QUERY, {
       where: where(

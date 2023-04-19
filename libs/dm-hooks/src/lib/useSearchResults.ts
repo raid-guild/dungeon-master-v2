@@ -10,19 +10,23 @@ import {
   IRaid,
 } from '@raidguild/dm-types';
 
-const keyIcons = {
+const keyIcons: { [key: string]: string } = {
   applications: 'UserPlusIcon',
   consultations: 'QueueListIcon',
   members: 'UserGroupIcon',
   raids: 'StarIcon',
 };
 
+type searchResultType = {
+  id: string;
+  children: string;
+  icon: string;
+  href: string;
+} | null;
+
 type searchQueryReturn = Promise<{
-  applications: IApplication[];
-  consultations: IConsultation[];
-  members: IMember[];
-  raids: IRaid[];
-}> | null;
+  [key: string]: searchResultType[];
+} | null>;
 
 const processForCommandPalette = (key: string, record: any) => ({
   id: `${key}-${_.get(record, 'id')}`,
@@ -31,7 +35,13 @@ const processForCommandPalette = (key: string, record: any) => ({
   href: `/${key}/${_.get(record, key === 'members' ? 'eth_address' : 'id')}`,
 });
 
-const useSearchResults = ({ token, search }) => {
+const useSearchResults = ({
+  token,
+  search,
+}: {
+  token: string;
+  search: string;
+}) => {
   const searchQueryResult = async (): searchQueryReturn => {
     if (!search) return null;
 

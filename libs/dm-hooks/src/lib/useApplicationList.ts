@@ -35,12 +35,19 @@ const orderBy = (applicationSortKey: string) => ({
   }),
 });
 
+type applicationListType = {
+  token: string;
+  applicationSkillTypeFilterKey?: string;
+  applicationSkillFilterKey?: string;
+  applicationSortKey: string;
+};
+
 const useApplicationList = ({
   token,
   applicationSkillTypeFilterKey = 'ALL',
   applicationSkillFilterKey = 'ALL',
   applicationSortKey = 'name',
-}) => {
+}: applicationListType) => {
   const limit = 15;
 
   const applicationQueryResult = async (pageParam: number) => {
@@ -94,11 +101,17 @@ const useApplicationList = ({
 
 export default useApplicationList;
 
+type applicationCountType = {
+  token: string;
+  applicationSkillTypeFilterKey?: string;
+  applicationSkillFilterKey?: string;
+};
+
 export const useApplicationsCount = ({
   token,
   applicationSkillTypeFilterKey = 'ALL',
   applicationSkillFilterKey = 'ALL',
-}) => {
+}: applicationCountType) => {
   const applicationsCountQuery = async () => {
     const result = await client({ token }).request(
       APPLICATIONS_LIST_COUNT_QUERY,

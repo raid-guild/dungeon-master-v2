@@ -19,7 +19,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import {
   useConsultationList,
   useConsultationsCount,
-  useDefaultTitle
+  useDefaultTitle,
 } from '@raidguild/dm-hooks';
 import {
   IConsultation,
@@ -57,8 +57,10 @@ const ConsultationList = () => {
     useState<string>('ALL');
   const [consultationSubmissionFilter, setConsultationSubmissionFilter] =
     useState<string>('ALL');
-  const [consultationSort, setConsultationSort] = useState<string>('name');
-  const [sortChanged, setSortChanged] = useState(false);
+  type consultationSortKeys = 'name' | 'recentlyAdded';
+  const [consultationSort, setConsultationSort] =
+    useState<consultationSortKeys>('name');
+  const [, setSortChanged] = useState(false);
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');

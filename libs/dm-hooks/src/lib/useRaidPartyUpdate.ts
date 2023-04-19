@@ -9,7 +9,7 @@ import {
 } from '@raidguild/dm-graphql';
 import { IRaidPartyInsert, camelize } from '@raidguild/dm-utils';
 
-export const useRaidPartyAdd = ({ token }) => {
+export const useRaidPartyAdd = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -55,7 +55,7 @@ export const useRaidPartyAdd = ({ token }) => {
   return { mutateAsync, isLoading, isError, isSuccess };
 };
 
-export const useRaidPartyRemove = ({ token }) => {
+export const useRaidPartyRemove = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
