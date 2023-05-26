@@ -21,100 +21,50 @@ insert_permissions:
     permission:
       check: {}
       columns:
-        - deleted
-        - approach
-        - challenge
-        - result
         - case_study
         - category
         - description
-        - image_url
         - name
         - repo_link
         - result_link
-        - slug
-        - created_at
-        - updated_at
         - id
         - raid_id
 select_permissions:
   - role: cohort
     permission:
       columns:
-        - deleted
-        - approach
-        - challenge
-        - result
         - case_study
         - category
         - description
-        - image_url
         - name
         - repo_link
         - result_link
-        - slug
-        - created_at
-        - updated_at
         - id
         - raid_id
       filter: {}
   - role: member
     permission:
       columns:
-        - approach
         - case_study
         - category
-        - challenge
-        - created_at
-        - deleted
         - description
-        - id
-        - image_url
         - name
-        - raid_id
         - repo_link
-        - result
         - result_link
-        - slug
-        - updated_at
+        - id
+        - raid_id
       filter: {}
       allow_aggregations: true
-  - role: public
-    permission:
-      columns:
-        - approach
-        - case_study
-        - category
-        - challenge
-        - created_at
-        - description
-        - image_url
-        - name
-        - repo_link
-        - result
-        - result_link
-        - slug
-      filter:
-        deleted:
-          _eq: false
 update_permissions:
   - role: cohort
     permission:
       columns:
-        - deleted
-        - approach
-        - challenge
-        - result
         - case_study
         - category
         - description
-        - image_url
         - name
         - repo_link
         - result_link
-        - slug
-        - created_at
-        - updated_at
         - id
         - raid_id
       filter: {}
@@ -122,20 +72,12 @@ update_permissions:
   - role: member
     permission:
       columns:
-        - deleted
-        - approach
-        - challenge
-        - result
         - case_study
         - category
         - description
-        - image_url
         - name
         - repo_link
         - result_link
-        - slug
-        - created_at
-        - updated_at
         - id
         - raid_id
       filter: {}

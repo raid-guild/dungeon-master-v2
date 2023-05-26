@@ -46,18 +46,6 @@ select_permissions:
         - id
       filter: {}
       allow_aggregations: true
-  - role: public
-    permission:
-      columns:
-        - author
-        - content
-        - created_at
-        - description
-        - image
-        - slug
-        - tags
-        - title
-      filter: {}
 update_permissions:
   - role: member
     permission:
