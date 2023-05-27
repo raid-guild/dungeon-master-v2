@@ -62,79 +62,83 @@ insert_permissions:
     permission:
       check: {}
       columns:
-        - escrow_index
         - airtable_id
         - category_key
+        - cleric_id
+        - consultation_id
+        - created_at
+        - end_date
+        - escrow_index
+        - id
         - invoice_address
         - locker_hash
         - name
-        - status_key
-        - v1_id
-        - created_at
-        - end_date
+        - raid_channel_id
         - start_date
+        - status_key
         - updated_at
-        - cleric_id
-        - consultation_id
-        - id
+        - v1_id
 select_permissions:
   - role: cohort
     permission:
       columns:
-        - escrow_index
         - airtable_id
         - category_key
+        - cleric_id
+        - consultation_id
+        - created_at
+        - end_date
+        - escrow_index
+        - id
         - invoice_address
         - locker_hash
         - name
-        - status_key
-        - v1_id
-        - created_at
-        - end_date
+        - raid_channel_id
         - start_date
+        - status_key
         - updated_at
-        - cleric_id
-        - consultation_id
-        - id
+        - v1_id
       filter: {}
   - role: member
     permission:
       columns:
-        - escrow_index
         - airtable_id
         - category_key
+        - cleric_id
+        - consultation_id
+        - created_at
+        - end_date
+        - escrow_index
+        - id
         - invoice_address
         - locker_hash
         - name
-        - status_key
-        - v1_id
-        - created_at
-        - end_date
+        - raid_channel_id
         - start_date
+        - status_key
         - updated_at
-        - cleric_id
-        - consultation_id
-        - id
+        - v1_id
       filter: {}
       allow_aggregations: true
 update_permissions:
   - role: member
     permission:
       columns:
-        - escrow_index
         - airtable_id
         - category_key
+        - cleric_id
+        - consultation_id
+        - created_at
+        - end_date
+        - escrow_index
+        - id
         - invoice_address
         - locker_hash
         - name
-        - status_key
-        - v1_id
-        - created_at
-        - end_date
+        - raid_channel_id
         - start_date
+        - status_key
         - updated_at
-        - cleric_id
-        - consultation_id
-        - id
+        - v1_id
       filter: {}
       check: null
