@@ -8,7 +8,6 @@
     "dm-utils": "libs/dm-utils",
     "frontend": "apps/frontend",
     "frontend-e2e": "apps/frontend-e2e",
-    "hasura": "services/hasura",
-    "is-even": "libs/is-even"
+    "hasura": "services/hasura"
   }
 }

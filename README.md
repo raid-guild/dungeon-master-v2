@@ -20,3 +20,17 @@ NEXT_PUBLIC_ALCHEMY_KEY
 `yarn`
 
 `yarn start`
+
+
+
+## using 'nx' workspaces
+
+
+### common commands
+
+build all packages
+
+```
+yarn nx run-many --target=build --all
+```
+
