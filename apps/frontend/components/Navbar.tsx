@@ -25,6 +25,7 @@ const links = [
   { href: '/members', label: 'Members' },
   { href: '/applications', label: 'Applications' },
   { href: '/accounting', label: 'Accounting' },
+  { href: '/escrow', label: 'Smart Escrow' },
 ];
 
 interface NavItem {
