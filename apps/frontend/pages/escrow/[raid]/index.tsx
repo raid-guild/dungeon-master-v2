@@ -5,10 +5,11 @@ import { ethers, utils } from 'ethers';
 // import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { useRaidDetail } from '@raidguild/dm-hooks';
+import { useRaidDetail, useSmartInvoiceAddress } from '@raidguild/dm-hooks';
+import { useAccount, useNetwork } from 'wagmi';
 
 import { GetServerSidePropsContext } from 'next';
-import axios from 'axios';
+// import axios from 'axios';
 import Head from 'next/head';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
@@ -18,19 +19,19 @@ import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
 // import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
 // import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
 
-import { getInvoice } from '../../../graphql/getInvoice';
-import {
-  getSmartInvoiceAddress,
-  getRaidPartyAddress,
-} from '../../../utils/invoice';
-import { rpcUrls } from '../../../utils/constants';
-import { Page404 } from '../../../shared/Page404';
-import { DM_ENDPOINT, HASURA_SECRET } from '../../../config';
-import {
-  ALL_RAIDS_QUERY,
-  RAID_BY_ID_QUERY,
-  RAID_BY_V1_ID_QUERY,
-} from '../../graphql/queries';
+// import { getInvoice } from '../../../graphql/getInvoice';
+// import {
+//   getSmartInvoiceAddress,
+//   getRaidPartyAddress,
+// } from '../../../utils/invoice';
+// import { rpcUrls } from '../../../utils/constants';
+// import { Page404 } from '../../../shared/Page404';
+// import { DM_ENDPOINT, HASURA_SECRET } from '../../../config';
+// import {
+//   ALL_RAIDS_QUERY,
+//   RAID_BY_ID_QUERY,
+//   RAID_BY_V1_ID_QUERY,
+// } from '../../graphql/queries';
 
 // export const getStaticPaths = async () => {
 //   const graphqlQuery = {
@@ -65,19 +66,19 @@ import {
 //   };
 // };
 
-const fetchRaid = async (query, raidId) => {
-  const graphqlQuery = {
-    operationName: 'validateRaidId',
-    query: query,
-    variables: { raidId: raidId },
-  };
+// const fetchRaid = async (query, raidId) => {
+//   const graphqlQuery = {
+//     operationName: 'validateRaidId',
+//     query: query,
+//     variables: { raidId: raidId },
+//   };
 
-  const { data } = await axios.post(`${DM_ENDPOINT}`, graphqlQuery, {
-    headers: { 'x-hasura-admin-secret': HASURA_SECRET },
-  });
+//   const { data } = await axios.post(`${DM_ENDPOINT}`, graphqlQuery, {
+//     headers: { 'x-hasura-admin-secret': HASURA_SECRET },
+//   });
 
-  return data.data?.raids;
-};
+//   return data.data?.raids;
+// };
 
 // export const getServerSideProps = async (context) => {
 //   const { raidId } = context.params;
@@ -141,17 +142,36 @@ const Escrow = ({ raidId }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: raid } = useRaidDetail({ raidId, token });
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+  console.log('raidId, token', raidId, token);
 
   const [invoice, setInvoice] = useState();
   const [raidParty, setRaidParty] = useState('');
   const [invoiceFetchError, setInvoiceFetchError] = useState(false);
+  const { data: sIAddress } = useSmartInvoiceAddress({
+    invoiceAddress: raid?.invoiceAddress,
+  });
 
   const [loading, setLoading] = useState(false);
   const [statusText, setStatusText] = useState(
     'Connect your wallet to fetch invoice information.'
   );
+  useEffect(() => {
+    console.log('sIAddress: ', sIAddress);
+  }, [sIAddress]);
+  console.log('sIAddress render: ', sIAddress);
+  console.log('raid?.invoiceAddress ', raid?.invoiceAddress);
 
-  const [validRaid, setValidRaid] = useState(false);
+  // todo: handle escrowValue definition
+  const escrowValue = 10;
+  // get from invoice.terminationTime
+  const terminationTime = new Date();
+
+  const [validRaid, setValidRaid] = useState(true);
+
+  console.log(chain, 'chain');
+  console.log(raid, 'raid');
 
   // useEffect(() => {
   //   if (raid) {
@@ -173,34 +193,32 @@ const Escrow = ({ raidId }) => {
   //   }
   // }, []);
 
-  // const getSmartInvoiceData = async () => {
-  //   try {
-  //     if (
-  //       utils.isAddress(context.invoice_id) &&
-  //       !Number.isNaN(parseInt(context.chainID))
-  //     ) {
-  //       setLoading(true);
-  //       setStatusText('Fetching Smart Invoice from Wrapped Invoice..');
-  //       let smartInvoice = await getSmartInvoiceAddress(
-  //         context.invoice_id,
-  //         context.provider
-  //       );
+  const getSmartInvoiceData = async () => {
+    try {
+      if (
+        utils.isAddress(context.invoice_id) &&
+        !Number.isNaN(parseInt(chain))
+      ) {
+        setLoading(true);
+        setStatusText('Fetching Smart Invoice from Wrapped Invoice..');
+        let smartInvoice = await getSmartInvoiceAddress(
+          // context.invoice_id == raid.invoice_address
+          context.invoice_id,
+          context.provider
+        );
 
-  //       const invoice = await getInvoice(
-  //         parseInt(context.chainID),
-  //         smartInvoice
-  //       );
-  //       setInvoice(invoice);
-  //       setInvoiceFetchError(false);
-  //       setLoading(false);
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     setInvoiceFetchError(true);
-  //     setStatusText('Wrong network. Please switch to the correct network.');
-  //     setLoading(false);
-  //   }
-  // };
+        const invoice = await getInvoice(parseInt(chain), smartInvoice);
+        setInvoice(invoice);
+        setInvoiceFetchError(false);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setInvoiceFetchError(true);
+      setStatusText('Wrong network. Please switch to the correct network.');
+      setLoading(false);
+    }
+  };
 
   // const fetchRaidPartyAddress = async () => {
   //   if (invoice) {
@@ -210,30 +228,35 @@ const Escrow = ({ raidId }) => {
   // };
 
   // useEffect(() => {
-  //   if (Number(context.chainID) == 100) {
+  //   if (chain?.id == 100) {
   //     if (context.invoice_id) {
   //       getSmartInvoiceData();
   //     }
-  //   } else if (context.account !== '') {
+  //   } else if (address !== '') {
   //     setInvoiceFetchError(true);
   //     setStatusText('Wrong network. Please switch to the correct network.');
   //   }
-  // }, [context.invoice_id, context.chainID]);
+  // }, [context.invoice_id, chain]);
 
   // useEffect(() => {
   //   fetchRaidPartyAddress();
   // }, [invoice]);
 
+  console.log('escrowValue && raid', escrowValue && raid, escrowValue, raid);
+  console.log(
+    'invoice && !loading && chain?.id == 100',
+    invoice && !loading && chain?.id == 100
+  );
   return (
     <Flex w='100%' h='100%' justifyContent='center'>
-      {escrowValue && (
+      {escrowValue && raid && (
         <Head>
-          <title>{raid.raid_name}</title>
-          <meta property='og:title' content={raid.raid_name} />
+          <title>{raid.raidName}</title>
+          <meta property='og:title' content={raid.raidName} />
           <meta
             property='og:image'
             content={`https://smartescrow.raidguild.org/api/og?projectName=${
-              raid.raid_name
+              raid.raidName
             }&escrowValue=${Number(utils.formatEther(escrowValue)).toFixed(
               0
             )}&safetyValveDate=${terminationTime}`}
@@ -243,7 +266,7 @@ const Escrow = ({ raidId }) => {
           <meta
             name='twitter:image'
             content={`https://smartescrow.raidguild.org/api/og?projectName=${
-              raid.raid_name
+              raid.raidName
             }&escrowValue=${Number(utils.formatEther(escrowValue)).toFixed(
               0
             )}&safetyValveDate=${terminationTime}`}
@@ -254,7 +277,8 @@ const Escrow = ({ raidId }) => {
 
       {validRaid ? (
         <>
-          {context.account === '' && (
+          <h1>hello world escrow page</h1>
+          {!address && (
             <Flex direction='column' alignItems='center'>
               <Text variant='textOne'>{statusText}</Text>
             </Flex>
@@ -262,7 +286,7 @@ const Escrow = ({ raidId }) => {
 
           {invoiceFetchError && <Text variant='textOne'>{statusText}</Text>}
 
-          {invoice && !loading && Number(context.chainID) == 100 && (
+          {invoice && !loading && chain?.id == 100 && (
             <Flex
               width='100%'
               direction={{ md: 'column', lg: 'row' }}
@@ -278,13 +302,13 @@ const Escrow = ({ raidId }) => {
                 {/* <InvoicePaymentDetails
                   web3={context.web3}
                   invoice={invoice}
-                  chainID={context.chainID}
+                  chainID={chain}
                   provider={context.provider}
                 />
 
                 <InvoiceButtonManager
                   invoice={invoice}
-                  account={context.account}
+                  account={address}
                   provider={context.provider}
                   raidParty={raidParty}
                   wrappedAddress={context.invoice_id}
@@ -294,7 +318,8 @@ const Escrow = ({ raidId }) => {
           )}
         </>
       ) : (
-        <Page404 />
+        // <Page404 />
+        <div>page not found</div>
       )}
     </Flex>
   );

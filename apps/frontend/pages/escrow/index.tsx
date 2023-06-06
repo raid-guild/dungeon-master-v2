@@ -35,17 +35,19 @@ export const Home = () => {
 
   useEffect(() => {
     if (raid) {
-        context.setAppState({
-          invoice_id: raid.invoiceAddress,
-          v1_id: raid.v1Id,
-          raid_id: raid.id,
-          project_name: raid.name,
-          client_name: raid.consultationByConsultation.consultationContacts.contact.name,
-          start_date: new Date(Number(raid.startDate)) || 'Not Specified',
-          end_date: new Date(Number(raid.endDate)) || 'Not Specified',
-          link_to_details: 'Not Specified',
-          brief_description: 'Not Specified',
-        });
+      context.setAppState({
+        invoice_id: raid.invoiceAddress,
+        v1_id: raid.v1Id,
+        raid_id: raid.id,
+        project_name: raid.name,
+        client_name:
+          raid.consultationByConsultation.consultationContacts.contact.name,
+        start_date: new Date(Number(raid.startDate)) || 'Not Specified',
+        end_date: new Date(Number(raid.endDate)) || 'Not Specified',
+        link_to_details: 'Not Specified',
+        brief_description: 'Not Specified',
+      });
+      setInvoiceAddress(raid.invoiceAddress);
     } else {
       // todo: display toast with no raid found message
     }
