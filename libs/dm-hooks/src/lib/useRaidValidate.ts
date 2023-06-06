@@ -29,7 +29,7 @@ const useRaidValidate = ({
       }
     );
     console.log('useRaidValidate result', result);
-    return result?.raids?.length > 0;
+    return result?.raids;
   };
 
   const { status, error, data, isLoading } = useQuery<any, Error>({

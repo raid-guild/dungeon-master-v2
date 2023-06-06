@@ -3,15 +3,20 @@ import { useContext, useEffect, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import { ethers, utils } from 'ethers';
 // import jwt from 'jsonwebtoken';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import { useRaidDetail } from '@raidguild/dm-hooks';
+
+import { GetServerSidePropsContext } from 'next';
 import axios from 'axios';
 import Head from 'next/head';
 
-import { AppContext } from '../../../context/AppContext';
+import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
 
 import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
-import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePaymentDetails';
-import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
-import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
+// import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePaymentDetails';
+// import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
+// import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
 
 import { getInvoice } from '../../../graphql/getInvoice';
 import {
@@ -74,52 +79,68 @@ const fetchRaid = async (query, raidId) => {
   return data.data?.raids;
 };
 
-export const getServerSideProps = async (context) => {
-  const { raidId } = context.params;
+// export const getServerSideProps = async (context) => {
+//   const { raidId } = context.params;
 
-  let raids;
-  if (raidId.includes('-')) {
-    raids = await fetchRaid(RAID_BY_ID_QUERY, raidId);
-  } else {
-    raids = await fetchRaid(RAID_BY_V1_ID_QUERY, raidId);
-  }
+//   let raids;
+//   if (raidId.includes('-')) {
+//     raids = await fetchRaid(RAID_BY_ID_QUERY, raidId);
+//   } else {
+//     raids = await fetchRaid(RAID_BY_V1_ID_QUERY, raidId);
+//   }
 
-  if (!raids || raids.length === 0) {
-    return {
-      props: {
-        raid: null,
-        escrowValue: null,
-        terminationTime: null,
-      },
-      // revalidate: 1
-    };
-  }
+//   if (!raids || raids.length === 0) {
+//     return {
+//       props: {
+//         raid: null,
+//         escrowValue: null,
+//         terminationTime: null,
+//       },
+//       // revalidate: 1
+//     };
+//   }
 
-  let invoice;
-  try {
-    if (raids[0].invoice_address) {
-      let smartInvoice = await getSmartInvoiceAddress(
-        raids[0].invoice_address,
-        new ethers.providers.JsonRpcProvider(rpcUrls[100])
-      );
-      invoice = await getInvoice(100, smartInvoice);
-    }
-  } catch (e) {
-    console.log(e);
-  }
+//   let invoice;
+//   try {
+//     if (raids[0].invoice_address) {
+//       let smartInvoice = await getSmartInvoiceAddress(
+//         raids[0].invoice_address,
+//         new ethers.providers.JsonRpcProvider(rpcUrls[100])
+//       );
+//       invoice = await getInvoice(100, smartInvoice);
+//     }
+//   } catch (e) {
+//     console.log(e);
+//   }
+
+//   return {
+//     props: {
+//       raid: raids ? raids[0] : null,
+//       escrowValue: invoice ? invoice.total : null,
+//       terminationTime: invoice ? invoice.terminationTime : null,
+//     },
+//     // revalidate: 1
+//   };
+// };
+
+// * use SSR to fetch query params for RQ invalidation
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { raid } = context.params;
 
   return {
     props: {
-      raid: raids ? raids[0] : null,
-      escrowValue: invoice ? invoice.total : null,
-      terminationTime: invoice ? invoice.terminationTime : null,
+      raidId: raid || null,
     },
-    // revalidate: 1
   };
 };
 
-export default function Escrow({ raid, escrowValue, terminationTime }) {
-  const context = useContext(AppContext);
+const Escrow = ({ raidId }) => {
+  const context = useContext(SmartEscrowContext);
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const { data: raid } = useRaidDetail({ raidId, token });
 
   const [invoice, setInvoice] = useState();
   const [raidParty, setRaidParty] = useState('');
@@ -250,11 +271,11 @@ export default function Escrow({ raid, escrowValue, terminationTime }) {
             >
               <Flex direction='column' minW='30%'>
                 <ProjectInfo context={context} />
-                <InvoiceMetaDetails invoice={invoice} raidParty={raidParty} />
+                {/* <InvoiceMetaDetails invoice={invoice} raidParty={raidParty} /> */}
               </Flex>
 
               <Flex direction='column' minW='45%'>
-                <InvoicePaymentDetails
+                {/* <InvoicePaymentDetails
                   web3={context.web3}
                   invoice={invoice}
                   chainID={context.chainID}
@@ -267,7 +288,7 @@ export default function Escrow({ raid, escrowValue, terminationTime }) {
                   provider={context.provider}
                   raidParty={raidParty}
                   wrappedAddress={context.invoice_id}
-                />
+                /> */}
               </Flex>
             </Flex>
           )}
@@ -277,4 +298,6 @@ export default function Escrow({ raid, escrowValue, terminationTime }) {
       )}
     </Flex>
   );
-}
+};
+
+export default Escrow;

@@ -1,4 +1,4 @@
-import { Flex, Heading, Box, Link, Text } from '@chakra-ui/react';
+import { Flex, Heading, Box, Text } from '@chakra-ui/react';
 
 export const ProjectInfo = ({ context }) => {
   return (

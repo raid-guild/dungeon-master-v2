@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   VStack,
@@ -14,30 +14,42 @@ import SiteLayout from '../../components/SiteLayout';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import _ from 'lodash';
-import { useRaidValidate } from '@raidguild/dm-hooks';
+import { useRaidDetail } from '@raidguild/dm-hooks';
 
-import { SmartEscrow } from '../../contexts/SmartEscrow';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 // import { validateRaidId } from '../utils/requests';
 
 export const Home = () => {
-  const context = useContext(SmartEscrow);
+  const context = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [localRaidId, setLocalRaidId] = useState('');
   const [validId, setValidId] = useState(false);
   const [escrowVersion, setEscrowVersion] = useState('Dungeon Master V2');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: isRaidIdValid } = useRaidValidate({ token, raidId });
+  const { data: raid } = useRaidDetail({ token, raidId });
 
   const toast = useToast();
 
-  console.log('isRaidIdValid ', isRaidIdValid);
+  console.log('isRaidIdValid ', raid);
 
-  // useEffect(() => {
-  //   if (raidId) {
-  //     validateIDLocally();
-  //   }
-  // }, [raidId]);
+  useEffect(() => {
+    if (raid) {
+        context.setAppState({
+          invoice_id: raid.invoiceAddress,
+          v1_id: raid.v1Id,
+          raid_id: raid.id,
+          project_name: raid.name,
+          client_name: raid.consultationByConsultation.consultationContacts.contact.name,
+          start_date: new Date(Number(raid.startDate)) || 'Not Specified',
+          end_date: new Date(Number(raid.endDate)) || 'Not Specified',
+          link_to_details: 'Not Specified',
+          brief_description: 'Not Specified',
+        });
+    } else {
+      // todo: display toast with no raid found message
+    }
+  }, [raid]);
 
   // const validateIDLocally = async () => {
   //   const result = await validateRaidId({ token, raidId });
@@ -89,17 +101,17 @@ export const Home = () => {
             label='Raid ID'
             maxWidth='400px'
           ></ControlledInput>
-          {isRaidIdValid ? (
+          {raid ? (
             <Text color='green.500'>Raid ID is valid!</Text>
-          ) : isRaidIdValid === false ? (
+          ) : !raid ? (
             <Text color='red.500'>Raid ID is not valid!</Text>
           ) : (
             <Box height='30px'></Box>
           )}
           <HStack>
-            {isRaidIdValid === true ? (
+            {raid ? (
               <Link href={`/escrow/${raidId}`} passHref>
-                <Button disabled={!isRaidIdValid} variant='outline'>
+                <Button disabled={!raid} variant='outline'>
                   View Escrow
                 </Button>
               </Link>
