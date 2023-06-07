@@ -48,16 +48,23 @@ services:
       # HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       ## uncomment next line for JWT configuration (NextAuth)
       # HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+      HASURA_EVENT_WEBHOOK_SECRET: ${HASURA_EVENT_WEBHOOK_SECRET}
+      HASURA_EVENT_WEBHOOK_URL: ${HASURA_EVENT_WEBHOOK_URL}
 
   hasura-setup:
     container_name: dm_hasura_setup
     image: alpine:latest
     depends_on:
       - graphql-engine
-    restart: "no"
+    restart: 'no'
     volumes:
       - ./services/hasura:/usr/local/hasura
-    entrypoint: ["/bin/sh", "-c", "cd /usr/local/hasura && chmod +x ./setup.sh && ./setup.sh"]
+    entrypoint:
+      [
+        '/bin/sh',
+        '-c',
+        'cd /usr/local/hasura && chmod +x ./setup.sh && ./setup.sh',
+      ]
     environment:
       HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:${HASURA_ENDPOINT_PORT}
       ## uncomment next line to set an admin secret
