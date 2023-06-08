@@ -67,7 +67,7 @@ event_triggers:
       interval_sec: 10
       num_retries: 0
       timeout_sec: 60
-    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cleric-added'
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/raider-added'
     headers:
       - name: Authorization
         value_from_env: HASURA_EVENT_WEBHOOK_SECRET

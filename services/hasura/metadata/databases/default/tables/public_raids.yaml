@@ -177,7 +177,7 @@ event_triggers:
       interval_sec: 10
       num_retries: 0
       timeout_sec: 60
-    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cleric-added'
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/create-channels'
     headers:
       - name: Authorization
         value_from_env: HASURA_EVENT_WEBHOOK_SECRET
@@ -203,7 +203,7 @@ event_triggers:
       interval_sec: 10
       num_retries: 0
       timeout_sec: 60
-    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cleric-added'
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/status-updated'
     headers:
       - name: Authorization
         value_from_env: HASURA_EVENT_WEBHOOK_SECRET
