@@ -142,3 +142,79 @@ update_permissions:
         - v1_id
       filter: {}
       check: null
+event_triggers:
+  - name: cleric_added
+    definition:
+      enable_manual: false
+      update:
+        columns:
+          - raid_channel_id
+          - cleric_id
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cleric-added'
+    headers:
+      - name: Authorization
+        value_from_env: HASURA_EVENT_WEBHOOK_SECRET
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "cleric_id": {{$body.event.data.new.cleric_id}},
+            "raid_channel_id": {{$body.event.data.new.raid_channel_id}}
+          }
+      template_engine: Kriti
+      version: 2
+  - name: create_raid_channels
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cleric-added'
+    headers:
+      - name: Authorization
+        value_from_env: HASURA_EVENT_WEBHOOK_SECRET
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "name": {{$body.event.data.new.name}},
+            "id": {{$body.event.data.new.id}}
+          }
+      template_engine: Kriti
+      version: 2
+  - name: status_updated
+    definition:
+      enable_manual: false
+      update:
+        columns:
+          - status_key
+          - raid_channel_id
+          - id
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cleric-added'
+    headers:
+      - name: Authorization
+        value_from_env: HASURA_EVENT_WEBHOOK_SECRET
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "id": {{$body.event.data.new.id}},
+            "status_key": {{$body.event.data.new.status_key}},
+            "raid_channel_id": {{$body.event.data.new.raid_channel_id}}
+          }
+      template_engine: Kriti
+      version: 2
