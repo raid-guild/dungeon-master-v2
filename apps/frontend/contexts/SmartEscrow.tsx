@@ -8,6 +8,8 @@ export type SmartEscrowContextType = {
   //web3 needs
   appState: any;
   setAppState: any;
+  invoice_id: string;
+  provider: any;
 };
 export const SmartEscrowContext = createContext({} as SmartEscrowContextType);
 

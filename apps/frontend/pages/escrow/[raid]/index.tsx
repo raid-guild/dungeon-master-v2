@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from 'react';
-import { Flex, Text } from '@chakra-ui/react';
 import { ethers, utils } from 'ethers';
 // import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useRaidDetail, useSmartInvoiceAddress } from '@raidguild/dm-hooks';
 import { useAccount, useNetwork } from 'wagmi';
+import { NextSeo } from 'next-seo';
+import SiteLayout from '../../../components/SiteLayout';
+import { Heading, VStack, Flex, Text } from '@raidguild/design-system';
 
 import { GetServerSidePropsContext } from 'next';
 // import axios from 'axios';
@@ -16,14 +18,14 @@ import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
 
 import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
 // import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePaymentDetails';
-// import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
+import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
 // import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
 
-// import { getInvoice } from '../../../graphql/getInvoice';
-// import {
-//   getSmartInvoiceAddress,
-//   getRaidPartyAddress,
-// } from '../../../utils/invoice';
+import { getInvoice } from '../../../smartEscrow/graphql/getInvoice';
+import {
+  getSmartInvoiceAddress,
+  getRaidPartyAddress,
+} from '../../../smartEscrow/utils/invoice';
 // import { rpcUrls } from '../../../utils/constants';
 // import { Page404 } from '../../../shared/Page404';
 // import { DM_ENDPOINT, HASURA_SECRET } from '../../../config';
@@ -138,7 +140,7 @@ export const getServerSideProps = async (
 };
 
 const Escrow = ({ raidId }) => {
-  const context = useContext(SmartEscrowContext);
+  const { appState, setAppState } = useContext(SmartEscrowContext);
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: raid } = useRaidDetail({ raidId, token });
@@ -160,7 +162,41 @@ const Escrow = ({ raidId }) => {
   useEffect(() => {
     console.log('sIAddress: ', sIAddress);
   }, [sIAddress]);
+
+  useEffect(() => {
+    console.log('useeffect on invoice_id and chain', chain, appState);
+    if (chain?.id == 100 && appState.invoice_id) {
+      getSmartInvoiceData();
+    } else if ((address as string) !== '') {
+      setInvoiceFetchError(true);
+      setStatusText('Wrong network. Please switch to the correct network.');
+    }
+  }, [appState.invoice_id, chain]);
+
+  useEffect(() => {
+    if (raid) {
+      setAppState({
+        ...appState,
+        invoice_id: raid.invoiceAddress,
+        v1_id: raid.v1Id,
+        raid_id: raid.id,
+        project_name: raid.name,
+        client_name:
+          raid.consultationByConsultation?.consultationContacts[0]?.contact
+            ?.name,
+        start_date: new Date(Number(raid.startDate)) || 'Not Specified',
+        end_date: new Date(Number(raid.endDate)) || 'Not Specified',
+        link_to_details: 'Not Specified',
+        brief_description: 'Not Specified',
+      });
+      // setInvoiceAddress(raid.invoiceAddress);
+    } else {
+      // todo: display toast with no raid found message
+    }
+  }, [raid]);
+
   console.log('sIAddress render: ', sIAddress);
+  console.log('[raid] index render. appState: ', appState);
   console.log('raid?.invoiceAddress ', raid?.invoiceAddress);
 
   // todo: handle escrowValue definition
@@ -195,19 +231,27 @@ const Escrow = ({ raidId }) => {
 
   const getSmartInvoiceData = async () => {
     try {
+      console.log(
+        'inside getsmart invoice data',
+        utils.isAddress(appState.invoice_id)
+      );
       if (
-        utils.isAddress(context.invoice_id) &&
-        !Number.isNaN(parseInt(chain))
+        utils.isAddress(appState.invoice_id)
+        // !Number.isNaN(parseInt(chain))
+        // todo: check thtat this conditional is not needed
       ) {
         setLoading(true);
+        // debugger;
         setStatusText('Fetching Smart Invoice from Wrapped Invoice..');
         let smartInvoice = await getSmartInvoiceAddress(
-          // context.invoice_id == raid.invoice_address
-          context.invoice_id,
-          context.provider
+          // appState.invoice_id == raid.invoice_address
+          appState.invoice_id,
+          appState.provider
         );
+        console.log('fetched smartInvoice: ', smartInvoice);
 
-        const invoice = await getInvoice(parseInt(chain), smartInvoice);
+        const invoice = await getInvoice(parseInt(chain.id), smartInvoice);
+        console.log('fetched invoice: ', invoice);
         setInvoice(invoice);
         setInvoiceFetchError(false);
         setLoading(false);
@@ -228,17 +272,6 @@ const Escrow = ({ raidId }) => {
   // };
 
   // useEffect(() => {
-  //   if (chain?.id == 100) {
-  //     if (context.invoice_id) {
-  //       getSmartInvoiceData();
-  //     }
-  //   } else if (address !== '') {
-  //     setInvoiceFetchError(true);
-  //     setStatusText('Wrong network. Please switch to the correct network.');
-  //   }
-  // }, [context.invoice_id, chain]);
-
-  // useEffect(() => {
   //   fetchRaidPartyAddress();
   // }, [invoice]);
 
@@ -248,58 +281,65 @@ const Escrow = ({ raidId }) => {
     invoice && !loading && chain?.id == 100
   );
   return (
-    <Flex w='100%' h='100%' justifyContent='center'>
-      {escrowValue && raid && (
-        <Head>
-          <title>{raid.raidName}</title>
-          <meta property='og:title' content={raid.raidName} />
-          <meta
-            property='og:image'
-            content={`https://smartescrow.raidguild.org/api/og?projectName=${
-              raid.raidName
-            }&escrowValue=${Number(utils.formatEther(escrowValue)).toFixed(
-              0
-            )}&safetyValveDate=${terminationTime}`}
-          />
-          <meta name='twitter:card' content='summary_large_image' />
-          <meta name='twitter:title' content={raid.name} />
-          <meta
-            name='twitter:image'
-            content={`https://smartescrow.raidguild.org/api/og?projectName=${
-              raid.raidName
-            }&escrowValue=${Number(utils.formatEther(escrowValue)).toFixed(
-              0
-            )}&safetyValveDate=${terminationTime}`}
-          />
-          <meta property='og:type' content='website' />
-        </Head>
-      )}
+    <>
+      <NextSeo title='Smart Escrow' />
 
-      {validRaid ? (
-        <>
-          <h1>hello world escrow page</h1>
-          {!address && (
-            <Flex direction='column' alignItems='center'>
-              <Text variant='textOne'>{statusText}</Text>
-            </Flex>
-          )}
+      <SiteLayout subheader={<Heading>Smart Escrow</Heading>}>
+        <VStack width='100%' align='center' maxWidth='400px'>
+          <Flex w='100%' h='100%' justifyContent='center'>
+            {escrowValue && raid && (
+              <Head>
+                <title>{raid.raidName}</title>
+                <meta property='og:title' content={raid.raidName} />
+                <meta
+                  property='og:image'
+                  content={`https://smartescrow.raidguild.org/api/og?projectName=${
+                    raid.raidName
+                  }&escrowValue=${Number(
+                    utils.formatEther(escrowValue)
+                  ).toFixed(0)}&safetyValveDate=${terminationTime}`}
+                />
+                <meta name='twitter:card' content='summary_large_image' />
+                <meta name='twitter:title' content={raid.name} />
+                <meta
+                  name='twitter:image'
+                  content={`https://smartescrow.raidguild.org/api/og?projectName=${
+                    raid.raidName
+                  }&escrowValue=${Number(
+                    utils.formatEther(escrowValue)
+                  ).toFixed(0)}&safetyValveDate=${terminationTime}`}
+                />
+                <meta property='og:type' content='website' />
+              </Head>
+            )}
 
-          {invoiceFetchError && <Text variant='textOne'>{statusText}</Text>}
+            {validRaid ? (
+              <>
+                <h1>hello world escrow page</h1>
+                {!address && (
+                  <Flex direction='column' alignItems='center'>
+                    <Text variant='textOne'>{statusText}</Text>
+                  </Flex>
+                )}
 
-          {invoice && !loading && chain?.id == 100 && (
-            <Flex
-              width='100%'
-              direction={{ md: 'column', lg: 'row' }}
-              alignItems='center'
-              justifyContent='space-evenly'
-            >
-              <Flex direction='column' minW='30%'>
-                <ProjectInfo context={context} />
-                {/* <InvoiceMetaDetails invoice={invoice} raidParty={raidParty} /> */}
-              </Flex>
+                {invoiceFetchError && (
+                  <Text variant='textOne'>{statusText}</Text>
+                )}
 
-              <Flex direction='column' minW='45%'>
-                {/* <InvoicePaymentDetails
+                {invoice && !loading && chain?.id == 100 && (
+                  <Flex
+                    width='100%'
+                    direction={{ md: 'column', lg: 'row' }}
+                    alignItems='center'
+                    justifyContent='space-evenly'
+                  >
+                    <Flex direction='column' minW='30%'>
+                      <ProjectInfo appState={appState} />
+                      <InvoiceMetaDetails invoice={invoice} raidParty={raidParty} />
+                    </Flex>
+
+                    <Flex direction='column' minW='45%'>
+                      {/* <InvoicePaymentDetails
                   web3={context.web3}
                   invoice={invoice}
                   chainID={chain}
@@ -313,15 +353,18 @@ const Escrow = ({ raidId }) => {
                   raidParty={raidParty}
                   wrappedAddress={context.invoice_id}
                 /> */}
-              </Flex>
-            </Flex>
-          )}
-        </>
-      ) : (
-        // <Page404 />
-        <div>page not found</div>
-      )}
-    </Flex>
+                    </Flex>
+                  </Flex>
+                )}
+              </>
+            ) : (
+              // <Page404 />
+              <div>page not found</div>
+            )}
+          </Flex>
+        </VStack>
+      </SiteLayout>
+    </>
   );
 };
 

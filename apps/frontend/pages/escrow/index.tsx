@@ -20,7 +20,7 @@ import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 // import { validateRaidId } from '../utils/requests';
 
 export const Home = () => {
-  const context = useContext(SmartEscrowContext);
+  const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [localRaidId, setLocalRaidId] = useState('');
   const [validId, setValidId] = useState(false);
@@ -35,19 +35,21 @@ export const Home = () => {
 
   useEffect(() => {
     if (raid) {
-      context.setAppState({
+      setAppState({
+        ...appState,
         invoice_id: raid.invoiceAddress,
         v1_id: raid.v1Id,
         raid_id: raid.id,
         project_name: raid.name,
         client_name:
-          raid.consultationByConsultation.consultationContacts.contact.name,
+          raid.consultationByConsultation?.consultationContacts[0]?.contact
+            ?.name,
         start_date: new Date(Number(raid.startDate)) || 'Not Specified',
         end_date: new Date(Number(raid.endDate)) || 'Not Specified',
         link_to_details: 'Not Specified',
         brief_description: 'Not Specified',
       });
-      setInvoiceAddress(raid.invoiceAddress);
+      // setInvoiceAddress(raid.invoiceAddress);
     } else {
       // todo: display toast with no raid found message
     }
@@ -61,11 +63,11 @@ export const Home = () => {
   const validateID = async () => {
     setRaidId(localRaidId);
     // if (raidId === '') return alert('ID cannot be empty!');
-    // context.updateLoadingState();
+    // updateLoadingState();
 
     // let raid = await validateRaidId(ID, escrowVersion);
     // if (raid) {
-    //   context.setDungeonMasterContext({
+    //   setDungeonMasterContext({
     //     invoice_id: raid.invoice_address,
     //     v1_id: raid.v1_id,
     //     raid_id: raid.id,
@@ -86,7 +88,7 @@ export const Home = () => {
     //     isClosable: true,
     //   });
     // }
-    // context.updateLoadingState();
+    // updateLoadingState();
   };
 
   return (

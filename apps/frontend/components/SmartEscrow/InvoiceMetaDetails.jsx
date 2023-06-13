@@ -1,7 +1,7 @@
 import { HStack, Text, Tooltip } from '@chakra-ui/react';
-import { QuestionIcon } from '../icons/QuestionIcon';
+import { QuestionIcon } from './icons/QuestionIcon';
 
-import { AccountLink } from '../shared/AccountLink';
+import { AccountLink } from './shared/AccountLink';
 
 export const InvoiceMetaDetails = ({ invoice, raidParty }) => {
   return (

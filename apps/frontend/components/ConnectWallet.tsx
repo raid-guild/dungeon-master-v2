@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import _ from 'lodash';
 import { useAccount, useDisconnect } from 'wagmi';
@@ -20,11 +20,24 @@ import { CgProfile } from 'react-icons/cg';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from '@raidguild/dm-utils';
 import Link from './ChakraNextLink';
+import { SmartEscrowContext } from '../contexts/SmartEscrow';
+import { useSigner } from 'wagmi';
 
 const ConnectWallet: React.FC = () => {
+  const context = useContext(SmartEscrowContext);
   const { address } = useAccount();
+  const { data: signer, isError, isLoading } = useSigner();
   const { disconnect } = useDisconnect();
   const showNetwork = false; // maybe unhide, in some cases
+  useEffect(() => {
+    if (address && signer) {
+      console.log('logged into address, signer ', address, signer);
+      context.setAppState({
+        ...context.appState,
+        provider: signer,
+      });
+    }
+  }, [address, signer]);
 
   return (
     <ConnectButton.Custom>
