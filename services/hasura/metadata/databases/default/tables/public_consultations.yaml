@@ -96,19 +96,21 @@ insert_permissions:
     permission:
       check: {}
       columns:
-        - additional_info
-        - budget_key
-        - consultation_hash
-        - consultation_status_key
-        - delivery_priorities_key
+        - id
+        - v1_id
+        - name
+        - link
+        - type_key
+        - specs_key
         - description
         - desired_delivery_date
-        - link
-        - name
-        - specs_key
-        - submission_hash
+        - budget_key
+        - delivery_priorities_key
+        - additional_info
         - submission_type_key
-        - type_key
+        - submission_hash
+        - consultation_hash
+        - consultation_status_key
 select_permissions:
   - role: cohort
     permission:
