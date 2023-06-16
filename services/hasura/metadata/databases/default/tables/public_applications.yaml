@@ -188,3 +188,26 @@ update_permissions:
         - referred_by_id
       filter: {}
       check: null
+event_triggers:
+  - name: cohort_submission
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{HASURA_EVENT_WEBHOOK_URL}}/hasura/cohort-submission'
+    headers:
+      - name: Authorization
+        value_from_env: HASURA_EVENT_WEBHOOK_SECRET
+    request_transform:
+      body:
+        action: transform
+        template: |-
+          {
+            "id": {{$body.event.data.new.id}}
+          }
+      template_engine: Kriti
+      version: 2
