@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import _ from 'lodash';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, useNetwork } from 'wagmi';
 import {
   Menu,
   MenuButton,
@@ -22,22 +22,34 @@ import { truncateAddress } from '@raidguild/dm-utils';
 import Link from './ChakraNextLink';
 import { SmartEscrowContext } from '../contexts/SmartEscrow';
 import { useSigner } from 'wagmi';
+import Web3 from 'web3';
+import { rpcUrls } from '../smartEscrow/utils/constants';
+import { ethers } from 'ethers';
 
 const ConnectWallet: React.FC = () => {
   const context = useContext(SmartEscrowContext);
   const { address } = useAccount();
-  const { data: signer, isError, isLoading } = useSigner();
+  const { chain } = useNetwork();
+  console.log('connectWallet chain: ', chain);
+  const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
   const showNetwork = false; // maybe unhide, in some cases
   useEffect(() => {
-    if (address && signer) {
+    if (address && signer && chain.id) {
+      const web3Provider = new Web3(window.ethereum);
+      const gotProvider = new ethers.providers.Web3Provider(
+        web3Provider.currentProvider
+      );
       console.log('logged into address, signer ', address, signer);
       context.setAppState({
         ...context.appState,
         provider: signer,
+        account: address,
+        chainId: chain.id,
+        web3Provider: gotProvider,
       });
     }
-  }, [address, signer]);
+  }, [address, signer, chain]);
 
   return (
     <ConnectButton.Custom>

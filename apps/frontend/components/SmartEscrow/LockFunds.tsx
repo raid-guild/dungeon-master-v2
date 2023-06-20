@@ -1,18 +1,18 @@
 import { Button, Flex, Heading, Link, Text, VStack, Image } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
-import React, { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
-import LockImage from '../assets/lock.svg';
-import { AppContext } from '../context/AppContext';
+import LockImage from '../../smartEscrow/assets/lock.svg';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
-import { AccountLink } from '../shared/AccountLink';
-import { OrderedTextarea } from '../shared/OrderedTextArea';
-import { getTxLink } from '../utils/helpers';
-import { lock } from '../utils/invoice';
-import { uploadDisputeDetails } from '../utils/ipfs';
+import { AccountLink } from './shared/AccountLink';
+import { OrderedTextarea } from './shared/OrderedTextArea';
+import { getTxLink } from '../../smartEscrow/utils/helpers';
+import { lock } from '../../smartEscrow/utils/invoice';
+import { uploadDisputeDetails } from '../../smartEscrow/utils/ipfs';
 import { Loader } from './Loader';
 
-import { NETWORK_CONFIG } from '../utils/constants';
+import { NETWORK_CONFIG } from '../../smartEscrow/utils/constants';
 
 const parseTokenAddress = (chainId, address) => {
   for (const [key, value] of Object.entries(
@@ -60,7 +60,7 @@ export const LockFunds = ({
   wrappedAddress,
   isRaidParty,
 }) => {
-  const { chainID, provider } = useContext(AppContext);
+  const { chainId, provider } = useContext(SmartEscrowContext);
   const { address, resolver, token, resolutionRate } = invoice;
 
   const [disputeReason, setDisputeReason] = useState('');
@@ -68,10 +68,10 @@ export const LockFunds = ({
   const fee = `${utils.formatUnits(
     BigNumber.from(balance).div(resolutionRate),
     18,
-  )} ${parseTokenAddress(chainID, token)}`;
+  )} ${parseTokenAddress(chainId, token)}`;
 
-  const [locking, setLocking] = useState(false);
-  const [transaction, setTransaction] = useState();
+  const [locking, setLocking] = useState<boolean>(false);
+  const [transaction, setTransaction] = useState<any>();
 
   const lockFunds = useCallback(async () => {
     if (provider && !locking && balance.gt(0) && disputeReason) {
@@ -124,7 +124,7 @@ export const LockFunds = ({
           <Text color="white" textAlign="center" fontSize="sm">
             Follow your transaction{' '}
             <Link
-              href={getTxLink(chainID, transaction.hash)}
+              href={getTxLink(chainId, transaction.hash)}
               isExternal
               color="red.500"
               textDecoration="underline"
@@ -200,18 +200,18 @@ export const LockFunds = ({
         w="100%"
       >
         {`Lock ${utils.formatUnits(balance, 18)} ${parseTokenAddress(
-          chainID,
+          chainId,
           token,
         )}`}
       </Button>
-      {isKnownResolver(chainID, resolver) && (
+      {isKnownResolver(chainId, resolver) && (
         <Link
-          href={getResolverInfo(chainID, resolver).termsUrl}
+          href={getResolverInfo(chainId, resolver).termsUrl}
           isExternal
           color="red.500"
           textDecor="underline"
         >
-          Learn about {getResolverString(chainID, resolver)} dispute process &
+          Learn about {getResolverString(chainId, resolver)} dispute process &
           terms
         </Link>
       )}

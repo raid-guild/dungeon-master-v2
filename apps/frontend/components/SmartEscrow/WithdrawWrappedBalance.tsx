@@ -1,34 +1,34 @@
-import { Button, Heading, Link, Text, VStack } from '@chakra-ui/react';
+import { Button, Heading, Link, Text, VStack } from '@raidguild/design-system';
 import { utils, Contract } from 'ethers';
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 
-import { Loader } from '../components/Loader';
+import { Loader } from './Loader';
 
-import { AppContext } from '../context/AppContext';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
-import { getTxLink, parseTokenAddress } from '../utils/helpers';
-import { awaitSpoilsWithdrawn, getSmartInvoiceAddress } from '../utils/invoice';
-import { getInvoice } from '../graphql/getInvoice';
-import { balanceOf } from '../utils/erc20';
-import { notifyRaidSpoils } from '../utils/requests';
+import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
+import { awaitSpoilsWithdrawn, getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
+import { balanceOf } from '../../smartEscrow/utils/erc20';
+import { notifyRaidSpoils } from '../../smartEscrow/utils/requests';
 
 export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
   const [loading, setLoading] = useState(false);
-  const { chainID, invoice_id, provider } = useContext(AppContext);
+  const { chainId, invoice_id, provider } = useContext(SmartEscrowContext);
 
   const [transaction, setTransaction] = useState();
 
   const pollSubgraph = async () => {
-    let smartInvoice = await getSmartInvoiceAddress(invoice_id, provider);
+    const smartInvoice = await getSmartInvoiceAddress(invoice_id, provider);
 
     let isSubscribed = true;
 
     const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainID), smartInvoice);
+      const inv = await getInvoice(parseInt(chainId), smartInvoice);
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
 
-        let newBalance = await balanceOf(provider, token, contractAddress);
+        const newBalance = await balanceOf(provider, token, contractAddress);
 
         if (!(utils.formatUnits(newBalance, 18) > 0)) {
           isSubscribed = false;
@@ -47,10 +47,10 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
     let result = await awaitSpoilsWithdrawn(provider, tx);
 
     let status = await notifyRaidSpoils(
-      parseTokenAddress(chainID, result.token),
+      parseTokenAddress(chainId, result.token),
       utils.formatUnits(result.childShare, 18),
       utils.formatUnits(result.parentShare, 18),
-      getTxLink(chainID, tx.hash)
+      getTxLink(chainId, tx.hash)
     );
     console.log(status);
   };
@@ -63,7 +63,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
         const contract = new Contract(
           contractAddress,
           abi,
-          provider.getSigner()
+          provider
         );
         const tx = await contract.withdrawAll();
         setTransaction(tx);
@@ -110,7 +110,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
           textAlign='center'
           fontFamily='jetbrains'
         >{`${utils.formatUnits(balance, 18)} ${parseTokenAddress(
-          chainID,
+          chainId,
           token
         )}`}</Text>
       </VStack>
@@ -119,7 +119,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
-            href={getTxLink(chainID, transaction.hash)}
+            href={getTxLink(chainId, transaction.hash)}
             isExternal
             color='red.500'
             textDecoration='underline'

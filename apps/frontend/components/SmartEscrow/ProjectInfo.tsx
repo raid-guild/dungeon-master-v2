@@ -1,4 +1,4 @@
-import { Link, Flex, Heading, Box, Text } from '@raidguild/design-system';
+import { Flex, Heading, Box, Text } from '@raidguild/design-system';
 
 export const ProjectInfo = ({ appState }) => {
   return (

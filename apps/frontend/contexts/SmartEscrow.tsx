@@ -2,7 +2,7 @@ import React, { useState, Component, createContext, ReactNode } from 'react';
 
 import { ethers } from 'ethers';
 
-import { rpcUrls } from '../smartEscrow/constants';
+import { rpcUrls } from '../smartEscrow/utils/constants';
 
 export type SmartEscrowContextType = {
   //web3 needs
@@ -10,6 +10,7 @@ export type SmartEscrowContextType = {
   setAppState: any;
   invoice_id: string;
   provider: any;
+  chainId: string;
 };
 export const SmartEscrowContext = createContext({} as SmartEscrowContextType);
 
@@ -21,8 +22,8 @@ const DEFAULT_APP_STATE = {
   //web3 needs
   account: '',
   provider: '',
-  web3: '',
-  chainID: '',
+  web3Provider: '',
+  chainId: '',
 
   //dungeon master info
   v1_id: '',

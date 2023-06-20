@@ -1,27 +1,29 @@
 import {
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Text,
+  Tooltip,
+  VStack,
+} from '@raidguild/design-system';
+import {
   Alert,
   AlertIcon,
   AlertTitle,
-  Button,
-  Checkbox,
-  Flex,
-  Heading,
   Input,
   InputGroup,
   InputRightElement,
-  Link,
   Select,
-  Text,
-  Tooltip,
-  VStack
+  Checkbox,
 } from '@chakra-ui/react';
-import { BigNumber, Contract, utils } from 'ethers';
+import { BigNumber, BigNumberish, Contract, utils } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 
-import { Loader } from '../components/Loader';
-import { AppContext } from '../context/AppContext';
-import { QuestionIcon } from '../icons/QuestionIcon';
-import { balanceOf } from '../utils/erc20';
+import { Loader } from './Loader';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
+import { QuestionIcon } from './icons/QuestionIcon';
+import { balanceOf } from '../../smartEscrow/utils/erc20';
 
 import {
   getTxLink,
@@ -29,18 +31,21 @@ import {
   getWrappedNativeToken,
   parseTokenAddress,
   checkedAtIndex,
-  getCheckedStatus
-} from '../utils/helpers';
+  getCheckedStatus,
+} from '../../smartEscrow/utils/helpers';
 
-import { getSmartInvoiceAddress } from '../utils/invoice';
-import { getInvoice } from '../graphql/getInvoice';
+import { getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
 export const DepositFunds = ({ invoice, deposited, due }) => {
   const { address, token, amounts, currentMilestone } = invoice;
-  const { chainID, invoice_id, provider, account } = useContext(AppContext);
+  const {
+    appState: { chainId, invoice_id, provider, account },
+  } = useContext(SmartEscrowContext);
+  console.log('render deposit funds', chainId);
 
-  const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainID);
-  const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainID);
+  const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
+  const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
   const isWRAPPED = token.toLowerCase() === WRAPPED_NATIVE_TOKEN;
 
   const [paymentType, setPaymentType] = useState(0);
@@ -59,9 +64,10 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
     let smartInvoice = await getSmartInvoiceAddress(invoice_id, provider);
 
     let isSubscribed = true;
+    console.log('pollSubgraph smartInvoice: ', smartInvoice);
 
     const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainID), smartInvoice);
+      let inv = await getInvoice(parseInt(chainId), smartInvoice);
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
 
@@ -84,12 +90,10 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
       setLoading(true);
       let tx;
       if (paymentType === 1) {
-        tx = await provider
-          .getSigner()
-          .sendTransaction({ to: address, value: amount });
+        tx = await provider.sendTransaction({ to: address, value: amount });
       } else {
         const abi = ['function transfer(address, uint256) public'];
-        const tokenContract = new Contract(token, abi, provider.getSigner());
+        const tokenContract = new Contract(token, abi, provider);
         tx = await tokenContract.transfer(address, amount);
       }
       setTransaction(tx);
@@ -105,6 +109,12 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   useEffect(() => {
     try {
       if (paymentType === 0) {
+        console.log(
+          'deposit funds useEffect: provider, token, account',
+          provider,
+          token,
+          account
+        );
         balanceOf(provider, token, account).then(setBalance);
       } else {
         provider.getBalance(account).then(setBalance);
@@ -117,24 +127,23 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   return (
     <VStack w='100%' spacing='1rem'>
       <Heading
-        fontWeight='normal'
-        mb='1rem'
-        textTransform='uppercase'
-        textAlign='center'
-        fontFamily='rubik'
-        color='red'
+        color='white'
+        as='h3'
+        fontSize='2xl'
+        transition='all ease-in-out .25s'
+        _hover={{ cursor: 'pointer', color: 'raid' }}
       >
         Pay Invoice
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='jetbrains'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         At a minimum, you’ll need to deposit enough to cover the{' '}
         {currentMilestone === '0' ? 'first' : 'next'} project payment.
       </Text>
-      <Text textAlign='center' color='purpleLight' fontFamily='jetbrains'>
+      <Text textAlign='center' color='primary.500' fontFamily='texturina'>
         How much will you be depositing today?
       </Text>
       <VStack spacing='0.5rem'>
-        {amounts.map((a, i) => {
+        {amounts.map((a: BigNumberish, i: number) => {
           return (
             <Checkbox
               minW='300px'
@@ -157,14 +166,14 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
                 setAmount(newAmount);
                 setAmountInput(utils.formatUnits(newAmount, 18));
               }}
-              color='yellow'
+              color='yellow.500'
               border='none'
               size='lg'
               fontSize='1rem'
-              fontFamily='jetbrains'
+              fontFamily='texturina'
             >
               Payment #{i + 1} &nbsp; &nbsp;
-              {utils.formatUnits(a, 18)} {parseTokenAddress(chainID, token)}
+              {utils.formatUnits(a, 18)} {parseTokenAddress(chainId, token)}
             </Checkbox>
           );
         })}
@@ -175,16 +184,16 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
       <VStack
         spacing='0.5rem'
         align='stretch'
-        color='purpleLight'
+        color='primary.500'
         mb='1rem'
-        fontFamily='jetbrains'
+        fontFamily='texturina'
       >
         <Flex justify='space-between' w='100%'>
           <Text fontWeight='500'>Enter a Manual Deposit Amount</Text>
           {paymentType === 1 && (
             <Tooltip
               label={`Your ${NATIVE_TOKEN_SYMBOL} will be automagically wrapped to ${parseTokenAddress(
-                chainID,
+                chainId,
                 token
               )} tokens`}
               placement='auto-start'
@@ -224,11 +233,11 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
                 color='red'
                 border='none'
               >
-                <option value='0'>{parseTokenAddress(chainID, token)}</option>
+                <option value='0'>{parseTokenAddress(chainId, token)}</option>
                 <option value='1'>{NATIVE_TOKEN_SYMBOL}</option>
               </Select>
             ) : (
-              parseTokenAddress(chainID, token)
+              parseTokenAddress(chainId, token)
             )}
           </InputRightElement>
         </InputGroup>
@@ -246,13 +255,13 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
         justify='space-between'
         w='100%'
         fontSize='sm'
-        fontFamily='jetbrains'
+        fontFamily='texturina'
       >
         {deposited && (
           <VStack align='flex-start'>
             <Text fontWeight='bold'>Total Deposited</Text>
             <Text>{`${utils.formatUnits(deposited, 18)} ${parseTokenAddress(
-              chainID,
+              chainId,
               token
             )}`}</Text>
           </VStack>
@@ -261,7 +270,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
           <VStack>
             <Text fontWeight='bold'>Total Due</Text>
             <Text>{`${utils.formatUnits(due, 18)} ${parseTokenAddress(
-              chainID,
+              chainId,
               token
             )}`}</Text>
           </VStack>
@@ -272,7 +281,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
             <Text>
               {`${utils.formatUnits(balance, 18)} ${
                 paymentType === 0
-                  ? parseTokenAddress(chainID, token)
+                  ? parseTokenAddress(chainId, token)
                   : NATIVE_TOKEN_SYMBOL
               }`}
             </Text>
@@ -286,7 +295,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
           onClick={deposit}
           isDisabled={amount.lte(0)}
           textTransform='uppercase'
-          variant='primary'
+          variant='solid'
           w='100%'
         >
           Deposit
@@ -296,7 +305,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
-            href={getTxLink(chainID, transaction.hash)}
+            href={getTxLink(chainId, transaction.hash)}
             isExternal
             color='red'
             textDecoration='underline'

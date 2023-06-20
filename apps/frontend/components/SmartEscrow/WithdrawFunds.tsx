@@ -1,16 +1,16 @@
-import { Button, Heading, Link, Text, VStack } from '@chakra-ui/react';
+import { Button, Heading, Link, Text, VStack } from '@raidguild/design-system';
 import { utils } from 'ethers';
 import React, { useContext, useState } from 'react';
 
-import { AppContext } from '../context/AppContext';
-import { getTxLink, parseTokenAddress } from '../utils/helpers';
-import { withdraw } from '../utils/invoice';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
+import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
+import { withdraw } from '../../smartEscrow/utils/invoice';
 
-import { Loader } from '../components/Loader';
+import { Loader } from './Loader';
 
 export const WithdrawFunds = ({ contractAddress, token, balance }) => {
   const [loading, setLoading] = useState(false);
-  const { chainID, provider } = useContext(AppContext);
+  const { chainId, provider } = useContext(SmartEscrowContext);
 
   const [transaction, setTransaction] = useState();
 
@@ -63,7 +63,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance }) => {
           textAlign='center'
           fontFamily='jetbrains'
         >{`${utils.formatUnits(balance, 18)} ${parseTokenAddress(
-          chainID,
+          chainId,
           token
         )}`}</Text>
       </VStack>
@@ -71,7 +71,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance }) => {
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
-            href={getTxLink(chainID, transaction.hash)}
+            href={getTxLink(chainId, transaction.hash)}
             isExternal
             color='red.500'
             textDecoration='underline'

@@ -10,7 +10,7 @@ const graphUrls = {
 
 const getGraphUrl = chainId => graphUrls[chainId] || graphUrls[4];
 
-const SUPPORTED_NETWORKS = Object.keys(NETWORK_CONFIG).map(n => Number(n));
+export const SUPPORTED_NETWORKS = Object.keys(NETWORK_CONFIG).map(n => Number(n)).filter((n) => !isNaN(n));
 
 export const clients = SUPPORTED_NETWORKS.reduce(
   (o, chainId) => ({

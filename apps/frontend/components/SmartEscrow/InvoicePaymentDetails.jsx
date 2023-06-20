@@ -1,12 +1,12 @@
 import { Flex, HStack, VStack, Text, Divider, Link } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
+import { util } from 'ethers';
+import { AccountLink } from './shared/AccountLink';
 
-import { AccountLink } from '../shared/AccountLink';
-
-import { balanceOf } from '../utils/erc20';
-import { NETWORK_CONFIG, IPFS_ENDPOINT } from '../utils/constants';
-import { getTxLink } from '../utils/helpers';
+import { balanceOf } from '../../smartEscrow/utils/erc20';
+import { NETWORK_CONFIG, IPFS_ENDPOINT } from '../../smartEscrow/utils/constants';
+import { getTxLink } from '../../smartEscrow/utils/helpers';
 
 const parseTokenAddress = (chainId, address) => {
   for (const [key, value] of Object.entries(
@@ -20,7 +20,7 @@ const parseTokenAddress = (chainId, address) => {
 
 const getIpfsLink = (hash) => `${IPFS_ENDPOINT}/ipfs/${hash}`;
 
-export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
+export const InvoicePaymentDetails = ({ web3, invoice, chainId, provider }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
 
   useEffect(() => {
@@ -68,8 +68,8 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
       <HStack mt='.5rem' mb='1rem' justifyContent='space-between'>
         <Text variant='textOne'>Total Project Amount</Text>
         <Text variant='textOne'>
-          {web3.utils.fromWei(invoice.total)}{' '}
-          {parseTokenAddress(chainID, invoice.token)}
+          {utils.formatEther(invoice.total)}{' '}
+          {parseTokenAddress(chainId, invoice.token)}
         </Text>
       </HStack>
       <VStack align='stretch' spacing='0.25rem'>
@@ -106,7 +106,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
                     isExternal
                     color='grey'
                     fontStyle='italic'
-                    href={getTxLink(chainID, releases[index].txHash)}
+                    href={getTxLink(chainId, releases[index].txHash)}
                   >
                     Released{' '}
                     {new Date(
@@ -121,7 +121,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
                       isExternal
                       color='grey'
                       fontStyle='italic'
-                      href={getTxLink(chainID, deposits[ind].txHash)}
+                      href={getTxLink(chainId, deposits[ind].txHash)}
                     >
                       {full ? '' : 'Partially '}Deposited{' '}
                       {new Date(
@@ -134,7 +134,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
                   textAlign='right'
                   fontWeight='500'
                 >{`${utils.formatUnits(amt, 18)} ${parseTokenAddress(
-                  chainID,
+                  chainId,
                   invoice.token
                 )}`}</Text>
               </HStack>
@@ -147,21 +147,21 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
         <Text variant='textOne'>Total Deposited</Text>
         <Text variant='textOne'>
           {utils.formatUnits(deposited, 18)}{' '}
-          {parseTokenAddress(chainID, invoice.token)}
+          {parseTokenAddress(chainId, invoice.token)}
         </Text>
       </HStack>
       <HStack justifyContent='space-between' mb='.2rem'>
         <Text variant='textOne'>Total Released</Text>
         <Text variant='textOne'>
           {utils.formatUnits(released, 18)}{' '}
-          {parseTokenAddress(chainID, invoice.token)}
+          {parseTokenAddress(chainId, invoice.token)}
         </Text>
       </HStack>
       <HStack justifyContent='space-between'>
         <Text variant='textOne'>Remaining Amount Due</Text>
         <Text variant='textOne'>
           {utils.formatUnits(due, 18)}{' '}
-          {parseTokenAddress(chainID, invoice.token)}
+          {parseTokenAddress(chainId, invoice.token)}
         </Text>
       </HStack>
       <Divider mt='1rem' mb='1rem' />
@@ -181,7 +181,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
               <Text textAlign='right'>{`${utils.formatUnits(
                 balance,
                 18
-              )} ${parseTokenAddress(chainID, invoice.token)}`}</Text>{' '}
+              )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>{' '}
             </>
           ) : (
             <>
@@ -192,7 +192,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
               <Text textAlign='right'>{`${utils.formatUnits(
                 isReleasable ? amount : amount.sub(balance),
                 18
-              )} ${parseTokenAddress(chainID, invoice.token)}`}</Text>
+              )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
             </>
           )}
         </Flex>
@@ -211,17 +211,17 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
             <Text textAlign='right'>{`${utils.formatUnits(
               balance,
               18
-            )} ${parseTokenAddress(chainID, invoice.token)}`}</Text>
+            )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
           </Flex>
           <Text fontFamily='jetbrains' color='purpleLight'>
             {`A dispute is in progress with `}
-            <AccountLink address={resolver} chainId={chainID} />
+            <AccountLink address={resolver} chainId={chainId} />
             <br />
             <Link href={getIpfsLink(dispute.ipfsHash)} isExternal>
               <u>View details on IPFS</u>
             </Link>
             <br />
-            <Link href={getTxLink(chainID, dispute.txHash)} isExternal>
+            <Link href={getTxLink(chainId, dispute.txHash)} isExternal>
               <u>View transaction</u>
             </Link>
           </Text>
@@ -243,7 +243,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
                 .add(resolution.providerAward)
                 .add(resolution.resolutionFee ? resolution.resolutionFee : 0),
               18
-            )} ${parseTokenAddress(chainID, invoice.token)}`}</Text>
+            )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
           </Flex>
           <Flex
             justify='space-between'
@@ -251,7 +251,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
           >
             <Flex flex={1}>
               <Text fontFamily='jetbrains' maxW='300px' color='purpleLight'>
-                <AccountLink address={resolver} chainId={chainID} />
+                <AccountLink address={resolver} chainId={chainId} />
                 {' has resolved the dispute and dispersed remaining funds'}
                 <br />
                 <br />
@@ -259,7 +259,7 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
                   <u>View details on IPFS</u>
                 </Link>
                 <br />
-                <Link href={getTxLink(chainID, resolution.txHash)} isExternal>
+                <Link href={getTxLink(chainId, resolution.txHash)} isExternal>
                   <u>View transaction</u>
                 </Link>
               </Text>
@@ -274,23 +274,23 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainID, provider }) => {
                   {`${utils.formatUnits(
                     BigNumber.from(resolution.resolutionFee),
                     18
-                  )} ${parseTokenAddress(chainID, invoice.token)} to `}
-                  <AccountLink address={resolver} chainId={chainID} />
+                  )} ${parseTokenAddress(chainId, invoice.token)} to `}
+                  <AccountLink address={resolver} chainId={chainId} />
                 </Text>
               )}
               <Text textAlign='right' color='purpleLight'>
                 {`${utils.formatUnits(
                   BigNumber.from(resolution.clientAward),
                   18
-                )} ${parseTokenAddress(chainID, invoice.token)} to `}
-                <AccountLink address={client} chainId={chainID} />
+                )} ${parseTokenAddress(chainId, invoice.token)} to `}
+                <AccountLink address={client} chainId={chainId} />
               </Text>
               <Text textAlign='right' color='purpleLight'>
                 {`${utils.formatUnits(
                   BigNumber.from(resolution.providerAward),
                   18
-                )} ${parseTokenAddress(chainID, invoice.token)} to `}
-                <AccountLink address={invoice.provider} chainId={chainID} />
+                )} ${parseTokenAddress(chainId, invoice.token)} to `}
+                <AccountLink address={invoice.provider} chainId={chainId} />
               </Text>
             </VStack>
           </Flex>

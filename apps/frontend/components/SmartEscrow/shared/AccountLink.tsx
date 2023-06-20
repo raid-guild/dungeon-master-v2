@@ -10,26 +10,26 @@ import { getAddressLink } from '../../../smartEscrow/utils/helpers';
 
 export const AccountLink = ({
   address: inputAddress,
-  chainId: inputChainId
+  chainId: inputChainId,
 }) => {
   const context = useContext(SmartEscrowContext);
 
   const address =
     typeof inputAddress === 'string' ? inputAddress.toLowerCase() : '';
   const [profile, setProfile] = useState();
-  const chainId = inputChainId || context.chainID;
+  const chainId = inputChainId || context.chainId;
 
-  useEffect(() => {
-    let isSubscribed = true;
-    if (utils.isAddress(address)) {
-      getProfile(address).then((p) =>
-        isSubscribed ? setProfile(p) : undefined
-      );
-    }
-    return () => {
-      isSubscribed = false;
-    };
-  }, [address]);
+  // useEffect(() => {
+  //   let isSubscribed = true;
+  //   if (utils.isAddress(address)) {
+  //     getProfile(address).then((p) =>
+  //       isSubscribed ? setProfile(p) : undefined
+  //     );
+  //   }
+  //   return () => {
+  //     isSubscribed = false;
+  //   };
+  // }, [address]);
 
   let displayString = address;
 
@@ -54,7 +54,7 @@ export const AccountLink = ({
       px='0.25rem'
       _hover={{
         textDecor: 'none',
-        bgColor: 'blackLight'
+        bgColor: 'blackLight',
       }}
       borderRadius='5px'
       alignItems='center'

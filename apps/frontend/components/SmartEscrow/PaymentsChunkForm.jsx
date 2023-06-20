@@ -5,19 +5,17 @@ import {
   InputGroup,
   Input,
   InputRightElement,
-  Text,
-  Button
 } from '@chakra-ui/react';
+import { Text, Button } from '@raidguild/design-system';
 
 import styled from '@emotion/styled';
-import { theme } from '../theme/theme';
 
 const StyledInput = styled(Input)`
   width: 100%;
   outline: none;
   border: none;
   color: white;
-  font-family: ${theme.fonts.jetbrains};
+  ${'' /* font-family: ${theme.fonts.jetbrains}; */}
   font-size: 1rem;
   background-color: black;
   margin-bottom: 15px;
@@ -29,7 +27,7 @@ const StyledInput = styled(Input)`
 `;
 
 const StyledFormLabel = styled(FormLabel)`
-  font-family: ${theme.fonts.spaceMono};
+  ${'' /* font-family: ${theme.fonts.spaceMono}; */}
   font-weight: bold;
 `;
 
@@ -86,7 +84,7 @@ export const PaymentsChunkForm = ({
 
       <Flex direction='row' width='100%' mt='1rem'>
         <Button
-          variant='secondary'
+          variant='outline'
           minW='25%'
           p='5px'
           mr='.5rem'
@@ -95,7 +93,7 @@ export const PaymentsChunkForm = ({
           Back
         </Button>
         <Button
-          variant='primary'
+          variant='solid'
           w='100%'
           onClick={() => {
             let sum = payments.reduce((acc, num) => Number(acc) + Number(num));

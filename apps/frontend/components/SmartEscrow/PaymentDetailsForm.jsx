@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { utils } from 'ethers';
 import {
   Flex,
   Input,
@@ -14,17 +15,17 @@ import styled from '@emotion/styled';
 
 import { RadioBox } from './RadioBox';
 
-import { theme } from '../theme/theme';
-import { QuestionIcon } from '../icons/QuestionIcon';
+import { QuestionIcon } from '../../smartEscrow/icons/QuestionIcon';
 
-import { getResolverUrl, getSpoilsUrl } from '../utils/helpers';
+import { getResolverUrl, getSpoilsUrl } from '../../smartEscrow/utils/helpers';
+import { SUPPORTED_NETWORKS } from '../../smartEscrow/graphql/client';
 
 const StyledInput = styled(Input)`
   width: 100%;
   outline: none;
   border: none;
   color: white;
-  font-family: ${theme.fonts.jetbrains};
+  ${'' /* font-family: ${theme.fonts.jetbrains}; */}
   font-size: 1rem;
   background-color: black;
   margin-bottom: 15px;
@@ -36,12 +37,12 @@ const StyledInput = styled(Input)`
 `;
 
 const StyledFormLabel = styled(FormLabel)`
-  font-family: ${theme.fonts.spaceMono};
+  ${'' /* font-family: ${theme.fonts.spaceMono}; */}
   font-weight: bold;
 `;
 
 export const PaymentDetailsForm = ({
-  context,
+  appState,
   client,
   serviceProvider,
   tokenType,
@@ -60,19 +61,20 @@ export const PaymentDetailsForm = ({
   const [tokens, setTokens] = useState([]);
 
   const updateTokenList = () => {
-    if (parseInt(context.chainID) === 100) {
+    if (parseInt(appState.chainId) === 100) {
       setTokens(['WETH', 'WXDAI']);
-    } else if (parseInt(context.chainID) === 1) {
+    } else if (parseInt(appState.chainId) === 1) {
       setTokens(['WETH', 'DAI']);
     } else {
       setTokens(['WETH', 'DAI', 'TEST']);
     }
   };
 
+  console.log('SUPPORTED_NETWORKS: ', SUPPORTED_NETWORKS);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => updateTokenList(), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => updateTokenList(), [context.chainID]);
+  useEffect(() => updateTokenList(), [appState.chainId]);
 
   return (
     <Flex
@@ -156,7 +158,7 @@ export const PaymentDetailsForm = ({
       <Flex direction="row">
         <FormControl isReadOnly mr=".5em">
           <Link
-            href={getResolverUrl(parseInt(context.chainID))}
+            href={getResolverUrl(parseInt(appState.chainId))}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -169,7 +171,7 @@ export const PaymentDetailsForm = ({
 
         <FormControl isReadOnly mr=".5em">
           <Link
-            href={getSpoilsUrl(parseInt(context.chainID), serviceProvider)}
+            href={getSpoilsUrl(parseInt(appState.chainId), serviceProvider)}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -200,17 +202,15 @@ export const PaymentDetailsForm = ({
       </Flex>
 
       <Button
-        variant="primary"
+        variant="solid"
         onClick={() => {
           if (
-            parseInt(context.chainID) !== 4 &&
-            parseInt(context.chainID) !== 100 &&
-            parseInt(context.chainID) !== 1
+            SUPPORTED_NETWORKS.indexOf(parseInt(appState.chainId)) === -1
           )
             return sendToast('Switch to a supported network.');
-          if (!context.web3.utils.isAddress(client))
+          if (!utils.isAddress(client))
             return sendToast('Invalid Client Address.');
-          if (!context.web3.utils.isAddress(serviceProvider))
+          if (!utils.isAddress(serviceProvider))
             return sendToast('Invalid Raid Party Address.');
           if (client === serviceProvider)
             return sendToast(

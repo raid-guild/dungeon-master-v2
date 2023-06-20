@@ -57,7 +57,7 @@ export const NavButton = ({ onClick, children }) => (
 );
 
 export const Header = () => {
-  const { account, chainID, disconnect, connectAccount } =
+  const { account, chainId, disconnect, connectAccount } =
     useContext(AppContext);
   const [isOpen, onOpen] = useState(false);
 
@@ -138,7 +138,7 @@ export const Header = () => {
                     display={{ base: 'none', md: 'flex' }}
                     size='sm'
                   >
-                    {getNetworkLabel(chainID)}
+                    {getNetworkLabel(chainId)}
                   </Tag>
                 </Button>
               </PopoverTrigger>

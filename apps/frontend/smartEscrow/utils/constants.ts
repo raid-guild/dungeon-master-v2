@@ -84,11 +84,41 @@ export const NETWORK_CONFIG = {
       },
     },
   },
+  5: {
+    SUBGRAPH: 'psparacino/goerli-smart-invoices',
+
+    WRAPPED_NATIVE_TOKEN:
+      '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'.toLowerCase(),
+    INVOICE_FACTORY: '0x546adED0B0179d550e87cf909939a1207Fd26fB7'.toLowerCase(),
+    TOKENS: {
+      WETH: {
+        decimals: 18,
+        address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'.toLowerCase(),
+      },
+      DAI: {
+        decimals: 18,
+        address: '0x3af6b2f907f0c55f279e0ed65751984e6cdc4a42'.toLowerCase(),
+      },
+      TEST: {
+        decimals: 18,
+        address: '0x982e00B16c313E979C0947b85230907Fce45d50e'.toLowerCase(),
+      },
+    },
+    RESOLVERS: {
+      LexDAO: {
+        address: '0x1206b51217271FC3ffCa57d0678121983ce0390E'.toLowerCase(),
+        logoUrl: LexDAOLogo,
+        termsUrl:
+          'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
+      },
+    },
+  },
 };
 
 export const explorerUrls = {
   1: 'https://etherscan.io',
   4: 'https://rinkeby.etherscan.io',
+  5: 'https://goerli.etherscan.io/',
   42: 'https://kovan.etherscan.io',
   100: 'https://blockscout.com/poa/xdai',
 };
@@ -98,6 +128,7 @@ export const chainIds = {
   mainnet: 1,
   rinkeby: 4,
   kovan: 42,
+  goerli: 5,
 };
 
 export const hexChainIds = {
@@ -105,6 +136,7 @@ export const hexChainIds = {
   mainnet: '0x1',
   rinkeby: '0x4',
   kovan: '0x2a',
+  goerli: '0x5',
 };
 
 export const networkLabels = {
@@ -122,6 +154,7 @@ export const networkLabels = {
 export const networkNames = {
   1: 'ETH Mainnet',
   4: 'Rinkeby Testnet',
+  5: 'Goerli Testnet',
   42: 'Kovan Testnet',
   100: 'xDai Chain',
 };
@@ -129,6 +162,7 @@ export const networkNames = {
 export const rpcUrls = {
   1: `https://mainnet.infura.io/v3/${INFURA_ID}`,
   4: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
+  5: `https://goerli.infura.io/v3/${INFURA_ID}`,
   42: `https://kovan.infura.io/v3/${INFURA_ID}`,
   100: 'https://rpc.gnosischain.com',
 };
@@ -136,18 +170,21 @@ export const rpcUrls = {
 export const nativeSymbols = {
   1: 'ETH',
   4: 'ETH',
+  5: 'ETH',
   42: 'ETH',
   100: 'XDAI',
 };
 
 export const wrappedNativeToken = {
   4: NETWORK_CONFIG[4].WRAPPED_NATIVE_TOKEN,
+  5: NETWORK_CONFIG[5].WRAPPED_NATIVE_TOKEN,
   100: NETWORK_CONFIG[100].WRAPPED_NATIVE_TOKEN,
   1: NETWORK_CONFIG[1].WRAPPED_NATIVE_TOKEN,
 };
 
 export const tokenInfo = {
   4: NETWORK_CONFIG[4].TOKENS,
+  5: NETWORK_CONFIG[5].TOKENS,
   100: NETWORK_CONFIG[100].TOKENS,
   1: NETWORK_CONFIG[1].TOKENS,
 };

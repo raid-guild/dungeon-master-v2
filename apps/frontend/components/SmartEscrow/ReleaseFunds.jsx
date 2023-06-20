@@ -2,17 +2,17 @@ import { Button, Heading, Link, Text, VStack } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import React, { useContext, useState } from 'react';
 
-import { Loader } from '../components/Loader';
+import { Loader } from './Loader';
 
-import { AppContext } from '../context/AppContext';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
-import { getTxLink, parseTokenAddress } from '../utils/helpers';
-import { release, getSmartInvoiceAddress } from '../utils/invoice';
-import { getInvoice } from '../graphql/getInvoice';
+import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
+import { release, getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
 export const ReleaseFunds = ({ invoice, balance }) => {
   const [loading, setLoading] = useState(false);
-  const { chainID, invoice_id, provider } = useContext(AppContext);
+  const { chainId, invoice_id, provider } = useContext(SmartEscrowContext);
   const { currentMilestone, amounts, address, token } = invoice;
 
   const pollSubgraph = async () => {
@@ -21,7 +21,7 @@ export const ReleaseFunds = ({ invoice, balance }) => {
     let isSubscribed = true;
 
     const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainID), smartInvoice);
+      let inv = await getInvoice(parseInt(chainId), smartInvoice);
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
 
@@ -107,13 +107,13 @@ export const ReleaseFunds = ({ invoice, balance }) => {
         >{`${utils.formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
           18
-        )} ${parseTokenAddress(chainID, token)}`}</Text>
+        )} ${parseTokenAddress(chainId, token)}`}</Text>
       </VStack>
       {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
-            href={getTxLink(chainID, transaction.hash)}
+            href={getTxLink(chainId, transaction.hash)}
             isExternal
             color='red.500'
             textDecoration='underline'

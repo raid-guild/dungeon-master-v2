@@ -1,6 +1,6 @@
 import { IPFS_ENDPOINT, BOX_ENDPOINT } from './constants';
 
-export const getProfile = async (account) => {
+export const getProfile = async (account: string) => {
   const address = account.toLowerCase();
   const profile = {
     address,

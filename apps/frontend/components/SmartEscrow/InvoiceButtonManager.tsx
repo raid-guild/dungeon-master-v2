@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
+import { SimpleGrid, Button } from '@raidguild/design-system';
 import {
-  SimpleGrid,
-  Button,
   Modal,
   ModalCloseButton,
   ModalContent,
-  ModalOverlay
+  ModalOverlay,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
@@ -23,7 +22,7 @@ export const InvoiceButtonManager = ({
   account,
   provider,
   raidParty,
-  wrappedAddress
+  wrappedAddress,
 }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
   const [wrappedInvoiceBalance, setWrappedInvoiceBalance] = useState(
@@ -95,7 +94,7 @@ export const InvoiceButtonManager = ({
     amounts,
     released,
     total,
-    resolver
+    resolver,
   } = invoice;
 
   const isRaidParty = account.toLowerCase() === raidParty.toLowerCase();
@@ -135,7 +134,7 @@ export const InvoiceButtonManager = ({
         <SimpleGrid columns={1} spacing='1rem' w='100%' mt='1rem'>
           {invoice.isLocked ? (
             <Button
-              variant='primary'
+              variant='solid'
               textTransform='uppercase'
               onClick={() => onResolve()}
             >
@@ -143,7 +142,7 @@ export const InvoiceButtonManager = ({
             </Button>
           ) : (
             <Button
-              variant='primary'
+              variant='solid'
               textTransform='uppercase'
               onClick={() => onDeposit()}
             >
@@ -157,7 +156,7 @@ export const InvoiceButtonManager = ({
         <SimpleGrid columns={gridColumns} spacing='1rem' w='100%' mt='1rem'>
           {isLockable && (isClient || isRaidParty) && (
             <Button
-              variant='primary'
+              variant='solid'
               textTransform='uppercase'
               onClick={() => onLock()}
             >
@@ -166,7 +165,7 @@ export const InvoiceButtonManager = ({
           )}
           {isExpired && balance.gt(0) && (
             <Button
-              variant='primary'
+              variant='solid'
               textTransform='uppercase'
               onClick={() => onWithdraw()}
             >
@@ -175,7 +174,7 @@ export const InvoiceButtonManager = ({
           )}
           {isReleasable && (
             <Button
-              variant='primary'
+              variant='solid'
               textTransform='uppercase'
               onClick={() => onDeposit()}
             >
@@ -187,9 +186,9 @@ export const InvoiceButtonManager = ({
               base: Number.isInteger(gridColumns)
                 ? 'auto/auto/auto/auto'
                 : '2/1/2/span 2',
-              sm: 'auto/auto/auto/auto'
+              sm: 'auto/auto/auto/auto',
             }}
-            variant='primary'
+            variant='solid'
             textTransform='uppercase'
             onClick={() => (isReleasable ? onRelease() : onDeposit())}
           >
@@ -207,7 +206,7 @@ export const InvoiceButtonManager = ({
         >
           {isLockable && (isClient || isRaidParty) && (
             <Button
-              variant='primary'
+              variant='solid'
               textTransform='uppercase'
               onClick={() => onLock()}
             >
@@ -215,7 +214,7 @@ export const InvoiceButtonManager = ({
             </Button>
           )}
           <Button
-            variant='primary'
+            variant='solid'
             textTransform='uppercase'
             onClick={() => onDeposit()}
           >
@@ -226,7 +225,7 @@ export const InvoiceButtonManager = ({
 
       {wrappedInvoiceBalance.gt(0) && isRaidParty && (
         <Button
-          variant='primary'
+          variant='solid'
           textTransform='uppercase'
           mt='1rem'
           onClick={() => onWithdrawWrappedBalance()}
@@ -240,7 +239,7 @@ export const InvoiceButtonManager = ({
           <ModalContent
             p='2rem'
             maxW='40rem'
-            background='blackLight'
+            background='gray.800'
             borderRadius='0.5rem'
             color='white'
           >

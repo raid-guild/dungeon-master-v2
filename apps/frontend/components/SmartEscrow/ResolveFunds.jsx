@@ -11,17 +11,17 @@ import {
 import { BigNumber, utils } from 'ethers';
 import React, { useCallback, useContext, useState } from 'react';
 
-import { AppContext } from '../context/AppContext';
-import { OrderedTextarea } from '../shared/OrderedTextArea';
-import { Loader } from '../components/Loader';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
+import { OrderedTextarea } from './shared/OrderedTextArea';
+import { Loader } from './Loader';
 
-import { getTxLink, parseTokenAddress } from '../utils/helpers';
-import { resolve } from '../utils/invoice';
-import { uploadDisputeDetails } from '../utils/ipfs';
+import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
+import { resolve } from '../../smartEscrow/utils/invoice';
+import { uploadDisputeDetails } from '../../smartEscrow/utils/ipfs';
 
 export const ResolveFunds = ({ invoice, balance, close }) => {
   const { address, resolutionRate, token, isLocked } = invoice;
-  const { chainID, provider } = useContext(AppContext);
+  const { chainId, provider } = useContext(SmartEscrowContext);
 
   const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState();
@@ -99,7 +99,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
               balance,
               18
             )} ${parseTokenAddress(
-              chainID,
+              chainId,
               token
             )} between the client and provider, excluding the ${
               100 / resolutionRate
@@ -147,7 +147,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 placeholder='Client Award'
               />
               <InputRightElement w='3.5rem' color='yellow'>
-                {parseTokenAddress(chainID, token)}
+                {parseTokenAddress(chainId, token)}
               </InputRightElement>
             </InputGroup>
           </VStack>
@@ -183,7 +183,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 placeholder='Provider Award'
               />
               <InputRightElement w='3.5rem' color='yellow'>
-                {parseTokenAddress(chainID, token)}
+                {parseTokenAddress(chainId, token)}
               </InputRightElement>
             </InputGroup>
           </VStack>
@@ -206,7 +206,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 isDisabled
               />
               <InputRightElement w='3.5rem' color='yellow'>
-                {parseTokenAddress(chainID, token)}
+                {parseTokenAddress(chainId, token)}
               </InputRightElement>
             </InputGroup>
           </VStack>
@@ -229,7 +229,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
             <Text color='white' textAlign='center' fontSize='sm'>
               Follow your transaction{' '}
               <Link
-                href={getTxLink(chainID, transaction.hash)}
+                href={getTxLink(chainId, transaction.hash)}
                 isExternal
                 color='red.500'
                 textDecoration='underline'

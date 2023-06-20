@@ -1,34 +1,37 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Flex, Text, Link, Button, Heading, VStack } from '@chakra-ui/react';
+import { Flex, Link, Heading, VStack } from '@chakra-ui/react';
+import { Button, Text } from '@raidguild/design-system';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { utils } from 'ethers';
 
-import { CopyIcon } from '../icons/CopyIcon';
-import { Loader } from '../components/Loader';
+import { CopyIcon } from '../../smartEscrow/icons/CopyIcon';
+import { Loader } from './Loader';
 
-import { awaitInvoiceAddress, getSmartInvoiceAddress } from '../utils/invoice';
-import { getInvoice } from '../graphql/getInvoice';
-import { getTxLink, copyToClipboard, apiRequest } from '../utils/helpers';
-import { updateRaidInvoice } from '../utils/requests';
+import { awaitInvoiceAddress, getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
+import { getTxLink, copyToClipboard, apiRequest } from '../../smartEscrow/utils/helpers';
+import { updateRaidInvoice } from '../../smartEscrow/utils/requests';
 
 const POLL_INTERVAL = 5000;
 
 export const EscrowSuccess = ({
   ethersProvider,
   tx,
-  chainID,
-  raidID,  
+  chainId,
+  raidId,
 }) => {
   const [wrappedInvoiceId, setWrappedInvoiceId] = useState('');
   const [smartInvoiceId, setSmartInvoiceId] = useState('');
   const [invoice, setInvoice] = useState();
   const router = useRouter();
+  console.log('escrow success: ethersProvider: ', ethersProvider);
 
   const [progressText, updateProgressText] = useState('');
 
   const postInvoiceId = async () => {
-    await updateRaidInvoice(raidID, wrappedInvoiceId);
+    console.log('postInvoiceId: ', raidId, wrappedInvoiceId);
+    await updateRaidInvoice(raidId, wrappedInvoiceId);
   };
 
   const fetchSmartInvoiceId = () => {
@@ -45,9 +48,9 @@ export const EscrowSuccess = ({
     let isSubscribed = true;
     const interval = setInterval(() => {
       console.log(
-        `Indexing subgraph with chain ID ${chainID} & Smart Invoice ID ${smartInvoiceId}`
+        `Indexing subgraph with chain ID ${chainId} & Smart Invoice ID ${smartInvoiceId}`
       );
-      getInvoice(chainID, smartInvoiceId).then((inv) => {
+      getInvoice(chainId, smartInvoiceId).then((inv) => {
         console.log(`Data returned, ${inv}`);
         if (isSubscribed && !!inv) {
           setInvoice(inv);
@@ -82,7 +85,7 @@ export const EscrowSuccess = ({
     setTimeout(() => {
       pollSubgraph();
     }, 10000);
-  }, [chainID, smartInvoiceId, invoice]);
+  }, [chainId, smartInvoiceId, invoice]);
 
   useEffect(() => {
     if (utils.isAddress(wrappedInvoiceId)) {
@@ -100,7 +103,7 @@ export const EscrowSuccess = ({
       minWidth='50%'
     >
       <Heading
-        fontFamily='spaceMono'
+        fontFamily='texturina'
         textTransform='uppercase'
         size='md'
         mb='2rem'
@@ -112,19 +115,20 @@ export const EscrowSuccess = ({
         color='white'
         textAlign='center'
         fontSize='sm'
-        fontFamily='jetbrains'
+        fontFamily='texturina'
         mb='1rem'
       >
         {wrappedInvoiceId
           ? 'You can view your transaction '
           : 'You can check the progress of your transaction '}
         <Link
-          href={getTxLink(chainID, tx.hash)}
+          href={getTxLink(chainId, tx.hash)}
           isExternal
-          color='yellow'
+          color='yellow.500'
           textDecoration='underline'
           target='_blank'
           rel='noopener noreferrer'
+          fontFamily='texturina'
         >
           here
         </Link>
@@ -132,7 +136,7 @@ export const EscrowSuccess = ({
 
       {invoice ? (
         <VStack w='100%' align='stretch' mb='1rem'>
-          <Text fontWeight='bold' variant='textOne' color='red'>
+          <Text fontWeight='bold' variant='mono' color='red.500'>
             Invoice URL
           </Text>
           <Flex
@@ -142,22 +146,22 @@ export const EscrowSuccess = ({
             bg='black'
             borderRadius='0.25rem'
             w='100%'
-            fontFamily='spaceMono'
+            fontFamily='texturina'
           >
             <Link
               ml='0.5rem'
-              href={`/escrow/${raidID}`}
-              color='yellow'
+              href={`/escrow/${raidId}`}
+              color='yellow.500'
               overflow='hidden'
             >
-              {`https://${window.location.hostname}/escrow/${raidID}`}
+              {`https://${window.location.hostname}/escrow/${raidId}`}
             </Link>
             {document.queryCommandSupported('copy') && (
               <Button
                 ml={4}
                 onClick={() =>
                   copyToClipboard(
-                    `https://${window.location.hostname}/escrow/${raidID}`
+                    `https://${window.location.hostname}/escrow/${raidId}`
                   )
                 }
                 bgColor='black'
@@ -175,12 +179,12 @@ export const EscrowSuccess = ({
         <Flex direction='column' alignItems='center'>
           <Loader />
           <br />
-          <Text fontFamily='jetbrains'>{progressText}</Text>
+          <Text fontFamily='texturina'>{progressText}</Text>
         </Flex>
       )}
 
       <Button
-        variant='primary'
+        variant='outline'
         onClick={() => {
           router.push(`/`);
         }}

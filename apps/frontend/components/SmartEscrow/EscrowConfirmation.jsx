@@ -1,11 +1,14 @@
-import { Flex, HStack, Text, Button } from '@chakra-ui/react';
+import { Flex, HStack } from '@chakra-ui/react';
+import { Button, Text } from '@raidguild/design-system';
+import { AccountLink } from './shared/AccountLink';
+import * as Web3Utils from 'web3-utils';
 
-import { AccountLink } from '../shared/AccountLink';
+import { spoilsPercent, NETWORK_CONFIG } from '../../smartEscrow/utils/constants';
 
-import { spoilsPercent, NETWORK_CONFIG } from '../utils/constants';
+console.log('Web3Utils: utils ', Web3Utils);
 
 export const EscrowConfirmation = ({
-  context,
+  appState,
   client,
   serviceProvider,
   tokenType,
@@ -21,16 +24,19 @@ export const EscrowConfirmation = ({
 }) => {
   const createInvoice = async () => {
     setLoading(true);
+    console.log('setLoading is true, calling createInvoice');
+    // debugger;
+    console.log('Web3Utils: ', Web3Utils);
 
-    let chainID = context.chainID;
-    let ethersProvider = context.provider;
+    let chainId = appState.chainId;
+    let ethersProvider = appState.provider;
     let clientAddress = client;
 
     let daoAddress = '';
 
-    if (parseInt(chainID) === 100) {
+    if (parseInt(chainId) === 100) {
       daoAddress = NETWORK_CONFIG['RG_XDAI'];
-    } else if (parseInt(chainID) === 1) {
+    } else if (parseInt(chainId) === 1) {
       daoAddress = NETWORK_CONFIG['RG_MULTISIG'];
     } else {
       daoAddress = serviceProvider;
@@ -39,19 +45,21 @@ export const EscrowConfirmation = ({
     let serviceProviders = [daoAddress, serviceProvider]; // [dao address, multisig address]
     let splitFactor = spoilsPercent;
     let resolver =
-      NETWORK_CONFIG[parseInt(chainID)]['RESOLVERS']['LexDAO']['address']; //arbitration
+      NETWORK_CONFIG[parseInt(chainId)]['RESOLVERS']['LexDAO']['address']; //arbitration
     let tokenAddress =
-      NETWORK_CONFIG[parseInt(chainID)]['TOKENS'][tokenType]['address'];
+      NETWORK_CONFIG[parseInt(chainId)]['TOKENS'][tokenType]['address'];
     let paymentsInWei = [];
     let terminationTime = new Date(selectedDay).getTime() / 1000;
 
+    console.log('payments: using toWei unit ', payments);
     payments.map((amount) =>
-      paymentsInWei.push(context.web3.utils.toWei(amount))
+      paymentsInWei.push(Web3Utils.toWei(amount, 'ether'))
     );
+    console.log('paymentsInWei: ', paymentsInWei);
 
     try {
       let transaction = await register(
-        chainID,
+        chainId,
         ethersProvider,
         clientAddress,
         serviceProviders,
@@ -62,6 +70,7 @@ export const EscrowConfirmation = ({
         terminationTime,
         '0x0000000000000000000000000000000000000000000000000000000000000000'
       );
+      console.log('transaction: ', transaction);
 
       setTx(transaction);
 
@@ -84,7 +93,7 @@ export const EscrowConfirmation = ({
           Project Name:
         </Text>
         <Text variant='textOne' color='white' maxWidth='200px' isTruncated>
-          {context.project_name}
+          {appState.project_name}
         </Text>
       </HStack>
       <HStack mb='.5rem' justifyContent='space-between'>
@@ -111,7 +120,7 @@ export const EscrowConfirmation = ({
         <Text fontWeight='bold' variant='textOne'>
           Payment Token:
         </Text>
-        <Text variant='textOne' color='yellow'>
+        <Text variant='textOne' color='yellow.500'>
           {tokenType}
         </Text>
       </HStack>
@@ -119,7 +128,7 @@ export const EscrowConfirmation = ({
         <Text fontWeight='bold' variant='textOne'>
           Payment Due:
         </Text>
-        <Text variant='textOne' color='yellow'>
+        <Text variant='textOne' color='yellow.500'>
           {paymentDue}
         </Text>
       </HStack>
@@ -127,26 +136,26 @@ export const EscrowConfirmation = ({
         <Text fontWeight='bold' variant='textOne'>
           No of Payments:
         </Text>
-        <Text variant='textOne' color='yellow'>
+        <Text variant='textOne' color='yellow.500'>
           {milestones}
         </Text>
       </HStack>
 
       <Flex direction='row' width='100%'>
         <Button
-          variant='secondary'
+          variant='outline'
           minW='25%'
           p='5px'
           mr='.5rem'
-          isDisabled={isLoading}
+          // isDisabled={isLoading}
           onClick={() => updateStep((prevStep) => prevStep - 1)}
         >
           Back
         </Button>
         <Button
-          variant='primary'
+          variant='solid'
           w='100%'
-          isDisabled={isLoading}
+          // isDisabled={isLoading}
           onClick={createInvoice}
         >
           {isLoading ? 'Creating Escrow..' : 'Create Escrow'}

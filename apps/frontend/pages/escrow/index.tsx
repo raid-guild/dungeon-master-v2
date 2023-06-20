@@ -22,7 +22,9 @@ import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 export const Home = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
-  const [localRaidId, setLocalRaidId] = useState('');
+  const [localRaidId, setLocalRaidId] = useState(
+    '8fc39a24-44c9-46a9-b36a-78516b6287ad'
+  );
   const [validId, setValidId] = useState(false);
   const [escrowVersion, setEscrowVersion] = useState('Dungeon Master V2');
   const { data: session } = useSession();
@@ -35,6 +37,7 @@ export const Home = () => {
 
   useEffect(() => {
     if (raid) {
+      console.log('setting raid: ', raid);
       setAppState({
         ...appState,
         invoice_id: raid.invoiceAddress,
@@ -90,6 +93,7 @@ export const Home = () => {
     // }
     // updateLoadingState();
   };
+  console.log('escrow page render: raid: ', raid, 'raidId: ', raidId);
 
   return (
     <>
