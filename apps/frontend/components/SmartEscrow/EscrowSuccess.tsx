@@ -8,20 +8,14 @@ import { utils } from 'ethers';
 import { CopyIcon } from '../../smartEscrow/icons/CopyIcon';
 import { Loader } from './Loader';
 
-import { awaitInvoiceAddress, getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import { awaitInvoiceAddress } from '../../smartEscrow/utils/invoice';
 import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
-import { getTxLink, copyToClipboard, apiRequest } from '../../smartEscrow/utils/helpers';
+import { getTxLink, copyToClipboard } from '../../smartEscrow/utils/helpers';
 import { updateRaidInvoice } from '../../smartEscrow/utils/requests';
 
 const POLL_INTERVAL = 5000;
 
-export const EscrowSuccess = ({
-  ethersProvider,
-  tx,
-  chainId,
-  raidId,
-}) => {
-  const [wrappedInvoiceId, setWrappedInvoiceId] = useState('');
+export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
   const [smartInvoiceId, setSmartInvoiceId] = useState('');
   const [invoice, setInvoice] = useState();
   const router = useRouter();
@@ -30,18 +24,8 @@ export const EscrowSuccess = ({
   const [progressText, updateProgressText] = useState('');
 
   const postInvoiceId = async () => {
-    console.log('postInvoiceId: ', raidId, wrappedInvoiceId);
-    await updateRaidInvoice(raidId, wrappedInvoiceId);
-  };
-
-  const fetchSmartInvoiceId = () => {
-    updateProgressText('Fetching Smart Invoice ID from Wrapped Invoice..');
-    console.log('Fetching Smart Invoice ID from Wrapped Invoice..');
-    getSmartInvoiceAddress(wrappedInvoiceId, ethersProvider).then((id) => {
-      setSmartInvoiceId(id.toLowerCase());
-      updateProgressText(`Received Smart Invoice ID.`);
-      console.log(`Received Smart Invoice ID, ${id.toLowerCase()}`);
-    });
+    console.log('postInvoiceId: ', raidId, smartInvoiceId);
+    await updateRaidInvoice(raidId, smartInvoiceId);
   };
 
   const pollSubgraph = () => {
@@ -56,10 +40,12 @@ export const EscrowSuccess = ({
           setInvoice(inv);
           updateProgressText(`Invoice data received.`);
           console.log(`Invoice data received, ${inv}`);
+          clearInterval(interval);
         }
       });
     }, POLL_INTERVAL);
     return () => {
+      alert("clear interval is called");
       isSubscribed = false;
       clearInterval(interval);
     };
@@ -67,12 +53,12 @@ export const EscrowSuccess = ({
 
   useEffect(() => {
     if (tx && ethersProvider) {
-      updateProgressText('Fetching Wrapped Invoice ID...');
-      console.log('Fetching Wrapped Invoice ID...');
+      updateProgressText('Fetching Smart Invoice ID...');
+      console.log('Fetching Smart Invoice ID...');
       awaitInvoiceAddress(ethersProvider, tx).then((id) => {
-        setWrappedInvoiceId(id.toLowerCase());
-        updateProgressText(`Received Wrapped Invoice ID.`);
-        console.log(`Received Wrapped Invoice ID, ${id.toLowerCase()}`);
+        setSmartInvoiceId(id.toLowerCase());
+        updateProgressText(`Received Smart Invoice ID.`);
+        console.log(`Received Smart Invoice ID, ${id.toLowerCase()}`);
       });
     }
   }, [tx, ethersProvider]);
@@ -88,11 +74,10 @@ export const EscrowSuccess = ({
   }, [chainId, smartInvoiceId, invoice]);
 
   useEffect(() => {
-    if (utils.isAddress(wrappedInvoiceId)) {
+    if (utils.isAddress(smartInvoiceId)) {
       postInvoiceId();
-      fetchSmartInvoiceId();
     }
-  }, [wrappedInvoiceId]);
+  }, [smartInvoiceId]);
 
   return (
     <Flex
@@ -118,7 +103,7 @@ export const EscrowSuccess = ({
         fontFamily='texturina'
         mb='1rem'
       >
-        {wrappedInvoiceId
+        {smartInvoiceId
           ? 'You can view your transaction '
           : 'You can check the progress of your transaction '}
         <Link

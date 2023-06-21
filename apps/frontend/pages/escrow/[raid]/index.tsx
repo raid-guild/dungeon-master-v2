@@ -165,12 +165,20 @@ const Escrow = ({ raidId }) => {
 
   useEffect(() => {
     console.log('useeffect on invoice_id and chain', chain, appState);
-    if (
-      SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 &&
+    console.log(
+      'SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1',
+      SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
       appState.invoice_id
-    ) {
+    );
+    if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && appState.invoice_id) {
       getSmartInvoiceData();
     } else if ((address as string) !== '') {
+      console.log(
+        'Error 1',
+        SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
+        appState.invoice_id,
+        appState
+      );
       setInvoiceFetchError(true);
       setStatusText(WRONG_NETWORK_MESSAGE);
     }
@@ -245,21 +253,25 @@ const Escrow = ({ raidId }) => {
         // todo: check thtat this conditional is not needed
       ) {
         setLoading(true);
-        setStatusText('Fetching Smart Invoice from Wrapped Invoice..');
-        const smartInvoice = await getSmartInvoiceAddress(
-          // appState.invoice_id == raid.invoice_address
-          appState.invoice_id,
-          appState.provider
-        );
-        console.log('fetched smartInvoice: ', smartInvoice);
+        setStatusText('Fetching Smart Invoice Data..');
 
-        const invoice = await getInvoice(chain.id, smartInvoice);
+        const invoice = await getInvoice(chain.id, appState.invoice_id);
         console.log('fetched invoice: ', invoice);
-        setInvoice(invoice);
-        setInvoiceFetchError(false);
-        setLoading(false);
+        if (invoice) {
+          setInvoice(invoice);
+          setInvoiceFetchError(false);
+          setLoading(false);
+        } else {
+          console.log('Error, invoice not found');
+          setInvoiceFetchError(true);
+          setStatusText(
+            `Something went wrong. Smart Invoice with address ${appState.invoice_id} was not found.`
+          );
+          setLoading(false);
+        }
       }
     } catch (err) {
+      console.log('Error 2');
       console.log(err);
       setInvoiceFetchError(true);
       setStatusText(WRONG_NETWORK_MESSAGE);
@@ -287,6 +299,11 @@ const Escrow = ({ raidId }) => {
     invoice && !loading && chain?.id == 100
   );
   console.log('address, invoiceFetchError', address, invoiceFetchError);
+  console.log(
+    'Escrow detail page render, appState, invoice: ',
+    appState,
+    invoice
+  );
   return (
     <>
       <NextSeo title='Smart Escrow' />

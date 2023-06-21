@@ -28,7 +28,7 @@ const NewEscrow = () => {
   );
 
   const [paymentDue, setPaymentDue] = useState('1');
-  const [milestones, setMilestones] = useState(5);
+  const [milestones, setMilestones] = useState(2);
   const [selectedDay, setSelectedDay] = useState('');
 
   const [tokenType, setTokenType] = useState('');
@@ -43,6 +43,7 @@ const NewEscrow = () => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('new page first useEffect appState: ', appState);
     if (!appState.raid_id) {
       console.log('no appState.raid_id found. appState: ', appState);
       router.push(`/escrow`);
@@ -69,7 +70,7 @@ const NewEscrow = () => {
       ),
     });
   };
-  console.log('new escrow called: isLoading: ', isLoading);
+  console.log('pages/escrow/new render function: isLoading: ', isLoading);
 
   return (
     <>

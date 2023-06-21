@@ -1,11 +1,17 @@
 import { Flex, HStack } from '@chakra-ui/react';
 import { Button, Text } from '@raidguild/design-system';
 import { AccountLink } from './shared/AccountLink';
+import { utils } from 'ethers';
 import * as Web3Utils from 'web3-utils';
 
-import { spoilsPercent, NETWORK_CONFIG } from '../../smartEscrow/utils/constants';
+import {
+  SPOILS_BASIS_POINTS,
+  NETWORK_CONFIG,
+} from '../../smartEscrow/utils/constants';
 
 console.log('Web3Utils: utils ', Web3Utils);
+
+const REQUIRES_VERIFICATION = true;
 
 export const EscrowConfirmation = ({
   appState,
@@ -20,17 +26,16 @@ export const EscrowConfirmation = ({
   setLoading,
   updateStep,
   register,
-  setTx
+  setTx,
 }) => {
   const createInvoice = async () => {
     setLoading(true);
     console.log('setLoading is true, calling createInvoice');
-    // debugger;
     console.log('Web3Utils: ', Web3Utils);
 
-    let chainId = appState.chainId;
-    let ethersProvider = appState.provider;
-    let clientAddress = client;
+    const chainId = appState.chainId;
+    const ethersProvider = appState.provider;
+    const clientAddress = client;
 
     let daoAddress = '';
 
@@ -42,14 +47,15 @@ export const EscrowConfirmation = ({
       daoAddress = serviceProvider;
     }
 
-    let serviceProviders = [daoAddress, serviceProvider]; // [dao address, multisig address]
-    let splitFactor = spoilsPercent;
-    let resolver =
+    const resolver =
       NETWORK_CONFIG[parseInt(chainId)]['RESOLVERS']['LexDAO']['address']; //arbitration
-    let tokenAddress =
+    const tokenAddress =
       NETWORK_CONFIG[parseInt(chainId)]['TOKENS'][tokenType]['address'];
-    let paymentsInWei = [];
-    let terminationTime = new Date(selectedDay).getTime() / 1000;
+    const wrappedNativeToken =
+      NETWORK_CONFIG[parseInt(chainId)]['WRAPPED_NATIVE_TOKEN'];
+    const factoryAddress = NETWORK_CONFIG[parseInt(chainId)]['INVOICE_FACTORY'];
+    const paymentsInWei = [];
+    const terminationTime = new Date(selectedDay).getTime() / 1000;
 
     console.log('payments: using toWei unit ', payments);
     payments.map((amount) =>
@@ -57,18 +63,59 @@ export const EscrowConfirmation = ({
     );
     console.log('paymentsInWei: ', paymentsInWei);
 
+    const resolverType = 0; // 0 for individual, 1 for erc-792 arbitrator
+    const type = utils.formatBytes32String('split-escrow');
+
+    // THESE ARE THE REQUIRED FIELDS FOR SPLIT-ESCROW TYPE in correct order
+    // address _client,
+    // uint8 _resolverType,
+    // address _resolver,
+    // address _token,
+    // uint256 _terminationTime, // exact termination date in seconds since epoch
+    // bytes32 _details,
+    // address _wrappedNativeToken,
+    // bool _requireVerification,
+    // address _factory,
+    // address _dao,
+    // uint256 _daoFee
+
+    const data = utils.AbiCoder.prototype.encode(
+      [
+        'address',
+        'uint8',
+        'address',
+        'address',
+        'uint256',
+        'bytes32',
+        'address',
+        'bool',
+        'address',
+        'address',
+        'uint256',
+      ],
+      [
+        clientAddress,
+        resolverType,
+        resolver, // address _resolver (LEX DAO resolver address)
+        tokenAddress, // address _token (payment token address)
+        terminationTime,
+        '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
+        wrappedNativeToken,
+        REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
+        factoryAddress,
+        daoAddress,
+        SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
+      ]
+    );
+
     try {
-      let transaction = await register(
+      const transaction = await register(
         chainId,
         ethersProvider,
-        clientAddress,
-        serviceProviders,
-        splitFactor,
-        resolver,
-        tokenAddress,
+        daoAddress, // this is the recipient
         paymentsInWei,
-        terminationTime,
-        '0x0000000000000000000000000000000000000000000000000000000000000000'
+        data,
+        type
       );
       console.log('transaction: ', transaction);
 

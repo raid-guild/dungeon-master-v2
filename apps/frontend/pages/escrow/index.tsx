@@ -23,7 +23,7 @@ export const Home = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [localRaidId, setLocalRaidId] = useState(
-    '8fc39a24-44c9-46a9-b36a-78516b6287ad'
+    '5d226e68-b6b4-4a3f-a70c-9a24307e8913'
   );
   const [validId, setValidId] = useState(false);
   const [escrowVersion, setEscrowVersion] = useState('Dungeon Master V2');

@@ -6,11 +6,13 @@ export const IPFS_ENDPOINT = 'https://ipfs.infura.io';
 export const BOX_ENDPOINT = 'https://ipfs.3box.io';
 
 export const NETWORK_CONFIG = {
+  // RaidGuild DAO treasury address V3
   RG_XDAI: '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f'.toLowerCase(),
+  // RaidGuild Ethereum Mainnet multisig
   RG_MULTISIG: '0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'.toLowerCase(),
   100: {
     SUBGRAPH: 'dan13ram/xdai-smart-invoices',
-    INVOICE_FACTORY: '0x6e769470F6F8D99794e53C87Fd8254E5D4FeDb8B'.toLowerCase(),
+    INVOICE_FACTORY: '0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'.toLowerCase(),
     WRAPPED_NATIVE_TOKEN:
       '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d'.toLowerCase(),
     TOKENS: {
@@ -86,7 +88,6 @@ export const NETWORK_CONFIG = {
   },
   5: {
     SUBGRAPH: 'psparacino/goerli-smart-invoices',
-
     WRAPPED_NATIVE_TOKEN:
       '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'.toLowerCase(),
     INVOICE_FACTORY: '0x546adED0B0179d550e87cf909939a1207Fd26fB7'.toLowerCase(),
@@ -189,7 +190,7 @@ export const tokenInfo = {
   1: NETWORK_CONFIG[1].TOKENS,
 };
 
-export const spoilsPercent = 10;
+export const SPOILS_BASIS_POINTS = 1000;
 
 export const INVOICE_VERSION = 'smart-escrow-v1';
 

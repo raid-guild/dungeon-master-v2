@@ -13,54 +13,45 @@ const getInvoiceFactoryAddress = (chainId) => {
   return invoiceFactory[chainId] || invoiceFactory[4];
 };
 
+// chainId,
+// ethersProvider,
+// paymentsInWei,
+// data,
+// type
 export const register = async (
   chainId,
   ethersProvider,
-  client,
-  providers,
-  splitFactor,
-  resolver,
-  token,
-  payments,
-  terminationTime,
-  details
+  recipient,
+  amounts,
+  data,
+  type
 ) => {
+  // debugger;
+  console.log(
+    'calling register with params: ',
+    chainId,
+    ethersProvider,
+    recipient,
+    amounts,
+    data,
+    type
+  );
+  // Smart Invoice Factory Abi for create function
   const abi = new utils.Interface([
-    'function create(address _client, address[] calldata _providers, uint256 _splitFactor, uint8 _resolverType, address _resolver, address _token, uint256[] calldata _amounts, uint256 _terminationTime, bytes32 _details) external',
+    'function create(address _recipient, uint256[] calldata _amounts, bytes _data, bytes32 _type) public',
   ]);
   console.log(
     'register: getInvoiceFactoryAddress(chainId): chainId: ',
     getInvoiceFactoryAddress(chainId),
     chainId
   );
+  // invoice factory address for smart invoice
+  const factoryAddress = getInvoiceFactoryAddress(chainId);
 
-  const contract = new Contract(
-    getInvoiceFactoryAddress(chainId),
-    abi,
-    ethersProvider
-  );
+  const contract = new Contract(factoryAddress, abi, ethersProvider);
 
-  const resolverType = 0;
-  return contract.create(
-    client,
-    providers,
-    splitFactor,
-    resolverType,
-    resolver,
-    token,
-    payments,
-    terminationTime,
-    details
-  );
-};
-
-export const getSmartInvoiceAddress = async (address, ethersProvider) => {
-  const abi = new utils.Interface([
-    'function invoice() public view returns(address)',
-  ]);
-  const contract = new Contract(address, abi, ethersProvider);
-  const smartInvoice = await contract.invoice();
-  return smartInvoice;
+  console.log('calling create with params: ', recipient, amounts, data, type);
+  return contract.create(recipient, amounts, data, type);
 };
 
 export const getRaidPartyAddress = async (address, ethersProvider) => {
@@ -99,8 +90,9 @@ export const getResolutionRateFromFactory = async (
 export const awaitInvoiceAddress = async (ethersProvider, tx) => {
   await tx.wait(1);
   const abi = new utils.Interface([
-    'event LogNewWrappedInvoice(uint256 indexed index, address wrappedInvoice)',
+    'event LogNewInvoice(uint256 indexed index, address indexed invoice, uint256[] amounts, bytes32 invoiceType, uint256 version)',
   ]);
+
   const receipt = await ethersProvider.getTransactionReceipt(tx.hash);
   console.log('awaitInvoiceAddress receipt', receipt);
   const eventFragment = abi.events[Object.keys(abi.events)[0]];
@@ -118,7 +110,8 @@ export const awaitInvoiceAddress = async (ethersProvider, tx) => {
       event.data,
       event.topics
     );
-    return decodedLog.wrappedInvoice;
+    console.log('event found: ', event, 'decodedLog: ', decodedLog);
+    return decodedLog.invoice;
   }
   return '';
 };

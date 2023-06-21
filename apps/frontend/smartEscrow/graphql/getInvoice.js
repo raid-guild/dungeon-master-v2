@@ -21,16 +21,19 @@ const invoiceQuery = gql`
   ${InvoiceDetails}
 `;
 
+// This fetches data on the invoice from The Graph
 export const getInvoice = async (chainId, queryAddress) => {
   const address = isAddress(queryAddress);
   if (!address) return null;
+  console.log('getInvoice clients[chainId], chainId, queryAddress', clients[chainId], chainId, queryAddress);
 
   const { data, error } = await clients[chainId]
     .query(invoiceQuery, { address })
     .toPromise();
+  console.log('getInvoice result: data, error: ', data, error);
   if (!data) {
     if (error) {
-      console.log(error);
+      console.error(error);
     }
     return null;
   }
