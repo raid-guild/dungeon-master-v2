@@ -42,13 +42,13 @@ export const getInvoice = async (chainId, queryAddress) => {
 };
 
 // export const getInvoice = async (chainId, queryAddress, tryAll = false) => {
-//   let invoice = await getInvoiceFromchainId(chainId, queryAddress);
+//   let invoice = await getInvoiceFromChainId(chainId, queryAddress);
 //   if (!invoice && tryAll) {
 //     const otherChainIds = new Set(SUPPORTED_NETWORKS);
 //     otherChainIds.delete(chainId);
 //     for (const chain of otherChainIds) {
 //       // eslint-ignore-next-line no-await-in-loop
-//       invoice = await getInvoiceFromchainId(chain, queryAddress);
+//       invoice = await getInvoiceFromChainId(chain, queryAddress);
 //       if (invoice) {
 //         break;
 //       }

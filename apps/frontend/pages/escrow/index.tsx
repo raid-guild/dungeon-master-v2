@@ -23,9 +23,9 @@ export const Home = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [localRaidId, setLocalRaidId] = useState(
-    '5d226e68-b6b4-4a3f-a70c-9a24307e8913'
+    '7bc41434-494f-4a0b-a938-b00eeec4ee99'
   );
-  const [validId, setValidId] = useState(false);
+  const [validId, setValidId] = useState<boolean | undefined>(undefined);
   const [escrowVersion, setEscrowVersion] = useState('Dungeon Master V2');
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -33,10 +33,12 @@ export const Home = () => {
 
   const toast = useToast();
 
-  console.log('isRaidIdValid ', raid);
+  console.log('raid render: raid: ', raid);
 
   useEffect(() => {
-    if (raid) {
+    if (raid && Object.keys(raid).length > 0) {
+      setValidId(true);
+
       console.log('setting raid: ', raid);
       setAppState({
         ...appState,
@@ -53,8 +55,6 @@ export const Home = () => {
         brief_description: 'Not Specified',
       });
       // setInvoiceAddress(raid.invoiceAddress);
-    } else {
-      // todo: display toast with no raid found message
     }
   }, [raid]);
 
@@ -94,6 +94,46 @@ export const Home = () => {
     // updateLoadingState();
   };
   console.log('escrow page render: raid: ', raid, 'raidId: ', raidId);
+  const renderActionButton = () => {
+    if (validId === true && raid && !raid.invoiceAddress) {
+      return (
+        <Link href='/escrow/new' passHref>
+          <Button variant='outline'>Register Escrow</Button>
+        </Link>
+      );
+    } else if (validId === false || validId === undefined) {
+      return (
+        <Button
+          variant='outline'
+          onClick={validateID}
+          disabled={!localRaidId}
+          _hover={{
+            opacity: 0.8,
+          }}
+        >
+          Validate ID
+        </Button>
+      );
+    } else if (validId === true && raid && raid.invoiceAddress) {
+      return (
+        <Link href={`/escrow/${raidId}`} passHref>
+          <Button disabled={!raid} variant='outline'>
+            View Escrow
+          </Button>
+        </Link>
+      );
+    }
+  };
+
+  const renderValidationMessage = () => {
+    if (validId === true) {
+      return <Text color='green.500'>Raid ID is valid!</Text>;
+    } else if (validId === false) {
+      return <Text color='red.500'>Raid ID is not valid!</Text>;
+    } else {
+      return <Box height='30px'></Box>;
+    }
+  };
 
   return (
     <>
@@ -109,36 +149,8 @@ export const Home = () => {
             label='Raid ID'
             maxWidth='400px'
           ></ControlledInput>
-          {raid ? (
-            <Text color='green.500'>Raid ID is valid!</Text>
-          ) : !raid ? (
-            <Text color='red.500'>Raid ID is not valid!</Text>
-          ) : (
-            <Box height='30px'></Box>
-          )}
-          <HStack>
-            {raid ? (
-              <Link href={`/escrow/${raidId}`} passHref>
-                <Button disabled={!raid} variant='outline'>
-                  View Escrow
-                </Button>
-              </Link>
-            ) : (
-              <Button
-                variant='outline'
-                onClick={validateID}
-                disabled={!localRaidId}
-                _hover={{
-                  opacity: 0.8,
-                }}
-              >
-                Validate ID
-              </Button>
-            )}
-            <Link href='/escrow/new' passHref>
-              <Button variant='outline'>Register Escrow</Button>
-            </Link>
-          </HStack>
+          {renderValidationMessage()}
+          <HStack>{renderActionButton()}</HStack>
         </VStack>
       </SiteLayout>
     </>

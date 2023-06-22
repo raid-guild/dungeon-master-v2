@@ -250,7 +250,7 @@ const Escrow = ({ raidId }) => {
       if (
         utils.isAddress(appState.invoice_id)
         // !Number.isNaN(parseInt(chain))
-        // todo: check thtat this conditional is not needed
+        // todo: check that this conditional is not needed
       ) {
         setLoading(true);
         setStatusText('Fetching Smart Invoice Data..');
