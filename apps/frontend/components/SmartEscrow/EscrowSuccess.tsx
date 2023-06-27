@@ -45,7 +45,7 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
       });
     }, POLL_INTERVAL);
     return () => {
-      alert("clear interval is called");
+      alert('clear interval is called');
       isSubscribed = false;
       clearInterval(interval);
     };
@@ -121,7 +121,7 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
 
       {invoice ? (
         <VStack w='100%' align='stretch' mb='1rem'>
-          <Text fontWeight='bold' variant='mono' color='red.500'>
+          <Text fontWeight='bold' variant='mono' color='primary.300'>
             Invoice URL
           </Text>
           <Flex

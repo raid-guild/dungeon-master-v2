@@ -14,7 +14,7 @@ export const Page404 = () => {
       <Flex direction={{ lg: 'row', base: 'column' }} mt='2rem'>
         <Link href='/' passHref>
           <Button
-            variant='primary'
+            variant='solid'
             mr={{ lg: '1rem', base: '0' }}
             mb={{ lg: '0', base: '1rem' }}
           >

@@ -2,7 +2,7 @@ import { Contract, utils } from 'ethers';
 
 import { NETWORK_CONFIG } from './constants';
 
-const getInvoiceFactoryAddress = (chainId) => {
+const getInvoiceFactoryAddress = (chainId: number) => {
   const invoiceFactory = {
     4: NETWORK_CONFIG[4].INVOICE_FACTORY,
     100: NETWORK_CONFIG[100].INVOICE_FACTORY,
@@ -54,19 +54,10 @@ export const register = async (
   return contract.create(recipient, amounts, data, type);
 };
 
-export const getRaidPartyAddress = async (address, ethersProvider) => {
-  const abi = new utils.Interface([
-    'function child() public view returns(address)',
-  ]);
-  const contract = new Contract(address, abi, ethersProvider);
-  const child = await contract.child();
-  return child;
-};
-
 export const getResolutionRateFromFactory = async (
-  chainId,
-  ethersProvider,
-  resolver
+  chainId: number,
+  ethersProvider: any,
+  resolver: any
 ) => {
   if (!utils.isAddress(resolver)) return 20;
   try {

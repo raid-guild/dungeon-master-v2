@@ -3,11 +3,11 @@ import { QuestionIcon } from './icons/QuestionIcon';
 
 import { AccountLink } from './shared/AccountLink';
 
-export const InvoiceMetaDetails = ({ invoice, raidParty }) => {
+export const InvoiceMetaDetails = ({ invoice }) => {
   return (
     <>
       <HStack mb='.5rem' mt='2rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='jetbrains'>
+        <Text fontWeight='bold' fontFamily='texturina'>
           Safety Valve Date:
         </Text>
         <HStack>
@@ -21,19 +21,19 @@ export const InvoiceMetaDetails = ({ invoice, raidParty }) => {
         </HStack>
       </HStack>
       <HStack mb='.5rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='jetbrains'>
+        <Text fontWeight='bold' fontFamily='texturina'>
           Client:
         </Text>
         <AccountLink address={invoice.client} />
       </HStack>
       <HStack mb='.5rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='jetbrains'>
+        <Text fontWeight='bold' fontFamily='texturina'>
           Raid Party:
         </Text>
-        <AccountLink address={raidParty} />
+        <AccountLink address={invoice.provider} />
       </HStack>
       <HStack mb='.5rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='jetbrains'>
+        <Text fontWeight='bold' fontFamily='texturina'>
           Resolver:
         </Text>
         <AccountLink address={invoice.resolver} />

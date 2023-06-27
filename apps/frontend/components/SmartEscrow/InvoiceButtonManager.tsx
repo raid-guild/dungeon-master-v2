@@ -21,7 +21,6 @@ export const InvoiceButtonManager = ({
   invoice,
   account,
   provider,
-  raidParty,
   wrappedAddress,
 }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
@@ -97,12 +96,18 @@ export const InvoiceButtonManager = ({
     resolver,
   } = invoice;
 
-  const isRaidParty = account.toLowerCase() === raidParty.toLowerCase();
+  const isRaidParty =
+    account.toLowerCase() === invoice?.provider?.toLowerCase();
 
-  const isClient = account.toLowerCase() === client;
+  // const isClient = account.toLowerCase() === client;
+  const isClient = true;
   const isResolver = account.toLowerCase() === resolver.toLowerCase();
+  // const isResolver = true;
+  console.log('isResolver: ', resolver);
+
   const dispute =
     isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;
+  // const dispute = true;
   const deposited = BigNumber.from(released).add(balance);
   const due = deposited.gte(total)
     ? BigNumber.from(0)
@@ -115,7 +120,8 @@ export const InvoiceButtonManager = ({
   const amount = BigNumber.from(
     currentMilestone < amounts.length ? amounts[currentMilestone] : 0
   );
-  const isLockable = !isExpired && !isLocked && balance.gt(0);
+  // const isLockable = !isExpired && !isLocked && balance.gt(0);
+  const isLockable = true;
 
   const isReleasable = !isLocked && balance.gte(amount) && balance.gt(0);
 
@@ -127,6 +133,8 @@ export const InvoiceButtonManager = ({
   } else {
     gridColumns = 1;
   }
+  invoice.isLocked = true;
+  console.log('balance: ', balance);
 
   return (
     <>

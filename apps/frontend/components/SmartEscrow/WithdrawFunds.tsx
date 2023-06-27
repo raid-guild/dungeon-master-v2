@@ -1,6 +1,13 @@
-import { Button, Heading, Link, Text, VStack } from '@raidguild/design-system';
+import {
+  Button,
+  Heading,
+  Link,
+  Text,
+  VStack,
+  useToast,
+} from '@raidguild/design-system';
 import { utils } from 'ethers';
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
@@ -8,9 +15,13 @@ import { withdraw } from '../../smartEscrow/utils/invoice';
 
 import { Loader } from './Loader';
 
-export const WithdrawFunds = ({ contractAddress, token, balance }) => {
+export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
   const [loading, setLoading] = useState(false);
-  const { chainId, provider } = useContext(SmartEscrowContext);
+  const toast = useToast();
+
+  const {
+    appState: { chainId, provider },
+  } = useContext(SmartEscrowContext);
 
   const [transaction, setTransaction] = useState();
 
@@ -27,33 +38,36 @@ export const WithdrawFunds = ({ contractAddress, token, balance }) => {
         }, 20000);
       } catch (withdrawError) {
         console.log(withdrawError);
+        toast.error({
+          title: 'Oops there was an error',
+          iconName: 'alert',
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
       }
     }
   };
+  console.log('withdraw funds chainId ', chainId, token);
 
   return (
     <VStack w='100%' spacing='1rem'>
       <Heading
-        fontWeight='normal'
         mb='1rem'
-        textTransform='uppercase'
-        textAlign='center'
-        fontFamily='rubik'
-        color='red'
+        color='white'
+        as='h3'
+        fontSize='2xl'
+        transition='all ease-in-out .25s'
+        _hover={{ cursor: 'pointer', color: 'raid' }}
       >
         Withdraw Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='jetbrains'>
+      <Text textAlign='center' fontSize='sm' mb='1rem'>
         Follow the instructions in your wallet to withdraw remaining funds from
         the escrow.
       </Text>
       <VStack my='2rem' px='5rem' py='1rem' bg='black' borderRadius='0.5rem'>
-        <Text
-          color='red.500'
-          fontSize='0.875rem'
-          textAlign='center'
-          fontFamily='jetbrains'
-        >
+        <Text color='primary.300' fontSize='0.875rem' textAlign='center'>
           Amount To Be Withdrawn
         </Text>
         <Text
@@ -61,7 +75,6 @@ export const WithdrawFunds = ({ contractAddress, token, balance }) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-          fontFamily='jetbrains'
         >{`${utils.formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,
           token
@@ -73,7 +86,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance }) => {
           <Link
             href={getTxLink(chainId, transaction.hash)}
             isExternal
-            color='red.500'
+            color='primary.300'
             textDecoration='underline'
           >
             here
@@ -83,7 +96,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance }) => {
       {loading && <Loader />}
       <Button
         onClick={withdrawFunds}
-        variant='primary'
+        variant='solid'
         textTransform='uppercase'
         w='100%'
       >

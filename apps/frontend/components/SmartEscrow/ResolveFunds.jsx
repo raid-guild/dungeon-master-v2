@@ -9,7 +9,7 @@ import {
   VStack
 } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
-import React, { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 import { OrderedTextarea } from './shared/OrderedTextArea';
@@ -18,17 +18,22 @@ import { Loader } from './Loader';
 import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
 import { resolve } from '../../smartEscrow/utils/invoice';
 import { uploadDisputeDetails } from '../../smartEscrow/utils/ipfs';
+import { Toast } from '@raidguild/design-system';
 
 export const ResolveFunds = ({ invoice, balance, close }) => {
   const { address, resolutionRate, token, isLocked } = invoice;
-  const { chainId, provider } = useContext(SmartEscrowContext);
+  const {
+    appState: { chainId, provider },
+  } = useContext(SmartEscrowContext);
 
   const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState();
 
-  const resolverAward = balance.gt(0)
-    ? balance.div(resolutionRate)
-    : BigNumber.from(0);
+  // const resolverAward = resolutionRate === '0' ? BigNumber.from('0') : balance.gt(0)
+  //   ? balance.div(resolutionRate)
+  //   : BigNumber.from(0);
+
+    const resolverAward = BigNumber.from('1');
   const availableFunds = balance.sub(resolverAward);
   const [clientAward, setClientAward] = useState(availableFunds);
   const [providerAward, setProviderAward] = useState(BigNumber.from(0));
@@ -84,16 +89,16 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
   return (
     <VStack w='100%' spacing='1rem'>
       <Heading
-        fontWeight='normal'
         mb='1rem'
-        textTransform='uppercase'
-        textAlign='center'
-        fontFamily='rubik'
-        color='red'
+        color='white'
+        as='h3'
+        fontSize='2xl'
+        transition='all ease-in-out .25s'
+        _hover={{ cursor: 'pointer', color: 'raid' }}
       >
         Resolve Dispute
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='jetbrains'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {isLocked
           ? `You’ll need to distribute the total balance of ${utils.formatUnits(
               balance,
@@ -102,7 +107,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
               chainId,
               token
             )} between the client and provider, excluding the ${
-              100 / resolutionRate
+              resolutionRate === '0' ? '0' : 100 / resolutionRate
             }% arbitration fee which you shall receive.`
           : `Invoice is not locked`}
       </Text>
@@ -118,8 +123,8 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
           <VStack
             spacing='0.5rem'
             align='stretch'
-            color='red.500'
-            fontFamily='jetbrains'
+            color='primary.300'
+            fontFamily='texturina'
           >
             <Text fontWeight='700'>Client Award</Text>
             <InputGroup>
@@ -154,8 +159,8 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
           <VStack
             spacing='0.5rem'
             align='stretch'
-            color='red.500'
-            fontFamily='jetbrains'
+            color='primary.300'
+            fontFamily='texturina'
           >
             <Text fontWeight='700'>Provider Award</Text>
             <InputGroup>
@@ -190,9 +195,9 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
           <VStack
             spacing='0.5rem'
             align='stretch'
-            color='red.500'
+            color='primary.300'
             mb='1rem'
-            fontFamily='jetbrains'
+            fontFamily='texturina'
           >
             <Text fontWeight='700'>Resolver Award</Text>
             <InputGroup>
@@ -218,7 +223,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
               onClick={resolveFunds}
               isDisabled={resolverAward.lte(0) || !comments}
               textTransform='uppercase'
-              variant='primary'
+              variant='solid'
               w='100%'
             >
               Resolve
@@ -231,7 +236,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
               <Link
                 href={getTxLink(chainId, transaction.hash)}
                 isExternal
-                color='red.500'
+                color='primary.300'
                 textDecoration='underline'
               >
                 here
@@ -242,7 +247,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
       ) : (
         <Button
           onClick={close}
-          variant='primary'
+          variant='solid'
           textTransform='uppercase'
           w='100%'
         >

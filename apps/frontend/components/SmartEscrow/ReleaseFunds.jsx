@@ -1,4 +1,5 @@
 import { Button, Heading, Link, Text, VStack } from '@chakra-ui/react';
+import { useToast } from '@raidguild/design-system';
 import { BigNumber, utils } from 'ethers';
 import React, { useContext, useState } from 'react';
 
@@ -12,7 +13,10 @@ import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
 export const ReleaseFunds = ({ invoice, balance }) => {
   const [loading, setLoading] = useState(false);
-  const { chainId, invoice_id, provider } = useContext(SmartEscrowContext);
+  const toast = useToast();
+  const {
+    appState: { chainId, invoice_id, provider }
+  } = useContext(SmartEscrowContext);
   const { currentMilestone, amounts, address, token } = invoice;
 
   const pollSubgraph = async () => {
@@ -69,6 +73,13 @@ export const ReleaseFunds = ({ invoice, balance }) => {
         await pollSubgraph();
       } catch (releaseError) {
         console.log(releaseError);
+        setLoading(false);
+        toast.error({
+          title: 'Oops there was an error',
+          iconName: 'alert',
+          duration: 3000,
+          isClosable: true,
+        });
       }
     }
   };
@@ -76,25 +87,25 @@ export const ReleaseFunds = ({ invoice, balance }) => {
   return (
     <VStack w='100%' spacing='1rem'>
       <Heading
-        fontWeight='normal'
         mb='1rem'
-        textTransform='uppercase'
-        textAlign='center'
-        fontFamily='rubik'
-        color='red'
+        color='white'
+        as='h3'
+        fontSize='2xl'
+        transition='all ease-in-out .25s'
+        _hover={{ cursor: 'pointer', color: 'raid' }}
       >
         Release Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='jetbrains'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' >
         Follow the instructions in your wallet to release funds from escrow to
         the raid party.
       </Text>
       <VStack my='2rem' px='5rem' py='1rem' bg='black' borderRadius='0.5rem'>
         <Text
-          color='red'
+          color='primary.300'
           fontSize='0.875rem'
           textAlign='center'
-          fontFamily='jetbrains'
+
         >
           Amount To Be Released
         </Text>
@@ -103,7 +114,7 @@ export const ReleaseFunds = ({ invoice, balance }) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-          fontFamily='jetbrains'
+
         >{`${utils.formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
           18
@@ -115,7 +126,7 @@ export const ReleaseFunds = ({ invoice, balance }) => {
           <Link
             href={getTxLink(chainId, transaction.hash)}
             isExternal
-            color='red.500'
+            color='primary.300'
             textDecoration='underline'
           >
             here
@@ -128,7 +139,7 @@ export const ReleaseFunds = ({ invoice, balance }) => {
         <Button
           onClick={releaseFunds}
           textTransform='uppercase'
-          variant='primary'
+          variant='solid'
           w='100%'
         >
           Release

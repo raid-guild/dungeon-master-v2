@@ -33,8 +33,6 @@ import {
   checkedAtIndex,
   getCheckedStatus,
 } from '../../smartEscrow/utils/helpers';
-
-import { getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
 import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
 export const DepositFunds = ({ invoice, deposited, due }) => {
@@ -61,17 +59,15 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   const [balance, setBalance] = useState();
 
   const pollSubgraph = async () => {
-    let smartInvoice = await getSmartInvoiceAddress(invoice_id, provider);
-
     let isSubscribed = true;
-    console.log('pollSubgraph smartInvoice: ', smartInvoice);
+    console.log('pollSubgraph smartInvoice: ', invoice_id);
 
     const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainId), smartInvoice);
+      const inv = await getInvoice(parseInt(chainId), invoice_id);
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
 
-        let balance = await balanceOf(provider, inv.token, inv.address);
+        const balance = await balanceOf(provider, inv.token, inv.address);
         let newDepositValue = BigNumber.from(inv.released).add(balance);
         newDepositValue = utils.formatUnits(newDepositValue, 18);
         if (newDepositValue > utils.formatUnits(deposited, 18)) {
@@ -230,7 +226,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
                 onChange={(e) => setPaymentType(Number(e.target.value))}
                 value={paymentType}
                 bg='black'
-                color='red'
+                color='primary.300'
                 border='none'
               >
                 <option value='0'>{parseTokenAddress(chainId, token)}</option>
@@ -243,7 +239,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
         </InputGroup>
         {amount.gt(due) && (
           <Alert bg='none'>
-            <AlertIcon color='red.500' />
+            <AlertIcon color='primary.300' />
             <AlertTitle fontSize='sm'>
               Your deposit is greater than the due amount!
             </AlertTitle>
@@ -307,7 +303,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
           <Link
             href={getTxLink(chainId, transaction.hash)}
             isExternal
-            color='red'
+            color='primary.300'
             textDecoration='underline'
           >
             here

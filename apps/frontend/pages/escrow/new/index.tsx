@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useToast, Text, Center } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import SiteLayout from '../../../components/SiteLayout';
-import { Heading, Box, Flex } from '@raidguild/design-system';
+import { Heading, Box, Flex, Card } from '@raidguild/design-system';
 import { useRouter } from 'next/router';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
@@ -62,7 +62,7 @@ const NewEscrow = () => {
           p={3}
           mt='2rem'
           bg='#ff3864'
-          fontFamily='jetbrains'
+          fontFamily='texturina'
           textTransform='uppercase'
         >
           {msg}
@@ -84,6 +84,7 @@ const NewEscrow = () => {
           justifyContent='space-evenly'
         >
           <ProjectInfo appState={appState} />
+          {/* todo: Use card for each form stage component */}
           {step === 1 && (
             <PaymentDetailsForm
               appState={appState}

@@ -48,7 +48,7 @@ export const NavButton = ({ onClick, children }) => (
     transition='all 0.5s ease 0.4s'
     my='1rem'
     variant='link'
-    color='red'
+    color='primary.300'
     fontWeight='normal'
     fontSize='1.5rem'
   >
@@ -126,8 +126,8 @@ export const Header = () => {
                   <Text
                     px={2}
                     display={{ base: 'none', md: 'flex' }}
-                    fontFamily='jetbrains'
-                    color='red'
+                    fontFamily='texturina'
+                    color='primary.300'
                   >
                     {profile && profile.name
                       ? profile.name
@@ -148,7 +148,7 @@ export const Header = () => {
                     onClick={() => {
                       disconnect();
                     }}
-                    variant='primary'
+                    variant='solid'
                     mt='0'
                   >
                     Disconnect
@@ -160,7 +160,7 @@ export const Header = () => {
         )}
 
         {account === '' && (
-          <Button w='200px' variant='primary' onClick={connectAccount}>
+          <Button w='200px' variant='solid' onClick={connectAccount}>
             Connect Wallet
           </Button>
         )}

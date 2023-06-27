@@ -19,10 +19,6 @@ import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceBut
 import { SUPPORTED_NETWORKS } from '../../../smartEscrow/graphql/client';
 
 import { getInvoice } from '../../../smartEscrow/graphql/getInvoice';
-import {
-  getSmartInvoiceAddress,
-  getRaidPartyAddress,
-} from '../../../smartEscrow/utils/invoice';
 // import { rpcUrls } from '../../../utils/constants';
 // import { Page404 } from '../../../shared/Page404';
 // import { DM_ENDPOINT, HASURA_SECRET } from '../../../config';
@@ -149,7 +145,6 @@ const Escrow = ({ raidId }) => {
   console.log('raidId, token', raidId, token);
 
   const [invoice, setInvoice] = useState();
-  const [raidParty, setRaidParty] = useState('');
   const [invoiceFetchError, setInvoiceFetchError] = useState(false);
   const { data: sIAddress } = useSmartInvoiceAddress({
     invoiceAddress: raid?.invoiceAddress,
@@ -279,20 +274,6 @@ const Escrow = ({ raidId }) => {
     }
   };
 
-  const fetchRaidPartyAddress = async () => {
-    if (invoice) {
-      const addr = await getRaidPartyAddress(
-        invoice.provider,
-        appState.provider
-      );
-      setRaidParty(addr);
-    }
-  };
-
-  useEffect(() => {
-    fetchRaidPartyAddress();
-  }, [invoice]);
-
   console.log('escrowValue && raid', escrowValue && raid, escrowValue, raid);
   console.log(
     'invoice && !loading && chain?.id == 100',
@@ -320,38 +301,36 @@ const Escrow = ({ raidId }) => {
 
               {invoiceFetchError && <Text variant='textOne'>{statusText}</Text>}
 
-              {invoice && !loading && chain?.id == 100 && (
-                <Flex
-                  width='100%'
-                  direction={{ md: 'column', lg: 'row' }}
-                  alignItems='center'
-                  justifyContent='space-evenly'
-                >
-                  <Flex direction='column' minW='30%'>
-                    <ProjectInfo appState={appState} />
-                    <InvoiceMetaDetails
-                      invoice={invoice}
-                      raidParty={raidParty}
-                    />
-                  </Flex>
+              {invoice &&
+                !loading &&
+                SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && (
+                  <Flex
+                    width='100%'
+                    direction={{ md: 'column', lg: 'row' }}
+                    alignItems='center'
+                    justifyContent='space-evenly'
+                  >
+                    <Flex direction='column' minW='30%'>
+                      <ProjectInfo appState={appState} />
+                      <InvoiceMetaDetails invoice={invoice} />
+                    </Flex>
 
-                  <Flex direction='column' minW='45%'>
-                    <InvoicePaymentDetails
-                      web3={appState.web3}
-                      invoice={invoice}
-                      chainId={chain.id}
-                      provider={appState.provider}
-                    />
-                    <InvoiceButtonManager
-                      invoice={invoice}
-                      account={address}
-                      provider={appState.provider}
-                      raidParty={raidParty}
-                      wrappedAddress={appState.invoice_id}
-                    />
+                    <Flex direction='column' minW='45%'>
+                      <InvoicePaymentDetails
+                        web3={appState.web3}
+                        invoice={invoice}
+                        chainId={chain.id}
+                        provider={appState.provider}
+                      />
+                      <InvoiceButtonManager
+                        invoice={invoice}
+                        account={address}
+                        provider={appState.provider}
+                        wrappedAddress={appState.invoice_id}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
-              )}
+                )}
             </>
           ) : (
             // <Page404 />

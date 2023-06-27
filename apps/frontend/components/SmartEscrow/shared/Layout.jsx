@@ -12,7 +12,7 @@ export const Layout = ({ children }) => {
       justify='space-between'
       align='center'
       background='blackLight'
-      color='red'
+      color='primary.300'
       overflowY='scroll'
     >
       <Header />

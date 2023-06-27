@@ -13,16 +13,16 @@ export const OrderedTextarea = ({
   type = 'text'
 }) => {
   return (
-    <VStack w='100%' spacing='0.5rem' justify='space-between' color='red.500'>
+    <VStack w='100%' spacing='0.5rem' justify='space-between' color='primary.300'>
       <Flex justify='space-between' w='100%'>
-        <Text fontFamily='jetbrains' fontWeight='700' color='red'>
+        <Text fontFamily='texturina' fontWeight='700' color='primary.300'>
           {label}
         </Text>
         <Flex>
           {infoText && <Text fontSize='xs'>{infoText}</Text>}
           {tooltip && (
             <Tooltip label={tooltip} placement='auto-start'>
-              <QuestionIcon ml='1rem' boxSize='0.75rem' color='red' />
+              <QuestionIcon ml='1rem' boxSize='0.75rem' color='primary.300' />
             </Tooltip>
           )}
         </Flex>

@@ -1,4 +1,12 @@
-import { Button, Flex, Heading, Link, Text, VStack, Image } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Text,
+  VStack,
+  Image,
+} from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useContext, useState } from 'react';
 
@@ -16,7 +24,7 @@ import { NETWORK_CONFIG } from '../../smartEscrow/utils/constants';
 
 const parseTokenAddress = (chainId, address) => {
   for (const [key, value] of Object.entries(
-    NETWORK_CONFIG[parseInt(chainId)]['TOKENS'],
+    NETWORK_CONFIG[parseInt(chainId)]['TOKENS']
   )) {
     if (value['address'] === address.toLowerCase()) {
       return key;
@@ -39,11 +47,11 @@ const resolvers = {
   1: Object.keys(NETWORK_CONFIG[1].RESOLVERS),
 };
 
-const getResolvers = chainId => resolvers[chainId] || resolvers[4];
+const getResolvers = (chainId) => resolvers[chainId] || resolvers[4];
 const isKnownResolver = (chainId, resolver) =>
   getResolvers(chainId).indexOf(resolver.toLowerCase()) !== -1;
 
-const getAccountString = account => {
+const getAccountString = (account) => {
   const len = account.length;
   return `0x${account.substr(2, 3).toUpperCase()}...${account
     .substr(len - 3, len - 1)
@@ -60,14 +68,18 @@ export const LockFunds = ({
   wrappedAddress,
   isRaidParty,
 }) => {
-  const { chainId, provider } = useContext(SmartEscrowContext);
+  const {
+    appState: { chainId, provider },
+  } = useContext(SmartEscrowContext);
   const { address, resolver, token, resolutionRate } = invoice;
 
   const [disputeReason, setDisputeReason] = useState('');
 
   const fee = `${utils.formatUnits(
-    BigNumber.from(balance).div(resolutionRate),
-    18,
+    resolutionRate === '0'
+      ? BigNumber.from('0')
+      : BigNumber.from(balance).div(resolutionRate),
+    18
   )} ${parseTokenAddress(chainId, token)}`;
 
   const [locking, setLocking] = useState<boolean>(false);
@@ -85,7 +97,7 @@ export const LockFunds = ({
         const tx = await lock(
           provider,
           isRaidParty ? wrappedAddress : address,
-          detailsHash,
+          detailsHash
         );
         setTransaction(tx);
         await tx.wait();
@@ -109,47 +121,47 @@ export const LockFunds = ({
 
   if (locking) {
     return (
-      <VStack w="100%" spacing="1rem">
+      <VStack w='100%' spacing='1rem'>
         <Heading
-          fontWeight="normal"
-          mb="1rem"
-          textTransform="uppercase"
-          textAlign="center"
-          fontFamily="rubik"
-          color="red"
+          fontWeight='normal'
+          mb='1rem'
+          textTransform='uppercase'
+          textAlign='center'
+          fontFamily='rubik'
+          color='primary.300'
         >
           Locking Funds
         </Heading>
         {transaction && (
-          <Text color="white" textAlign="center" fontSize="sm">
+          <Text color='white' textAlign='center' fontSize='sm'>
             Follow your transaction{' '}
             <Link
               href={getTxLink(chainId, transaction.hash)}
               isExternal
-              color="red.500"
-              textDecoration="underline"
+              color='primary.300'
+              textDecoration='underline'
             >
               here
             </Link>
           </Text>
         )}
         <Flex
-          w="100%"
-          justify="center"
-          align="center"
-          minH="7rem"
-          my="3rem"
-          position="relative"
-          color="red.500"
+          w='100%'
+          justify='center'
+          align='center'
+          minH='7rem'
+          my='3rem'
+          position='relative'
+          color='primary.300'
         >
-          <Loader size="6rem" />
+          <Loader size='6rem' />
           <Flex
-            position="absolute"
-            left="50%"
-            top="50%"
-            transform="translate(-50%,-50%)"
+            position='absolute'
+            left='50%'
+            top='50%'
+            transform='translate(-50%,-50%)'
           >
-            <Image src={LockImage.src} width="2rem" alt='lock image' />
+            <Image src={LockImage.src} width='2rem' alt='lock image' />
           </Flex>
         </Flex>
       </VStack>
@@ -157,23 +169,21 @@ export const LockFunds = ({
   }
 
   return (
-    <VStack w="100%" spacing="1rem">
+    <VStack w='100%' spacing='1rem'>
       <Heading
-        fontWeight="normal"
-        mb="1rem"
-        textTransform="uppercase"
-        textAlign="center"
-        fontFamily="rubik"
-        color="red"
+        color='white'
+        as='h3'
+        fontSize='2xl'
+        transition='all ease-in-out .25s'
+        _hover={{ cursor: 'pointer', color: 'raid' }}
       >
         Lock Funds
       </Heading>
-
-      <Text textAlign="center" fontSize="sm" mb="1rem" fontFamily="jetbrains">
+      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         Locking freezes all remaining funds in the contract and initiates a
         dispute.
       </Text>
-      <Text textAlign="center" fontSize="sm" mb="1rem" fontFamily="jetbrains">
+      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {'Once a dispute has been initiated, '}
         <AccountLink address={resolver} />
         {
@@ -182,12 +192,12 @@ export const LockFunds = ({
       </Text>
 
       <OrderedTextarea
-        tooltip="Why do you want to lock these funds?"
-        label="Dispute Reason"
+        tooltip='Why do you want to lock these funds?'
+        label='Dispute Reason'
         value={disputeReason}
         setValue={setDisputeReason}
       />
-      <Text color="white" textAlign="center" fontFamily="jetbrains">
+      <Text color='white' textAlign='center' fontFamily='texturina'>
         {`Upon resolution, a fee of ${fee} will be deducted from the locked fund amount and sent to `}
         <AccountLink address={resolver} />
         {` for helping resolve this dispute.`}
@@ -195,21 +205,21 @@ export const LockFunds = ({
       <Button
         onClick={lockFunds}
         isDisabled={!disputeReason}
-        textTransform="uppercase"
-        variant="primary"
-        w="100%"
+        textTransform='uppercase'
+        variant='solid'
+        w='100%'
       >
         {`Lock ${utils.formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,
-          token,
+          token
         )}`}
       </Button>
       {isKnownResolver(chainId, resolver) && (
         <Link
           href={getResolverInfo(chainId, resolver).termsUrl}
           isExternal
-          color="red.500"
-          textDecor="underline"
+          color='primary.300'
+          textDecor='underline'
         >
           Learn about {getResolverString(chainId, resolver)} dispute process &
           terms

@@ -41,7 +41,7 @@ export const PaymentsChunkForm = ({
   updateStep
 }) => {
   return (
-    <Flex
+    <Card
       direction='column'
       background='#262626'
       padding='1.5rem'
@@ -65,7 +65,7 @@ export const PaymentsChunkForm = ({
                   value={payments[index]}
                 />
                 <InputRightElement
-                  fontFamily='jetbrains'
+                  fontFamily='texturina'
                   color='yellow'
                   w='3.5rem'
                   mr='.5rem'
@@ -78,7 +78,7 @@ export const PaymentsChunkForm = ({
         })}
       </div>
 
-      <Text color='white' textTransform='uppercase' fontFamily='jetbrains'>
+      <Text color='white' textTransform='uppercase' fontFamily='texturina'>
         The sum should add up to {paymentDue} {tokenType}
       </Text>
 

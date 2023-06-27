@@ -129,7 +129,7 @@ export const Home = () => {
     if (validId === true) {
       return <Text color='green.500'>Raid ID is valid!</Text>;
     } else if (validId === false) {
-      return <Text color='red.500'>Raid ID is not valid!</Text>;
+      return <Text color='primary.300'>Raid ID is not valid!</Text>;
     } else {
       return <Box height='30px'></Box>;
     }

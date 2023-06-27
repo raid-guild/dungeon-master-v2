@@ -7,14 +7,19 @@ import { Loader } from './Loader';
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
 import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
-import { awaitSpoilsWithdrawn, getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import {
+  awaitSpoilsWithdrawn,
+  getSmartInvoiceAddress,
+} from '../../smartEscrow/utils/invoice';
 import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 import { balanceOf } from '../../smartEscrow/utils/erc20';
 import { notifyRaidSpoils } from '../../smartEscrow/utils/requests';
 
 export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
   const [loading, setLoading] = useState(false);
-  const { chainId, invoice_id, provider } = useContext(SmartEscrowContext);
+  const {
+    appState: { chainId, invoice_id, provider },
+  } = useContext(SmartEscrowContext);
 
   const [transaction, setTransaction] = useState();
 
@@ -60,11 +65,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
       try {
         setLoading(true);
         const abi = new utils.Interface(['function withdrawAll() external']);
-        const contract = new Contract(
-          contractAddress,
-          abi,
-          provider
-        );
+        const contract = new Contract(contractAddress, abi, provider);
         const tx = await contract.withdrawAll();
         setTransaction(tx);
         await tx.wait();
@@ -85,21 +86,21 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
         textTransform='uppercase'
         textAlign='center'
         fontFamily='rubik'
-        color='red'
+        color='primary.300'
       >
         Withdraw Balance
       </Heading>
 
-      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='jetbrains'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         Follow the instructions in your wallet to withdraw the balance from
         wrapped invoice.
       </Text>
       <VStack my='2rem' px='5rem' py='1rem' bg='black' borderRadius='0.5rem'>
         <Text
-          color='red.500'
+          color='primary.300'
           fontSize='0.875rem'
           textAlign='center'
-          fontFamily='jetbrains'
+          fontFamily='texturina'
         >
           Balance Available
         </Text>
@@ -108,7 +109,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-          fontFamily='jetbrains'
+          fontFamily='texturina'
         >{`${utils.formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,
           token
@@ -121,7 +122,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
           <Link
             href={getTxLink(chainId, transaction.hash)}
             isExternal
-            color='red.500'
+            color='primary.300'
             textDecoration='underline'
           >
             here
@@ -132,7 +133,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
       {!loading && (
         <Button
           onClick={withdrawFunds}
-          variant='primary'
+          variant='solid'
           textTransform='uppercase'
           w='100%'
         >
