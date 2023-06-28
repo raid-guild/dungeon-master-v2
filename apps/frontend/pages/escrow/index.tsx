@@ -22,9 +22,7 @@ import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 export const Home = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
-  const [localRaidId, setLocalRaidId] = useState(
-    '7bc41434-494f-4a0b-a938-b00eeec4ee99'
-  );
+  const [localRaidId, setLocalRaidId] = useState('');
   const [validId, setValidId] = useState<boolean | undefined>(undefined);
   const [escrowVersion, setEscrowVersion] = useState('Dungeon Master V2');
   const { data: session } = useSession();

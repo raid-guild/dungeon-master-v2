@@ -25,7 +25,7 @@ export const InvoiceButtonManager = ({
 }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
   const [wrappedInvoiceBalance, setWrappedInvoiceBalance] = useState(
-    BigNumber.from(0)
+    BigNumber.from(10)
   );
 
   const [selected, setSelected] = useState(0);
@@ -72,12 +72,14 @@ export const InvoiceButtonManager = ({
   const checkBalance = (set, contractAddress) => {
     balanceOf(provider, invoice.token, contractAddress)
       .then((b) => {
+        console.log('set.name', set.name, contractAddress, b.toString());
         set(b);
       })
       .catch((balanceError) => console.log(balanceError));
   };
 
   useEffect(() => {
+    console.log('invoice:  ', invoice);
     checkBalance(setBalance, invoice.address);
     checkBalance(setWrappedInvoiceBalance, invoice.provider);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,8 +98,9 @@ export const InvoiceButtonManager = ({
     resolver,
   } = invoice;
 
-  const isRaidParty =
-    account.toLowerCase() === invoice?.provider?.toLowerCase();
+  // const isRaidParty =
+  //   account.toLowerCase() === invoice?.provider?.toLowerCase();
+  const isRaidParty = true;
 
   // const isClient = account.toLowerCase() === client;
   const isClient = true;
@@ -120,8 +123,8 @@ export const InvoiceButtonManager = ({
   const amount = BigNumber.from(
     currentMilestone < amounts.length ? amounts[currentMilestone] : 0
   );
-  // const isLockable = !isExpired && !isLocked && balance.gt(0);
-  const isLockable = true;
+  const isLockable = !isExpired && !isLocked && balance.gt(0);
+  // const isLockable = true;
 
   const isReleasable = !isLocked && balance.gte(amount) && balance.gt(0);
 
@@ -133,8 +136,9 @@ export const InvoiceButtonManager = ({
   } else {
     gridColumns = 1;
   }
-  invoice.isLocked = true;
-  console.log('balance: ', balance);
+  console.log('wrappedInvoiceBalance.gt(0)', wrappedInvoiceBalance.gt(0));
+  // invoice.isLocked = true;
+  // console.log('balance: ', balance);
 
   return (
     <>
@@ -238,7 +242,7 @@ export const InvoiceButtonManager = ({
           mt='1rem'
           onClick={() => onWithdrawWrappedBalance()}
         >
-          Withdraw Balance
+          Withdraw Balance (wrapped)
         </Button>
       )}
 

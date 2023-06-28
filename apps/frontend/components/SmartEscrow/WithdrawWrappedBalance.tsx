@@ -88,7 +88,7 @@ export const WithdrawWrappedBalance = ({ contractAddress, token, balance }) => {
         fontFamily='rubik'
         color='primary.300'
       >
-        Withdraw Balance
+        Withdraw Balance (Wrapped)
       </Heading>
 
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
