@@ -1,6 +1,12 @@
 import { gql } from 'graphql-request';
 import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
+// export const RAID_VIEWER_QUERY = gql`
+//   query RaidViewerQuery(
+
+//   )
+// `;
+
 export const RAIDS_LIST_QUERY = gql`
   query RaidsListQuery(
     $offset: Int!

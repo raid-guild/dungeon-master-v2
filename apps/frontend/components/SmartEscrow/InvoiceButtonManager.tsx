@@ -15,7 +15,6 @@ import { ReleaseFunds } from './ReleaseFunds';
 import { ResolveFunds } from './ResolveFunds';
 import { LockFunds } from './LockFunds';
 import { WithdrawFunds } from './WithdrawFunds';
-import { WithdrawWrappedBalance } from './WithdrawWrappedBalance';
 
 export const InvoiceButtonManager = ({
   invoice,
@@ -24,9 +23,6 @@ export const InvoiceButtonManager = ({
   wrappedAddress,
 }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
-  const [wrappedInvoiceBalance, setWrappedInvoiceBalance] = useState(
-    BigNumber.from(10)
-  );
 
   const [selected, setSelected] = useState(0);
   const [modal, setModal] = useState(false);
@@ -62,13 +58,6 @@ export const InvoiceButtonManager = ({
     }
   };
 
-  const onWithdrawWrappedBalance = async () => {
-    if (isRaidParty && wrappedInvoiceBalance) {
-      setSelected(5);
-      setModal(true);
-    }
-  };
-
   const checkBalance = (set, contractAddress) => {
     balanceOf(provider, invoice.token, contractAddress)
       .then((b) => {
@@ -81,7 +70,6 @@ export const InvoiceButtonManager = ({
   useEffect(() => {
     console.log('invoice:  ', invoice);
     checkBalance(setBalance, invoice.address);
-    checkBalance(setWrappedInvoiceBalance, invoice.provider);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -98,12 +86,12 @@ export const InvoiceButtonManager = ({
     resolver,
   } = invoice;
 
-  // const isRaidParty =
-  //   account.toLowerCase() === invoice?.provider?.toLowerCase();
-  const isRaidParty = true;
+  const isRaidParty =
+    account.toLowerCase() === invoice?.provider?.toLowerCase();
+  // const isRaidParty = true;
 
-  // const isClient = account.toLowerCase() === client;
-  const isClient = true;
+  const isClient = account.toLowerCase() === client;
+  // const isClient = true;
   const isResolver = account.toLowerCase() === resolver.toLowerCase();
   // const isResolver = true;
   console.log('isResolver: ', resolver);
@@ -136,7 +124,6 @@ export const InvoiceButtonManager = ({
   } else {
     gridColumns = 1;
   }
-  console.log('wrappedInvoiceBalance.gt(0)', wrappedInvoiceBalance.gt(0));
   // invoice.isLocked = true;
   // console.log('balance: ', balance);
 
@@ -235,17 +222,6 @@ export const InvoiceButtonManager = ({
         </SimpleGrid>
       )}
 
-      {wrappedInvoiceBalance.gt(0) && isRaidParty && (
-        <Button
-          variant='solid'
-          textTransform='uppercase'
-          mt='1rem'
-          onClick={() => onWithdrawWrappedBalance()}
-        >
-          Withdraw Balance (wrapped)
-        </Button>
-      )}
-
       <Modal isOpen={modal} onClose={() => setModal(false)} isCentered>
         <ModalOverlay>
           <ModalContent
@@ -297,14 +273,6 @@ export const InvoiceButtonManager = ({
                 token={invoice.token}
                 invoice={invoice}
                 balance={balance}
-                close={() => setModal(false)}
-              />
-            )}
-            {modal && selected === 5 && (
-              <WithdrawWrappedBalance
-                contractAddress={invoice.provider}
-                token={invoice.token}
-                balance={wrappedInvoiceBalance}
                 close={() => setModal(false)}
               />
             )}

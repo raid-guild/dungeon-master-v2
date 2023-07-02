@@ -82,6 +82,7 @@ const NewEscrow = () => {
           direction='row'
           alignItems='center'
           justifyContent='space-evenly'
+          mt='6'
         >
           <ProjectInfo appState={appState} />
           {/* todo: Use card for each form stage component */}

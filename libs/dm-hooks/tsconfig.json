@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "@emotion/react",
+    // "jsxImportSource": "@emotion/react", // this causes error: TS2590: Expression produces a union type that is too complex to represent
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

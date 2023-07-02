@@ -30,7 +30,6 @@ const ConnectWallet: React.FC = () => {
   const context = useContext(SmartEscrowContext);
   const { address } = useAccount();
   const { chain } = useNetwork();
-  console.log('connectWallet chain: ', chain);
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
   const showNetwork = false; // maybe unhide, in some cases
@@ -40,7 +39,6 @@ const ConnectWallet: React.FC = () => {
       const gotProvider = new ethers.providers.Web3Provider(
         web3Provider.currentProvider
       );
-      console.log('logged into address, signer ', address, signer);
       context.setAppState({
         ...context.appState,
         provider: signer,

@@ -44,6 +44,9 @@ export const getOrCreateUser = async (
     throw new Error('No address provided');
   }
   return fetchExistingUser(address).then((existingUser: IUser | null) => {
+    if (existingUser === null) {
+      return Promise.resolve('AUTHED_USER');
+    }
     if (existingUser) {
       return Promise.resolve(existingUser);
     }

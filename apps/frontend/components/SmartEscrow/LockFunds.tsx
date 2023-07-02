@@ -123,12 +123,11 @@ export const LockFunds = ({
     return (
       <VStack w='100%' spacing='1rem'>
         <Heading
-          fontWeight='normal'
-          mb='1rem'
-          textTransform='uppercase'
-          textAlign='center'
-          fontFamily='rubik'
-          color='primary.300'
+          color='white'
+          as='h3'
+          fontSize='2xl'
+          transition='all ease-in-out .25s'
+          _hover={{ cursor: 'pointer', color: 'raid' }}
         >
           Locking Funds
         </Heading>

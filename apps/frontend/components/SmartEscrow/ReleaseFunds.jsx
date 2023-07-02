@@ -8,7 +8,7 @@ import { Loader } from './Loader';
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
 import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
-import { release, getSmartInvoiceAddress } from '../../smartEscrow/utils/invoice';
+import { release } from '../../smartEscrow/utils/invoice';
 import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
 export const ReleaseFunds = ({ invoice, balance }) => {
@@ -20,12 +20,11 @@ export const ReleaseFunds = ({ invoice, balance }) => {
   const { currentMilestone, amounts, address, token } = invoice;
 
   const pollSubgraph = async () => {
-    let smartInvoice = await getSmartInvoiceAddress(invoice_id, provider);
 
     let isSubscribed = true;
 
     const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainId), smartInvoice);
+      let inv = await getInvoice(parseInt(chainId), invoice_id);
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
 

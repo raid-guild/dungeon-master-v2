@@ -6,6 +6,7 @@ const HASURA_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 
 const handler = async (req, res) => {
   const { method } = req;
+  console.log('inside validate api handler, req.body: ', req.body);
 
   if (method !== 'POST') {
     return res.status(405).json('Method not allowed');

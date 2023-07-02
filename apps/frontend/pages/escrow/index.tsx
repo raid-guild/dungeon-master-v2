@@ -10,63 +10,62 @@ import {
   Box,
   HStack,
 } from '@raidguild/design-system';
-import SiteLayout from '../../components/SiteLayout';
+import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import _ from 'lodash';
-import { useRaidDetail } from '@raidguild/dm-hooks';
+import axios from 'axios';
 
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 // import { validateRaidId } from '../utils/requests';
 
+export const validateRaidId = async (raidId: string) => {
+  const { data } = await axios.post('/api/validate', { raidId });
+  return data;
+};
+
 export const Home = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
-  const [localRaidId, setLocalRaidId] = useState('');
   const [validId, setValidId] = useState<boolean | undefined>(undefined);
-  const [escrowVersion, setEscrowVersion] = useState('Dungeon Master V2');
-  const { data: session } = useSession();
-  const token = _.get(session, 'token');
-  const { data: raid } = useRaidDetail({ token, raidId });
+  const [raid, setRaid] = useState();
 
-  const toast = useToast();
+  useEffect(() => {
+    if (validId === true || validId === false) {
+      setValidId(undefined);
+    }
+  }, [raidId]);
 
   console.log('raid render: raid: ', raid);
 
-  useEffect(() => {
-    if (raid && Object.keys(raid).length > 0) {
+  const validateID = async () => {
+    const raid = await validateRaidId(raidId);
+    setRaid(raid);
+    console.log('got raid: ', raid);
+
+    if (raid) {
       setValidId(true);
 
       console.log('setting raid: ', raid);
       setAppState({
         ...appState,
-        invoice_id: raid.invoiceAddress,
-        v1_id: raid.v1Id,
+        invoice_id: raid.invoice_address,
+        v1_id: raid.v1_id,
         raid_id: raid.id,
         project_name: raid.name,
         client_name:
           raid.consultationByConsultation?.consultationContacts[0]?.contact
             ?.name,
-        start_date: new Date(Number(raid.startDate)) || 'Not Specified',
-        end_date: new Date(Number(raid.endDate)) || 'Not Specified',
+        start_date: new Date(Number(raid.start_date)) || 'Not Specified',
+        end_date: new Date(Number(raid.end_date)) || 'Not Specified',
         link_to_details: 'Not Specified',
         brief_description: 'Not Specified',
       });
       // setInvoiceAddress(raid.invoiceAddress);
+    } else {
+      setValidId(false);
     }
-  }, [raid]);
 
-  // const validateIDLocally = async () => {
-  //   const result = await validateRaidId({ token, raidId });
-  //   console.log('result', result);
-  // };
-
-  const validateID = async () => {
-    setRaidId(localRaidId);
-    // if (raidId === '') return alert('ID cannot be empty!');
-    // updateLoadingState();
-
-    // let raid = await validateRaidId(ID, escrowVersion);
     // if (raid) {
     //   setDungeonMasterContext({
     //     invoice_id: raid.invoice_address,
@@ -93,7 +92,7 @@ export const Home = () => {
   };
   console.log('escrow page render: raid: ', raid, 'raidId: ', raidId);
   const renderActionButton = () => {
-    if (validId === true && raid && !raid.invoiceAddress) {
+    if (validId === true && raid && !raid.invoice_address) {
       return (
         <Link href='/escrow/new' passHref>
           <Button variant='outline'>Register Escrow</Button>
@@ -104,7 +103,7 @@ export const Home = () => {
         <Button
           variant='outline'
           onClick={validateID}
-          disabled={!localRaidId}
+          disabled={!raidId}
           _hover={{
             opacity: 0.8,
           }}
@@ -112,7 +111,7 @@ export const Home = () => {
           Validate ID
         </Button>
       );
-    } else if (validId === true && raid && raid.invoiceAddress) {
+    } else if (validId === true && raid && raid.invoice_address) {
       return (
         <Link href={`/escrow/${raidId}`} passHref>
           <Button disabled={!raid} variant='outline'>
@@ -124,6 +123,7 @@ export const Home = () => {
   };
 
   const renderValidationMessage = () => {
+    console.log('validId ', validId);
     if (validId === true) {
       return <Text color='green.500'>Raid ID is valid!</Text>;
     } else if (validId === false) {
@@ -137,20 +137,20 @@ export const Home = () => {
     <>
       <NextSeo title='Smart Escrow' />
 
-      <SiteLayout subheader={<Heading>Smart Escrow</Heading>}>
-        <VStack width='100%' align='center' maxWidth='400px'>
+      <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
+        <VStack width='100%' align='center' maxWidth='400px' mt='6'>
           <ControlledInput
             type='text'
-            value={localRaidId}
+            value={raidId}
             placeholder='Raid ID from Dungeon Master..'
-            onChange={(event) => setLocalRaidId(event.target.value)}
+            onChange={(event) => setRaidId(event.target.value)}
             label='Raid ID'
             maxWidth='400px'
           ></ControlledInput>
           {renderValidationMessage()}
           <HStack>{renderActionButton()}</HStack>
         </VStack>
-      </SiteLayout>
+      </SiteLayoutPublic>
     </>
   );
 };

@@ -6,7 +6,7 @@ import {
   Input,
   InputRightElement,
 } from '@chakra-ui/react';
-import { Text, Button } from '@raidguild/design-system';
+import { Text, Button, Card } from '@raidguild/design-system';
 
 import styled from '@emotion/styled';
 
@@ -105,6 +105,6 @@ export const PaymentsChunkForm = ({
           Next: Confirmation
         </Button>
       </Flex>
-    </Flex>
+    </Card>
   );
 };

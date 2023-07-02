@@ -62,6 +62,7 @@ export const EscrowConfirmation = ({
       paymentsInWei.push(Web3Utils.toWei(amount, 'ether'))
     );
     console.log('paymentsInWei: ', paymentsInWei);
+    console.log('terminationTime', terminationTime);
 
     const resolverType = 0; // 0 for individual, 1 for erc-792 arbitrator
     const type = utils.formatBytes32String('split-escrow');
@@ -78,6 +79,8 @@ export const EscrowConfirmation = ({
     // address _factory,
     // address _dao,
     // uint256 _daoFee
+
+    // todo: find out why selectedDay leads to terminationTime to be zero
 
     const data = utils.AbiCoder.prototype.encode(
       [
@@ -98,7 +101,7 @@ export const EscrowConfirmation = ({
         resolverType,
         resolver, // address _resolver (LEX DAO resolver address)
         tokenAddress, // address _token (payment token address)
-        terminationTime,
+        terminationTime, // safety valve date
         '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
         wrappedNativeToken,
         REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
