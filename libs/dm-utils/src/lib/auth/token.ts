@@ -9,7 +9,7 @@ const { NEXTAUTH_SECRET } = process.env;
 
 export const CONFIG = {
   encodingAlgorithm: 'HS256',
-  defaultRoles: ['member'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
+  defaultRoles: ['user'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
   defaultMaxAge: 30 * 60, // 30 minutes
 };
 
@@ -50,8 +50,18 @@ export const encodeAuth = async ({
   if (_.get(token, 'exp')) return encodeToken(token);
 
   const user = await getOrCreateUser(_.get(token, 'sub'));
+  if (user === 'AUTHED_USER') {
+    return encodeToken(
+      createToken({
+        user: { id: _.get(token, 'sub') },
+        token,
+        maxAge,
+        roles: ['user'],
+      })
+    );
+  }
 
-  return encodeToken(createToken({ user, token, maxAge }));
+  return encodeToken(createToken({ user, token, maxAge, roles: ['member'] }));
 };
 
 export const decodeToken = (token: string) =>

@@ -1,23 +1,20 @@
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
-  VStack,
   ControlledInput,
   Heading,
   Button,
   useToast,
   Text,
   Box,
-  HStack,
+  Flex,
 } from '@raidguild/design-system';
+
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
 import _ from 'lodash';
 import axios from 'axios';
-
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-// import { validateRaidId } from '../utils/requests';
 
 export const validateRaidId = async (raidId: string) => {
   const { data } = await axios.post('/api/validate', { raidId });
@@ -61,34 +58,9 @@ export const Home = () => {
         link_to_details: 'Not Specified',
         brief_description: 'Not Specified',
       });
-      // setInvoiceAddress(raid.invoiceAddress);
     } else {
       setValidId(false);
     }
-
-    // if (raid) {
-    //   setDungeonMasterContext({
-    //     invoice_id: raid.invoice_address,
-    //     v1_id: raid.v1_id,
-    //     raid_id: raid.id,
-    //     project_name: raid.name,
-    //     client_name: raid.consultation.consultations_contacts[0].contact.name,
-    //     start_date: new Date(Number(raid.start_date)) || 'Not Specified',
-    //     end_date: new Date(Number(raid.end_date)) || 'Not Specified',
-    //     link_to_details: 'Not Specified',
-    //     brief_description: 'Not Specified',
-    //   });
-
-    //   setValidId(true);
-    // } else {
-    //   toast.error({
-    //     title: 'Raid ID not found or invalid.',
-    //     iconName: 'alert',
-    //     duration: 3000,
-    //     isClosable: true,
-    //   });
-    // }
-    // updateLoadingState();
   };
   console.log('escrow page render: raid: ', raid, 'raidId: ', raidId);
   const renderActionButton = () => {
@@ -138,18 +110,20 @@ export const Home = () => {
       <NextSeo title='Smart Escrow' />
 
       <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
-        <VStack width='100%' align='center' maxWidth='400px' mt='6'>
-          <ControlledInput
-            type='text'
-            value={raidId}
-            placeholder='Raid ID from Dungeon Master..'
-            onChange={(event) => setRaidId(event.target.value)}
-            label='Raid ID'
-            maxWidth='400px'
-          ></ControlledInput>
-          {renderValidationMessage()}
-          <HStack>{renderActionButton()}</HStack>
-        </VStack>
+        <Flex directin='column'>
+          <Flex width='100%' align='center' maxWidth='400px' mt='6'>
+            <ControlledInput
+              type='text'
+              value={raidId}
+              placeholder='Raid ID from Dungeon Master..'
+              onChange={(event) => setRaidId(event.target.value)}
+              label='Raid ID'
+              maxWidth='400px'
+            ></ControlledInput>
+            {renderValidationMessage()}
+          </Flex>
+          {renderActionButton()}
+        </Flex>
       </SiteLayoutPublic>
     </>
   );

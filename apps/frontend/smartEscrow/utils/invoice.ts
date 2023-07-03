@@ -26,7 +26,6 @@ export const register = async (
   data,
   type
 ) => {
-  // debugger;
   console.log(
     'calling register with params: ',
     chainId,

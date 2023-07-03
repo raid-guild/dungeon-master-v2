@@ -39,11 +39,11 @@ const fetchExistingUser = async (address: string): Promise<IUser | null> =>
 
 export const getOrCreateUser = async (
   address: string | undefined
-): Promise<IUser> => {
+): Promise<IUser | unknown> => {
   if (!address || !isAddress(address)) {
     throw new Error('No address provided');
   }
-  return fetchExistingUser(address).then((existingUser: IUser | null) => {
+  return fetchExistingUser(address).then((existingUser: IUser | unknown) => {
     if (existingUser === null) {
       return Promise.resolve('AUTHED_USER');
     }

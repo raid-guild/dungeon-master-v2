@@ -13,6 +13,7 @@ import axios from 'axios';
 
 import { GetServerSidePropsContext } from 'next';
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
+import { Page404 } from '../../../components/SmartEscrow/shared/Page404';
 
 import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
 import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePaymentDetails';
@@ -24,6 +25,8 @@ import { getInvoice } from '../../../smartEscrow/graphql/getInvoice';
 
 const DM_ENDPOINT = process.env.NEXT_PUBLIC_API_URL;
 const HASURA_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
+const WRONG_NETWORK_MESSAGE =
+  'This network is not supported: Switch to Gnosis Network';
 
 const fetchRaid = async (query, raidId) => {
   const graphqlQuery = {
@@ -54,47 +57,25 @@ export const getServerSideProps = async (context) => {
     return {
       props: {
         raid: null,
-        escrowValue: null,
-        terminationTime: null,
-        invoice: null,
       },
       // revalidate: 1
     };
   }
 
-  let invoice;
-  try {
-    if (raids[0].invoice_address) {
-      invoice = await getInvoice(100, raids[0].invoice_address);
-      console.log('found invoice: ', invoice);
-    }
-  } catch (e) {
-    console.log(e);
-  }
-
   return {
     props: {
       raid: raids ? raids[0] : null,
-      escrowValue: invoice ? invoice.total : null,
-      terminationTime: invoice ? invoice.terminationTime : null,
-      invoice,
     },
   };
 };
 
-const Escrow = ({ raid, rescrowValue, terminationTime, invoice }) => {
+const Escrow = ({ raid }) => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const { address } = useAccount();
   const { chain } = useNetwork();
-  console.log(
-    'escrow page render: raid, rescrowValue, terminationTime, invoice: ',
-    raid,
-    rescrowValue,
-    terminationTime,
-    invoice
-  );
 
   const [invoiceFetchError, setInvoiceFetchError] = useState(false);
+  const [invoice, setInvoice] = useState();
   const { data: sIAddress } = useSmartInvoiceAddress({
     invoiceAddress: raid?.invoice_address,
   });
@@ -103,30 +84,39 @@ const Escrow = ({ raid, rescrowValue, terminationTime, invoice }) => {
   const [statusText, setStatusText] = useState(
     'Connect your wallet to fetch invoice information.'
   );
+  const [validRaid, setValidRaid] = useState(true);
+
+  console.log('escrow page render: raid, invoice: ', raid, invoice);
+
   useEffect(() => {
     console.log('sIAddress: ', sIAddress);
   }, [sIAddress]);
 
-  // useEffect(() => {
-  //   console.log('useeffect on invoice_id and chain', chain, appState);
-  //   console.log(
-  //     'SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1',
-  //     SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
-  //     appState.invoice_id
-  //   );
-  //   if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && appState.invoice_id) {
-  //     getSmartInvoiceData();
-  //   } else if ((address as string) !== '') {
-  //     console.log(
-  //       'Error 1',
-  //       SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
-  //       appState.invoice_id,
-  //       appState
-  //     );
-  //     setInvoiceFetchError(true);
-  //     setStatusText(WRONG_NETWORK_MESSAGE);
-  //   }
-  // }, [appState.invoice_id, chain]);
+  useEffect(() => {
+    console.log('useeffect on invoice_id and chain', chain, appState);
+    console.log(
+      'SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1',
+      SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
+      appState.invoice_id
+    );
+    if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && appState.invoice_id) {
+      getSmartInvoiceData();
+    } else if ((address as string) !== '') {
+      console.log(
+        'Error 1',
+        SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
+        appState.invoice_id,
+        appState
+      );
+      setInvoiceFetchError(true);
+      setStatusText(WRONG_NETWORK_MESSAGE);
+    }
+  }, [appState.invoice_id, chain]);
+
+  // Set this on render from invoice
+  // escrowValue: null,
+  // terminationTime: null,
+  // invoice: null,
 
   useEffect(() => {
     console.log('raid found, raid: ', raid);
@@ -145,11 +135,43 @@ const Escrow = ({ raid, rescrowValue, terminationTime, invoice }) => {
         link_to_details: 'Not Specified',
         brief_description: 'Not Specified',
       });
-      // setInvoiceAddress(raid.invoiceAddress);
+
+      if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1) {
+        getSmartInvoiceData();
+      } else if ((address as string) !== '') {
+        console.log(
+          'Error 1',
+          SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
+          appState.invoice_id,
+          appState
+        );
+        setInvoiceFetchError(true);
+        setStatusText(WRONG_NETWORK_MESSAGE);
+      }
     } else {
       // todo: display toast with no raid found message
     }
   }, []);
+
+  const getSmartInvoiceData = async () => {
+    try {
+      if (raid.invoice_address) {
+        // todo: remove hardcoded chainId
+        const currInvoice = await getInvoice(chain.id, raid.invoice_address);
+        if (!currInvoice) {
+          setInvoiceFetchError(true);
+          setStatusText(
+            `Data for invoice with address ${raid.invoice_address} was not found`
+          );
+        } else {
+          setInvoice(currInvoice);
+          console.log('found invoice: ', invoice);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   console.log('sIAddress render: ', sIAddress);
   console.log('[raid] index render. appState: ', appState);
@@ -158,8 +180,6 @@ const Escrow = ({ raid, rescrowValue, terminationTime, invoice }) => {
   // todo: handle escrowValue definition
   const escrowValue = 10;
   // get from invoice.terminationTime
-
-  const [validRaid, setValidRaid] = useState(true);
 
   console.log(chain, 'chain');
   console.log(raid, 'raid');
@@ -223,8 +243,7 @@ const Escrow = ({ raid, rescrowValue, terminationTime, invoice }) => {
                 )}
             </>
           ) : (
-            // <Page404 />
-            <div>page not found</div>
+            <Page404 />
           )}
         </Flex>
       </SiteLayoutPublic>
