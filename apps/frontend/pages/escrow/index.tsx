@@ -64,44 +64,56 @@ export const Home = () => {
   };
   console.log('escrow page render: raid: ', raid, 'raidId: ', raidId);
   const renderActionButton = () => {
+    const buttons = [];
+    buttons.push(
+      <Button
+        variant='outline'
+        onClick={validateID}
+        disabled={!raidId}
+        _hover={{
+          opacity: 0.8,
+        }}
+        mb='4'
+      >
+        Validate ID
+      </Button>
+    );
     if (validId === true && raid && !raid.invoice_address) {
-      return (
+      buttons.push(
         <Link href='/escrow/new' passHref>
-          <Button variant='outline'>Register Escrow</Button>
+          <Button variant='outline' mb='4'>
+            Register Escrow
+          </Button>
         </Link>
       );
-    } else if (validId === false || validId === undefined) {
-      return (
-        <Button
-          variant='outline'
-          onClick={validateID}
-          disabled={!raidId}
-          _hover={{
-            opacity: 0.8,
-          }}
-        >
-          Validate ID
-        </Button>
-      );
     } else if (validId === true && raid && raid.invoice_address) {
-      return (
+      buttons.push(
         <Link href={`/escrow/${raidId}`} passHref>
-          <Button disabled={!raid} variant='outline'>
+          <Button disabled={!raid} variant='outline' mb='4'>
             View Escrow
           </Button>
         </Link>
       );
     }
+    return buttons;
   };
 
   const renderValidationMessage = () => {
     console.log('validId ', validId);
     if (validId === true) {
-      return <Text color='green.500'>Raid ID is valid!</Text>;
+      return (
+        <Text color='green.500' mb='2'>
+          Raid ID is valid!
+        </Text>
+      );
     } else if (validId === false) {
-      return <Text color='primary.300'>Raid ID is not valid!</Text>;
+      return (
+        <Text color='primary.300' mb='2'>
+          Raid ID is not valid!
+        </Text>
+      );
     } else {
-      return <Box height='30px'></Box>;
+      return <Box height='30px' mb='2'></Box>;
     }
   };
 
@@ -110,20 +122,26 @@ export const Home = () => {
       <NextSeo title='Smart Escrow' />
 
       <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
-        <Flex directin='column'>
-          <Flex width='100%' align='center' maxWidth='400px' mt='6'>
+        <Box>
+          <Flex
+            direction='column'
+            justify='flex-start'
+            flex='1'
+            align='center'
+            width='100%'
+          >
             <ControlledInput
               type='text'
               value={raidId}
               placeholder='Raid ID from Dungeon Master..'
               onChange={(event) => setRaidId(event.target.value)}
               label='Raid ID'
-              maxWidth='400px'
+              minWidth={['300px', '500px']}
             ></ControlledInput>
-            {renderValidationMessage()}
+            <Box>{renderValidationMessage()}</Box>
+            {renderActionButton()}
           </Flex>
-          {renderActionButton()}
-        </Flex>
+        </Box>
       </SiteLayoutPublic>
     </>
   );
