@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import {
   Flex,
@@ -42,6 +42,18 @@ const MemberDetailsCard: React.FC<MemberProps> = ({
   const copyEth = useClipboard(
     _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
   );
+
+  useEffect(() => {
+    copyDiscord.setValue(
+      _.get(member, 'contactInfo.discord') ??
+        _.get(application, 'contactInfo.discord')
+    );
+
+    copyEth.setValue(
+      _.get(member, 'ethAddress') ?? _.get(application, 'ethAddress')
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [member, application]);
 
   const memberLinks = [
     _.get(

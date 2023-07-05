@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 import {
   Flex,
@@ -98,6 +98,13 @@ const MemberCard: React.FC<MemberProps> = ({
   const copyDiscord = useClipboard(discord);
   // const copyEns = useClipboard(ensName);
   const copyEth = useClipboard(ethAddress);
+
+  useEffect(() => {
+    copyDiscord.setValue(discord);
+
+    copyEth.setValue(ethAddress);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [member, application]);
 
   const socials = [
     telegram && {
