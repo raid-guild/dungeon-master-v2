@@ -11,20 +11,30 @@ import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
 import { release } from '../../smartEscrow/utils/invoice';
 import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
-export const ReleaseFunds = ({ invoice, balance }) => {
+// todo: typescript types
+type ReleaseFundsProp = {
+  invoice: any;
+  balance: any;
+};
+
+export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const {
-    appState: { chainId, invoice_id, provider }
+    appState: { chainId, invoice_id, provider },
   } = useContext(SmartEscrowContext);
   const { currentMilestone, amounts, address, token } = invoice;
 
   const pollSubgraph = async () => {
-
     let isSubscribed = true;
 
     const interval = setInterval(async () => {
       let inv = await getInvoice(parseInt(chainId), invoice_id);
+      console.log(
+        'polling subgraph:  invoice_id, chainId: ',
+        invoice_id,
+        chainId
+      );
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
 
@@ -95,17 +105,12 @@ export const ReleaseFunds = ({ invoice, balance }) => {
       >
         Release Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem' >
+      <Text textAlign='center' fontSize='sm' mb='1rem'>
         Follow the instructions in your wallet to release funds from escrow to
         the raid party.
       </Text>
       <VStack my='2rem' px='5rem' py='1rem' bg='black' borderRadius='0.5rem'>
-        <Text
-          color='primary.300'
-          fontSize='0.875rem'
-          textAlign='center'
-
-        >
+        <Text color='primary.300' fontSize='0.875rem' textAlign='center'>
           Amount To Be Released
         </Text>
         <Text
@@ -113,7 +118,6 @@ export const ReleaseFunds = ({ invoice, balance }) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-
         >{`${utils.formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
           18

@@ -33,7 +33,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
   //   ? balance.div(resolutionRate)
   //   : BigNumber.from(0);
 
-    const resolverAward = BigNumber.from('1');
+  const resolverAward = BigNumber.from('1');
   const availableFunds = balance.sub(resolverAward);
   const [clientAward, setClientAward] = useState(availableFunds);
   const [providerAward, setProviderAward] = useState(BigNumber.from(0));
