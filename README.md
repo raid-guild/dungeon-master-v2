@@ -4,9 +4,15 @@
 ### Getting Started
 
 
-1. In `apps/frontend` copy and rename `.env.example` to `.env.local`
+1. Copy env file
 
-2. Fill in the required credentials.
+```
+cp apps/frontend/.env.example ./apps/frontend/.env.local
+```
+
+
+2. Fill in the required credentials in env file.
+
 ```
 HASURA_GRAPHQL_ADMIN_SECRET
 
@@ -15,12 +21,19 @@ NEXTAUTH_SECRET
 NEXT_PUBLIC_ALCHEMY_KEY
 ```
 
-3. Start front end server:
+3. Install dependencies with Yarn.
 
-`yarn`
+```
+yarn
+```
 
-`yarn start`
+4. Run frontend app locally.
 
+```
+yarn start
+```
+
+5. Open the app in your browser at https://localhost:4200
 
 
 ## using 'nx' workspaces
@@ -32,5 +45,23 @@ build all packages
 
 ```
 yarn nx run-many --target=build --all
+```
+
+remove a project
+
+```
+npx nx generate @nrwl/workspace:remove --projectName=publishable-lib-in-rg
+```
+
+generate a new next.js app
+
+```
+npx nx generate @nx/next:application app-1
+```
+
+generate a new react library
+
+```
+npx nx generate @nrwl/react:library component
 ```
 
