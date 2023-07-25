@@ -1,8 +1,8 @@
 # Dungeon Master v2
 
+Monorepo built with [nx](https://nx.dev/)
 
-### Getting Started
-
+### How to run locally
 
 1. Copy env file
 
@@ -50,18 +50,18 @@ yarn nx run-many --target=build --all
 remove a project
 
 ```
-npx nx generate @nrwl/workspace:remove --projectName=publishable-lib-in-rg
+npx nx generate @nrwl/workspace:remove --projectName=<your project name>
 ```
 
 generate a new next.js app
 
 ```
-npx nx generate @nx/next:application app-1
+npx nx generate @nrwl/next:application <your application name>
 ```
 
 generate a new react library
 
 ```
-npx nx generate @nrwl/react:library component
+npx nx generate @nrwl/react:library <your component name>
 ```
 

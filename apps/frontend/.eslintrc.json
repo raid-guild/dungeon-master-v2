@@ -1,9 +1,10 @@
 {
   "extends": [
-    "plugin:@nrwl/nx/react-typescript",
+    "airbnb",
     "next",
     "next/core-web-vitals",
-    "../../.eslintrc.json"
+    "../../.eslintrc.json",
+    "plugin:@nrwl/nx/react-typescript",
   ],
   "ignorePatterns": ["!**/*"],
   "overrides": [
