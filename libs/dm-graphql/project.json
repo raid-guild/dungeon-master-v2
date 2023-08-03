@@ -1,4 +1,5 @@
 {
+  "name": "dm-graphql",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dm-graphql/src",
   "projectType": "library",
@@ -14,27 +15,26 @@
       }
     },
     "publish": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "node tools/scripts/publish.mjs dm-graphql {args.ver} {args.tag}"
       },
       "dependsOn": [
         {
-          "projects": "self",
           "target": "build"
         }
       ]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/dm-graphql/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/dm-graphql"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/dm-graphql"],
       "options": {
         "jestConfig": "libs/dm-graphql/jest.config.ts",
         "passWithNoTests": true

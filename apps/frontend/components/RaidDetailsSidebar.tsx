@@ -44,28 +44,26 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
         size='sm'
         title='Update Raid Status'
         localOverlay={localOverlay}
-        content={
-          <StatusUpdateForm
-            raidId={_.get(raid, 'id')}
-            raid={raid}
-            currentStatus={_.get(raid, 'raidStatus.raidStatus')}
-            closeModal={closeModals}
-          />
-        }
-      />
+      >
+        <StatusUpdateForm
+          raidId={_.get(raid, 'id')}
+          raid={raid}
+          currentStatus={_.get(raid, 'raidStatus.raidStatus')}
+          closeModal={closeModals}
+        />
+      </ModalWrapper>
       <ModalWrapper
         name='raidForm'
         size='xl'
         title='Update Raid'
         localOverlay={localOverlay}
-        content={
-          <RaidUpdateForm
-            raidId={_.get(raid, 'id')}
-            raid={raid}
-            closeModal={closeModals}
-          />
-        }
-      />
+      >
+        <RaidUpdateForm
+          raidId={_.get(raid, 'id')}
+          raid={raid}
+          closeModal={closeModals}
+        />
+      </ModalWrapper>
 
       <RaidPartyInfo raid={raid} />
       {/* RAID TAGS */}

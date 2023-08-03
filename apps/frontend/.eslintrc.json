@@ -1,46 +1,18 @@
 {
-  "extends": [
-    "airbnb",
-    "next",
-    "next/core-web-vitals",
-    "../../.eslintrc.json",
-    "plugin:@nrwl/nx/react-typescript",
-  ],
-  "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        // NEXT
-        "@next/next/no-html-link-for-pages": ["error", "apps/frontend/pages"],
-        // IMPORT
-        "import/extensions": [
-          "error",
-          "ignorePackages",
-          { "js": "never", "jsx": "never", "ts": "never", "tsx": "never" }
-        ],
-        // REACT
-        "react/require-default-props": "off",
-        "react/jsx-filename-extension": [2, { "extensions": [".jsx", ".tsx"] }],
-        "react/function-component-definition": [
-          2,
-          {
-            "namedComponents": ["arrow-function"]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ],
+  "extends": ["next", "plugin:@nx/react-typescript", "../../.eslintrc.json"],
   "rules": {
-    "@next/next/no-html-link-for-pages": "off"
+    // NEXT
+    "@next/next/no-html-link-for-pages": ["error", "apps/frontend/pages"],
+    // REACT
+    "react/react-in-jsx-scope": "off",
+    "react/require-default-props": "off",
+    "react/jsx-filename-extension": [2, { "extensions": [".jsx", ".tsx"] }],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": ["arrow-function"]
+      }
+    ]
   },
   "env": {
     "jest": true

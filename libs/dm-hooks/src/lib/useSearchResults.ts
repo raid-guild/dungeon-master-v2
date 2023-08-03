@@ -45,7 +45,7 @@ const useSearchResults = ({
   const searchQueryResult = async (): searchQueryReturn => {
     if (!search) return null;
 
-    const result = await client({ token }).request(SEARCH_QUERY, {
+    const result: any = await client({ token }).request(SEARCH_QUERY, {
       search: `%${search}%`,
     });
 

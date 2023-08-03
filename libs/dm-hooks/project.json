@@ -1,4 +1,5 @@
 {
+  "name": "dm-hooks",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dm-hooks/src",
   "projectType": "library",
@@ -14,27 +15,26 @@
       }
     },
     "publish": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "node tools/scripts/publish.mjs dm-hooks {args.ver} {args.tag}"
       },
       "dependsOn": [
         {
-          "projects": "self",
           "target": "build"
         }
       ]
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/dm-hooks/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/dm-hooks"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/dm-hooks"],
       "options": {
         "jestConfig": "libs/dm-hooks/jest.config.ts",
         "passWithNoTests": true

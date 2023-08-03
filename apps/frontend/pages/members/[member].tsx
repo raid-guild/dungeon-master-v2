@@ -161,16 +161,15 @@ const Member = ({ memberAddress }: Props) => {
         size='xl'
         title='Update Member Details'
         localOverlay={localOverlay}
-        content={
-          <UpdateMemberForm
-            memberId={_.get(member, 'id')}
-            memberAddress={memberAddress}
-            member={member}
-            application={_.get(member, 'application')}
-            closeModal={closeModals}
-          />
-        }
-      />
+      >
+        <UpdateMemberForm
+          memberId={_.get(member, 'id')}
+          memberAddress={memberAddress}
+          member={member}
+          application={_.get(member, 'application')}
+          closeModal={closeModals}
+        />
+      </ModalWrapper>
     </>
   );
 };
