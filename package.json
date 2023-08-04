@@ -9,6 +9,9 @@
     "test": "nx test"
   },
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@emotion/react": "11.11.1",
     "@emotion/server": "11.10.0",
