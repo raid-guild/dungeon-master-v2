@@ -5,13 +5,15 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/dm-graphql",
         "main": "libs/dm-graphql/src/index.ts",
+        "packageJson": "libs/dm-graphql/package.json",
         "tsConfig": "libs/dm-graphql/tsconfig.lib.json",
-        "assets": ["libs/dm-graphql/*.md"]
+        "assets": ["libs/dm-graphql/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

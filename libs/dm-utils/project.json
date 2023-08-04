@@ -5,13 +5,15 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/dm-utils",
         "main": "libs/dm-utils/src/index.ts",
+        "packageJson": "libs/dm-utils/package.json",
         "tsConfig": "libs/dm-utils/tsconfig.lib.json",
-        "assets": ["libs/dm-utils/*.md"]
+        "assets": ["libs/dm-utils/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

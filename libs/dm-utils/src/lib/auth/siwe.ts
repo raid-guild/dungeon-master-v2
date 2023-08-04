@@ -27,19 +27,26 @@ const checkNonce = async ({
   credentials,
   req,
 }: SiweMessageAuthorizeParams) =>
-  getCsrfToken({ req }).then((nonce: string | undefined) => {
-    if (!_.eq(_.get(siwe, 'nonce'), nonce)) {
-      return Promise.reject(Error('Invalid nonce'));
-    }
-    return Promise.resolve({ siwe, credentials, req });
-  });
+  getCsrfToken({ req: { headers: req.headers } })
+    .then((nonce: string | undefined) => {
+      if (!_.eq(_.get(siwe, 'nonce'), nonce)) {
+        return Promise.reject(Error('Invalid nonce'));
+      }
+      return Promise.resolve({ siwe, credentials, req });
+    })
+    .catch((error: Error) => {
+      console.log('here', error);
+    });
 
 const checkDomain = ({
   siwe,
   credentials,
 }: SiweCredentialParams): Promise<SiweCredentialParams> => {
   if (!NEXTAUTH_URL) {
-    return Promise.reject(Error('Invalid domain'));
+    return Promise.reject(Error('Invalid set domain'));
+  }
+  if (process.env.NODE_ENV === 'development') {
+    return Promise.resolve({ siwe, credentials });
   }
   if (!_.eq(_.get(siwe, 'domain'), new URL(NEXTAUTH_URL).host)) {
     return Promise.reject(Error('Invalid domain'));
@@ -64,9 +71,9 @@ export const authorizeSiweMessage = (
   data: SiweAuthorizeParams
 ): Promise<User | null> =>
   parseCredentials(data)
-    .then((d) => checkNonce(d))
-    .then((d) => checkDomain(d))
-    .then((d) => checkSignature(d))
+    .then((d: any) => checkNonce(d))
+    .then((d: any) => checkDomain(d))
+    .then((d: any) => checkSignature(d))
     .then(
       ({ siwe }) => ({ id: _.get(siwe, 'address') }) // TODO _.toLower
     )

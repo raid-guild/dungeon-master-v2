@@ -5,13 +5,15 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/dm-hooks",
         "main": "libs/dm-hooks/src/index.ts",
+        "packageJson": "libs/dm-hooks/package.json",
         "tsConfig": "libs/dm-hooks/tsconfig.lib.json",
-        "assets": ["libs/dm-hooks/*.md"]
+        "assets": ["libs/dm-hooks/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "publish": {

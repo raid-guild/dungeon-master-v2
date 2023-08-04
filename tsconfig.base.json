@@ -16,7 +16,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@dm/is-even": ["libs/is-even/src/index.ts"],
       "@raidguild/dm-graphql": ["libs/dm-graphql/src/index.ts"],
       "@raidguild/dm-hooks": ["libs/dm-hooks/src/index.ts"],
       "@raidguild/dm-types": ["libs/dm-types/src/index.ts"],
