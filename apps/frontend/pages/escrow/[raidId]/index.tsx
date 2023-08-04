@@ -6,7 +6,7 @@ import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
 import { useAccount, useNetwork } from 'wagmi';
 import { NextSeo } from 'next-seo';
 import SiteLayoutPublic from '../../../components/SiteLayoutPublic';
-import { Heading, Flex, Text, Box } from '@raidguild/design-system';
+import { Heading, Flex, Text } from '@raidguild/design-system';
 import axios from 'axios';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
@@ -95,7 +95,7 @@ const Escrow = ({ raid }) => {
     if (raid) {
       setAppState({
         ...appState,
-        invoice_id: raid.invoiceAddress,
+        invoice_id: raid.invoice_address,
         v1_id: raid.v1Id,
         raid_id: raid.id,
         project_name: raid.name,
@@ -128,7 +128,6 @@ const Escrow = ({ raid }) => {
   const getSmartInvoiceData = async () => {
     try {
       if (raid.invoice_address) {
-        // todo: remove hardcoded chainId
         const currInvoice = await getInvoice(chain.id, raid.invoice_address);
         if (!currInvoice) {
           setInvoiceFetchError(true);

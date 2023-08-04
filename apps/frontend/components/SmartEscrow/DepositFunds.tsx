@@ -63,6 +63,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
     console.log('pollSubgraph smartInvoice: ', invoice_id);
 
     const interval = setInterval(async () => {
+      console.log('inside poll subgraph');
       const inv = await getInvoice(parseInt(chainId), invoice_id);
       if (isSubscribed && !!inv) {
         console.log(`Invoice data received, ${inv}`);
@@ -292,7 +293,6 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
           isDisabled={amount.lte(0)}
           textTransform='uppercase'
           variant='solid'
-          w='100%'
         >
           Deposit
         </Button>

@@ -94,12 +94,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
         </Text>
       )}
       {loading && <Loader />}
-      <Button
-        onClick={withdrawFunds}
-        variant='solid'
-        textTransform='uppercase'
-        w='100%'
-      >
+      <Button onClick={withdrawFunds} variant='solid' textTransform='uppercase'>
         Withdraw
       </Button>
     </VStack>

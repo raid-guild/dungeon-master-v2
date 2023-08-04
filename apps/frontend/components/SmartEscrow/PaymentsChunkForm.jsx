@@ -6,7 +6,7 @@ import {
   Input,
   InputRightElement,
 } from '@chakra-ui/react';
-import { Text, Button, Card } from '@raidguild/design-system';
+import { Text, Button } from '@raidguild/design-system';
 
 import styled from '@emotion/styled';
 
@@ -41,7 +41,7 @@ export const PaymentsChunkForm = ({
   updateStep
 }) => {
   return (
-    <Card
+    <Flex
       direction='column'
       background='#262626'
       padding='1.5rem'
@@ -94,7 +94,6 @@ export const PaymentsChunkForm = ({
         </Button>
         <Button
           variant='solid'
-          w='100%'
           onClick={() => {
             let sum = payments.reduce((acc, num) => Number(acc) + Number(num));
             if (Number(sum) !== Number(paymentDue))
@@ -105,6 +104,6 @@ export const PaymentsChunkForm = ({
           Next: Confirmation
         </Button>
       </Flex>
-    </Card>
+    </Flex>
   );
 };

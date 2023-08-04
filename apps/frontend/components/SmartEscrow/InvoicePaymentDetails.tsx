@@ -23,16 +23,26 @@ const parseTokenAddress = (chainId, address) => {
 
 const getIpfsLink = (hash) => `${IPFS_ENDPOINT}/ipfs/${hash}`;
 
-export const InvoicePaymentDetails = ({ web3, invoice, chainId, provider }) => {
+export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
 
   useEffect(() => {
     // this is the balance of the ERC20 token of payment of the Smart Invoice
+    console.log(
+      'provider, invoice.token, invoice.address: ',
+      provider,
+      invoice.token,
+      invoice.address
+    );
     balanceOf(provider, invoice.token, invoice.address)
       .then((b) => {
+        console.log('balance: ', b);
         setBalance(b);
       })
-      .catch((balanceError) => console.log(balanceError));
+      .catch((balanceError) => {
+        console.log('balanc eerror', balanceError);
+        console.log(balanceError);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -72,7 +82,9 @@ export const InvoicePaymentDetails = ({ web3, invoice, chainId, provider }) => {
     'InvoicePaymentDetails render: token address',
     chainId,
     invoice.token,
-    parseTokenAddress(chainId, invoice.token)
+    parseTokenAddress(chainId, invoice.token),
+    'invoice: ',
+    invoice
   );
   return (
     <Card variant='filled' p={1} direction='column' width='100%'>

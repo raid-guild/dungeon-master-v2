@@ -95,6 +95,14 @@ export const InvoiceButtonManager = ({
   const isResolver = account.toLowerCase() === resolver.toLowerCase();
   // const isResolver = true;
   console.log('isResolver: ', resolver);
+  console.log(
+    'isRaidParty: ',
+    isRaidParty,
+    'isClient: ',
+    isClient,
+    'isResolver: ',
+    isResolver
+  );
 
   const dispute =
     isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;

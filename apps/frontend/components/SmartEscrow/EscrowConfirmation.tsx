@@ -191,21 +191,21 @@ export const EscrowConfirmation = ({
         </Text>
       </HStack>
 
-      <Flex direction='row' width='100%'>
+      <Flex direction='row' width='100%' justify='center'>
         <Button
           variant='outline'
-          minW='25%'
-          p='5px'
+          // minW='25%'
+          // p='5px'
           mr='.5rem'
-          // isDisabled={isLoading}
+          isDisabled={isLoading}
           onClick={() => updateStep((prevStep) => prevStep - 1)}
         >
           Back
         </Button>
         <Button
           variant='solid'
-          w='100%'
-          // isDisabled={isLoading}
+          // w='100%'
+          isDisabled={isLoading}
           onClick={createInvoice}
         >
           {isLoading ? 'Creating Escrow..' : 'Create Escrow'}

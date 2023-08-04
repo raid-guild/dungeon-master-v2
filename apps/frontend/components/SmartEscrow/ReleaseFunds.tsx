@@ -143,7 +143,6 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
           onClick={releaseFunds}
           textTransform='uppercase'
           variant='solid'
-          w='100%'
         >
           Release
         </Button>

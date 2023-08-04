@@ -206,7 +206,6 @@ export const LockFunds = ({
         isDisabled={!disputeReason}
         textTransform='uppercase'
         variant='solid'
-        w='100%'
       >
         {`Lock ${utils.formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,

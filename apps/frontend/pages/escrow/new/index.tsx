@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useToast, Text, Center } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import SiteLayout from '../../../components/SiteLayout';
 import { Heading, Box, Flex, Card } from '@raidguild/design-system';
@@ -24,7 +24,7 @@ const NewEscrow = () => {
     '0x76C3038Ef92B1E917d47F67767dA784a027582D4'
   );
   const [serviceProvider, setServiceProvider] = useState(
-    '0x306744992015C90dEcb014e0836fC50176dE6Cf7'
+    '0x7E749EFaaC66782C423b9d80260D87818a9A04BD'
   );
 
   const [paymentDue, setPaymentDue] = useState('1');

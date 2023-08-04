@@ -12,6 +12,7 @@ export type SmartEscrowContextType = {
   provider: any;
   chainId: string;
 };
+
 export const SmartEscrowContext = createContext({} as SmartEscrowContextType);
 
 interface SmartEscrowProviderProps {

@@ -224,7 +224,6 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
               isDisabled={resolverAward.lte(0) || !comments}
               textTransform='uppercase'
               variant='solid'
-              w='100%'
             >
               Resolve
             </Button>
