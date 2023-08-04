@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "types": ["node", "jest"],
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -8,15 +9,19 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2016",
     "module": "esnext",
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@dmv2/common-utilities": ["libs/common-utilities/src/index.ts"]
+      "@raidguild/dm-graphql": ["libs/dm-graphql/src/index.ts"],
+      "@raidguild/dm-hooks": ["libs/dm-hooks/src/index.ts"],
+      "@raidguild/dm-types": ["libs/dm-types/src/index.ts"],
+      "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"]
     }
   },
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "tmp"]
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { HStack, Button, Stack } from '@raidguild/design-system';
-import { IRaid } from '../utils';
+import { IRaid } from '@raidguild/dm-utils';
 import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
 import ModalWrapper from './ModalWrapper';
@@ -44,28 +44,26 @@ const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
         size='sm'
         title='Update Raid Status'
         localOverlay={localOverlay}
-        content={
-          <StatusUpdateForm
-            raidId={_.get(raid, 'id')}
-            raid={raid}
-            currentStatus={_.get(raid, 'raidStatus.raidStatus')}
-            closeModal={closeModals}
-          />
-        }
-      />
+      >
+        <StatusUpdateForm
+          raidId={_.get(raid, 'id')}
+          raid={raid}
+          currentStatus={_.get(raid, 'raidStatus.raidStatus')}
+          closeModal={closeModals}
+        />
+      </ModalWrapper>
       <ModalWrapper
         name='raidForm'
         size='xl'
         title='Update Raid'
         localOverlay={localOverlay}
-        content={
-          <RaidUpdateForm
-            raidId={_.get(raid, 'id')}
-            raid={raid}
-            closeModal={closeModals}
-          />
-        }
-      />
+      >
+        <RaidUpdateForm
+          raidId={_.get(raid, 'id')}
+          raid={raid}
+          closeModal={closeModals}
+        />
+      </ModalWrapper>
 
       <RaidPartyInfo raid={raid} />
       {/* RAID TAGS */}

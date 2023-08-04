@@ -1,7 +1,7 @@
 import { Link, Tooltip } from '@raidguild/design-system';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ITokenBalanceLineItem } from '../types';
-import { minMaxNumberFilter, sortNumeric } from '../utils';
+import { ITokenBalanceLineItem } from '@raidguild/dm-types';
+import { minMaxNumberFilter, sortNumeric } from '@raidguild/dm-utils';
 import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 

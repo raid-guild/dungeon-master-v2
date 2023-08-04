@@ -16,17 +16,18 @@ import {
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import InfiniteScroll from 'react-infinite-scroller';
-import useConsultationList, {
+import {
+  useConsultationList,
   useConsultationsCount,
-} from '../hooks/useConsultationList';
-import useDefaultTitle from '../hooks/useDefaultTitle';
-import RaidCard from '../components/RaidCard';
-import SiteLayout from '../components/SiteLayout';
+  useDefaultTitle,
+} from '@raidguild/dm-hooks';
 import {
   IConsultation,
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
-} from '../utils';
+} from '@raidguild/dm-utils';
+import RaidCard from '../components/RaidCard';
+import SiteLayout from '../components/SiteLayout';
 
 const consultationTypeOptions = [
   { label: 'Show All', value: 'ALL' },
@@ -56,8 +57,10 @@ const ConsultationList = () => {
     useState<string>('ALL');
   const [consultationSubmissionFilter, setConsultationSubmissionFilter] =
     useState<string>('ALL');
-  const [consultationSort, setConsultationSort] = useState<string>('name');
-  const [sortChanged, setSortChanged] = useState(false);
+  type consultationSortKeys = 'name' | 'recentlyAdded';
+  const [consultationSort, setConsultationSort] =
+    useState<consultationSortKeys>('name');
+  const [, setSortChanged] = useState(false);
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -93,7 +96,9 @@ const ConsultationList = () => {
     setConsultationSubmissionFilter(filterOption);
   };
 
-  const handleConsultationSortChange = async (sortOption: string) => {
+  const handleConsultationSortChange = async (
+    sortOption: consultationSortKeys
+  ) => {
     setConsultationSort(sortOption);
     setSortChanged(true);
   };
@@ -206,7 +211,9 @@ const ConsultationList = () => {
           value={consultationSort}
           defaultValue={consultationSort['Name']}
           onChange={(e) => {
-            handleConsultationSortChange(e.target.value);
+            handleConsultationSortChange(
+              e.target.value as consultationSortKeys
+            );
           }}
         >
           {consultationSortOptions.map((sortOption) => (

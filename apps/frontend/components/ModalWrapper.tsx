@@ -12,10 +12,10 @@ import {
 import { OverlayContextType, IModals } from '../contexts/OverlayContext';
 // TODO replace this modal with the one from design-system
 
-export interface ModalWrapperProps extends ChakraBoxProps {
+interface CustomModalWrapperProps {
   name: keyof IModals;
   title: string;
-  content: React.ReactNode;
+  children: React.ReactNode;
   titleColor?: string;
   bgColor?: string;
   size?: string;
@@ -24,10 +24,12 @@ export interface ModalWrapperProps extends ChakraBoxProps {
   onClose?: () => void;
 }
 
+export type ModalWrapperProps = CustomModalWrapperProps & ChakraBoxProps;
+
 const ModalWrapper: React.FC<ModalWrapperProps> = ({
   name,
   title,
-  content,
+  children,
   isOpen,
   onClose,
   size,
@@ -52,7 +54,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
           <Heading>{title}</Heading>
         </ModalHeader>
         <ModalCloseButton color='whiteAlpha.700' />
-        <ModalBody>{content}</ModalBody>
+        <ModalBody>{children}</ModalBody>
       </ModalContent>
     </ChakraModal>
   );

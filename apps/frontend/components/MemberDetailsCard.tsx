@@ -21,7 +21,7 @@ import {
   IMember,
   IApplication,
   SKILLS_DISPLAY,
-} from '../utils';
+} from '@raidguild/dm-utils';
 
 interface MemberProps {
   member?: IMember;

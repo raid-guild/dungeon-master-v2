@@ -8,7 +8,7 @@ import {
   encodeAuth,
   decodeAuth,
   CONFIG,
-} from '../../../utils/auth';
+} from '@raidguild/dm-utils';
 
 const { NEXTAUTH_SECRET } = process.env;
 
@@ -25,7 +25,12 @@ const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
   const options: NextAuthOptions = {
     providers: [siweProvider],
     session: { strategy: 'jwt', maxAge: CONFIG.defaultMaxAge },
-    jwt: { secret: NEXTAUTH_SECRET, encode: encodeAuth, decode: decodeAuth },
+    jwt: {
+      secret: NEXTAUTH_SECRET,
+      encode: encodeAuth,
+      // used any because not sure how to type this
+      decode: decodeAuth as any,
+    },
     callbacks: { session: extendSessionWithUserAndToken },
   };
 

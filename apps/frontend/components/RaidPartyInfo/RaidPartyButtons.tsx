@@ -22,8 +22,8 @@ import {
   membersExceptRaidParty,
   SIDEBAR_ACTION_STATES,
   rolesExceptRequiredRoles,
-} from '../../utils';
-import { useRaidPartyAdd, useAddRolesRequired } from '../../hooks';
+} from '@raidguild/dm-utils';
+import { useRaidPartyAdd, useAddRolesRequired } from '@raidguild/dm-hooks';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;

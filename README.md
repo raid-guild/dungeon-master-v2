@@ -1,12 +1,17 @@
 # Dungeon Master v2
 
+Monorepo built with [nx](https://nx.dev/)
 
-### Getting Started
+### How to run locally
 
+1. Copy env file
 
-1. In `apps/frontend` copy and rename `.env.example` to `.env.local`
+```
+cp apps/frontend/.env.example ./apps/frontend/.env.local
+```
 
-2. Fill in the required credentials.
+2. Fill in the required credentials in env file.
+
 ```
 HASURA_GRAPHQL_ADMIN_SECRET
 
@@ -15,8 +20,44 @@ NEXTAUTH_SECRET
 NEXT_PUBLIC_ALCHEMY_KEY
 ```
 
-3. Start front end server:
+3. Install dependencies with Yarn.
 
-`yarn`
+```
+yarn
+```
 
-`yarn start`
+4. Run frontend app locally.
+
+```
+yarn start
+```
+
+5. Open the app in your browser at https://localhost:4200
+
+## using 'nx' workspaces
+
+### common commands
+
+build all packages
+
+```
+yarn nx run-many --target=build --all
+```
+
+remove a project
+
+```
+npx nx generate @nx/workspace:remove --projectName=<your project name>
+```
+
+generate a new next.js app
+
+```
+npx nx generate @nx/next:application <your application name>
+```
+
+generate a new react library
+
+```
+npx nx generate @nx/react:library <your component name>
+```

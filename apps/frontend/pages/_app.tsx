@@ -13,8 +13,7 @@ import { useToast, RGThemeProvider } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { wagmiClient } from '../utils/wagmiClient';
-import { chains } from '../utils/chains';
+import { wagmiClient, chains } from '@raidguild/dm-utils';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
@@ -72,7 +71,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           refetchOnWindowFocus={false}
         >
           <RainbowKitSiweNextAuthProvider>
-            <RainbowKitProvider chains={chains} theme={darkTheme()}>
+            <RainbowKitProvider chains={chains || []} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>
                 <OverlayContextProvider>
                   <Component {...pageProps} />
