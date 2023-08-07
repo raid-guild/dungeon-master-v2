@@ -36,7 +36,7 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
         chainId
       );
       if (isSubscribed && !!inv) {
-        console.log(`Invoice data received, ${inv}`);
+        console.log(`Invoice data received, ${inv}`, inv);
 
         if (
           utils.formatUnits(inv.released, 18) >

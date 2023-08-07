@@ -55,6 +55,9 @@ export const EscrowConfirmation = ({
       NETWORK_CONFIG[parseInt(chainId)]['WRAPPED_NATIVE_TOKEN'];
     const factoryAddress = NETWORK_CONFIG[parseInt(chainId)]['INVOICE_FACTORY'];
     const paymentsInWei = [];
+    console.log('selectedDay: ', selectedDay);
+    console.log('resolver: ', resolver);
+    debugger;
     const terminationTime = new Date(selectedDay).getTime() / 1000;
 
     console.log('payments: using toWei unit ', payments);
@@ -109,6 +112,35 @@ export const EscrowConfirmation = ({
         daoAddress,
         SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
       ]
+    );
+    console.log('data :', [
+      clientAddress,
+      resolverType,
+      resolver, // address _resolver (LEX DAO resolver address)
+      tokenAddress, // address _token (payment token address)
+      terminationTime, // safety valve date
+      '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
+      wrappedNativeToken,
+      REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
+      factoryAddress,
+      daoAddress,
+      SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
+    ]);
+    console.log(
+      'zzzz data :',
+      JSON.stringify([
+        clientAddress,
+        resolverType,
+        resolver, // address _resolver (LEX DAO resolver address)
+        tokenAddress, // address _token (payment token address)
+        terminationTime, // safety valve date
+        '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
+        wrappedNativeToken,
+        REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
+        factoryAddress,
+        daoAddress,
+        SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
+      ])
     );
 
     try {
@@ -194,7 +226,7 @@ export const EscrowConfirmation = ({
       <Flex direction='row' width='100%' justify='center'>
         <Button
           variant='outline'
-          // minW='25%'
+          minW='25%'
           // p='5px'
           mr='.5rem'
           isDisabled={isLoading}
@@ -204,7 +236,7 @@ export const EscrowConfirmation = ({
         </Button>
         <Button
           variant='solid'
-          // w='100%'
+          w='100%'
           isDisabled={isLoading}
           onClick={createInvoice}
         >

@@ -94,6 +94,7 @@ export const PaymentsChunkForm = ({
         </Button>
         <Button
           variant='solid'
+          width='100%'
           onClick={() => {
             let sum = payments.reduce((acc, num) => Number(acc) + Number(num));
             if (Number(sum) !== Number(paymentDue))

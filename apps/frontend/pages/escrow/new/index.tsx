@@ -20,27 +20,25 @@ const NewEscrow = () => {
   const { appState } = useContext(SmartEscrowContext);
   const router = useRouter();
 
-  const [client, setClient] = useState(
-    '0x76C3038Ef92B1E917d47F67767dA784a027582D4'
-  );
-  const [serviceProvider, setServiceProvider] = useState(
-    '0x7E749EFaaC66782C423b9d80260D87818a9A04BD'
-  );
+  const [client, setClient] = useState<string>('');
+  const [serviceProvider, setServiceProvider] = useState<string>('');
 
-  const [paymentDue, setPaymentDue] = useState('1');
-  const [milestones, setMilestones] = useState(2);
-  const [selectedDay, setSelectedDay] = useState('');
+  const [paymentDue, setPaymentDue] = useState<string>('1');
+  const [milestones, setMilestones] = useState<string>('1');
+  const [selectedDay, setSelectedDay] = useState<string>('');
 
-  const [tokenType, setTokenType] = useState('');
+  const [tokenType, setTokenType] = useState<string>('');
 
-  const [payments, setPayments] = useState(
+  const [payments, setPayments] = useState<string | undefined[]>(
     Array.from(Array(Number(milestones)))
   );
 
-  const [tx, setTx] = useState('');
+  const [tx, setTx] = useState<string>('');
 
-  const [step, updateStep] = useState(1);
-  const [isLoading, setLoading] = useState(false);
+  const [step, updateStep] = useState<number>(1);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  console.log('payments: ', payments);
+  console.log('selectedDay: ', selectedDay, typeof selectedDay);
 
   useEffect(() => {
     console.log('new page first useEffect appState: ', appState);

@@ -66,7 +66,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
       console.log('inside poll subgraph');
       const inv = await getInvoice(parseInt(chainId), invoice_id);
       if (isSubscribed && !!inv) {
-        console.log(`Invoice data received, ${inv}`);
+        console.log(`Invoice data received, ${inv}`, inv);
 
         const balance = await balanceOf(provider, inv.token, inv.address);
         let newDepositValue = BigNumber.from(inv.released).add(balance);
