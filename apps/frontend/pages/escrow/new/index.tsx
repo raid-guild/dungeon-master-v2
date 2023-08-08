@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import SiteLayout from '../../../components/SiteLayout';
-import { Heading, Box, Flex, Card } from '@raidguild/design-system';
+import { Heading, Box, Flex } from '@raidguild/design-system';
 import { useRouter } from 'next/router';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';

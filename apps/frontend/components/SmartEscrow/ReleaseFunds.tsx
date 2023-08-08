@@ -11,7 +11,6 @@ import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
 import { release } from '../../smartEscrow/utils/invoice';
 import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 
-// todo: typescript types
 type ReleaseFundsProp = {
   invoice: any;
   balance: any;
@@ -30,24 +29,15 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
 
     const interval = setInterval(async () => {
       let inv = await getInvoice(parseInt(chainId), invoice_id);
-      console.log(
-        'polling subgraph:  invoice_id, chainId: ',
-        invoice_id,
-        chainId
-      );
-      if (isSubscribed && !!inv) {
-        console.log(`Invoice data received, ${inv}`, inv);
 
+      if (isSubscribed && !!inv) {
         if (
           utils.formatUnits(inv.released, 18) >
           utils.formatUnits(invoice.released, 18)
         ) {
           isSubscribed = false;
           clearInterval(interval);
-          console.log(
-            utils.formatUnits(inv.released, 18),
-            utils.formatUnits(invoice.released, 18)
-          );
+
           window.location.reload();
         }
       }
@@ -81,7 +71,7 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
         await tx.wait();
         await pollSubgraph();
       } catch (releaseError) {
-        console.log(releaseError);
+        console.error(releaseError);
         setLoading(false);
         toast.error({
           title: 'Oops there was an error',

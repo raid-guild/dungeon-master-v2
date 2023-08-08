@@ -15,7 +15,6 @@ const StyledInput = styled(Input)`
   outline: none;
   border: none;
   color: white;
-  ${'' /* font-family: ${theme.fonts.jetbrains}; */}
   font-size: 1rem;
   background-color: black;
   margin-bottom: 15px;
@@ -27,7 +26,6 @@ const StyledInput = styled(Input)`
 `;
 
 const StyledFormLabel = styled(FormLabel)`
-  ${'' /* font-family: ${theme.fonts.spaceMono}; */}
   font-weight: bold;
 `;
 
@@ -38,7 +36,7 @@ export const PaymentsChunkForm = ({
   payments,
   setPayments,
   sendToast,
-  updateStep
+  updateStep,
 }) => {
   return (
     <Flex

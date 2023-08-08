@@ -1,10 +1,7 @@
 import { Flex, Link, Text } from '@chakra-ui/react';
-import { utils } from 'ethers';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-
-import { getProfile } from '../../../smartEscrow/utils/3box';
 
 import { getAddressLink } from '../../../smartEscrow/utils/helpers';
 
@@ -18,18 +15,6 @@ export const AccountLink = ({
     typeof inputAddress === 'string' ? inputAddress.toLowerCase() : '';
   const [profile, setProfile] = useState();
   const chainId = inputChainId || context.chainId;
-
-  // useEffect(() => {
-  //   let isSubscribed = true;
-  //   if (utils.isAddress(address)) {
-  //     getProfile(address).then((p) =>
-  //       isSubscribed ? setProfile(p) : undefined
-  //     );
-  //   }
-  //   return () => {
-  //     isSubscribed = false;
-  //   };
-  // }, [address]);
 
   let displayString = address;
 
@@ -70,7 +55,6 @@ export const AccountLink = ({
         align='center'
         bgColor='black'
         bgImage={imageUrl && `url(${imageUrl})`}
-        // border={`1px solid ${theme.colors.white20}`}
         bgSize='cover'
         bgRepeat='no-repeat'
         bgPosition='center center'

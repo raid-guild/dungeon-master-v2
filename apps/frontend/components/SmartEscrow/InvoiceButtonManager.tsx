@@ -61,14 +61,12 @@ export const InvoiceButtonManager = ({
   const checkBalance = (set, contractAddress) => {
     balanceOf(provider, invoice.token, contractAddress)
       .then((b) => {
-        console.log('set.name', set.name, contractAddress, b.toString());
         set(b);
       })
       .catch((balanceError) => console.log(balanceError));
   };
 
   useEffect(() => {
-    console.log('invoice:  ', invoice);
     checkBalance(setBalance, invoice.address);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -88,25 +86,12 @@ export const InvoiceButtonManager = ({
 
   const isRaidParty =
     account.toLowerCase() === invoice?.provider?.toLowerCase();
-  // const isRaidParty = true;
 
   const isClient = account.toLowerCase() === client;
-  // const isClient = true;
   const isResolver = account.toLowerCase() === resolver.toLowerCase();
-  // const isResolver = true;
-  console.log('isResolver: ', resolver);
-  console.log(
-    'isRaidParty: ',
-    isRaidParty,
-    'isClient: ',
-    isClient,
-    'isResolver: ',
-    isResolver
-  );
 
   const dispute =
     isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;
-  // const dispute = true;
   const deposited = BigNumber.from(released).add(balance);
   const due = deposited.gte(total)
     ? BigNumber.from(0)
@@ -120,7 +105,6 @@ export const InvoiceButtonManager = ({
     currentMilestone < amounts.length ? amounts[currentMilestone] : 0
   );
   const isLockable = !isExpired && !isLocked && balance.gt(0);
-  // const isLockable = true;
 
   const isReleasable = !isLocked && balance.gte(amount) && balance.gt(0);
 
@@ -132,8 +116,6 @@ export const InvoiceButtonManager = ({
   } else {
     gridColumns = 1;
   }
-  // invoice.isLocked = true;
-  // console.log('balance: ', balance);
 
   return (
     <>

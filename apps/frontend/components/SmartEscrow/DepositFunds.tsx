@@ -40,7 +40,6 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   const {
     appState: { chainId, invoice_id, provider, account },
   } = useContext(SmartEscrowContext);
-  console.log('render deposit funds', chainId);
 
   const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
   const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
@@ -60,21 +59,16 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
 
   const pollSubgraph = async () => {
     let isSubscribed = true;
-    console.log('pollSubgraph smartInvoice: ', invoice_id);
 
     const interval = setInterval(async () => {
-      console.log('inside poll subgraph');
       const inv = await getInvoice(parseInt(chainId), invoice_id);
       if (isSubscribed && !!inv) {
-        console.log(`Invoice data received, ${inv}`, inv);
-
         const balance = await balanceOf(provider, inv.token, inv.address);
-        let newDepositValue = BigNumber.from(inv.released).add(balance);
+        let newDepositValue: any = BigNumber.from(inv.released).add(balance);
         newDepositValue = utils.formatUnits(newDepositValue, 18);
         if (newDepositValue > utils.formatUnits(deposited, 18)) {
           isSubscribed = false;
           clearInterval(interval);
-          console.log(newDepositValue, utils.formatUnits(deposited, 18));
           window.location.reload();
         }
       }
@@ -99,25 +93,19 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
       await pollSubgraph();
     } catch (depositError) {
       setLoading(false);
-      console.log(depositError);
+      console.error(depositError);
     }
   };
 
   useEffect(() => {
     try {
       if (paymentType === 0) {
-        console.log(
-          'deposit funds useEffect: provider, token, account',
-          provider,
-          token,
-          account
-        );
         balanceOf(provider, token, account).then(setBalance);
       } else {
         provider.getBalance(account).then(setBalance);
       }
     } catch (balanceError) {
-      console.log(balanceError);
+      console.error(balanceError);
     }
   }, [paymentType, token, provider, account]);
 

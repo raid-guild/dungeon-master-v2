@@ -9,8 +9,6 @@ import {
   NETWORK_CONFIG,
 } from '../../smartEscrow/utils/constants';
 
-console.log('Web3Utils: utils ', Web3Utils);
-
 const REQUIRES_VERIFICATION = true;
 
 export const EscrowConfirmation = ({
@@ -30,8 +28,6 @@ export const EscrowConfirmation = ({
 }) => {
   const createInvoice = async () => {
     setLoading(true);
-    console.log('setLoading is true, calling createInvoice');
-    console.log('Web3Utils: ', Web3Utils);
 
     const chainId = appState.chainId;
     const ethersProvider = appState.provider;
@@ -55,17 +51,11 @@ export const EscrowConfirmation = ({
       NETWORK_CONFIG[parseInt(chainId)]['WRAPPED_NATIVE_TOKEN'];
     const factoryAddress = NETWORK_CONFIG[parseInt(chainId)]['INVOICE_FACTORY'];
     const paymentsInWei = [];
-    console.log('selectedDay: ', selectedDay);
-    console.log('resolver: ', resolver);
-    debugger;
     const terminationTime = new Date(selectedDay).getTime() / 1000;
 
-    console.log('payments: using toWei unit ', payments);
     payments.map((amount) =>
       paymentsInWei.push(Web3Utils.toWei(amount, 'ether'))
     );
-    console.log('paymentsInWei: ', paymentsInWei);
-    console.log('terminationTime', terminationTime);
 
     const resolverType = 0; // 0 for individual, 1 for erc-792 arbitrator
     const type = utils.formatBytes32String('split-escrow');
@@ -82,8 +72,6 @@ export const EscrowConfirmation = ({
     // address _factory,
     // address _dao,
     // uint256 _daoFee
-
-    // todo: find out why selectedDay leads to terminationTime to be zero
 
     const data = utils.AbiCoder.prototype.encode(
       [
@@ -113,35 +101,6 @@ export const EscrowConfirmation = ({
         SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
       ]
     );
-    console.log('data :', [
-      clientAddress,
-      resolverType,
-      resolver, // address _resolver (LEX DAO resolver address)
-      tokenAddress, // address _token (payment token address)
-      terminationTime, // safety valve date
-      '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
-      wrappedNativeToken,
-      REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
-      factoryAddress,
-      daoAddress,
-      SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
-    ]);
-    console.log(
-      'zzzz data :',
-      JSON.stringify([
-        clientAddress,
-        resolverType,
-        resolver, // address _resolver (LEX DAO resolver address)
-        tokenAddress, // address _token (payment token address)
-        terminationTime, // safety valve date
-        '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
-        wrappedNativeToken,
-        REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
-        factoryAddress,
-        daoAddress,
-        SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
-      ])
-    );
 
     try {
       const transaction = await register(
@@ -152,7 +111,6 @@ export const EscrowConfirmation = ({
         data,
         type
       );
-      console.log('transaction: ', transaction);
 
       setTx(transaction);
 
@@ -182,13 +140,13 @@ export const EscrowConfirmation = ({
         <Text fontWeight='bold' variant='textOne'>
           Client Address:
         </Text>
-        <AccountLink address={client} />
+        <AccountLink address={client} chainId={appState.chainId} />
       </HStack>
       <HStack mb='.5rem' justifyContent='space-between'>
         <Text fontWeight='bold' variant='textOne'>
           Raid Party Address:
         </Text>
-        <AccountLink address={serviceProvider} />
+        <AccountLink address={serviceProvider} chainId={appState.chainId} />
       </HStack>
       <HStack mb='.5rem' justifyContent='space-between'>
         <Text fontWeight='bold' variant='textOne'>
@@ -227,7 +185,6 @@ export const EscrowConfirmation = ({
         <Button
           variant='outline'
           minW='25%'
-          // p='5px'
           mr='.5rem'
           isDisabled={isLoading}
           onClick={() => updateStep((prevStep) => prevStep - 1)}

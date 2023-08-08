@@ -25,7 +25,6 @@ const StyledInput = styled(Input)`
   outline: none;
   border: none;
   color: white;
-  ${'' /* font-family: ${theme.fonts.jetbrains}; */}
   font-size: 1rem;
   background-color: black;
   margin-bottom: 15px;
@@ -37,7 +36,6 @@ const StyledInput = styled(Input)`
 `;
 
 const StyledFormLabel = styled(FormLabel)`
-  ${'' /* font-family: ${theme.fonts.spaceMono}; */}
   font-weight: bold;
 `;
 
@@ -70,7 +68,6 @@ export const PaymentDetailsForm = ({
     }
   };
 
-  console.log('SUPPORTED_NETWORKS: ', SUPPORTED_NETWORKS);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => updateTokenList(), []);
   // eslint-disable-next-line react-hooks/exhaustive-deps

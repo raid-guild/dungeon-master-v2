@@ -19,27 +19,20 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
   const [smartInvoiceId, setSmartInvoiceId] = useState('');
   const [invoice, setInvoice] = useState();
   const router = useRouter();
-  console.log('escrow success: ethersProvider: ', ethersProvider);
 
   const [progressText, updateProgressText] = useState('');
 
   const postInvoiceId = async () => {
-    console.log('postInvoiceId: ', raidId, smartInvoiceId);
     await updateRaidInvoice(raidId, smartInvoiceId);
   };
 
   const pollSubgraph = () => {
     let isSubscribed = true;
     const interval = setInterval(() => {
-      console.log(
-        `Indexing subgraph with chain ID ${chainId} & Smart Invoice ID ${smartInvoiceId}`
-      );
       getInvoice(chainId, smartInvoiceId).then((inv) => {
-        console.log(`Data returned, ${inv}`);
         if (isSubscribed && !!inv) {
           setInvoice(inv);
           updateProgressText(`Invoice data received.`);
-          console.log(`Invoice data received, ${inv}`);
           clearInterval(interval);
         }
       });
@@ -54,11 +47,9 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
   useEffect(() => {
     if (tx && ethersProvider) {
       updateProgressText('Fetching Smart Invoice ID...');
-      console.log('Fetching Smart Invoice ID...');
       awaitInvoiceAddress(ethersProvider, tx).then((id) => {
         setSmartInvoiceId(id.toLowerCase());
         updateProgressText(`Received Smart Invoice ID.`);
-        console.log(`Received Smart Invoice ID, ${id.toLowerCase()}`);
       });
     }
   }, [tx, ethersProvider]);

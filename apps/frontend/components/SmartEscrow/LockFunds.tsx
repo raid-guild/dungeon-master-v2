@@ -106,7 +106,7 @@ export const LockFunds = ({
         }, 20000);
       } catch (lockError) {
         setLocking(false);
-        console.log(lockError);
+        console.error(lockError);
       }
     }
   }, [
@@ -184,7 +184,7 @@ export const LockFunds = ({
       </Text>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {'Once a dispute has been initiated, '}
-        <AccountLink address={resolver} />
+        <AccountLink address={resolver} chainId={chainId} />
         {
           ' will review your case, the project agreement and dispute reasoning before making a decision on how to fairly distribute remaining funds.'
         }
@@ -198,7 +198,7 @@ export const LockFunds = ({
       />
       <Text color='white' textAlign='center' fontFamily='texturina'>
         {`Upon resolution, a fee of ${fee} will be deducted from the locked fund amount and sent to `}
-        <AccountLink address={resolver} />
+        <AccountLink address={resolver} chainId={chainId} />
         {` for helping resolve this dispute.`}
       </Text>
       <Button

@@ -8,7 +8,6 @@ export const Page404 = () => {
       direction='column'
       alignItems='center'
       justifyContent='center'
-      // fontFamily={theme.fonts.spaceMono}
     >
       <Heading variant='headingOne'>Page not found</Heading>
       <Flex direction={{ lg: 'row', base: 'column' }} mt='2rem'>

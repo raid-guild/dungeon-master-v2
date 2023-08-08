@@ -6,7 +6,7 @@ import {
   InputRightElement,
   Link,
   Text,
-  VStack
+  VStack,
 } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useContext, useState } from 'react';
@@ -28,12 +28,18 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
 
   const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState();
+  let resolverAward;
+  try {
+    resolverAward =
+      resolutionRate === '0'
+        ? BigNumber.from('0')
+        : balance.gt(0)
+        ? balance.div(resolutionRate)
+        : BigNumber.from(0);
+  } catch (e) {
+    console.error('error in ResoleFunds component ', e);
+  }
 
-  // const resolverAward = resolutionRate === '0' ? BigNumber.from('0') : balance.gt(0)
-  //   ? balance.div(resolutionRate)
-  //   : BigNumber.from(0);
-
-  const resolverAward = BigNumber.from('1');
   const availableFunds = balance.sub(resolverAward);
   const [clientAward, setClientAward] = useState(availableFunds);
   const [providerAward, setProviderAward] = useState(BigNumber.from(0));
@@ -56,7 +62,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
         const detailsHash = await uploadDisputeDetails({
           comments,
           invoice: address,
-          amount: balance.toString()
+          amount: balance.toString(),
         });
         const tx = await resolve(
           provider,
@@ -72,7 +78,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
         }, 20000);
       } catch (depositError) {
         setLoading(false);
-        console.log(depositError);
+        console.error(depositError);
       }
     }
   }, [
@@ -83,7 +89,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
     clientAward,
     providerAward,
     resolverAward,
-    address
+    address,
   ]);
 
   return (
