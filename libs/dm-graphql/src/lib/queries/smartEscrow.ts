@@ -57,7 +57,10 @@ export const RAID_BY_V1_ID_QUERY = gql`
   ${RAID_DETAILS_FRAGMENT}
 `;
 
-export const UPDATE_INVOICE_ADDRESS_QUERY = (raidId: string, invoice_address: string) => `
+export const UPDATE_INVOICE_ADDRESS_QUERY = (
+  raidId: string,
+  invoice_address: string
+) => `
   mutation MyMutation {
     update_raids(where: {id: {_eq: "${raidId}"}}, _set: {invoice_address: "${invoice_address}"}) {
       returning {
@@ -67,5 +70,3 @@ export const UPDATE_INVOICE_ADDRESS_QUERY = (raidId: string, invoice_address: st
   }
   ${RAID_DETAILS_FRAGMENT}
 `;
-
-// 0x6085adf86110468945e6f109d1f6b7116a94d9f2;

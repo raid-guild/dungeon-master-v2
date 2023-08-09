@@ -13,11 +13,6 @@ const getInvoiceFactoryAddress = (chainId: number) => {
   return invoiceFactory[chainId] || invoiceFactory[4];
 };
 
-// chainId,
-// ethersProvider,
-// paymentsInWei,
-// data,
-// type
 export const register = async (
   chainId,
   ethersProvider,
@@ -26,30 +21,15 @@ export const register = async (
   data,
   type
 ) => {
-  console.log(
-    'calling register with params: ',
-    chainId,
-    ethersProvider,
-    recipient,
-    amounts,
-    data,
-    type
-  );
   // Smart Invoice Factory Abi for create function
   const abi = new utils.Interface([
     'function create(address _recipient, uint256[] calldata _amounts, bytes _data, bytes32 _type) public',
   ]);
-  console.log(
-    'register: getInvoiceFactoryAddress(chainId): chainId: ',
-    getInvoiceFactoryAddress(chainId),
-    chainId
-  );
   // invoice factory address for smart invoice
   const factoryAddress = getInvoiceFactoryAddress(chainId);
 
   const contract = new Contract(factoryAddress, abi, ethersProvider);
 
-  console.log('calling create with params: ', recipient, amounts, data, type);
   return contract.create(recipient, amounts, data, type);
 };
 
@@ -72,7 +52,7 @@ export const getResolutionRateFromFactory = async (
     const resolutionRate = Number(await contract.resolutionRates(resolver));
     return resolutionRate > 0 ? resolutionRate : 20;
   } catch (resolutionRateError) {
-    console.log(resolutionRateError);
+    console.error(resolutionRateError);
     return 20;
   }
 };
@@ -84,23 +64,15 @@ export const awaitInvoiceAddress = async (ethersProvider, tx) => {
   ]);
 
   const receipt = await ethersProvider.getTransactionReceipt(tx.hash);
-  console.log('awaitInvoiceAddress receipt', receipt);
   const eventFragment = abi.events[Object.keys(abi.events)[0]];
   const eventTopic = abi.getEventTopic(eventFragment);
   const event = receipt.logs.find((e) => e.topics[0] === eventTopic);
-  console.log(
-    'awaitInvoiceAddress event eventFragment eventTopic',
-    event,
-    eventFragment,
-    eventTopic
-  );
   if (event) {
     const decodedLog = abi.decodeEventLog(
       eventFragment,
       event.data,
       event.topics
     );
-    console.log('event found: ', event, 'decodedLog: ', decodedLog);
     return decodedLog.invoice;
   }
   return '';

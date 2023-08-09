@@ -27,7 +27,7 @@ export const NETWORK_CONFIG = {
     },
     RESOLVERS: {
       LexDAO: {
-        address: '0x034CfED494EdCff96f0D7160dC2B55Cae5Ee69E1'.toLowerCase(),
+        address: '0x153Fbf5da827903e030Dc317C4031755D74D508a'.toLowerCase(),
         logoUrl: LexDAOLogo,
         termsUrl:
           'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
@@ -35,8 +35,8 @@ export const NETWORK_CONFIG = {
     },
   },
   1: {
-    SUBGRAPH: 'dan13ram/mainnet-smart-invoices',
-    INVOICE_FACTORY: '0xD8D6216354551dC960A6d1aDd1E06581983c6694'.toLowerCase(),
+    SUBGRAPH: 'psparacino/v1-mainnet-smart-invoices',
+    INVOICE_FACTORY: '0x5E14cF595e18F91170009946205f8BBa21b323ca'.toLowerCase(),
     WRAPPED_NATIVE_TOKEN:
       '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase(),
     TOKENS: {
@@ -59,8 +59,8 @@ export const NETWORK_CONFIG = {
     },
   },
   4: {
-    SUBGRAPH: 'dan13ram/rinkeby-smart-invoices',
-    INVOICE_FACTORY: '0x003680b3C09699D0B16b01F4c00fBeF6692b1Dce'.toLowerCase(),
+    SUBGRAPH: 'psparacino/smart-invoices-rinkey-ps',
+    INVOICE_FACTORY: '0x659912E406b11D457656468c655F2e545E552259'.toLowerCase(),
     WRAPPED_NATIVE_TOKEN:
       '0xc778417E063141139Fce010982780140Aa0cD5Ab'.toLowerCase(),
     TOKENS: {

@@ -28,7 +28,6 @@ const useRaidValidate = ({
         ...variables,
       }
     );
-    console.log('useRaidValidate result', result);
     return result?.raids;
   };
 
