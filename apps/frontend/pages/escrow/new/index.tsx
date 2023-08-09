@@ -13,7 +13,6 @@ import { EscrowConfirmation } from '../../../components/SmartEscrow/EscrowConfir
 import { EscrowSuccess } from '../../../components/SmartEscrow/EscrowSuccess';
 import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
 
-// web3 functions
 import { register } from '../../../smartEscrow/utils/invoice';
 
 const NewEscrow = () => {
@@ -37,18 +36,14 @@ const NewEscrow = () => {
 
   const [step, updateStep] = useState<number>(1);
   const [isLoading, setLoading] = useState<boolean>(false);
-  console.log('payments: ', payments);
-  console.log('selectedDay: ', selectedDay, typeof selectedDay);
+
+  const toast = useToast();
 
   useEffect(() => {
-    console.log('new page first useEffect appState: ', appState);
     if (!appState.raid_id) {
-      console.log('no appState.raid_id found. appState: ', appState);
       router.push(`/escrow`);
     }
   }, []);
-
-  const toast = useToast();
 
   const sendToast = (msg, duration = 3000) => {
     toast({
@@ -68,7 +63,6 @@ const NewEscrow = () => {
       ),
     });
   };
-  console.log('pages/escrow/new render function: isLoading: ', isLoading);
 
   return (
     <>
@@ -83,7 +77,6 @@ const NewEscrow = () => {
           mt='6'
         >
           <ProjectInfo appState={appState} />
-          {/* todo: Use card for each form stage component */}
           {step === 1 && (
             <PaymentDetailsForm
               appState={appState}

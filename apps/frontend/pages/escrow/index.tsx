@@ -4,7 +4,6 @@ import {
   ControlledInput,
   Heading,
   Button,
-  useToast,
   Text,
   Box,
   Flex,
@@ -33,17 +32,13 @@ export const Home = () => {
     }
   }, [raidId]);
 
-  console.log('raid render: raid: ', raid);
-
   const validateID = async () => {
     const raid = await validateRaidId(raidId);
     setRaid(raid);
-    console.log('got raid: ', raid);
 
     if (raid) {
       setValidId(true);
 
-      console.log('setting raid: ', raid);
       setAppState({
         ...appState,
         invoice_id: raid.invoice_address,
@@ -62,7 +57,6 @@ export const Home = () => {
       setValidId(false);
     }
   };
-  console.log('escrow page render: raid: ', raid, 'raidId: ', raidId);
   const renderActionButton = () => {
     const buttons = [];
     buttons.push(
@@ -99,7 +93,6 @@ export const Home = () => {
   };
 
   const renderValidationMessage = () => {
-    console.log('validId ', validId);
     if (validId === true) {
       return (
         <Text color='green.500' mb='2'>

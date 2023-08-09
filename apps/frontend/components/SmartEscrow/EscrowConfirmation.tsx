@@ -44,7 +44,7 @@ export const EscrowConfirmation = ({
     }
 
     const resolver =
-      NETWORK_CONFIG[parseInt(chainId)]['RESOLVERS']['LexDAO']['address']; //arbitration
+      NETWORK_CONFIG[parseInt(chainId)]['RESOLVERS']['LexDAO']['address'];
     const tokenAddress =
       NETWORK_CONFIG[parseInt(chainId)]['TOKENS'][tokenType]['address'];
     const wrappedNativeToken =

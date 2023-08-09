@@ -48,7 +48,6 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
       }
     }
   };
-  console.log('withdraw funds chainId ', chainId, token);
 
   return (
     <VStack w='100%' spacing='1rem'>

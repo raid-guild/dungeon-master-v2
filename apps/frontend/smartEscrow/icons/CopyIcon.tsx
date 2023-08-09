@@ -9,5 +9,5 @@ export const CopyIcon = createIcon({
       fill='currentColor'
     />
   ),
-  viewBox: '-40 0 512 512'
+  viewBox: '-40 0 512 512',
 });

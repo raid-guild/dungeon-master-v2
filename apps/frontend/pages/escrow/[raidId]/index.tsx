@@ -41,7 +41,6 @@ const fetchRaid = async (query, raidId) => {
 
 export const getServerSideProps = async (context) => {
   const { raidId } = context.params;
-  console.log('inside getServersideProps raidId: ', raidId, context.params);
 
   let raids;
   if (raidId && raidId.includes('-')) {
@@ -73,25 +72,13 @@ const Escrow = ({ raid }) => {
 
   const [invoiceFetchError, setInvoiceFetchError] = useState(false);
   const [invoice, setInvoice] = useState();
-  const { data: sIAddress } = useSmartInvoiceAddress({
-    invoiceAddress: raid?.invoice_address,
-  });
 
-  const [loading, setLoading] = useState(false);
   const [statusText, setStatusText] = useState(
     'Connect your wallet to fetch invoice information.'
   );
   const [validRaid, setValidRaid] = useState(true);
 
-  console.log('escrow page render: raid, invoice: ', raid, invoice);
-
-  // Set this on render from invoice
-  // escrowValue: null,
-  // terminationTime: null,
-  // invoice: null,
-
   useEffect(() => {
-    console.log('raid found, raid: ', raid);
     if (raid) {
       setAppState({
         ...appState,
@@ -111,12 +98,6 @@ const Escrow = ({ raid }) => {
       if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1) {
         getSmartInvoiceData();
       } else if ((address as string) !== '') {
-        console.log(
-          'Error 1',
-          SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1,
-          appState.invoice_id,
-          appState
-        );
         setInvoiceFetchError(true);
         setStatusText(WRONG_NETWORK_MESSAGE);
       }
@@ -136,36 +117,13 @@ const Escrow = ({ raid }) => {
           );
         } else {
           setInvoice(currInvoice);
-          console.log('found invoice: ', invoice);
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
-  console.log('sIAddress render: ', sIAddress);
-  console.log('[raid] index render. appState: ', appState);
-  console.log('raid?.invoice_address ', raid?.invoice_address);
-
-  // todo: handle escrowValue definition
-  const escrowValue = 10;
-  // get from invoice.terminationTime
-
-  console.log(chain, 'chain');
-  console.log(raid, 'raid');
-
-  console.log('escrowValue && raid', escrowValue && raid, escrowValue, raid);
-  console.log(
-    'invoice && !loading && chain?.id == 100',
-    invoice && !loading && chain?.id == 100
-  );
-  console.log('address, invoiceFetchError', address, invoiceFetchError);
-  console.log(
-    'Escrow detail page render, appState, invoice: ',
-    appState,
-    invoice
-  );
   return (
     <>
       <NextSeo title='Smart Escrow' />
@@ -181,36 +139,34 @@ const Escrow = ({ raid }) => {
 
             {invoiceFetchError && <Text variant='textOne'>{statusText}</Text>}
 
-            {invoice &&
-              !loading &&
-              SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && (
-                <Flex
-                  width='100%'
-                  direction={{ md: 'column', lg: 'row' }}
-                  alignItems='center'
-                  justifyContent='space-evenly'
-                >
-                  <Flex direction='column' minW='30%'>
-                    <ProjectInfo appState={appState} />
-                    <InvoiceMetaDetails invoice={invoice} />
-                  </Flex>
-
-                  <Flex direction='column' minW='45%'>
-                    <InvoicePaymentDetails
-                      web3={appState.web3}
-                      invoice={invoice}
-                      chainId={chain.id}
-                      provider={appState.provider}
-                    />
-                    <InvoiceButtonManager
-                      invoice={invoice}
-                      account={address}
-                      provider={appState.provider}
-                      wrappedAddress={appState.invoice_id}
-                    />
-                  </Flex>
+            {invoice && SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && (
+              <Flex
+                width='100%'
+                direction={{ md: 'column', lg: 'row' }}
+                alignItems='center'
+                justifyContent='space-evenly'
+              >
+                <Flex direction='column' minW='30%'>
+                  <ProjectInfo appState={appState} />
+                  <InvoiceMetaDetails invoice={invoice} />
                 </Flex>
-              )}
+
+                <Flex direction='column' minW='45%'>
+                  <InvoicePaymentDetails
+                    web3={appState.web3}
+                    invoice={invoice}
+                    chainId={chain.id}
+                    provider={appState.provider}
+                  />
+                  <InvoiceButtonManager
+                    invoice={invoice}
+                    account={address}
+                    provider={appState.provider}
+                    wrappedAddress={appState.invoice_id}
+                  />
+                </Flex>
+              </Flex>
+            )}
           </>
         ) : (
           <Page404 />

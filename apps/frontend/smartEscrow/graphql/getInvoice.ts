@@ -1,6 +1,5 @@
 import gql from 'fake-tag';
 import { utils } from 'ethers';
-import { response as invoiceSubgraphResponse } from '../utils/mockResponse/invoiceSubgraph';
 
 import { clients } from './client';
 import { InvoiceDetails } from './fragments';
@@ -26,18 +25,11 @@ const invoiceQuery = gql`
 export const getInvoice = async (chainId: number, queryAddress: string) => {
   const address = isAddress(queryAddress);
   if (!address) return null;
-  console.log(
-    'getInvoice clients[chainId], chainId, queryAddress',
-    clients[chainId],
-    chainId,
-    queryAddress
-  );
 
   const { data, error } = await clients[chainId]
     .query(invoiceQuery, { address })
     .toPromise();
-  console.log('getInvoice result: data, error: ', data, error);
-  // return invoiceSubgraphResponse;
+
   if (!data) {
     if (error) {
       console.error(error);
