@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Flex, Link, Heading, VStack } from '@chakra-ui/react';
-import { Button, Text } from '@raidguild/design-system';
+import { Flex, Link, Heading, VStack, Text } from '@chakra-ui/react';
+import { Button } from '@raidguild/design-system';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { utils } from 'ethers';

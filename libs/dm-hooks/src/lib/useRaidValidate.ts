@@ -22,7 +22,7 @@ const useRaidValidate = ({
       variables.v1Id = raidId;
     }
 
-    const result = await client({ token }).request(
+    const result: any = await client({ token }).request(
       v2Id ? RAID_BY_ID_QUERY : RAID_BY_V1_ID_QUERY,
       {
         ...variables,

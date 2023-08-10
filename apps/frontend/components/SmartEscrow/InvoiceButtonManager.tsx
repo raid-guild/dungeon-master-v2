@@ -232,7 +232,6 @@ export const InvoiceButtonManager = ({
                 balance={balance}
                 wrappedAddress={wrappedAddress}
                 isRaidParty={isRaidParty}
-                close={() => setModal(false)}
               />
             )}
             {modal && selected === 1 && (
@@ -240,14 +239,12 @@ export const InvoiceButtonManager = ({
                 invoice={invoice}
                 deposited={deposited}
                 due={due}
-                close={() => setModal(false)}
               />
             )}
             {modal && selected === 2 && (
               <ReleaseFunds
                 invoice={invoice}
                 balance={balance}
-                close={() => setModal(false)}
               />
             )}
             {modal && selected === 3 && (
@@ -263,7 +260,6 @@ export const InvoiceButtonManager = ({
                 token={invoice.token}
                 invoice={invoice}
                 balance={balance}
-                close={() => setModal(false)}
               />
             )}
           </ModalContent>

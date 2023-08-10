@@ -37,7 +37,7 @@ const ConnectWallet: React.FC = () => {
     if (address && signer && chain.id) {
       const web3Provider = new Web3(window.ethereum);
       const gotProvider = new ethers.providers.Web3Provider(
-        web3Provider.currentProvider
+        web3Provider.currentProvider as any
       );
       context.setAppState({
         ...context.appState,

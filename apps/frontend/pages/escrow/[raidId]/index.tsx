@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
-import { useSmartInvoiceAddress } from '@raidguild/dm-hooks';
 import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
 import { useAccount, useNetwork } from 'wagmi';
 import { NextSeo } from 'next-seo';
@@ -153,7 +152,6 @@ const Escrow = ({ raid }) => {
 
                 <Flex direction='column' minW='45%'>
                   <InvoicePaymentDetails
-                    web3={appState.web3}
                     invoice={invoice}
                     chainId={chain.id}
                     provider={appState.provider}

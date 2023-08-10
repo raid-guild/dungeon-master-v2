@@ -1,19 +1,33 @@
 import { VStack, Flex, Text, Tooltip, Textarea } from '@chakra-ui/react';
 import { QuestionIcon } from '../icons/QuestionIcon';
 
+type OrderedTextAreaType = {
+  label: string;
+  value: string;
+  setValue: any;
+  infoText?: string;
+  tooltip: string;
+  placeholder: string;
+  maxLength?: number;
+  isDisabled?: boolean;
+};
 export const OrderedTextarea = ({
   label,
   value,
   setValue,
   infoText,
   tooltip,
-  placeholder,
+  placeholder = '',
   maxLength,
   isDisabled = false,
-  type = 'text'
-}) => {
+}: OrderedTextAreaType) => {
   return (
-    <VStack w='100%' spacing='0.5rem' justify='space-between' color='primary.300'>
+    <VStack
+      w='100%'
+      spacing='0.5rem'
+      justify='space-between'
+      color='primary.300'
+    >
       <Flex justify='space-between' w='100%'>
         <Text fontFamily='texturina' fontWeight='700' color='primary.300'>
           {label}
@@ -29,7 +43,6 @@ export const OrderedTextarea = ({
       </Flex>
       <Textarea
         bg='black'
-        type={type}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}

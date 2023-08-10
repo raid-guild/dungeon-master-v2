@@ -23,7 +23,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
     appState: { chainId, provider },
   } = useContext(SmartEscrowContext);
 
-  const [transaction, setTransaction] = useState();
+  const [transaction, setTransaction] = useState<any>();
 
   const withdrawFunds = async () => {
     if (!loading && provider && balance.gte(0)) {

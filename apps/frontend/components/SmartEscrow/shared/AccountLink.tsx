@@ -1,33 +1,29 @@
 import { Flex, Link, Text } from '@chakra-ui/react';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
 
 import { getAddressLink } from '../../../smartEscrow/utils/helpers';
 
+type AccountLinkProps = {
+  address: string;
+  chainId?: string;
+};
+
 export const AccountLink = ({
   address: inputAddress,
   chainId: inputChainId,
-}) => {
-  const context = useContext(SmartEscrowContext);
+}: AccountLinkProps) => {
+  const {
+    appState: { chainId, provider },
+  } = useContext(SmartEscrowContext);
 
   const address =
     typeof inputAddress === 'string' ? inputAddress.toLowerCase() : '';
-  const [profile, setProfile] = useState();
-  const chainId = inputChainId || context.chainId;
 
   let displayString = address;
 
   let imageUrl;
-
-  if (profile) {
-    if (profile.name) {
-      displayString = profile.name;
-    }
-    if (profile.imageUrl) {
-      imageUrl = profile.imageUrl;
-    }
-  }
 
   return (
     <Link

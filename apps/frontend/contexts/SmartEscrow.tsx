@@ -1,16 +1,8 @@
-import React, { useState, Component, createContext, ReactNode } from 'react';
-
-import { ethers } from 'ethers';
-
-import { rpcUrls } from '../smartEscrow/utils/constants';
+import React, { useState, createContext, ReactNode } from 'react';
 
 export type SmartEscrowContextType = {
-  //web3 needs
   appState: any;
   setAppState: any;
-  invoice_id: string;
-  provider: any;
-  chainId: string;
 };
 
 export const SmartEscrowContext = createContext({} as SmartEscrowContextType);

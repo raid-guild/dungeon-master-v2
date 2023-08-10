@@ -50,9 +50,9 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   const [amountInput, setAmountInput] = useState('');
 
   const [loading, setLoading] = useState(false);
-  const [transaction, setTransaction] = useState();
+  const [transaction, setTransaction] = useState<any>();
 
-  const initialStatus = getCheckedStatus(deposited, amounts);
+  const initialStatus: boolean[] = getCheckedStatus(deposited, amounts);
   const [checked, setChecked] = useState(initialStatus);
 
   const [balance, setBalance] = useState();

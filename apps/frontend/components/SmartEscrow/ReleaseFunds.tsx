@@ -55,7 +55,7 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
     return BigNumber.from(amounts[currentMilestone]);
   };
 
-  const [transaction, setTransaction] = useState();
+  const [transaction, setTransaction] = useState<any>();
 
   const releaseFunds = async () => {
     if (

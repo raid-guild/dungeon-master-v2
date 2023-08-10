@@ -1,3 +1,4 @@
+// @ts-ignore
 import gql from 'fake-tag';
 import { utils } from 'ethers';
 

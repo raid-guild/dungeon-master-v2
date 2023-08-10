@@ -24,7 +24,7 @@ export const Home = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [validId, setValidId] = useState<boolean | undefined>(undefined);
-  const [raid, setRaid] = useState();
+  const [raid, setRaid] = useState<any>();
 
   useEffect(() => {
     if (validId === true || validId === false) {

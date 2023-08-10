@@ -9,7 +9,7 @@ export const Page404 = () => {
       alignItems='center'
       justifyContent='center'
     >
-      <Heading variant='headingOne'>Page not found</Heading>
+      <Heading size='lg'>Page not found</Heading>
       <Flex direction={{ lg: 'row', base: 'column' }} mt='2rem'>
         <Link href='/' passHref>
           <Button

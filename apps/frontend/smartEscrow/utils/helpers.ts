@@ -5,7 +5,7 @@ import {
   networkLabels,
   NETWORK_CONFIG,
   nativeSymbols,
-  wrappedNativeToken
+  wrappedNativeToken,
 } from './constants';
 
 export const copyToClipboard = (value: string) => {
@@ -17,13 +17,13 @@ export const copyToClipboard = (value: string) => {
   document.body.removeChild(tempInput);
 };
 
-export const getExplorerUrl = (chainId: number) =>
-  explorerUrls[chainId] || explorerUrls[4];
+export const getExplorerUrl = (chainId: number | string) =>
+  explorerUrls[Number(chainId)] || explorerUrls[4];
 
 export const getTxLink = (chainId: number, hash: string) =>
   `${getExplorerUrl(chainId)}/tx/${hash}`;
 
-export const getAddressLink = (chainId: number, hash: string) =>
+export const getAddressLink = (chainId: number | string, hash: string) =>
   `${getExplorerUrl(chainId)}/address/${hash}`;
 
 export const getResolverUrl = (chainId: number) => {
@@ -72,6 +72,6 @@ export const parseTokenAddress = (chainId: number, address: string) => {
   }
 };
 
-export const checkedAtIndex = (index: number, checked: number[]) => {
+export const checkedAtIndex = (index: number, checked: boolean[]) => {
   return checked.map((_c, i) => i <= index);
 };

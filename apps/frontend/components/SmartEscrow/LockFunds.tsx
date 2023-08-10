@@ -193,6 +193,7 @@ export const LockFunds = ({
       <OrderedTextarea
         tooltip='Why do you want to lock these funds?'
         label='Dispute Reason'
+        placeholder='Dispute Reason'
         value={disputeReason}
         setValue={setDisputeReason}
       />

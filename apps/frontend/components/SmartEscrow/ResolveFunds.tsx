@@ -18,7 +18,6 @@ import { Loader } from './Loader';
 import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
 import { resolve } from '../../smartEscrow/utils/invoice';
 import { uploadDisputeDetails } from '../../smartEscrow/utils/ipfs';
-import { Toast } from '@raidguild/design-system';
 
 export const ResolveFunds = ({ invoice, balance, close }) => {
   const { address, resolutionRate, token, isLocked } = invoice;
@@ -27,7 +26,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
   } = useContext(SmartEscrowContext);
 
   const [loading, setLoading] = useState(false);
-  const [transaction, setTransaction] = useState();
+  const [transaction, setTransaction] = useState<any>();
   let resolverAward;
   try {
     resolverAward =
@@ -60,7 +59,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
       try {
         setLoading(true);
         const detailsHash = await uploadDisputeDetails({
-          comments,
+          reason: comments,
           invoice: address,
           amount: balance.toString(),
         });
@@ -122,8 +121,11 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
           <OrderedTextarea
             tooltip='Here you may explain your reasoning behind the resolution'
             label='Resolution Comments'
+            placeholder='Resolution Comments'
             value={comments}
             setValue={setComments}
+            infoText={''}
+            maxLength={10000}
           />
 
           <VStack

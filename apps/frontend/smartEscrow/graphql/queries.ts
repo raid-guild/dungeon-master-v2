@@ -1,4 +1,5 @@
-import gql from "fake-tag";
+// @ts-ignore
+import gql from 'fake-tag';
 
 export const ALL_INVOICES_QUERY = () => `query allInvoices {
     raids(where: {invoice_address: {_is_null: false}}) {
@@ -12,7 +13,14 @@ export const ALL_INVOICES_QUERY = () => `query allInvoices {
       }
     }}`;
 
-export const ALL_RAIDS_QUERY = gql`query fetchRaids { raids { id, v1_id } }`;
+export const ALL_RAIDS_QUERY = gql`
+  query fetchRaids {
+    raids {
+      id
+      v1_id
+    }
+  }
+`;
 
 const RAID_DETAILS_FRAGMENT = gql`
   fragment RaidDetails on raids {
@@ -34,7 +42,7 @@ const RAID_DETAILS_FRAGMENT = gql`
 
 export const RAID_BY_ID_QUERY = gql`
   query validateRaidId($raidId: uuid) {
-    raids(where: {id: {_eq: $raidId}}) {
+    raids(where: { id: { _eq: $raidId } }) {
       ...RaidDetails
     }
   }
@@ -43,17 +51,14 @@ export const RAID_BY_ID_QUERY = gql`
 
 export const RAID_BY_V1_ID_QUERY = gql`
   query validateRaidId($v1Id: String) {
-    raids(where: {v1_id: {_eq: $v1Id}}) {
+    raids(where: { v1_id: { _eq: $v1Id } }) {
       ...RaidDetails
     }
   }
   ${RAID_DETAILS_FRAGMENT}
 `;
 
-export const UPDATE_INVOICE_ADDRESS_QUERY = (
-  raidId,
-  invoice_address
-) => `
+export const UPDATE_INVOICE_ADDRESS_QUERY = (raidId, invoice_address) => `
   mutation MyMutation {
     update_raids(where: {id: {_eq: "${raidId}"}}, _set: {invoice_address: "${invoice_address}"}) {
       returning {
