@@ -76,7 +76,6 @@ const SiteLayoutPublic: React.FC<SiteLayoutPublicProps> = ({
 }: SiteLayoutPublicProps) => {
   const { chain } = useNetwork();
   const { pathname } = useRouter();
-  console.log('SiteLayoutPublic render chain: ', chain);
 
   const showScrollToTopButton =
     pathname === '/raids' ||

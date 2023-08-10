@@ -19,7 +19,7 @@ const fetchExistingUser = async (address: string): Promise<IUser | null> =>
     })
     .catch((error) => {
       // eslint-disable-next-line no-console
-      console.log(error);
+      console.error(error);
       return Promise.reject(error);
     });
 

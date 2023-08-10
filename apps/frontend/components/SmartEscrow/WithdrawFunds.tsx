@@ -37,7 +37,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
           window.location.reload();
         }, 20000);
       } catch (withdrawError) {
-        console.log(withdrawError);
+        console.error(withdrawError);
         toast.error({
           title: 'Oops there was an error',
           iconName: 'alert',

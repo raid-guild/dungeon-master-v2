@@ -3,7 +3,6 @@ import { UPDATE_INVOICE_ADDRESS_QUERY } from '../../smartEscrow/graphql/queries'
 
 const handler = async (req, res) => {
   const { method } = req;
-  console.log('api post - invoice-create req: ', req);
 
   if (method !== 'POST') {
     return res.status(405).json('Method not allowed');
