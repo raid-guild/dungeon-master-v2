@@ -16,12 +16,7 @@ import { ResolveFunds } from './ResolveFunds';
 import { LockFunds } from './LockFunds';
 import { WithdrawFunds } from './WithdrawFunds';
 
-export const InvoiceButtonManager = ({
-  invoice,
-  account,
-  provider,
-  wrappedAddress,
-}) => {
+export const InvoiceButtonManager = ({ invoice, account, provider }) => {
   const [balance, setBalance] = useState(BigNumber.from(0));
 
   const [selected, setSelected] = useState(0);
@@ -227,25 +222,13 @@ export const InvoiceButtonManager = ({
               right='0.5rem'
             />
             {modal && selected === 0 && (
-              <LockFunds
-                invoice={invoice}
-                balance={balance}
-                wrappedAddress={wrappedAddress}
-                isRaidParty={isRaidParty}
-              />
+              <LockFunds invoice={invoice} balance={balance} />
             )}
             {modal && selected === 1 && (
-              <DepositFunds
-                invoice={invoice}
-                deposited={deposited}
-                due={due}
-              />
+              <DepositFunds invoice={invoice} deposited={deposited} due={due} />
             )}
             {modal && selected === 2 && (
-              <ReleaseFunds
-                invoice={invoice}
-                balance={balance}
-              />
+              <ReleaseFunds invoice={invoice} balance={balance} />
             )}
             {modal && selected === 3 && (
               <ResolveFunds

@@ -62,12 +62,7 @@ const getResolverString = (chainId, resolver) => {
   return info ? info.name : getAccountString(resolver);
 };
 
-export const LockFunds = ({
-  invoice,
-  balance,
-  wrappedAddress,
-  isRaidParty,
-}) => {
+export const LockFunds = ({ invoice, balance }) => {
   const {
     appState: { chainId, provider },
   } = useContext(SmartEscrowContext);
@@ -94,11 +89,7 @@ export const LockFunds = ({
           invoice: address,
           amount: balance.toString(),
         });
-        const tx = await lock(
-          provider,
-          isRaidParty ? wrappedAddress : address,
-          detailsHash
-        );
+        const tx = await lock(provider, address, detailsHash);
         setTransaction(tx);
         await tx.wait();
         setTimeout(() => {
@@ -109,15 +100,7 @@ export const LockFunds = ({
         console.error(lockError);
       }
     }
-  }, [
-    provider,
-    locking,
-    balance,
-    disputeReason,
-    address,
-    isRaidParty,
-    wrappedAddress,
-  ]);
+  }, [provider, locking, balance, disputeReason, address]);
 
   if (locking) {
     return (

@@ -160,7 +160,6 @@ const Escrow = ({ raid }) => {
                     invoice={invoice}
                     account={address}
                     provider={appState.provider}
-                    wrappedAddress={appState.invoice_id}
                   />
                 </Flex>
               </Flex>
