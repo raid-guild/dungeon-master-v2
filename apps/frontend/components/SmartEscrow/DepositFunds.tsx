@@ -6,6 +6,7 @@ import {
   Text,
   Tooltip,
   VStack,
+  useToast,
 } from '@raidguild/design-system';
 import {
   Alert,
@@ -38,14 +39,15 @@ import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
 export const DepositFunds = ({ invoice, deposited, due }) => {
   const { address, token, amounts, currentMilestone } = invoice;
   const {
-    appState: { chainId, invoice_id, provider, account },
+    appState: { chainId, invoice_id, provider, web3Provider, account },
   } = useContext(SmartEscrowContext);
+  const toast = useToast();
 
   const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
   const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
   const isWRAPPED = token.toLowerCase() === WRAPPED_NATIVE_TOKEN;
 
-  const [paymentType, setPaymentType] = useState(0);
+  const [paymentType, setPaymentType] = useState(0); // 0 = Wrapped 1 = native token
   const [amount, setAmount] = useState(BigNumber.from(0));
   const [amountInput, setAmountInput] = useState('');
 
@@ -55,7 +57,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   const initialStatus: boolean[] = getCheckedStatus(deposited, amounts);
   const [checked, setChecked] = useState(initialStatus);
 
-  const [balance, setBalance] = useState();
+  const [balance, setBalance] = useState<BigNumber | undefined>();
 
   const pollSubgraph = async () => {
     let isSubscribed = true;
@@ -76,13 +78,31 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   };
 
   const deposit = async () => {
-    if (!amount || !provider) return;
+    if (!amount || !provider || !balance) {
+      toast.error({
+        title: 'Oops there was an error. Try to refresh',
+        iconName: 'alert',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    if (balance && !balance.gte(amount)) {
+      toast.error({
+        title:
+          'Your wallet does not contain a sufficient balance for this transaction. Please note that the native token is automatically wrapped to wrapped token.',
+        iconName: 'alert',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
     try {
       setLoading(true);
       let tx;
       if (paymentType === 1) {
+        /// deposit of native token
         tx = await provider.sendTransaction({ to: address, value: amount });
       } else {
+        /// deposit of wrapped native token
         const abi = ['function transfer(address, uint256) public'];
         const tokenContract = new Contract(token, abi, provider);
         tx = await tokenContract.transfer(address, amount);
@@ -100,9 +120,11 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   useEffect(() => {
     try {
       if (paymentType === 0) {
+        /// this is checking balanced of wrapped native token
         balanceOf(provider, token, account).then(setBalance);
       } else {
-        provider.getBalance(account).then(setBalance);
+        /// this is checking balanced of native token
+        web3Provider.getBalance(account).then(setBalance);
       }
     } catch (balanceError) {
       console.error(balanceError);
