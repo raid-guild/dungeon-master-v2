@@ -25,6 +25,7 @@ import {
   DELIVERY_PRIORITIES_DISPLAY,
   AVAILABLE_PROJECT_SPECS_DISPLAY,
   PROJECT_TYPE_DISPLAY,
+  RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
 import InfoStack from './InfoStack';
 
@@ -133,7 +134,10 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
         },
         {
           label: 'Category',
-          details: _.get(raid, 'raidCategory.raidCategory', '-'),
+          details:
+            RAID_CATEGORY_DISPLAY[
+              _.get(raid, 'raidCategory.raidCategory', '-')
+            ],
         },
         {
           label: 'Desired Delivery',
@@ -249,6 +253,11 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Locker Hash',
           details: _.get(raid, 'lockerHash'),
         },
+        _.get(raid, 'invoiceAddress') && {
+          label: 'Smart Escrow',
+          details: truncateAddress(_.get(raid, 'invoiceAddress')),
+          link: `/escrow/${raid.id}`,
+        },
       ].filter((x) => x),
     },
   ];
@@ -278,7 +287,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                       'repeat(3, 1fr)',
                     ]}
                     gap={6}
-                    alignItems='center'
+                    alignItems='flex-start'
                     justifyContent='space-between'
                     width='90%'
                     autoFlow='wrap'

@@ -17,7 +17,7 @@
     "@emotion/server": "11.10.0",
     "@emotion/styled": "11.11.0",
     "@ethersproject/address": "^5.7.0",
-    "@raidguild/design-system": "^0.4.46",
+    "@raidguild/design-system": "^0.4.47",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.1.5",
     "@tanstack/match-sorter-utils": "^8.7.6",

@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import NextLink from 'next/link';
+import { Link as ChakraLink } from '@raidguild/design-system';
 
 const ChakraNextLink = ({ href, children, ...props }) => (
-  <NextLink href={href} {...props} passHref>
+  <ChakraLink as={NextLink} href={href} {...props} passHref>
     {children}
-  </NextLink>
+  </ChakraLink>
 );
 
 export default ChakraNextLink;

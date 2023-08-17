@@ -5,7 +5,7 @@ import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
 import { useAccount, useNetwork } from 'wagmi';
 import { NextSeo } from 'next-seo';
 import SiteLayoutPublic from '../../../components/SiteLayoutPublic';
-import { Heading, Flex, Text } from '@raidguild/design-system';
+import { Heading, Flex, Text, VStack } from '@raidguild/design-system';
 import axios from 'axios';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
@@ -16,6 +16,7 @@ import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePa
 import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
 import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
 import { SUPPORTED_NETWORKS } from '../../../smartEscrow/graphql/client';
+import Link from '../../../components/ChakraNextLink';
 
 import { getInvoice } from '../../../smartEscrow/graphql/getInvoice';
 
@@ -72,7 +73,7 @@ const Escrow = ({ raid }) => {
   const [invoiceFetchError, setInvoiceFetchError] = useState(false);
   const [invoice, setInvoice] = useState();
 
-  const [statusText, setStatusText] = useState(
+  const [statusText, setStatusText] = useState<any>(
     'Connect your wallet to fetch invoice information.'
   );
   const [validRaid, setValidRaid] = useState(true);
@@ -112,7 +113,26 @@ const Escrow = ({ raid }) => {
         if (!currInvoice) {
           setInvoiceFetchError(true);
           setStatusText(
-            `Data for invoice with address ${raid.invoice_address} was not found`
+            <VStack>
+              <Text>
+                Data for invoice with address {raid.invoice_address} was not
+                found.
+              </Text>
+              <Text>
+                If it was created before August 2023, try looking in the V1 App{' '}
+                <Link
+                  href={`https://smartescrow.raidguild.org/escrow/${
+                    raid && raid.id
+                  }`}
+                  target={'_blank'}
+                  isExternal
+                  color='primary.300'
+                  textDecoration='underline'
+                >
+                  here
+                </Link>
+              </Text>
+            </VStack>
           );
         } else {
           setInvoice(currInvoice);
