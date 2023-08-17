@@ -121,6 +121,20 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     },
   ].filter((x) => x);
 
+  let smartEscrowLink;
+  const createdAt = _.get(raid, 'createdAt');
+  if (_.get(raid, 'invoiceAddress')) {
+    // smart escrow created after August 2023 use the new split-escrow type and front end inside DM
+    // url: https://dm.raidguild.org/escrow
+    if (new Date(createdAt) > new Date('2023-08-01')) {
+      smartEscrowLink = `/escrow/${raid.id}`;
+    } else {
+      // those created before use the first smart-escrow-nextjs app
+      // github: https://github.com/raid-guild/smart-escrow-nextjs
+      // url: https://smartescrow.raidguild.org
+      smartEscrowLink = `https://smartescrow.raidguild.org/escrow/${raid.id}`;
+    }
+  }
   const panels = [
     {
       title: 'Project Details',
@@ -256,7 +270,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
         _.get(raid, 'invoiceAddress') && {
           label: 'Smart Escrow',
           details: truncateAddress(_.get(raid, 'invoiceAddress')),
-          link: `/escrow/${raid.id}`,
+          link: smartEscrowLink,
         },
       ].filter((x) => x),
     },
