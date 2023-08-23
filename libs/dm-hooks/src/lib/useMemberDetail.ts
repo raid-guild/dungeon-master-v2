@@ -6,7 +6,13 @@ import { camelize, IMember, IRaid } from '@raidguild/dm-utils';
 
 const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 
-const useMemberDetail = ({ memberAddress, token }: { memberAddress: string, token: string }) => {
+const useMemberDetail = ({
+  memberAddress,
+  token,
+}: {
+  memberAddress: string;
+  token: string;
+}) => {
   const memberQueryResult = async () => {
     if (!memberAddress || !token) return null;
     // TODO handle filters
@@ -46,8 +52,7 @@ const useMemberDetail = ({ memberAddress, token }: { memberAddress: string, toke
     queryKey: ['memberDetail', memberAddress],
     queryFn: memberQueryResult,
     enabled: Boolean(token) && Boolean(memberAddress),
-// using any because not sure how to type this
-  } as any,);
+  });
 
   return { isLoading, isFetching, isError, error, data };
 };

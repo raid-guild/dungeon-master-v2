@@ -31,3 +31,5 @@ export {
 } from './useRolesRequiredUpdate';
 export { default as useSearchResults } from './useSearchResults';
 export { default as useUpdateCreate } from './useUpdateCreate';
+export { default as useRaidValidate } from './useRaidValidate';
+export { default as useSmartInvoiceAddress } from './useSmartInvoiceAddress';

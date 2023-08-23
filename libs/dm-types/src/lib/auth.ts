@@ -1,6 +1,7 @@
 import { JWT } from 'next-auth/jwt';
 import { NextApiRequest } from 'next';
 import { SiweMessage } from 'siwe';
+import { User } from 'next-auth';
 
 // camelized version of DB columns
 
@@ -26,7 +27,7 @@ export interface IContractCreate {
 // AUTH
 
 export type CreateTokenParams = {
-  user: IUser;
+  user?: User | unknown;
   token?: JWT;
   maxAge?: number;
   roles?: string[];

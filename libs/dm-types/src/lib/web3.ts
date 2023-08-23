@@ -14,6 +14,6 @@ export interface ChainList {
   [key: string]: Chain;
 }
 
-export interface ChainIdMapping {
+export interface chainIdMapping {
   [key: number]: Chain;
 }

@@ -35,7 +35,7 @@ const checkNonce = async ({
       return Promise.resolve({ siwe, credentials, req });
     })
     .catch((error: Error) => {
-      console.log('here', error);
+      console.error(error);
     });
 
 const checkDomain = ({
@@ -79,6 +79,6 @@ export const authorizeSiweMessage = (
     )
     .catch((e) => {
       // eslint-disable-next-line no-console
-      console.log(e);
+      console.error(e);
       return null;
     });

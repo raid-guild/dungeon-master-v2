@@ -25,6 +25,7 @@ import {
   DELIVERY_PRIORITIES_DISPLAY,
   AVAILABLE_PROJECT_SPECS_DISPLAY,
   PROJECT_TYPE_DISPLAY,
+  RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
 import InfoStack from './InfoStack';
 
@@ -120,6 +121,20 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     },
   ].filter((x) => x);
 
+  let smartEscrowLink;
+  const createdAt = _.get(raid, 'createdAt');
+  if (_.get(raid, 'invoiceAddress')) {
+    // smart escrow created after August 2023 use the new split-escrow type and front end inside DM
+    // url: https://dm.raidguild.org/escrow
+    if (new Date(createdAt) > new Date('2023-08-01')) {
+      smartEscrowLink = `/escrow/${raid.id}`;
+    } else {
+      // those created before use the first smart-escrow-nextjs app
+      // github: https://github.com/raid-guild/smart-escrow-nextjs
+      // url: https://smartescrow.raidguild.org
+      smartEscrowLink = `https://smartescrow.raidguild.org/escrow/${raid.id}`;
+    }
+  }
   const panels = [
     {
       title: 'Project Details',
@@ -133,7 +148,10 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
         },
         {
           label: 'Category',
-          details: _.get(raid, 'raidCategory.raidCategory', '-'),
+          details:
+            RAID_CATEGORY_DISPLAY[
+              _.get(raid, 'raidCategory.raidCategory', '-')
+            ],
         },
         {
           label: 'Desired Delivery',
@@ -249,6 +267,11 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Locker Hash',
           details: _.get(raid, 'lockerHash'),
         },
+        _.get(raid, 'invoiceAddress') && {
+          label: 'Smart Escrow',
+          details: truncateAddress(_.get(raid, 'invoiceAddress')),
+          link: smartEscrowLink,
+        },
       ].filter((x) => x),
     },
   ];
@@ -278,7 +301,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                       'repeat(3, 1fr)',
                     ]}
                     gap={6}
-                    alignItems='center'
+                    alignItems='flex-start'
                     justifyContent='space-between'
                     width='90%'
                     autoFlow='wrap'

@@ -6,7 +6,6 @@ import StatusUpdateForm from './StatusUpdateForm';
 import RaidUpdateForm from './RaidUpdateForm';
 import ModalWrapper from './ModalWrapper';
 import RaidPartyInfo from './RaidPartyInfo';
-// import RaidTags from './RaidTags';
 import { useOverlay } from '../contexts/OverlayContext';
 
 interface RaidDetailsSidebarProps {

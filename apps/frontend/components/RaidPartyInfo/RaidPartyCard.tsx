@@ -156,7 +156,6 @@ const RaidPartyCard = ({
       }
       if (!rolesRemovedWhere) return;
 
-      // console.log('remove roles');
       await removeRolesRequired({
         where: rolesRemovedWhere,
       });
