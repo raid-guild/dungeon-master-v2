@@ -11,7 +11,7 @@ export const NETWORK_CONFIG = {
   // RaidGuild Ethereum Mainnet multisig
   RG_MULTISIG: '0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'.toLowerCase(),
   100: {
-    SUBGRAPH: 'psparacino/v1-xdai-smart-invoices',
+    SUBGRAPH: 'geovgy/v1-gnosis-chain-smart-invoice',
     INVOICE_FACTORY: '0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'.toLowerCase(),
     WRAPPED_NATIVE_TOKEN:
       '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d'.toLowerCase(),
@@ -87,7 +87,7 @@ export const NETWORK_CONFIG = {
     },
   },
   5: {
-    SUBGRAPH: 'psparacino/goerli-smart-invoices',
+    SUBGRAPH: 'geovgy/v1-goerli-smart-invoice',
     WRAPPED_NATIVE_TOKEN:
       '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'.toLowerCase(),
     INVOICE_FACTORY: '0x546adED0B0179d550e87cf909939a1207Fd26fB7'.toLowerCase(),
