@@ -34,6 +34,7 @@ const links = [
     role: 'member',
     primary: true,
   },
+  { href: '/rips', label: 'RIPs', role: 'member' },
   { href: '/members', label: 'Members', role: 'member' },
   { href: '/applications', label: 'Applications', role: 'member' },
   { href: '/accounting', label: 'Accounting', role: 'member' },
