@@ -99,7 +99,7 @@ const RaidPartyButtons = ({
       leftIcon={<FiPlus />}
       onClick={() => setButton(SIDEBAR_ACTION_STATES.select)}
     >
-      Add Role or Raider
+      Add Raider or Required Role
     </Button>
   );
 
@@ -121,7 +121,7 @@ const RaidPartyButtons = ({
           setRoleToAdd(_.keys(GUILD_CLASS_DISPLAY)[0]);
         }}
       >
-        Add Role
+        Add Required Role
       </Button>
     </HStack>
   );
