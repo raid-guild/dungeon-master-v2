@@ -51,7 +51,7 @@ const MemberList = () => {
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('ALL'); // Is Raiding
+  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('true'); // Is Raiding
   const [memberSort, setMemberSort] = useState<string>('name'); // Name
   const [memberRolesFilter, setMemberRolesFilter] = useState<string>('ALL'); // All Roles
 
@@ -119,7 +119,7 @@ const MemberList = () => {
           name='memberStatus'
           id='raidRoles'
           value={memberStatusFilter}
-          defaultValue='ALL'
+          defaultValue='true'
           onChange={(e) => {
             handleMemberStatusFilterChange(e.target.value);
           }}
