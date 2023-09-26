@@ -278,7 +278,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <Card variant='filled' padding={2}>
+    <Card variant='filled' padding={2} minWidth={'lg'}>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;
