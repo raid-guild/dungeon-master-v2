@@ -258,6 +258,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
             _.get(raid, 'airtableId') ||
             _.get(raid, 'v1Id') ||
             _.get(raid, 'id'),
+          copy: true,
         },
         _.get(raid, 'escrowIndex') && {
           label: 'Escrow Index',
@@ -311,6 +312,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
                         link={_.get(item, 'link')}
+                        copy={_.get(item, 'copy')}
                         key={_.get(item, 'label')}
                       />
                     ))}

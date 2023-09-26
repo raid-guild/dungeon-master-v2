@@ -10,6 +10,7 @@ import {
   Icon,
   Tooltip,
   useClipboard,
+  Button,
 } from '@raidguild/design-system';
 import { FaExternalLinkAlt, FaInfoCircle, FaCopy } from 'react-icons/fa';
 import Link from './ChakraNextLink';
@@ -32,7 +33,7 @@ const InfoStack: React.FC<InfoStackProps> = ({
   const copyText = useClipboard(details);
 
   return (
-    <Stack justify='center'>
+    <Stack justify='center' minWidth={'0.5'}>
       <HStack>
         <Text color='white' fontSize='sm'>
           {label}
@@ -56,12 +57,20 @@ const InfoStack: React.FC<InfoStackProps> = ({
           </HStack>
         </Link>
       ) : copy ? (
-        <HStack>
-          <Text color='white' fontSize='lg' fontWeight='medium'>
-            {details}
-          </Text>
-          <Icon as={FaCopy} onClick={copyText.onCopy} />
-        </HStack>
+        <Tooltip label={`Copy ${label}`} size='sm' hasArrow>
+          <Button
+            variant='unstyled'
+            onClick={copyText.onCopy}
+            height={'-webkit-fit-content'}
+          >
+            <HStack>
+              <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
+                {details}
+              </Text>
+              <Icon as={FaCopy} />
+            </HStack>
+          </Button>
+        </Tooltip>
       ) : (
         <Text color='white' fontSize='lg' fontWeight='medium'>
           {details}
