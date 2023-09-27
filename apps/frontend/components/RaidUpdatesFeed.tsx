@@ -143,7 +143,11 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
             </Stack>
           ))}
       {updatesCount > 4 && (
-        <Accordion allowMultiple onChange={() => setExpanded(!expanded)}>
+        <Accordion
+          allowMultiple
+          onChange={() => setExpanded(!expanded)}
+          width={'full'}
+        >
           <AccordionItem border='none' key={0}>
             <h2>
               <AccordionButton color='raid' paddingInline={0}>

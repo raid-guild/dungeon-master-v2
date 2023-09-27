@@ -28,7 +28,7 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
     >
       <Flex
         gap={4}
-        direction={['column', null, null, 'row']}
+        direction={['column', null, null, null]}
         alignItems='flex-start'
         justifyContent='space-between'
         width='100%'
@@ -37,7 +37,7 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
           color='white'
           as='p'
           fontSize='md'
-          maxWidth={['95%', null, null, '60%']}
+          maxWidth={['95%', null, null, null]}
         >
           {update}
         </Text>
