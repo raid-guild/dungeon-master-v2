@@ -102,13 +102,25 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   consultation,
 }: RaidProps) => {
   const keyLinkItems = [
-    consultation?.link && {
-      label: 'Project Specs',
-      details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-        _.get(consultation, 'availableProjectSpec.availableProjectSpec')
-      ),
-      link: consultation?.link,
-    },
+    // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
+    // consultation form, so we handle edge cases here.
+    // Logic below should be simplified if it ever becomes a required field.
+    consultation?.link
+      ? {
+          label: 'Project Specs',
+          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
+              'YES'
+          ),
+          link: consultation?.link,
+        }
+      : {
+          label: 'Project Specs',
+          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
+              'NONE'
+          ),
+        },
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
       details:
