@@ -10,6 +10,7 @@ import {
   Tab,
   TabPanel,
   Text,
+  Box,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
