@@ -11,6 +11,7 @@ import {
   ChakraSelect,
   Text,
   Spacer,
+  HStack,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -204,13 +205,17 @@ const RaidList = () => {
         subheader={
           <>
             <Flex w='100%' align='center'>
-              <Spacer />
               <Heading variant='noShadow'>{title}</Heading>
               <Spacer />
               {count > 0 && (
-                <Text fontSize='3xl' fontWeight={800}>
-                  {count}
-                </Text>
+                <HStack alignItems={'baseline'} gap={1}>
+                  <Text fontSize='3xl' fontWeight={800}>
+                    {count}
+                  </Text>
+                  <Text fontSize='sm' fontWeight={'normal'}>
+                    raid{count > 1 ? 's' : ''}
+                  </Text>
+                </HStack>
               )}
             </Flex>
             <RaidControls />
