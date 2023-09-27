@@ -5,7 +5,6 @@ import React from 'react';
 import {
   Stack,
   Text,
-  Link as ChakraLink,
   HStack,
   Icon,
   Tooltip,
@@ -50,9 +49,9 @@ const InfoStack: React.FC<InfoStackProps> = ({
       {link ? (
         <Link href={link} isExternal>
           <HStack>
-            <ChakraLink color='white' fontSize='lg' fontWeight='medium'>
+            <Text color='white' fontSize='lg' fontWeight='medium'>
               {details}
-            </ChakraLink>
+            </Text>
             <Icon as={FaExternalLinkAlt} />
           </HStack>
         </Link>
