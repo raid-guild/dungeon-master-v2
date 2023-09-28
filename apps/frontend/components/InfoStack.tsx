@@ -49,7 +49,7 @@ const InfoStack: React.FC<InfoStackProps> = ({
       {link ? (
         <Link href={link} isExternal>
           <HStack>
-            <Text color='white' fontSize='lg' fontWeight='medium'>
+            <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
               {details}
             </Text>
             <Icon as={FaExternalLinkAlt} />
