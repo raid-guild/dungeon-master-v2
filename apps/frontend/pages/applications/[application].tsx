@@ -33,7 +33,7 @@ const Application = ({ applicationId }) => {
       <SiteLayout
         subheader={
           <Flex justify='center'>
-            <Heading>{_.get(application, 'name')}</Heading>
+            <Heading variant='noShadow'>{_.get(application, 'name')}</Heading>
           </Flex>
         }
       >

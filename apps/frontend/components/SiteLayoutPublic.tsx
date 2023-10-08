@@ -16,11 +16,11 @@ interface SiteLayoutPublicProps {
   emptyDataPhrase?: string;
   error?: Error;
   isLoading?: boolean;
-  minHeight?: string;
+  minHeight?: string | string[];
 }
 
 type GeneralLayoutProps = {
-  minHeight?: string;
+  minHeight?: string | string[];
   subheader?: ReactNode;
   showScrollToTopButton?: boolean;
   children?: ReactNode;
@@ -36,7 +36,7 @@ const GeneralLayout = ({
     direction='column'
     overflowX='hidden'
     margin='0 auto'
-    minHeight={minHeight || '100vh'}
+    minHeight={minHeight || ['100%', null, '100vh']}
     minWidth={['100%', null, null, '100vw']}
     position='relative'
     background='gray.700'
@@ -48,7 +48,7 @@ const GeneralLayout = ({
       justify='flex-start'
       flex='1'
       align='center'
-      minHeight={['100vh', '100vh', '0', '0']}
+      minHeight={['50vh', '100vh', '0', '0']}
     >
       <Stack
         spacing={8}
@@ -90,8 +90,15 @@ const SiteLayoutPublic: React.FC<SiteLayoutPublicProps> = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex justify='center' align='center' minH='70vh'>
-          <Heading size='md'>Connect your wallet & Sign in</Heading>
+        <Flex
+          justify='center'
+          align='center'
+          minH='70vh'
+          maxW={['70%', 'none']}
+        >
+          <Heading size='md' textAlign='center'>
+            Connect your wallet & Sign in
+          </Heading>
         </Flex>
       </GeneralLayout>
     );

@@ -190,7 +190,7 @@ const ApplicationList = () => {
           <>
             <Flex w='100%' align='center'>
               <Spacer />
-              <Heading>{title} List</Heading>
+              <Heading variant='noShadow'>{title} List</Heading>
               <Spacer />
               {count > 0 && (
                 <Text fontSize='3xl' fontWeight={800}>

@@ -205,7 +205,7 @@ const RaidList = () => {
           <>
             <Flex w='100%' align='center'>
               <Spacer />
-              <Heading>{title}</Heading>
+              <Heading variant='noShadow'>{title}</Heading>
               <Spacer />
               {count > 0 && (
                 <Text fontSize='3xl' fontWeight={800}>

@@ -71,7 +71,7 @@ const Consultation = ({ consultationId }: Props) => {
         subheader={
           <Flex w='100%' justify='space-between' align='center'>
             <Spacer />
-            <Heading>{_.get(consultation, 'name')}</Heading>
+            <Heading variant='noShadow'>{_.get(consultation, 'name')}</Heading>
             <Spacer />
             <Box>
               <Badge>

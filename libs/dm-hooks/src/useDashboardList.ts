@@ -5,7 +5,15 @@ import { camelize, IRaid } from '@raidguild/dm-utils';
 
 const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 
-const useDashboardList = ({ token, address }: { token: string, address: string }) => {
+const useDashboardList = ({
+  token,
+  role,
+  address,
+}: {
+  token: string;
+  role: string;
+  address: string;
+}) => {
   const dashboardQueryResult = async () => {
     const result = await client({ token }).request(DASHBOARD_QUERY, {
       address: _.toLower(address),
@@ -40,7 +48,7 @@ const useDashboardList = ({ token, address }: { token: string, address: string }
   const { data, error, status, isLoading } = useQuery(
     ['dashboard', address],
     dashboardQueryResult,
-    { enabled: !!token && !!address }
+    { enabled: !!token && !!address && role === 'member' }
   );
 
   return {

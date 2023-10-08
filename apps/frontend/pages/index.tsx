@@ -18,22 +18,30 @@ import { IConsultation, IRaid } from '@raidguild/dm-types';
 import { useDashboardList } from '@raidguild/dm-hooks';
 import SiteLayout from '../components/SiteLayout';
 import MiniRaidCard from '../components/MiniRaidCard';
+import { useRouter } from 'next/router';
 
 const Home: React.FC = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
+  const role = _.get(session, 'user.role');
+
+  const router = useRouter();
   const { address } = useAccount();
-  const { data } = useDashboardList({ token, address });
+  const { data } = useDashboardList({ token, role, address });
 
   const userRaids =
     !_.isEmpty(_.get(data, 'myRaids.active')) ||
     !_.isEmpty(_.get(data, 'myRaids.past'));
 
+  if (role === 'user') {
+    router.push('/escrow');
+  }
+
   return (
     <>
       <NextSeo title='Dashboard' />
 
-      <SiteLayout isLoading={!data} subheader={<Heading>Dashboard</Heading>}>
+      <SiteLayout isLoading={!data}>
         <Flex
           direction={['column', null, null, 'row']}
           alignItems='flex-start'

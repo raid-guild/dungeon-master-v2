@@ -191,7 +191,7 @@ export const Accounting = () => {
           ...balances,
           ...Object.values(tokenPrices),
         ]}
-        subheader={<Heading>Accounting</Heading>}
+        subheader={<Heading variant='noShadow'>Accounting</Heading>}
         emptyDataPhrase='No transactions'
         error={error}
       >
