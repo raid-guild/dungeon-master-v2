@@ -106,7 +106,7 @@ export const EscrowConfirmation = ({
       const transaction = await register(
         chainId,
         ethersProvider,
-        daoAddress, // this is the recipient
+        serviceProvider, // this is the recipient
         paymentsInWei,
         data,
         type

@@ -33,6 +33,7 @@ const ConnectWallet: React.FC = () => {
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
   const showNetwork = false; // maybe unhide, in some cases
+
   useEffect(() => {
     if (address && signer && chain.id) {
       const web3Provider = new Web3(window.ethereum);

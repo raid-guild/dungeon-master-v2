@@ -6,7 +6,6 @@ import { Heading, Box, Flex } from '@raidguild/design-system';
 import { useRouter } from 'next/router';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-
 import { PaymentDetailsForm } from '../../../components/SmartEscrow/PaymentDetailsForm';
 import { PaymentsChunkForm } from '../../../components/SmartEscrow/PaymentsChunkForm';
 import { EscrowConfirmation } from '../../../components/SmartEscrow/EscrowConfirmation';
