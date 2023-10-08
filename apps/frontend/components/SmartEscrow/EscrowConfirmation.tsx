@@ -117,6 +117,7 @@ export const EscrowConfirmation = ({
       updateStep((prevStep) => prevStep + 1);
       setLoading(false);
     } catch (err) {
+      console.log(err);
       setLoading(false);
     }
   };

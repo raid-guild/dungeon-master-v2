@@ -1,4 +1,4 @@
-import LexDAOLogo from '../assets/lex-dao.png';
+import LexDAOLogo from '../../assets/lex-dao.png';
 
 const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
 
@@ -193,5 +193,3 @@ export const tokenInfo = {
 export const SPOILS_BASIS_POINTS = 1000;
 
 export const INVOICE_VERSION = 'smart-escrow-v1';
-
-export const RAIDGUILD_DAO_MIN_SHARES = 100;

@@ -42,9 +42,9 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <RGThemeProvider>
       <DefaultSeo
-        titleTemplate='%s | Dungeon Master v1.5'
+        titleTemplate='%s | Dungeon Master'
         title='Dungeon Master'
-        defaultTitle='Raid Guild | Dungeon Master v1.5'
+        defaultTitle='Raid Guild | Dungeon Master'
         description='Adventurers, come and gather around the campfire.'
         canonical='https://dm.raidguild.org'
         openGraph={{
@@ -52,7 +52,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
           locale: 'en_IE',
           url: 'https://dm.raidguild.org',
           site_name: 'Raid Guild',
-          title: 'Dungeon Master v1.5',
+          title: 'Dungeon Master',
           description: 'Adventurers, come and gather around the campfire.',
           // images: [
           //   {

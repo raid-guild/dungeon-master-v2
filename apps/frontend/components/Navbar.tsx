@@ -18,14 +18,15 @@ import { HiSearch } from 'react-icons/hi';
 import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
 import { useOverlay } from '../contexts/OverlayContext';
+import { useSession } from 'next-auth/react';
 
 const links = [
-  { href: '/raids', label: 'Raids' },
-  { href: '/consultations', label: 'Consultations' },
-  { href: '/members', label: 'Members' },
-  { href: '/applications', label: 'Applications' },
-  { href: '/accounting', label: 'Accounting' },
-  { href: '/escrow', label: 'Smart Escrow' },
+  { href: '/raids', label: 'Raids', role: 'member' },
+  { href: '/consultations', label: 'Consultations', role: 'member' },
+  { href: '/members', label: 'Members', role: 'member' },
+  { href: '/applications', label: 'Applications', role: 'member' },
+  { href: '/accounting', label: 'Accounting', role: 'member' },
+  { href: '/escrow', label: 'Smart Escrow', role: 'client' },
 ];
 
 interface NavItem {
@@ -36,6 +37,10 @@ interface NavItem {
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { setCommandPallet: setOpen } = useOverlay();
+  const session = useSession();
+
+  const authenticated = _.get(session, 'status') === 'authenticated';
+  const role = _.get(session, 'data.user.role');
 
   return (
     <Box>
@@ -45,7 +50,7 @@ const Navbar = () => {
             <Heading>🏰</Heading>
           </Link>
           <Flex display={{ base: 'none', md: 'flex' }}>
-            <DesktopNav />
+            <DesktopNav role={role} />
           </Flex>
         </HStack>
 
@@ -89,27 +94,37 @@ const Navbar = () => {
         </Flex>
       </Flex>
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav role={role} />
       </Collapse>
     </Box>
   );
 };
 
-const DesktopNav = () => (
+const DesktopNav = ({ role }: { role: string }) => (
   <HStack align='center' spacing={4}>
-    {_.map(links, ({ href, label }) => (
-      <Link key={href} href={href}>
-        <Heading size='sm'>{label}</Heading>
-      </Link>
-    ))}
+    {_.map(links, ({ href, label, role: linkRole }) => {
+      if (!role) return null;
+      if (linkRole === 'member' && role !== 'member') return null;
+      // handle user?
+
+      return (
+        <Link key={href} href={href}>
+          <Heading size='sm'>{label}</Heading>
+        </Link>
+      );
+    })}
   </HStack>
 );
 
-const MobileNav = () => (
+const MobileNav = ({ role }: { role: string }) => (
   <Stack p={4} display={{ md: 'none' }}>
-    {_.map(links, ({ href, label }) => (
-      <MobileNavItem key={href} href={href} label={label} />
-    ))}
+    {_.map(links, ({ href, label, linkRole }) => {
+      if (!role) return null;
+      if (linkRole === 'member' && role !== 'member') return null;
+      // handle user?
+
+      return <MobileNavItem key={href} href={href} label={label} />;
+    })}
     <ConnectWallet />
   </Stack>
 );

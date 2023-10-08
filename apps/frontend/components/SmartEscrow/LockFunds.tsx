@@ -10,7 +10,7 @@ import {
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useContext, useState } from 'react';
 
-import LockImage from '../../smartEscrow/assets/lock.svg';
+import LockImage from '../../assets/lock.svg';
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
 import { AccountLink } from './shared/AccountLink';

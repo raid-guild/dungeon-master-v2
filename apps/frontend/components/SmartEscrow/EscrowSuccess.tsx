@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { utils } from 'ethers';
 
-import { CopyIcon } from '../../smartEscrow/icons/CopyIcon';
+import { CopyIcon } from './icons/CopyIcon';
 import { Loader } from './Loader';
 
 import { awaitInvoiceAddress } from '../../smartEscrow/utils/invoice';
