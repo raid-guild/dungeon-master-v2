@@ -24,7 +24,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchInterval: 1200 * 1000,
+        refetchInterval: 20 * 60 * 1000, // 20 minutes
         refetchOnWindowFocus: false,
       },
     },
@@ -42,17 +42,17 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <RGThemeProvider>
       <DefaultSeo
-        titleTemplate='%s | Dungeon Master v1.5'
+        titleTemplate='%s | Dungeon Master'
         title='Dungeon Master'
-        defaultTitle='Raid Guild | Dungeon Master v1.5'
+        defaultTitle='Raid Guild | Dungeon Master'
         description='Adventurers, come and gather around the campfire.'
         canonical='https://dm.raidguild.org'
         openGraph={{
           type: 'website',
           locale: 'en_IE',
           url: 'https://dm.raidguild.org',
-          site_name: 'Site title',
-          title: "Raid Guild | Dungeon Master v1.5'",
+          site_name: 'Raid Guild',
+          title: 'Dungeon Master',
           description: 'Adventurers, come and gather around the campfire.',
           // images: [
           //   {

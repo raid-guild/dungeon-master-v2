@@ -41,6 +41,8 @@ export type HasuraAuthToken = {
   address?: string;
   iat?: number;
   exp?: number;
+  role?: string;
+  roles?: string[];
   'https://hasura.io/jwt/claims'?: {
     'x-hasura-allowed-roles': string[];
     'x-hasura-default-role'?: string;

@@ -6,7 +6,6 @@ import { Heading, Box, Flex } from '@raidguild/design-system';
 import { useRouter } from 'next/router';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-
 import { PaymentDetailsForm } from '../../../components/SmartEscrow/PaymentDetailsForm';
 import { PaymentsChunkForm } from '../../../components/SmartEscrow/PaymentsChunkForm';
 import { EscrowConfirmation } from '../../../components/SmartEscrow/EscrowConfirmation';
@@ -68,7 +67,9 @@ const NewEscrow = () => {
     <>
       <NextSeo title='Smart Escrow' />
 
-      <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
+      <SiteLayout
+        subheader={<Heading variant='noShadow'>Register New Escrow</Heading>}
+      >
         <Flex
           width='100%'
           direction='row'

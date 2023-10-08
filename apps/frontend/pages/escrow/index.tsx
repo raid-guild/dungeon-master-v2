@@ -6,6 +6,8 @@ import {
   Button,
   Text,
   Box,
+  Stack,
+  HStack,
   Flex,
 } from '@raidguild/design-system';
 
@@ -20,7 +22,7 @@ export const validateRaidId = async (raidId: string) => {
   return data;
 };
 
-export const Home = () => {
+export const Escrow = () => {
   const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [validId, setValidId] = useState<boolean | undefined>(undefined);
@@ -68,13 +70,14 @@ export const Home = () => {
           opacity: 0.8,
         }}
         mb='4'
+        key='validate'
       >
         Validate ID
       </Button>
     );
     if (validId === true && raid && !raid.invoice_address) {
       buttons.push(
-        <Link href='/escrow/new' passHref>
+        <Link href='/escrow/new' passHref key='register'>
           <Button variant='outline' mb='4'>
             Register Escrow
           </Button>
@@ -82,7 +85,7 @@ export const Home = () => {
       );
     } else if (validId === true && raid && raid.invoice_address) {
       buttons.push(
-        <Link href={`/escrow/${raidId}`} passHref>
+        <Link href={`/escrow/${raidId}`} passHref key='view'>
           <Button disabled={!raid} variant='outline' mb='4'>
             View Escrow
           </Button>
@@ -114,30 +117,33 @@ export const Home = () => {
     <>
       <NextSeo title='Smart Escrow' />
 
-      <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
-        <Box>
-          <Flex
-            direction='column'
-            justify='flex-start'
-            flex='1'
-            align='center'
-            width='100%'
-          >
+      <SiteLayoutPublic
+        subheader={<Heading variant='noShadow'>Smart Escrow</Heading>}
+        minHeight={[null, null, '100vh']}
+      >
+        <Flex justify='center' width='100%'>
+          <Stack spacing={4}>
             <ControlledInput
               type='text'
               value={raidId}
               placeholder='Raid ID from Dungeon Master..'
               onChange={(event) => setRaidId(event.target.value)}
               label='Raid ID'
-              minWidth={['300px', '500px']}
-            ></ControlledInput>
-            <Box>{renderValidationMessage()}</Box>
-            {renderActionButton()}
-          </Flex>
-        </Box>
+              width={['300px', '500px']}
+              borderColor='whiteAlpha.600'
+              borderRadius='md'
+            />
+            <Flex justify='flex-end'>
+              <HStack>
+                {renderValidationMessage()}
+                {renderActionButton()}
+              </HStack>
+            </Flex>
+          </Stack>
+        </Flex>
       </SiteLayoutPublic>
     </>
   );
 };
 
-export default Home;
+export default Escrow;

@@ -3710,10 +3710,10 @@
     fs-extra "^10.0.0"
     lodash "^4.17.21"
 
-"@raidguild/design-system@^0.4.47":
-  version "0.4.47"
-  resolved "https://registry.yarnpkg.com/@raidguild/design-system/-/design-system-0.4.47.tgz#d34e021854ff6a81a0b9daae237c88b1315a63d3"
-  integrity sha512-TC9EihsV3l2YoINqpjA626tdPpoGu6xcen03aBTWtvv/2GQhXL/kXLU+hX1wSTr+ab1uoyKkPonD7jRMZk6Q6Q==
+"@raidguild/design-system@^0.4.48":
+  version "0.4.48"
+  resolved "https://registry.yarnpkg.com/@raidguild/design-system/-/design-system-0.4.48.tgz#c6f72274f858be1a19fdbd11e521bf497509de1c"
+  integrity sha512-4983iI0P1DoDtMN8g6zqxt22k2p/VAd5oJIxMQWzHGftM4RBwAVxlprgSw/XGP6lt9pqVA+gUqMcccmH4gAl8Q==
   dependencies:
     "@chakra-ui/react" "^2.7.0"
     "@chakra-ui/theme-tools" "^2.0.18"

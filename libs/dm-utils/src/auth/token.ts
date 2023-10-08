@@ -25,6 +25,8 @@ export const createToken = ({
   user: {
     id: _.get(user, 'id'),
   },
+  role: _.first(roles ?? CONFIG.defaultRoles),
+  roles: roles ?? CONFIG.defaultRoles,
   iat: Math.floor(Date.now() / 1000),
   exp: Math.floor(Date.now() / 1000) + (maxAge ?? CONFIG.defaultMaxAge),
   'https://hasura.io/jwt/claims': {
@@ -87,6 +89,8 @@ export const extendSessionWithUserAndToken = ({
     // @ts-ignore next-line
     address: _.get(token, 'sub'),
     id: _.get(token, 'user.id'),
+    role: _.get(token, 'role'),
+    roles: _.get(token, 'roles'),
   },
   token: encodeToken(token),
 });

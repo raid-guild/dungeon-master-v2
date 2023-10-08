@@ -11,6 +11,11 @@ import {
   Collapse,
   useDisclosure,
   IconButton,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Menu,
+  Button,
 } from '@raidguild/design-system';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -18,14 +23,21 @@ import { HiSearch } from 'react-icons/hi';
 import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
 import { useOverlay } from '../contexts/OverlayContext';
+import { useSession } from 'next-auth/react';
+import { BsCaretDown } from 'react-icons/bs';
 
 const links = [
-  { href: '/raids', label: 'Raids' },
-  { href: '/consultations', label: 'Consultations' },
-  { href: '/members', label: 'Members' },
-  { href: '/applications', label: 'Applications' },
-  { href: '/accounting', label: 'Accounting' },
-  { href: '/escrow', label: 'Smart Escrow' },
+  { href: '/raids', label: 'Raids', role: 'member', primary: true },
+  {
+    href: '/consultations',
+    label: 'Consultations',
+    role: 'member',
+    primary: true,
+  },
+  { href: '/members', label: 'Members', role: 'member' },
+  { href: '/applications', label: 'Applications', role: 'member' },
+  { href: '/accounting', label: 'Accounting', role: 'member' },
+  { href: '/escrow', label: 'Smart Escrow', role: 'client', primary: true },
 ];
 
 interface NavItem {
@@ -36,16 +48,19 @@ interface NavItem {
 const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
   const { setCommandPallet: setOpen } = useOverlay();
+  const session = useSession();
+
+  const role = _.get(session, 'data.user.role');
 
   return (
     <Box>
       <Flex justify='space-between' p={8}>
         <HStack>
           <Link href='/' mr={6}>
-            <Heading>🏰</Heading>
+            <Heading variant='noShadow'>🏰</Heading>
           </Link>
           <Flex display={{ base: 'none', md: 'flex' }}>
-            <DesktopNav />
+            <DesktopNav role={role} />
           </Flex>
         </HStack>
 
@@ -89,27 +104,74 @@ const Navbar = () => {
         </Flex>
       </Flex>
       <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
+        <MobileNav role={role} />
       </Collapse>
     </Box>
   );
 };
 
-const DesktopNav = () => (
+const DesktopNav = ({ role }: { role: string }) => (
   <HStack align='center' spacing={4}>
-    {_.map(links, ({ href, label }) => (
-      <Link key={href} href={href}>
-        <Heading size='sm'>{label}</Heading>
-      </Link>
-    ))}
+    {_.map(links, ({ href, label, role: linkRole, primary }) => {
+      if (!role || !primary) return null;
+      if (linkRole === 'member' && role !== 'member') return null;
+      // ? handle escrow in more menu for members
+      if (role === 'member' && href === '/escrow') return null;
+
+      return (
+        <Link key={href} href={href}>
+          <Heading size='sm' variant='noShadow'>
+            {label}
+          </Heading>
+        </Link>
+      );
+    })}
+    {role === 'member' && (
+      <Menu>
+        <MenuButton
+          as={Button}
+          bg='transparent'
+          _hover={{ bg: 'whiteAlpha.300' }}
+          _active={{ bg: 'whiteAlpha.200' }}
+          textTransform='capitalize'
+        >
+          <HStack>
+            <Heading size='sm' variant='noShadow'>
+              More
+            </Heading>
+            <Icon as={BsCaretDown} />
+          </HStack>
+        </MenuButton>
+        <MenuList>
+          {_.map(links, ({ href, label, primary }) => {
+            if (primary && href !== '/escrow') return null;
+
+            return (
+              <Link href={href}>
+                <MenuItem key={href}>
+                  <Heading size='sm' variant='noShadow'>
+                    {label}
+                  </Heading>
+                </MenuItem>
+              </Link>
+            );
+          })}
+        </MenuList>
+      </Menu>
+    )}
   </HStack>
 );
 
-const MobileNav = () => (
-  <Stack p={4} display={{ md: 'none' }}>
-    {_.map(links, ({ href, label }) => (
-      <MobileNavItem key={href} href={href} label={label} />
-    ))}
+const MobileNav = ({ role }: { role: string }) => (
+  <Stack p={4} display={{ md: 'none' }} bg='whiteAlpha.200' mb={5}>
+    {_.map(links, ({ href, label, role: linkRole }) => {
+      if (!role) return null;
+      if (linkRole === 'member' && role !== 'member') return null;
+      // handle user?
+      console.log(href, 'user', role, 'link', linkRole);
+
+      return <MobileNavItem key={href} href={href} label={label} />;
+    })}
     <ConnectWallet />
   </Stack>
 );
@@ -117,7 +179,9 @@ const MobileNav = () => (
 const MobileNavItem = ({ href, label }: NavItem) => (
   <Stack spacing={4}>
     <Link key={href} href={href} py={2}>
-      <Heading size='sm'>{label}</Heading>
+      <Heading size='sm' variant='noShadow'>
+        {label}
+      </Heading>
     </Link>
   </Stack>
 );

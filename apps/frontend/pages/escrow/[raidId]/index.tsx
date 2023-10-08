@@ -147,7 +147,9 @@ const Escrow = ({ raid }) => {
     <>
       <NextSeo title='Smart Escrow' />
 
-      <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
+      <SiteLayoutPublic
+        subheader={<Heading variant='noShadow'>Smart Escrow</Heading>}
+      >
         {validRaid ? (
           <>
             {!address && (
