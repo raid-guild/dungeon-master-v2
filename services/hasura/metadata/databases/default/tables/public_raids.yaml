@@ -8,6 +8,9 @@ object_relationships:
   - name: consultation
     using:
       foreign_key_constraint_on: consultation_id
+  - name: hunter
+    using:
+      foreign_key_constraint_on: hunter_id
   - name: raid_category
     using:
       foreign_key_constraint_on: category_key
@@ -15,6 +18,13 @@ object_relationships:
     using:
       foreign_key_constraint_on: status_key
 array_relationships:
+  - name: links
+    using:
+      foreign_key_constraint_on:
+        column: raid_id
+        table:
+          name: links
+          schema: public
   - name: portfolios
     using:
       foreign_key_constraint_on:
@@ -49,6 +59,13 @@ array_relationships:
         column: raid_id
         table:
           name: related_raids
+          schema: public
+  - name: signalled_interests
+    using:
+      foreign_key_constraint_on:
+        column: raid_id
+        table:
+          name: signalled_interest
           schema: public
   - name: updates
     using:

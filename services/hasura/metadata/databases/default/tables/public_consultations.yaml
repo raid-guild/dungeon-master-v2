@@ -42,12 +42,26 @@ array_relationships:
         table:
           name: consultations_services_required
           schema: public
+  - name: links
+    using:
+      foreign_key_constraint_on:
+        column: consultation_id
+        table:
+          name: links
+          schema: public
   - name: raids
     using:
       foreign_key_constraint_on:
         column: consultation_id
         table:
           name: raids
+          schema: public
+  - name: signalled_interests
+    using:
+      foreign_key_constraint_on:
+        column: consultation_id
+        table:
+          name: signalled_interest
           schema: public
 insert_permissions:
   - role: cohort

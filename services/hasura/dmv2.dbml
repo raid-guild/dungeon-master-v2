@@ -4,32 +4,34 @@ Table members {
   id uuid pk unique
   legacy_id text
   name text
+  contact_info_id uuid [ref: - contact_infos.id]
   eth_address text
+  ens_name text
+  guild_class text [ref: - guild_classes.guild_class]
+  membership_date timestamp
+  member_type text [ref: - member_types.member_type]
   is_raiding boolean
-  primary_class_key text [ref: - guild_classes.guild_class]
-  member_type_key text [ref: - member_types.member_type]
   championed_by_id uuid [ref: - members.id]
   application_id uuid [ref: - applications.id]
-  membership_date datetime
-  created_at datetime
-  updated_at datetime
 }
 
 Table applications {
   id uuid pk unique
   name text
+  email_address text
+  contact_info_id uuid [ref: - contact_infos.id]
   eth_address text
   introduction text
   learning_goals text
+  technical_skill_type text [ref: - technical_skill_types.technical_skill_type]
   passion text
   favorite_media text
   crypto_thrills text
   why_raidguild text
+  dao_familiarity text [ref: - dao_familiarities.dao_familiarity]
+  availability text [ref: - cohort_availabilities.cohort_availability]
   crypto_experience text
   comments text
-  technical_skill_type_key text [ref: - technical_skill_types.technical_skill_type]
-  dao_familiarity_key text [ref: - dao_familiarities.dao_familiarity]
-  availability_key text [ref: - cohort_availabilities.cohort_availability]
   handbook_read boolean
   pledge_readiness boolean
   referred_by_id uuid [ref: - members.id]
@@ -39,19 +41,19 @@ Table applications {
 Table raids {
   id uuid pk unique
   name text
-  status_key text [ref: - raid_statuses.raid_status]
-  category_key text [ref: - raid_categories.raid_category]
+  status text [ref: - raid_statuses.raid_status]
+  category text [ref: - raid_categories.raid_category]
   cleric_id uuid [ref: - members.id]
+  hunter_id uuid [ref: - members.id]
+  invoice_address text
+  start_date timestamp
+  end_date timestamp
   consultation_id uuid [ref: - consultations.id]
   portfolio_id uuid [ref: - portfolios.id]
   invoice_address text
   airtable_id text
   escrow_index int
   locker_hash text
-  start_date datetime
-  end_date datetime
-  created_at datetime
-  updated_at datetime
 }
 
 Table contact_infos {
@@ -59,17 +61,16 @@ Table contact_infos {
   member_id uuid [ref: - members.id]
   application_id uuid [ref: - applications.id]
   client_id uuid [ref: - clients.id]
-  email text UNIQUE
-  discord text UNIQUE
-  telegram text UNIQUE
-  twitter text UNIQUE
-  github text UNIQUE
+  email text
+  discord text
+  telegram text
+  twitter text
+  github text
 }
 
 Table clients {
   id uuid pk unique
   name text
-  website text
 }
 
 Table contacts {
@@ -77,26 +78,31 @@ Table contacts {
   name text
   bio text
   eth_address text
+  contact_info_id uuid [ref: - contact_infos.id]
 }
 
 Table consultations {
   id uuid pk unique
-  status_key text [ref: - consultation_statuses.consultation_status]
+  status text [ref: - consultation_statuses.consultation_status]
   client_id uuid [ref: - clients.id]
   name text
   link text
+  type text [ref: - project_types.project_type]
+  specs text [ref: - available_project_specs.available_project_spec]
   description text
-  type_key text [ref: - project_types.project_type]
-  specs_key text [ref: - available_project_specs.available_project_spec]
-  budget_key text [ref: - budget_options.budget_option]
-  delivery_priorities_key text [ref: - delivery_priorities.delivery_priority]
-  submission_type_key text [ref: - submission_types.submission_type]
+  desired_delivery_date timestamp
+  budget text [ref: - budget_options.budget_option]
+  delivery_priorities text [ref: - delivery_priorities.delivery_priority]
   additional_info text
+  submission_type text [ref: - submission_types.submission_type]
   submission_hash text
   consultation_hash text
-  desired_delivery_date datetime
-  created_at datetime
-  updated_at datetime
+}
+
+Table consultations_contacts {
+  id uuid pk unique
+  consultation_id uuid [ref: - consultations.id]
+  contact_id uuid [ref: - contacts.id]
 }
 
 Table portfolios {
@@ -138,6 +144,16 @@ Table blogs {
   updated_at datetime
 }
 
+Table links {
+  id uuid pk unique
+  raid_id uuid [ref: - raids.id]
+  application_id uuid [ref: - applications.id]
+  consultation_id uuid [ref: - consultations.id]
+  member_id uuid [ref: - members.id]
+  type text [ref: - link_types.link_type]
+  link text
+}
+
 // MANY-TO-MANY TABLES
 
 Table raid_parties {
@@ -160,28 +176,15 @@ Table members_skills {
   skill_type text [ref: - skill_types.skill_type]
 }
 
-Table consultations_services_required {
+Table consultations_services_req {
   id uuid pk unique 
   consultation_id uuid [ref: - consultations.id]
-  guild_service_key text [ref: - guild_services.guild_service]
-}
-
-Table clients_contacts {
-  id uuid pk unique
-  client_id uuid [ref: - clients.id]
-  contact_id uuid [ref: - contacts.id]
-}
-
-Table consultations_contacts {
-  id uuid pk unique
-  consultation_id uuid [ref: - consultations.id]
-  contact_id uuid [ref: - contacts.id]
+  service_req text [ref: - guild_services.guild_service]
 }
 
 Table portfolio_roles {
   id uuid pk unique
   portfolio_id uuid [ref: - portfolios.id]
-  member_id uuid [ref: - members.id]
   role text [ref: - guild_classes.guild_class]
 }
 
@@ -189,6 +192,77 @@ Table raids_roles_required {
   id uuid pk unique
   raid_id uuid [ref: - raids.id]
   role_required text [ref: - guild_classes.guild_class]
+}
+
+Table signalled_interest {
+  id uuid pk unique
+  member_id uuid [ref: - members.id]
+  raid_id uuid [ref: - raids.id]
+  consultation_id uuid [ref: - consultations.id]
+}
+
+/// PROPOSAL/INVOICE GENERATOR
+
+Table proposals {
+  id uuid pk unique
+  selection_object object [note: "references proposal options"]
+  custom_object object
+  proposal_type text
+}
+
+// consolidate with proposals?
+// probably, if we go with selections table model
+Table consultations_propsoals {
+  id uuid pk unique
+  proposal uuid [ref: - proposals.id]
+  consultation uuid [ref: - consultations.id]
+}
+
+Table milestones {
+  id uuid pk
+  proposal uuid [ref: - proposals.id]
+  stage int [note: "milestone number of total"]
+  amount int
+  custom_object object
+}
+
+Table milestones_selections {
+  id uuid pk unique
+  milestone uuid [ref: - milestones.id]
+  option uuid [ref: - proposal_options.id]
+  hours number
+  hourly number
+  min_weeks number
+  max_weeks number
+}
+
+Table features {
+  id uuid pk unique
+  description text
+  quantity number
+  unit_cost number
+}
+
+Table proposal_options {
+  id uuid pk unique
+  name text
+  proposal_category text [ref: - proposal_categories.proposal_category]
+  default_hours number
+  default_hourly number
+  min_weeks number
+  max_weeks number
+}
+
+Table proposal_features {
+  id uuid pk unique
+  proposal uuid [ref: - proposals.id]
+  feature uuid [ref: - features.id]
+}
+
+Table milestones_features {
+  id uuid pk unique
+  milestone uuid [ref: - milestones.id]
+  feature uuid [ref: - features.id]
 }
 
 // ENUM TABLES
@@ -255,6 +329,14 @@ Table raid_categories {
 
 Table consultation_statuses {
   consultation_status consultation_statuses 
+}
+
+Table proposal_categories {
+  proposal_category proposal_categories
+}
+
+Table link_types {
+  link_type link_types
 }
 
 // HASURA ENUMS ARE ALL CAPS WITH UNDERSCORES
@@ -396,4 +478,26 @@ enum consultation_statuses {
   PENDING
   CANCELLED
   ACCEPTED
+}
+
+enum proposal_categories {
+  COMMUNITY
+  DESIGN
+  TREASURY
+  MARKETING
+  FRONTEND_DEV
+  OPERATIONS
+  BIZ_DEV
+  BACKEND_DEV
+  PROJECT_MANAGEMENT
+  SMART_CONTRACTS
+  LEGAL
+  ACCOUNT_MANAGER
+}
+
+enum link_types {
+  SPECS_LINK
+  CLIENT_UPDATE
+  RETRO
+  OTHER
 }
