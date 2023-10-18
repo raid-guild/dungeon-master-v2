@@ -5,5 +5,6 @@ export * from './consultations';
 export * from './contacts';
 export * from './members';
 export * from './raids';
+export * from './rips';
 export * from './statusUpdates';
 export * from './web3';

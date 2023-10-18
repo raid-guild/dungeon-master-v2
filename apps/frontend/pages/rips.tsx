@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import {
   Stack,
@@ -11,6 +11,7 @@ import {
   ChakraSelect,
   Text,
   Spacer,
+  Button,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -20,12 +21,40 @@ import {
   useRaidList,
   useRaidsCount,
 } from '@raidguild/dm-hooks';
-import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
-import { raidSortKeys } from '@raidguild/dm-types';
-import RaidCard from '../components/RaidCard';
+import { IRaid, RIP_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
+import { IRip, raidSortKeys } from '@raidguild/dm-types';
+import RipCard from '../components/RipCard';
 import SiteLayout from '../components/SiteLayout';
+import axios from 'axios';
+import RaidCard from '../components/RaidCard';
 
-const raidStatusMapped = RAID_STATUS.map((status) => ({
+const getRipDetail = async () => {
+  try {
+    const { data } = await axios.post('/api/rip-detail-query', {});
+
+    const ripList = _.flatMap(
+      data.data.repository.project.columns.nodes,
+      (node) => {
+        return _.map(node.cards.edges, (edge) => {
+          return { ...edge.node.content, ripCategory: node.name };
+        });
+      }
+    );
+
+    const activeRipList = ripList.filter((rip) => {
+      return ['Consideration', 'Submitted', 'In Progress'].includes(
+        rip.ripCategory
+      );
+    });
+
+    return activeRipList;
+  } catch (err) {
+    console.error(err);
+    throw new Error('Failed to fetch RIP details');
+  }
+};
+
+const ripStatusMapped = RIP_STATUS.map((status) => ({
   label: status,
   value: status.toUpperCase(),
 }));
@@ -33,31 +62,32 @@ const raidStatusMapped = RAID_STATUS.map((status) => ({
 const raidStatusOptions = [
   ...[{ label: 'Active', value: 'ACTIVE' }],
   ...[{ label: 'Show All', value: 'ALL' }],
-  ...raidStatusMapped,
+  ...ripStatusMapped,
 ];
 
-const raidRolesOptions = [
-  ...[{ label: 'Show All', value: 'ALL' }],
-  ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
-  ...GUILD_CLASS_OPTIONS,
-];
+// const raidRolesOptions = [
+//   ...[{ label: 'Show All', value: 'ALL' }],
+//   ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
+//   ...GUILD_CLASS_OPTIONS,
+// ];
 
 const raidSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
   { label: 'Recent Comment', value: 'recentComment' },
-  { label: 'Recently Updated', value: 'recentlyUpdated' },
   { label: 'Name', value: 'name' },
-  { label: 'Start Date', value: 'startDate' },
-  { label: 'End Date', value: 'endDate' },
   { label: 'Create Date', value: 'createDate' },
+  // { label: 'Start Date', value: 'startDate' },
+  // { label: 'End Date', value: 'endDate' },
+  // { label: 'Recently Updated', value: 'recentlyUpdated' },
 ];
 
 const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
   const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
-  const [sortChanged, setSortChanged] = useState(false);
-  const title = useDefaultTitle();
+  // const [sortChanged, setSortChanged] = useState(false);
+  // const title = useDefaultTitle();
+  const title = 'RIPs';
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
@@ -65,13 +95,13 @@ const RaidList = () => {
     setRaidStatusFilter(status);
   };
 
-  const handleRaidRolesFilterChange = async (role: string) => {
-    setRaidRolesFilter(role);
-  };
+  // const handleRaidRolesFilterChange = async (role: string) => {
+  //   setRaidRolesFilter(role);
+  // };
 
   const handleRaidSortChange = async (sortOption: raidSortKeys) => {
     setRaidSort(sortOption);
-    setSortChanged(true);
+    // setSortChanged(true);
     if (sortOption === 'oldestComment') {
       setRaidStatusFilter('ACTIVE');
     }
@@ -94,7 +124,7 @@ const RaidList = () => {
           color='white'
           textAlign='left'
         >
-          Raid Status
+          RIP Status
         </FormLabel>
         <ChakraSelect
           width='100%'
@@ -115,7 +145,7 @@ const RaidList = () => {
           ))}
         </ChakraSelect>
       </Flex>
-      <Flex direction='column' flexBasis='25%'>
+      {/* <Flex direction='column' flexBasis='25%'>
         <FormLabel
           htmlFor='raidRoles'
           maxWidth='720px'
@@ -145,7 +175,7 @@ const RaidList = () => {
             </option>
           ))}
         </ChakraSelect>
-      </Flex>
+      </Flex> */}
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
           htmlFor='raidSort'
@@ -194,13 +224,21 @@ const RaidList = () => {
 
   const raids = _.flatten(_.get(data, 'pages'));
 
+  const [rips, setRips] = useState([]);
+  useEffect(() => {
+    getRipDetail().then((data) => {
+      setRips(data);
+    });
+  }, []);
+
   return (
     <>
-      <NextSeo title='Raids List' />
+      <NextSeo title='RIPs List' />
 
       <SiteLayout
         isLoading={!data}
-        data={raids}
+        data={rips}
+        emptyDataPhrase='No RIPs Found!'
         subheader={
           <>
             <Flex w='100%' align='center'>
@@ -213,7 +251,7 @@ const RaidList = () => {
                 </Text>
               )}
             </Flex>
-            <RaidControls />
+            {/* <RaidControls /> */}
           </>
         }
         error={error}
@@ -230,12 +268,8 @@ const RaidList = () => {
           }
         >
           <Stack spacing={4} mx='auto' key={2} w='100%'>
-            {_.map(raids, (raid: IRaid) => (
-              <RaidCard
-                raid={raid}
-                consultation={_.get(raid, 'consultation')}
-                key={_.get(raid, 'id')}
-              />
+            {_.map(rips, (rip: IRip) => (
+              <RipCard rip={rip} key={_.get(rip, 'number')} />
             ))}
           </Stack>
         </InfiniteScroll>
