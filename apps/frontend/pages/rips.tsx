@@ -12,21 +12,17 @@ import {
   Text,
   Spacer,
   Button,
+  HStack,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
-import {
-  useDefaultTitle,
-  useRaidList,
-  useRaidsCount,
-} from '@raidguild/dm-hooks';
+import { useRaidList, useRaidsCount } from '@raidguild/dm-hooks';
 import { IRaid, RIP_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
 import { IRip, raidSortKeys } from '@raidguild/dm-types';
 import RipCard from '../components/RipCard';
 import SiteLayout from '../components/SiteLayout';
 import axios from 'axios';
-import RaidCard from '../components/RaidCard';
 
 const getRipDetail = async () => {
   try {
@@ -65,11 +61,11 @@ const raidStatusOptions = [
   ...ripStatusMapped,
 ];
 
-// const raidRolesOptions = [
-//   ...[{ label: 'Show All', value: 'ALL' }],
-//   ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
-//   ...GUILD_CLASS_OPTIONS,
-// ];
+const raidRolesOptions = [
+  ...[{ label: 'Show All', value: 'ALL' }],
+  ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
+  ...GUILD_CLASS_OPTIONS,
+];
 
 const raidSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
@@ -85,8 +81,7 @@ const RaidList = () => {
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
   const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
-  // const [sortChanged, setSortChanged] = useState(false);
-  // const title = useDefaultTitle();
+  const [sortChanged, setSortChanged] = useState(false);
   const title = 'RIPs';
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -246,12 +241,17 @@ const RaidList = () => {
               <Heading>{title}</Heading>
               <Spacer />
               {count > 0 && (
-                <Text fontSize='3xl' fontWeight={800}>
-                  {count}
-                </Text>
+                <HStack alignItems={'baseline'} gap={1}>
+                  <Text fontSize='3xl' fontWeight={800}>
+                    {count}
+                  </Text>
+                  <Text fontSize='sm' fontWeight={'normal'}>
+                    proposal{count > 1 ? 's' : ''}
+                  </Text>
+                </HStack>
               )}
             </Flex>
-            {/* <RaidControls /> */}
+            <RaidControls />
           </>
         }
         error={error}

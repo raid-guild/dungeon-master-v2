@@ -69,7 +69,8 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
           <MemberAvatar member={raidCleric} /> */}
           <Link href={link}>
             <Button color='raid' borderColor='raid' variant='outline'>
-              View RIP #{ripNumber}
+              View RIP #{ripNumber}&nbsp;
+              <FaExternalLinkAlt size={14} />
             </Button>
           </Link>
         </Flex>

@@ -4,7 +4,7 @@ export const RIP_DETAIL_QUERY = gql`
   query RipDetailQuery(
     $repository_owner: String!
     $repository_name: String!
-    $project_number: Int
+    $project_number: Int!
     $project_columns: Int
     $cards_to_get: Int
   ) {
