@@ -11,7 +11,6 @@ import {
   ChakraSelect,
   Text,
   Spacer,
-  Button,
   HStack,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
@@ -19,7 +18,7 @@ import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useRaidList, useRaidsCount } from '@raidguild/dm-hooks';
 import { IRaid, RIP_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
-import { IRip, raidSortKeys } from '@raidguild/dm-types';
+import { IRip, ripSortKeys } from '@raidguild/dm-types';
 import RipCard from '../components/RipCard';
 import SiteLayout from '../components/SiteLayout';
 import axios from 'axios';
@@ -55,19 +54,19 @@ const ripStatusMapped = RIP_STATUS.map((status) => ({
   value: status.toUpperCase(),
 }));
 
-const raidStatusOptions = [
+const ripStatusOptions = [
   ...[{ label: 'Active', value: 'ACTIVE' }],
   ...[{ label: 'Show All', value: 'ALL' }],
   ...ripStatusMapped,
 ];
 
-const raidRolesOptions = [
-  ...[{ label: 'Show All', value: 'ALL' }],
-  ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
-  ...GUILD_CLASS_OPTIONS,
-];
+// const raidRolesOptions = [
+//   ...[{ label: 'Show All', value: 'ALL' }],
+//   ...[{ label: 'Any Role Set', value: 'ANY_ROLE_SET' }],
+//   ...GUILD_CLASS_OPTIONS,
+// ];
 
-const raidSortOptions = [
+const ripSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
   { label: 'Recent Comment', value: 'recentComment' },
   { label: 'Name', value: 'name' },
@@ -77,33 +76,29 @@ const raidSortOptions = [
   // { label: 'Recently Updated', value: 'recentlyUpdated' },
 ];
 
-const RaidList = () => {
-  const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
-  const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
+const RipList = () => {
+  const [ripStatusFilter, setRipStatusFilter] = useState<string>('ACTIVE');
+  const [ripSort, setRipSort] = useState<ripSortKeys>('oldestComment');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
   const [sortChanged, setSortChanged] = useState(false);
   const title = 'RIPs';
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const handleRaidStatusFilterChange = async (status: string) => {
-    setRaidStatusFilter(status);
+  const handleRipStatusFilterChange = async (status: string) => {
+    setRipStatusFilter(status);
   };
 
-  // const handleRaidRolesFilterChange = async (role: string) => {
-  //   setRaidRolesFilter(role);
-  // };
-
-  const handleRaidSortChange = async (sortOption: raidSortKeys) => {
-    setRaidSort(sortOption);
+  const handleRipSortChange = async (sortOption: ripSortKeys) => {
+    setRipSort(sortOption);
     // setSortChanged(true);
     if (sortOption === 'oldestComment') {
-      setRaidStatusFilter('ACTIVE');
+      setRipStatusFilter('ACTIVE');
     }
   };
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
-  const RaidControls = () => (
+  const RipControls = () => (
     <Flex
       direction={{ base: 'column', md: 'row' }}
       justifyContent='space-between'
@@ -112,7 +107,7 @@ const RaidList = () => {
     >
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='raidStatus'
+          htmlFor='ripStatus'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'
@@ -123,57 +118,26 @@ const RaidList = () => {
         </FormLabel>
         <ChakraSelect
           width='100%'
-          name='raidStatus'
-          value={raidStatusFilter}
+          name='ripStatus'
+          value={ripStatusFilter}
           defaultValue='Active'
           onChange={(e) => {
-            handleRaidStatusFilterChange(e.target.value);
-            if (raidSort === 'oldestComment') {
-              handleRaidStatusFilterChange('ACTIVE');
+            handleRipStatusFilterChange(e.target.value);
+            if (ripSort === 'oldestComment') {
+              handleRipStatusFilterChange('ACTIVE');
             }
           }}
         >
-          {raidStatusOptions.map((status) => (
+          {ripStatusOptions.map((status) => (
             <option key={status.value} value={status.value}>
               {status.label}
             </option>
           ))}
         </ChakraSelect>
       </Flex>
-      {/* <Flex direction='column' flexBasis='25%'>
-        <FormLabel
-          htmlFor='raidRoles'
-          maxWidth='720px'
-          fontFamily='texturina'
-          lineHeight='1.8'
-          color='white'
-          textAlign='left'
-        >
-          Raid Roles
-        </FormLabel>
-        <ChakraSelect
-          width='100%'
-          name='raidRoles'
-          id='raidRoles'
-          value={raidRolesFilter}
-          defaultValue='Show All'
-          onChange={(e) => {
-            handleRaidRolesFilterChange(e.target.value);
-            if (sortChanged === true && raidSort === 'oldestComment') {
-              setRaidStatusFilter('ACTIVE');
-            }
-          }}
-        >
-          {raidRolesOptions.map((role) => (
-            <option key={role.value} value={role.value}>
-              {role.label}
-            </option>
-          ))}
-        </ChakraSelect>
-      </Flex> */}
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='raidSort'
+          htmlFor='ripSort'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'
@@ -184,17 +148,17 @@ const RaidList = () => {
         </FormLabel>
         <ChakraSelect
           width='100%'
-          name='raidSort'
-          value={raidSort}
+          name='ripSort'
+          value={ripSort}
           defaultValue='Name'
           onChange={(e) => {
-            handleRaidSortChange(e.target.value as raidSortKeys);
+            handleRipSortChange(e.target.value as ripSortKeys);
             if (e.target.value === 'oldestComment') {
-              handleRaidStatusFilterChange('ACTIVE');
+              handleRipStatusFilterChange('ACTIVE');
             }
           }}
         >
-          {raidSortOptions.map((sortOption) => (
+          {ripSortOptions.map((sortOption) => (
             <option key={sortOption.value} value={sortOption.value}>
               {sortOption.label}
             </option>
@@ -204,20 +168,25 @@ const RaidList = () => {
     </Flex>
   );
 
-  const { data, error, fetchNextPage, hasNextPage } = useRaidList({
+  const {
+    data: raidListData,
+    error,
+    fetchNextPage,
+    hasNextPage,
+  } = useRaidList({
     token,
-    raidStatusFilterKey: raidStatusFilter,
+    raidStatusFilterKey: ripStatusFilter,
     raidRolesFilterKey: raidRolesFilter,
-    raidSortKey: raidSort,
+    raidSortKey: ripSort,
   });
-  const { data: count } = useRaidsCount({
+  const { data: raidCount } = useRaidsCount({
     token,
-    raidStatusFilterKey: raidStatusFilter,
+    raidStatusFilterKey: ripStatusFilter,
     raidRolesFilterKey: raidRolesFilter,
-    raidSortKey: raidSort,
+    raidSortKey: ripSort,
   });
 
-  const raids = _.flatten(_.get(data, 'pages'));
+  // const raids = _.flatten(_.get(data, 'pages'));
 
   const [rips, setRips] = useState([]);
   useEffect(() => {
@@ -231,7 +200,7 @@ const RaidList = () => {
       <NextSeo title='RIPs List' />
 
       <SiteLayout
-        isLoading={!data}
+        isLoading={!raidListData}
         data={rips}
         emptyDataPhrase='No RIPs Found!'
         subheader={
@@ -240,18 +209,18 @@ const RaidList = () => {
               <Spacer />
               <Heading>{title}</Heading>
               <Spacer />
-              {count > 0 && (
+              {raidCount > 0 && (
                 <HStack alignItems={'baseline'} gap={1}>
                   <Text fontSize='3xl' fontWeight={800}>
-                    {count}
+                    {raidCount}
                   </Text>
                   <Text fontSize='sm' fontWeight={'normal'}>
-                    proposal{count > 1 ? 's' : ''}
+                    proposal{raidCount > 1 ? 's' : ''}
                   </Text>
                 </HStack>
               )}
             </Flex>
-            <RaidControls />
+            <RipControls />
           </>
         }
         error={error}
@@ -278,4 +247,4 @@ const RaidList = () => {
   );
 };
 
-export default RaidList;
+export default RipList;
