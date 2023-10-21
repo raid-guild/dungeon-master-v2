@@ -12,6 +12,7 @@ import {
   Box,
   Icon,
   Flex,
+  Select,
 } from '@raidguild/design-system';
 import { FiPlus, FiX } from 'react-icons/fi';
 import {
@@ -22,8 +23,10 @@ import {
   membersExceptRaidParty,
   SIDEBAR_ACTION_STATES,
   rolesExceptRequiredRoles,
+  GUILD_CLASS_OPTIONS,
 } from '@raidguild/dm-utils';
 import { useRaidPartyAdd, useAddRolesRequired } from '@raidguild/dm-hooks';
+import { useForm } from 'react-hook-form';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;
@@ -47,12 +50,20 @@ const RaidPartyButtons = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const localMembers = membersExceptRaidParty(members, raidParty, cleric);
+  const requiredRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
+  const rolesFormDefaultValues = _.map(requiredRoles, (r) => ({
+    value: r,
+    label: GUILD_CLASS_DISPLAY[r],
+  }));
   const localRoles = rolesExceptRequiredRoles(
     _.keys(GUILD_CLASS_DISPLAY),
     raid
   );
   const [roleToAdd, setRoleToAdd] = useState<string>();
   const [raiderToAdd, setRaiderToAdd] = useState<string>();
+  const localForm = useForm({
+    mode: 'all',
+  });
 
   const { mutateAsync: updateRolesRequired } = useAddRolesRequired({
     token,
@@ -99,7 +110,7 @@ const RaidPartyButtons = ({
       leftIcon={<FiPlus />}
       onClick={() => setButton(SIDEBAR_ACTION_STATES.select)}
     >
-      Add Raider or Required Role
+      Add Raider or Update Roles
     </Button>
   );
 
@@ -121,7 +132,7 @@ const RaidPartyButtons = ({
           setRoleToAdd(_.keys(GUILD_CLASS_DISPLAY)[0]);
         }}
       >
-        Add Required Role
+        Update Roles
       </Button>
     </HStack>
   );
@@ -137,7 +148,7 @@ const RaidPartyButtons = ({
           setRoleToAdd(undefined);
         }}
       />
-      <ChakraSelect
+      {/* <ChakraSelect
         onChange={(e) => setRoleToAdd(e.target.value)}
         value={roleToAdd}
       >
@@ -146,8 +157,18 @@ const RaidPartyButtons = ({
             {GUILD_CLASS_DISPLAY[key]}
           </option>
         ))}
-      </ChakraSelect>
-      <Button onClick={submitAddRole}>Add</Button>
+      </ChakraSelect> */}
+      <Select
+        name={'Update Roles Select'}
+        variant='outline'
+        options={GUILD_CLASS_OPTIONS}
+        localForm={localForm}
+        isMulti
+        placeholder='Select Roles'
+        defaultValue={rolesFormDefaultValues}
+        // onChange={} is this needed?
+      />
+      <Button onClick={submitAddRole}>Update</Button>
     </Flex>
   );
 

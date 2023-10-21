@@ -55,6 +55,25 @@ export const ROLES_REQUIRED_DELETE_MUTATION = gql`
   ${ROLES_REQUIRED_FRAGMENT}
 `;
 
+export const ROLES_REQUIRED_UPDATE_MUTATION = gql`
+  mutation RolesRequiredUpdateMutation(
+    $insertRoles: [raids_roles_required_insert_input!]!
+    $where: raids_roles_required_bool_exp!
+  ) {
+    insert_raids_roles_required(objects: $insertRoles) {
+      returning {
+        ...RolesRequired
+      }
+    }
+    delete_raids_roles_required(where: $where) {
+      returning {
+        ...RolesRequired
+      }
+    }
+  }
+  ${ROLES_REQUIRED_FRAGMENT}
+`;
+
 export const RAID_PARTY_FRAGMENT = gql`
   fragment RaidParty on raid_parties {
     id
