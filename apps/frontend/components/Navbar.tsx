@@ -148,8 +148,8 @@ const DesktopNav = ({ role }: { role: string }) => (
             if (primary && href !== '/escrow') return null;
 
             return (
-              <Link href={href}>
-                <MenuItem key={href}>
+              <Link href={href} key={href}>
+                <MenuItem>
                   <Heading size='sm' variant='noShadow'>
                     {label}
                   </Heading>
@@ -168,8 +168,7 @@ const MobileNav = ({ role }: { role: string }) => (
     {_.map(links, ({ href, label, role: linkRole }) => {
       if (!role) return null;
       if (linkRole === 'member' && role !== 'member') return null;
-      // handle user?
-      console.log(href, 'user', role, 'link', linkRole);
+      // TODO handle user?
 
       return <MobileNavItem key={href} href={href} label={label} />;
     })}
