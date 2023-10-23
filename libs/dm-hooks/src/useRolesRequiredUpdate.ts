@@ -63,7 +63,7 @@ export const useRemoveRolesRequired = ({ token }: { token: string }) => {
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ where }: IRoleRemoveMany) => {
+    async ({ where }: { where: IRoleRemoveMany }) => {
       if (!where) return null;
 
       return client({ token }).request(ROLES_REQUIRED_DELETE_MUTATION, {

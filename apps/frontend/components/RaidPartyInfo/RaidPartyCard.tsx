@@ -132,34 +132,19 @@ const RaidPartyCard = ({
   const saveUpdatedRoles = async () => {
     const rolesRemoved = _.difference(roles, localRoles);
     // const rolesAdded = _.difference(localRoles, roles);
+    if (!rolesRemoved) return;
 
-    let rolesRemovedWhere = null;
+    const rolesRemovedWhere = {
+      _and: {
+        role: { _in: rolesRemoved },
+        raid_id: { _eq: _.get(raid, 'id') },
+      },
+    };
+
     // setClearRoles(false);
-    if (!_.isEmpty(rolesRemoved)) {
-      if (rolesRemoved.length === 1) {
-        rolesRemovedWhere = {
-          _and: {
-            raid_id: _.get(raid, 'id'),
-            role: rolesRemoved[0],
-          },
-        };
-      }
-      if (rolesRemoved.length > 1) {
-        rolesRemovedWhere = {
-          _or: rolesRemoved.map((role: string) => ({
-            _and: {
-              raid_id: _.get(raid, 'id'),
-              role,
-            },
-          })),
-        };
-      }
-      if (!rolesRemovedWhere) return;
-
-      await removeRolesRequired({
-        where: rolesRemovedWhere,
-      });
-    }
+    await removeRolesRequired({
+      where: rolesRemovedWhere,
+    });
   };
 
   const GeneralCard = ({ button, children }: GeneralCardProps) => (
