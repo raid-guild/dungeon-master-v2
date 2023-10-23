@@ -28,6 +28,7 @@ export { useRaidPartyAdd, useRaidPartyRemove } from './useRaidPartyUpdate';
 export {
   useAddRolesRequired,
   useRemoveRolesRequired,
+  useUpdateRolesRequired,
 } from './useRolesRequiredUpdate';
 export { default as useSearchResults } from './useSearchResults';
 export { default as useUpdateCreate } from './useUpdateCreate';

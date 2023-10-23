@@ -13,6 +13,8 @@ import {
   Icon,
   Flex,
   Select,
+  FormControl,
+  FormLabel,
 } from '@raidguild/design-system';
 import { FiPlus, FiX } from 'react-icons/fi';
 import {
@@ -24,9 +26,16 @@ import {
   SIDEBAR_ACTION_STATES,
   rolesExceptRequiredRoles,
   GUILD_CLASS_OPTIONS,
+  IRoleRequiredInsert,
+  IRoleRemoveMany,
 } from '@raidguild/dm-utils';
-import { useRaidPartyAdd, useAddRolesRequired } from '@raidguild/dm-hooks';
-import { useForm } from 'react-hook-form';
+import {
+  useRaidPartyAdd,
+  useAddRolesRequired,
+  useUpdateRolesRequired,
+} from '@raidguild/dm-hooks';
+import { Controller, useForm } from 'react-hook-form';
+import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;
@@ -36,8 +45,6 @@ type RaidPartyButtonsProps = {
   button?: string;
   setButton?: (button: string) => void;
 };
-
-// TODO swap for better selects
 
 const RaidPartyButtons = ({
   raid,
@@ -51,33 +58,82 @@ const RaidPartyButtons = ({
   const token = _.get(session, 'token');
   const localMembers = membersExceptRaidParty(members, raidParty, cleric);
   const requiredRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
-  const rolesFormDefaultValues = _.map(requiredRoles, (r) => ({
-    value: r,
-    label: GUILD_CLASS_DISPLAY[r],
+  const rolesFormDefaultValues = _.map(requiredRoles, (role) => ({
+    value: role,
+    label: GUILD_CLASS_DISPLAY[role],
   }));
+
   const localRoles = rolesExceptRequiredRoles(
     _.keys(GUILD_CLASS_DISPLAY),
     raid
   );
-  const [roleToAdd, setRoleToAdd] = useState<string>();
-  const [raiderToAdd, setRaiderToAdd] = useState<string>();
   const localForm = useForm({
     mode: 'all',
   });
+  const { control, handleSubmit } = localForm;
+  const [roleToAdd, setRoleToAdd] = useState<string>();
+  const [selectedRoleOptions, setSelectedRoleOptions] = useState<Option>();
+  const [raiderToAdd, setRaiderToAdd] = useState<string>();
 
-  const { mutateAsync: updateRolesRequired } = useAddRolesRequired({
+  const { mutateAsync: addRolesRequired } = useAddRolesRequired({
+    token,
+  });
+  const { mutateAsync: updateRolesRequired } = useUpdateRolesRequired({
     token,
   });
   const { mutateAsync: addRaider } = useRaidPartyAdd({ token });
 
   const submitAddRole = async () => {
     // TODO check against current localRoles
-    await updateRolesRequired({
+    await addRolesRequired({
       raidId: _.get(raid, 'id'),
       role: roleToAdd,
     });
     setTimeout(() => {
       setRoleToAdd(undefined);
+      setButton(SIDEBAR_ACTION_STATES.none);
+    }, 250);
+  };
+
+  const submitUpdateRoles = async () => {
+    const raidId = _.get(raid, 'id');
+
+    const selectedRoleValues: string[] = _.map(
+      selectedRoleOptions,
+      (v: Option) => v.value
+    );
+    console.log('selectedRoleValues', selectedRoleValues);
+    console.log('requiredRoles', requiredRoles);
+    const rolesAdded: string[] = _.difference(
+      selectedRoleValues,
+      requiredRoles
+    );
+    console.log('rolesAdded', rolesAdded);
+    const rolesRemoved: string[] = _.difference(
+      requiredRoles,
+      selectedRoleValues
+    );
+    console.log('rolesRemoved', rolesRemoved);
+
+    const insertRoles: IRoleRequiredInsert[] = _.map(rolesAdded, (role) => ({
+      raid_id: raidId,
+      role,
+    }));
+    console.log('insertRoles', insertRoles);
+    const rolesRemovedWhere: any = {
+      _and: {
+        role: { _in: rolesRemoved },
+        raid_id: { _eq: raidId },
+      },
+    };
+    console.log('rolesRemovedWhere', rolesRemovedWhere);
+
+    await updateRolesRequired({
+      insertRoles: insertRoles,
+      where: rolesRemovedWhere,
+    });
+    setTimeout(() => {
+      // setSelectedRoleOptions(null);
       setButton(SIDEBAR_ACTION_STATES.none);
     }, 250);
   };
@@ -158,17 +214,32 @@ const RaidPartyButtons = ({
           </option>
         ))}
       </ChakraSelect> */}
-      <Select
-        name={'Update Roles Select'}
-        variant='outline'
-        options={GUILD_CLASS_OPTIONS}
-        localForm={localForm}
-        isMulti
-        placeholder='Select Roles'
-        defaultValue={rolesFormDefaultValues}
-        // onChange={} is this needed?
-      />
-      <Button onClick={submitAddRole}>Update</Button>
+      <form onSubmit={handleSubmit(submitUpdateRoles)}>
+        {/* <FormControl> */}
+        {/* <FormLabel color='raid'>Guild Class</FormLabel> */}
+        <Controller
+          name='updateRolesSelect'
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              variant='outline'
+              isMulti
+              placeholder='Select Roles'
+              options={GUILD_CLASS_OPTIONS}
+              defaultValue={rolesFormDefaultValues}
+              localForm={localForm}
+              onChange={(values) => {
+                setSelectedRoleOptions(values);
+              }}
+              value={selectedRoleOptions}
+            />
+          )}
+        />
+        {/* </FormControl> */}
+        <Button type='submit'>Update</Button>
+      </form>
+      {/* <Button onClick={() => submitUpdateRoles()}>Update</Button> */}
     </Flex>
   );
 

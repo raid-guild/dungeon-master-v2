@@ -101,5 +101,10 @@ export interface IRoleRequiredInsert {
 }
 
 export interface IRoleRemoveMany {
-  where: object;
+  where: {
+    _and: {
+      role: { _in: string[] }; // ENUM
+      raid_id: { _eq: string };
+    };
+  };
 }
