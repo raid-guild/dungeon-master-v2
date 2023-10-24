@@ -9,9 +9,11 @@ import {
   Card,
   Tooltip,
   Stack,
+  Collapse,
+  Icon,
 } from '@raidguild/design-system';
 import { displayDate, IRip } from '@raidguild/dm-utils';
-import { FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaChevronDown } from 'react-icons/fa';
 import Link from './ChakraNextLink';
 import RipStatusBadge from './RipStatusBadge';
 
@@ -38,6 +40,8 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
     };
   });
   const latestUpdate = updates ? updates[0] : null;
+
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
@@ -113,16 +117,18 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
             <Text>{displayDate(latestUpdate.createdAt)}</Text>
           </HStack>
 
-          <Flex direction='column'>
-            <Tooltip label={latestUpdate.update} placement='top' hasArrow>
-              <span>
-                <Text color='white'>
-                  {_.gt(_.size(latestUpdate.update), 140)
-                    ? `${latestUpdate.update?.slice(0, 140)}...`
-                    : latestUpdate.update}
-                </Text>
-              </span>
-            </Tooltip>
+          <Flex alignItems={'baseline'}>
+            <Collapse startingHeight={20} in={isOpen}>
+              <Text color='white'>{latestUpdate.update}</Text>
+            </Collapse>
+            <Icon
+              as={FaChevronDown}
+              onClick={() => setIsOpen(!isOpen)}
+              cursor='pointer'
+              ml={1}
+              transform={isOpen ? 'rotate(180deg)' : ''}
+              transition={'all .25s ease-in-out'}
+            />
           </Flex>
         </Flex>
       )}
