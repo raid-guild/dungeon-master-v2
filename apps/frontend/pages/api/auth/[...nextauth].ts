@@ -22,19 +22,21 @@ const siweProvider = CredentialsProvider({
 type NextAuthOptions = Parameters<typeof NextAuth>[2];
 
 const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
-  const options: NextAuthOptions = {
-    providers: [siweProvider],
-    session: { strategy: 'jwt', maxAge: CONFIG.defaultMaxAge },
-    jwt: {
-      secret: NEXTAUTH_SECRET,
-      encode: encodeAuth,
-      // used any because not sure how to type this
-      decode: decodeAuth as any,
-    },
-    callbacks: { session: extendSessionWithUserAndToken },
-  };
+  const options: NextAuthOptions = authOptions;
 
   return NextAuth(req, res, options);
 };
 
 export default Auth;
+
+export const authOptions: NextAuthOptions = {
+  providers: [siweProvider],
+  session: { strategy: 'jwt', maxAge: CONFIG.defaultMaxAge },
+  jwt: {
+    secret: NEXTAUTH_SECRET,
+    encode: encodeAuth,
+    // used any because not sure how to type this
+    decode: decodeAuth as any,
+  },
+  callbacks: { session: extendSessionWithUserAndToken },
+};

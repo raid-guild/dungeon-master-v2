@@ -1,11 +1,18 @@
 import axios from 'axios';
 import { RIP_DETAIL_QUERY } from '@raidguild/dm-graphql';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './auth/[...nextauth]';
 
 const API_URL = process.env.GITHUB_API_URL || '';
 const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN;
 
-const handler = async (req, res) => {
-  // TODO use getSession from NextAuth
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return res.status(401).json('Unauthorized');
+  }
 
   const { method } = req;
 
@@ -31,7 +38,6 @@ const handler = async (req, res) => {
           Authorization: `Bearer ${GITHUB_API_TOKEN}`,
         },
       });
-
       res.status(201).json(data);
     } catch (err) {
       console.error(err);

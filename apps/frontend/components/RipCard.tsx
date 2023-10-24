@@ -7,7 +7,6 @@ import {
   Text,
   HStack,
   Card,
-  Tooltip,
   Stack,
   Collapse,
   Icon,
@@ -18,10 +17,11 @@ import Link from './ChakraNextLink';
 import RipStatusBadge from './RipStatusBadge';
 
 interface RipProps {
-  rip?: IRip;
+  rip: IRip;
 }
 
 const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
+  const [isOpen, setIsOpen] = React.useState(false);
   const description = _.get(rip, 'bodyText');
   // const link = `/rips/${id}/`;
   const link = _.get(rip, 'url');
@@ -39,9 +39,7 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
       update: node.bodyText,
     };
   });
-  const latestUpdate = updates ? updates[0] : null;
-
-  const [isOpen, setIsOpen] = React.useState(false);
+  const latestUpdate = updates ? updates[updates.length - 1] : null;
 
   return (
     <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
@@ -117,8 +115,8 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
             <Text>{displayDate(latestUpdate.createdAt)}</Text>
           </HStack>
 
-          <Flex alignItems={'baseline'}>
-            <Collapse startingHeight={20} in={isOpen}>
+          <Flex alignItems={'baseline'} justify={'space-between'}>
+            <Collapse startingHeight={24} in={isOpen}>
               <Text color='white'>{latestUpdate.update}</Text>
             </Collapse>
             <Icon
