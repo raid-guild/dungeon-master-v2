@@ -154,15 +154,9 @@ const RaidPartyButtons = ({
   );
 
   const SelectRole = () => (
-    <Flex justify='space-between' gap={1} w='100%'>
-      <IconButton
-        variant='outline'
-        icon={<Icon as={FiX} color='primary.500' />}
-        aria-label='Clear Set Role Required for Raid'
-        onClick={() => {
-          setButton(SIDEBAR_ACTION_STATES.none);
-        }}
-      />
+    // Wrap this whole component in a Chakra component to make it fill the width of its container div
+
+    <Box width='full'>
       <form onSubmit={handleSubmit(submitUpdateRoles)}>
         <Controller
           name='updateRolesSelect'
@@ -173,6 +167,7 @@ const RaidPartyButtons = ({
               variant='outline'
               isMulti
               placeholder='Select Roles'
+              isClearable={false}
               options={GUILD_CLASS_OPTIONS}
               defaultValue={rolesFormDefaultValues}
               localForm={localForm}
@@ -185,9 +180,20 @@ const RaidPartyButtons = ({
             />
           )}
         />
-        <Button type='submit'>Update</Button>
+        <HStack justify={'center'} gap={1} w='100%'>
+          <Button
+            variant={'outline'}
+            aria-label='Clear Set Role Required for Raid'
+            onClick={() => {
+              setButton(SIDEBAR_ACTION_STATES.none);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type='submit'>Update</Button>
+        </HStack>
       </form>
-    </Flex>
+    </Box>
   );
 
   // TODO handle loading a bit better
