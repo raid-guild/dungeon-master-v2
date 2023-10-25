@@ -44,26 +44,35 @@ const ripSortOptions = [
   { label: 'Recently Updated', value: 'recentlyUpdated' },
 ];
 
+interface RipQueryResult {
+  filteredRipList: IRip[];
+  filteredRipListCount: number;
+}
+
 const RipList = () => {
-  const [ripStatusFilter, setRipStatusFilter] = useState<string>('ACTIVE');
-  const [ripSort, setRipSort] = useState<ripSortKeys>('oldestComment');
-  const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
-  const [sortChanged, setSortChanged] = useState(false);
+  const [ripStatusFilterKey, setRipStatusFilterKey] =
+    useState<string>('ACTIVE');
+  const [ripSortKey, setRipSortKey] = useState<ripSortKeys>('oldestComment');
+  // const [sortChanged, setSortChanged] = useState(false);
   const title = 'RIPs';
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: rips, error, isLoading } = useRipList();
-  const { data: ripCount } = useRipsCount();
+  const {
+    data: rips,
+    error,
+    isLoading,
+  } = useRipList({ ripStatusFilterKey, ripSortKey });
+  const { data: ripCount } = useRipsCount({ ripStatusFilterKey, ripSortKey });
 
   const handleRipStatusFilterChange = async (status: string) => {
-    setRipStatusFilter(status);
+    setRipStatusFilterKey(status);
   };
 
   const handleRipSortChange = async (sortOption: ripSortKeys) => {
-    setRipSort(sortOption);
+    setRipSortKey(sortOption);
     // setSortChanged(true);
     if (sortOption === 'oldestComment') {
-      setRipStatusFilter('ACTIVE');
+      setRipStatusFilterKey('ACTIVE');
     }
   };
 
@@ -89,13 +98,13 @@ const RipList = () => {
         <ChakraSelect
           width='100%'
           name='ripStatus'
-          value={ripStatusFilter}
+          value={ripStatusFilterKey}
           defaultValue='Active'
           onChange={(e) => {
             handleRipStatusFilterChange(e.target.value);
-            if (ripSort === 'oldestComment') {
-              handleRipStatusFilterChange('ACTIVE');
-            }
+            // if (ripSortKey === 'oldestComment') {
+            //   handleRipStatusFilterChange('ACTIVE');
+            // }
           }}
         >
           {ripStatusOptions.map((status) => (
@@ -107,7 +116,7 @@ const RipList = () => {
       </Flex>
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
-          htmlFor='ripSort'
+          htmlFor='ripSortKey'
           maxWidth='720px'
           fontFamily='texturina'
           lineHeight='1.8'
@@ -118,14 +127,14 @@ const RipList = () => {
         </FormLabel>
         <ChakraSelect
           width='100%'
-          name='ripSort'
-          value={ripSort}
+          name='ripSortKey'
+          value={ripSortKey}
           defaultValue='Name'
           onChange={(e) => {
             handleRipSortChange(e.target.value as ripSortKeys);
-            if (e.target.value === 'oldestComment') {
-              handleRipStatusFilterChange('ACTIVE');
-            }
+            // if (e.target.value === 'oldestComment') {
+            //   handleRipStatusFilterChange('ACTIVE');
+            // }
           }}
         >
           {ripSortOptions.map((sortOption) => (
@@ -162,7 +171,7 @@ const RipList = () => {
                 </HStack>
               )}
             </Flex>
-            {/* <RipControls /> */}
+            <RipControls />
           </>
         }
         error={error}
