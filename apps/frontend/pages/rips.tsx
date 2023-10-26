@@ -13,7 +13,7 @@ import {
   Spacer,
   HStack,
 } from '@raidguild/design-system';
-import { useSession } from 'next-auth/react';
+// import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useRipList, useRipsCount } from '@raidguild/dm-hooks';
@@ -21,7 +21,6 @@ import { RIP_STATUS } from '@raidguild/dm-utils';
 import { IRip, ripSortKeys } from '@raidguild/dm-types';
 import RipCard from '../components/RipCard';
 import SiteLayout from '../components/SiteLayout';
-import axios from 'axios';
 
 const ripStatusMapped = RIP_STATUS.map((status) => ({
   label: status,
@@ -35,28 +34,21 @@ const ripStatusOptions = [
 ];
 
 const ripSortOptions = [
+  { label: 'Status', value: 'status' },
   { label: 'Oldest Comment', value: 'oldestComment' },
   { label: 'Recent Comment', value: 'recentComment' },
   { label: 'Name', value: 'name' },
   { label: 'Create Date', value: 'createDate' },
-  { label: 'Start Date', value: 'startDate' },
-  { label: 'End Date', value: 'endDate' },
-  { label: 'Recently Updated', value: 'recentlyUpdated' },
 ];
 
-interface RipQueryResult {
-  filteredRipList: IRip[];
-  filteredRipListCount: number;
-}
-
 const RipList = () => {
+  const title = 'RIPs';
   const [ripStatusFilterKey, setRipStatusFilterKey] =
     useState<string>('ACTIVE');
   const [ripSortKey, setRipSortKey] = useState<ripSortKeys>('oldestComment');
   // const [sortChanged, setSortChanged] = useState(false);
-  const title = 'RIPs';
-  const { data: session } = useSession();
-  const token = _.get(session, 'token');
+  // const { data: session } = useSession();
+  // const token = _.get(session, 'token');
   const {
     data: rips,
     error,
@@ -102,9 +94,6 @@ const RipList = () => {
           defaultValue='Active'
           onChange={(e) => {
             handleRipStatusFilterChange(e.target.value);
-            // if (ripSortKey === 'oldestComment') {
-            //   handleRipStatusFilterChange('ACTIVE');
-            // }
           }}
         >
           {ripStatusOptions.map((status) => (
@@ -132,9 +121,6 @@ const RipList = () => {
           defaultValue='Name'
           onChange={(e) => {
             handleRipSortChange(e.target.value as ripSortKeys);
-            // if (e.target.value === 'oldestComment') {
-            //   handleRipStatusFilterChange('ACTIVE');
-            // }
           }}
         >
           {ripSortOptions.map((sortOption) => (

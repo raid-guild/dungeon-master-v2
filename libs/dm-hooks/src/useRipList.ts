@@ -38,7 +38,28 @@ const useRipList = ({ ripStatusFilterKey, ripSortKey }: RipListType) => {
       return ripListFilter.includes(rip.ripCategory);
     });
 
-    return filteredRipList;
+    // Data comes from GH API in order of kanban board columns; no sort needed.
+    if (ripSortKey === 'status') {
+      return filteredRipList;
+    }
+
+    // Doing this here because GH GraphQL API doesn't support sorting
+    const sortedRipList = _.sortBy(filteredRipList, (rip) => {
+      switch (ripSortKey) {
+        case 'oldestComment':
+          return _.get(rip, 'comments.nodes[0].createdAt');
+        case 'recentComment':
+          return _.get(rip, 'comments.nodes[0].createdAt');
+        case 'name':
+          return rip.title;
+        case 'createDate':
+          return rip.createdAt;
+        default:
+          return rip;
+      }
+    });
+
+    return sortedRipList;
   };
 
   return useQuery<IRip[], Error>({
