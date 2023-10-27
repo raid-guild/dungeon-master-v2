@@ -3,7 +3,7 @@ export type ripSortKeys =
   | 'oldestComment'
   | 'recentComment'
   | 'name'
-  | 'createDate';
+  | 'createdDate';
 
 export interface IRip {
   number: number;

@@ -47,17 +47,31 @@ const useRipList = ({ ripStatusFilterKey, ripSortKey }: RipListType) => {
     const sortedRipList = _.sortBy(filteredRipList, (rip) => {
       switch (ripSortKey) {
         case 'oldestComment':
-          return _.get(rip, 'comments.nodes[0].createdAt');
+          const lastComment = _.last(_.get(rip, 'comments.nodes'));
+          return _.get(lastComment, 'createdAt');
         case 'recentComment':
-          return _.get(rip, 'comments.nodes[0].createdAt');
+          // Sort by oldestComment, then reverse below
+          const lastCommentIntermediary = _.last(_.get(rip, 'comments.nodes'));
+          return _.get(lastCommentIntermediary, 'createdAt');
         case 'name':
           return rip.title;
-        case 'createDate':
+        case 'createdDate':
+          // This returns oldest first. Reverse below as a preference.
           return rip.createdAt;
         default:
           return rip;
       }
     });
+
+    if (ripSortKey === 'createdDate') {
+      return sortedRipList.reverse();
+    }
+
+    // Raids with no comment appear first. Raids after that behave as expected.
+    // Smartest fix?
+    if (ripSortKey === 'recentComment') {
+      return sortedRipList.reverse();
+    }
 
     return sortedRipList;
   };

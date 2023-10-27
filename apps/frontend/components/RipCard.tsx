@@ -23,7 +23,6 @@ interface RipProps {
 const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const description = _.get(rip, 'bodyText');
-  // const link = `/rips/${id}/`;
   const link = _.get(rip, 'url');
   const ripStatus = _.get(rip, 'ripCategory');
   const raidDate = _.get(rip, 'createdAt');
@@ -58,7 +57,6 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
               transition='all ease-in-out .25s'
               _hover={{ cursor: 'pointer', color: 'red.100' }}
             >
-              {/* {_.get(raid, 'name', _.get(consultation, 'name'))} */}
               {_.get(rip, 'title')}
             </Heading>
           </Link>

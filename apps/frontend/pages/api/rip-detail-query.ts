@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
 
-const API_URL = process.env.GITHUB_API_URL || '';
+const GITHUB_API_URL = process.env.GITHUB_API_URL || '';
 const GITHUB_API_TOKEN = process.env.GITHUB_API_TOKEN;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -33,7 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       };
 
-      const { data } = await axios.post(`${API_URL}`, graphqlQuery, {
+      const { data } = await axios.post(`${GITHUB_API_URL}`, graphqlQuery, {
         headers: {
           Authorization: `Bearer ${GITHUB_API_TOKEN}`,
         },

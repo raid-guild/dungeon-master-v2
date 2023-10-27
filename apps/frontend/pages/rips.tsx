@@ -13,7 +13,6 @@ import {
   Spacer,
   HStack,
 } from '@raidguild/design-system';
-// import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useRipList, useRipsCount } from '@raidguild/dm-hooks';
@@ -38,17 +37,14 @@ const ripSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
   { label: 'Recent Comment', value: 'recentComment' },
   { label: 'Name', value: 'name' },
-  { label: 'Create Date', value: 'createDate' },
+  { label: 'Created Date', value: 'createdDate' },
 ];
 
 const RipList = () => {
   const title = 'RIPs';
   const [ripStatusFilterKey, setRipStatusFilterKey] =
     useState<string>('ACTIVE');
-  const [ripSortKey, setRipSortKey] = useState<ripSortKeys>('oldestComment');
-  // const [sortChanged, setSortChanged] = useState(false);
-  // const { data: session } = useSession();
-  // const token = _.get(session, 'token');
+  const [ripSortKey, setRipSortKey] = useState<ripSortKeys>('status');
   const {
     data: rips,
     error,
@@ -62,10 +58,6 @@ const RipList = () => {
 
   const handleRipSortChange = async (sortOption: ripSortKeys) => {
     setRipSortKey(sortOption);
-    // setSortChanged(true);
-    if (sortOption === 'oldestComment') {
-      setRipStatusFilterKey('ACTIVE');
-    }
   };
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
@@ -91,7 +83,6 @@ const RipList = () => {
           width='100%'
           name='ripStatus'
           value={ripStatusFilterKey}
-          defaultValue='Active'
           onChange={(e) => {
             handleRipStatusFilterChange(e.target.value);
           }}
@@ -118,7 +109,6 @@ const RipList = () => {
           width='100%'
           name='ripSortKey'
           value={ripSortKey}
-          defaultValue='Name'
           onChange={(e) => {
             handleRipSortChange(e.target.value as ripSortKeys);
           }}
