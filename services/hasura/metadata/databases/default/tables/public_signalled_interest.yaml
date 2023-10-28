@@ -1,0 +1,13 @@
+table:
+  name: signalled_interest
+  schema: public
+object_relationships:
+  - name: consultation
+    using:
+      foreign_key_constraint_on: consultation_id
+  - name: member
+    using:
+      foreign_key_constraint_on: member_id
+  - name: raid
+    using:
+      foreign_key_constraint_on: raid_id
