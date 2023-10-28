@@ -7,9 +7,8 @@ import { Loader } from './Loader';
 
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
-import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
-import { release } from '../../smartEscrow/utils/invoice';
-import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
+import { getTxLink, parseTokenAddress, release } from '@raidguild/escrow-utils';
+import { getInvoice } from '@raidguild/escrow-gql';
 
 type ReleaseFundsProp = {
   invoice: any;

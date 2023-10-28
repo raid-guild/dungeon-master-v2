@@ -15,16 +15,17 @@ import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
 import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePaymentDetails';
 import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
 import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
-import { SUPPORTED_NETWORKS } from '../../../smartEscrow/graphql/client';
+import { SUPPORTED_NETWORKS, getInvoice } from '@raidguild/escrow-gql';
 import Link from '../../../components/ChakraNextLink';
 
-import { getInvoice } from '../../../smartEscrow/graphql/getInvoice';
+// TODO use native client & gql-request
 
 const DM_ENDPOINT = process.env.NEXT_PUBLIC_API_URL;
 const HASURA_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 const WRONG_NETWORK_MESSAGE =
   'This network is not supported: Switch to Gnosis Network';
 
+// TODO move to helper
 const fetchRaid = async (query, raidId) => {
   const graphqlQuery = {
     operationName: 'validateRaidId',

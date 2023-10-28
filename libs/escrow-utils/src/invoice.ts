@@ -1,9 +1,11 @@
-import { Contract, utils } from 'ethers';
+import { BigNumberish, Contract, utils } from 'ethers';
+
+// TODO migrate to wagmi hooks
 
 import { NETWORK_CONFIG } from './constants';
 
 const getInvoiceFactoryAddress = (chainId: number) => {
-  const invoiceFactory = {
+  const invoiceFactory: { [key: number]: string } = {
     4: NETWORK_CONFIG[4].INVOICE_FACTORY,
     100: NETWORK_CONFIG[100].INVOICE_FACTORY,
     1: NETWORK_CONFIG[1].INVOICE_FACTORY,
@@ -14,12 +16,12 @@ const getInvoiceFactoryAddress = (chainId: number) => {
 };
 
 export const register = async (
-  chainId,
-  ethersProvider,
-  recipient,
-  amounts,
-  data,
-  type
+  chainId: any,
+  ethersProvider: any,
+  recipient: any,
+  amounts: any,
+  data: any,
+  type: any
 ) => {
   // Smart Invoice Factory Abi for create function
   const abi = new utils.Interface([
@@ -30,7 +32,7 @@ export const register = async (
 
   const contract = new Contract(factoryAddress, abi, ethersProvider);
 
-  return contract.create(recipient, amounts, data, type);
+  return contract['create'](recipient, amounts, data, type);
 };
 
 export const getResolutionRateFromFactory = async (
@@ -49,7 +51,7 @@ export const getResolutionRateFromFactory = async (
       ethersProvider
     );
 
-    const resolutionRate = Number(await contract.resolutionRates(resolver));
+    const resolutionRate = Number(await contract['resolutionRates'](resolver));
     return resolutionRate > 0 ? resolutionRate : 20;
   } catch (resolutionRateError) {
     console.error(resolutionRateError);
@@ -57,7 +59,7 @@ export const getResolutionRateFromFactory = async (
   }
 };
 
-export const awaitInvoiceAddress = async (ethersProvider, tx) => {
+export const awaitInvoiceAddress = async (ethersProvider: any, tx: any) => {
   await tx.wait(1);
   const abi = new utils.Interface([
     'event LogNewInvoice(uint256 indexed index, address indexed invoice, uint256[] amounts, bytes32 invoiceType, uint256 version)',
@@ -66,50 +68,50 @@ export const awaitInvoiceAddress = async (ethersProvider, tx) => {
   const receipt = await ethersProvider.getTransactionReceipt(tx.hash);
   const eventFragment = abi.events[Object.keys(abi.events)[0]];
   const eventTopic = abi.getEventTopic(eventFragment);
-  const event = receipt.logs.find((e) => e.topics[0] === eventTopic);
+  const event = receipt.logs.find((e: any) => e.topics[0] === eventTopic);
   if (event) {
     const decodedLog = abi.decodeEventLog(
       eventFragment,
       event.data,
       event.topics
     );
-    return decodedLog.invoice;
+    return decodedLog['invoice'];
   }
   return '';
 };
 
-export const release = async (ethersProvider, address) => {
+export const release = async (ethersProvider: any, address: string) => {
   const abi = new utils.Interface(['function release() public']);
   const contract = new Contract(address, abi, ethersProvider);
-  return contract.release();
+  return contract['release']();
 };
 
-export const withdraw = async (ethersProvider, address) => {
+export const withdraw = async (ethersProvider: any, address: string) => {
   const abi = new utils.Interface(['function withdraw() public']);
   const contract = new Contract(address, abi, ethersProvider);
-  return contract.withdraw();
+  return contract['withdraw']();
 };
 
 export const lock = async (
-  ethersProvider,
-  address,
-  detailsHash // 32 bits hex
+  ethersProvider: any,
+  address: string,
+  detailsHash: string // 32 bits hex
 ) => {
   const abi = new utils.Interface(['function lock(bytes32 details) external']);
   const contract = new Contract(address, abi, ethersProvider);
-  return contract.lock(detailsHash);
+  return contract['lock'](detailsHash);
 };
 
 export const resolve = async (
-  ethersProvider,
-  address,
-  clientAward,
-  providerAward,
-  detailsHash // 32 bits hex
+  ethersProvider: any,
+  address: string,
+  clientAward: number,
+  providerAward: BigNumberish,
+  detailsHash: string // 32 bits hex
 ) => {
   const abi = new utils.Interface([
     'function resolve(uint256 clientAward, uint256 providerAward, bytes32 details) external',
   ]);
   const contract = new Contract(address, abi, ethersProvider);
-  return contract.resolve(clientAward, providerAward, detailsHash);
+  return contract['resolve'](clientAward, providerAward, detailsHash);
 };

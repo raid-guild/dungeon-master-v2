@@ -8,10 +8,13 @@ import { utils } from 'ethers';
 import { CopyIcon } from './icons/CopyIcon';
 import { Loader } from './Loader';
 
-import { awaitInvoiceAddress } from '../../smartEscrow/utils/invoice';
-import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
-import { getTxLink, copyToClipboard } from '../../smartEscrow/utils/helpers';
-import { updateRaidInvoice } from '../../smartEscrow/utils/requests';
+import {
+  awaitInvoiceAddress,
+  getTxLink,
+  copyToClipboard,
+  updateRaidInvoice,
+} from '@raidguild/escrow-utils';
+import { getInvoice } from '@raidguild/escrow-gql';
 
 const POLL_INTERVAL = 5000;
 

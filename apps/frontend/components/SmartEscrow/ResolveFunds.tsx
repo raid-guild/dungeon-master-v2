@@ -15,9 +15,12 @@ import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 import { OrderedTextarea } from './shared/OrderedTextArea';
 import { Loader } from './Loader';
 
-import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
-import { resolve } from '../../smartEscrow/utils/invoice';
-import { uploadDisputeDetails } from '../../smartEscrow/utils/ipfs';
+import {
+  getTxLink,
+  parseTokenAddress,
+  resolve,
+  uploadDisputeDetails,
+} from '@raidguild/escrow-utils';
 
 export const ResolveFunds = ({ invoice, balance, close }) => {
   const { address, resolutionRate, token, isLocked } = invoice;

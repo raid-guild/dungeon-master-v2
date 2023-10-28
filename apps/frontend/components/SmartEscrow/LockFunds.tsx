@@ -9,18 +9,20 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useContext, useState } from 'react';
+import {
+  getTxLink,
+  lock,
+  uploadDisputeDetails,
+  NETWORK_CONFIG,
+} from '@raidguild/escrow-utils';
 
 import LockImage from '../../assets/lock.svg';
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
 import { AccountLink } from './shared/AccountLink';
 import { OrderedTextarea } from './shared/OrderedTextArea';
-import { getTxLink } from '../../smartEscrow/utils/helpers';
-import { lock } from '../../smartEscrow/utils/invoice';
-import { uploadDisputeDetails } from '../../smartEscrow/utils/ipfs';
-import { Loader } from './Loader';
 
-import { NETWORK_CONFIG } from '../../smartEscrow/utils/constants';
+import { Loader } from './Loader';
 
 const parseTokenAddress = (chainId, address) => {
   for (const [key, value] of Object.entries(

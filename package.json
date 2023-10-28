@@ -18,7 +18,7 @@
     "@emotion/styled": "11.11.0",
     "@ethersproject/address": "^5.7.0",
     "@hookform/resolvers": "^3.3.2",
-    "@raidguild/design-system": "^0.4.48",
+    "@raidguild/design-system": "^0.4.50",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.1.5",
     "@tanstack/match-sorter-utils": "^8.7.6",
@@ -69,6 +69,7 @@
     "@nx/linter": "16.6.0",
     "@nx/next": "16.6.0",
     "@nx/react": "16.6.0",
+    "@nx/vite": "16.6.0",
     "@nx/web": "16.6.0",
     "@nx/workspace": "16.6.0",
     "@raftlabs/nx-hasura": "^0.0.6",
@@ -80,6 +81,8 @@
     "@types/react-dom": "18.2.6",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
+    "@vitest/coverage-c8": "~0.32.0",
+    "@vitest/ui": "~0.32.0",
     "babel-jest": "29.4.3",
     "cypress": "^9.1.0",
     "eslint": "~8.15.0",
@@ -94,11 +97,14 @@
     "hasura-cli": "latest",
     "jest": "29.4.3",
     "jest-environment-jsdom": "28.1.3",
+    "jest-environment-node": "^29.4.1",
     "nx": "16.6.0",
     "prettier": "^2.6.2",
     "react-test-renderer": "18.2.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vite": "~4.3.9",
+    "vitest": "~0.32.0"
   }
 }

@@ -3,6 +3,8 @@ import { create } from 'ipfs-http-client';
 
 import { INVOICE_VERSION } from './constants';
 
+// TODO migrate to pinata
+
 const ipfsTheGraph = create({
   protocol: 'https',
   host: 'api.thegraph.com',
@@ -24,7 +26,7 @@ export const uploadMetadata = async (meta: any) => {
     ipfsTheGraph.add(bufferedString),
     ipfsInfura.add(bufferedString), // automatically pinned
   ]);
-  const { hash } = node[0];
+  const { hash } = (node as any)[0];
   await ipfsTheGraph.pin.add(hash);
   const bytes = Buffer.from(Base58.decode(hash));
   return `0x${bytes.slice(2).toString('hex')}`;
@@ -42,7 +44,7 @@ export const uploadDisputeDetails = async (meta: {
     ipfsTheGraph.add(bufferedString),
     ipfsInfura.add(bufferedString), // automatically pinned
   ]);
-  const { hash } = node[0];
+  const { hash } = (node as any)[0];
   await ipfsTheGraph.pin.add(hash);
   const bytes = Buffer.from(Base58.decode(hash));
   return `0x${bytes.slice(2).toString('hex')}`;
