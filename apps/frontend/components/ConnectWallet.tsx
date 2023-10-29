@@ -23,7 +23,6 @@ import Link from './ChakraNextLink';
 import { SmartEscrowContext } from '../contexts/SmartEscrow';
 import { useSigner } from 'wagmi';
 import Web3 from 'web3';
-import { rpcUrls } from '../smartEscrow/utils/constants';
 import { ethers } from 'ethers';
 
 const ConnectWallet: React.FC = () => {
@@ -32,7 +31,6 @@ const ConnectWallet: React.FC = () => {
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
-  const showNetwork = false; // maybe unhide, in some cases
 
   useEffect(() => {
     if (address && signer && chain.id) {
@@ -111,22 +109,20 @@ const ConnectWallet: React.FC = () => {
                     placement='bottom-end'
                     autoSelect={false}
                   >
-                    {showNetwork && (
-                      <Button
-                        variant='outline'
-                        width='fit'
-                        onClick={openChainModal}
-                      >
-                        <Image
-                          alt={chain.name ?? 'Chain icon'}
-                          src={chain.iconUrl}
-                          width={25}
-                          height={25}
-                          mr={2}
-                        />
-                        {chain.name}
-                      </Button>
-                    )}
+                    <Button
+                      variant='outline'
+                      width='fit'
+                      onClick={openChainModal}
+                    >
+                      <Image
+                        alt={chain.name ?? 'Chain icon'}
+                        src={chain.iconUrl}
+                        width={25}
+                        height={25}
+                        mr={2}
+                      />
+                      {chain.name}
+                    </Button>
 
                     <MenuButton as={Button} variant='outline' width='fit'>
                       <HStack spacing={3}>
