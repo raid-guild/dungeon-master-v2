@@ -42,23 +42,25 @@ const ripSortOptions = [
 
 const RipList = () => {
   const title = 'RIPs';
+
   const [ripStatusFilterKey, setRipStatusFilterKey] =
     useState<string>('ACTIVE');
-  const [ripSortKey, setRipSortKey] = useState<ripSortKeys>('status');
-  const {
-    data: rips,
-    error,
-    isLoading,
-  } = useRipList({ ripStatusFilterKey, ripSortKey });
-  const { data: ripCount } = useRipsCount({ ripStatusFilterKey, ripSortKey });
-
   const handleRipStatusFilterChange = async (status: string) => {
     setRipStatusFilterKey(status);
   };
 
+  const [ripSortKey, setRipSortKey] = useState<ripSortKeys>('status');
   const handleRipSortChange = async (sortOption: ripSortKeys) => {
     setRipSortKey(sortOption);
   };
+
+  const { data: ripCount } = useRipsCount({ ripStatusFilterKey, ripSortKey });
+
+  const { status, data, error, fetchNextPage, hasNextPage } = useRipList({
+    ripStatusFilterKey,
+    ripSortKey,
+  });
+  const rips = _.flatten(_.get(data, 'pages'));
 
   // TODO: generalize and move to separate file -- will need to pass options and filter state
   const RipControls = () => (
@@ -128,7 +130,7 @@ const RipList = () => {
       <NextSeo title='RIPs List' />
 
       <SiteLayout
-        isLoading={isLoading}
+        isLoading={status === 'loading'}
         data={rips}
         emptyDataPhrase='No RIPs found.'
         subheader={
@@ -155,8 +157,8 @@ const RipList = () => {
         <InfiniteScroll
           pageStart={0}
           style={{ width: '100%' }}
-          // loadMore={fetchNextPage}
-          // hasMore={hasNextPage}
+          loadMore={fetchNextPage}
+          hasMore={hasNextPage}
           loader={
             <Flex my={25} w='100%' justify='center' key={1}>
               <Spinner size='xl' my={50} />
