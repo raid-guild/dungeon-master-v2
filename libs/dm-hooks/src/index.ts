@@ -22,6 +22,7 @@ export { default as useMemberUpdate } from './useMemberUpdate';
 export { default as useMemberCreate } from './useMemberCreate';
 export { default as useRaidDetail } from './useRaidDetail';
 export { default as useRaidList, useRaidsCount } from './useRaidList';
+export { default as useRipList, useRipsCount } from './useRipList';
 export { default as useRaidUpdate } from './useRaidUpdate';
 export { default as useRaidCreate } from './useRaidCreate';
 export { useRaidPartyAdd, useRaidPartyRemove } from './useRaidPartyUpdate';
