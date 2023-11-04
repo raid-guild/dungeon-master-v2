@@ -4,35 +4,32 @@ import {
   Avatar,
   // AvatarGroup,
   Box,
+  Box,
+  Button,
   Button,
   ChakraSelect,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  RoleBadge,
-  Text,
-} from '@raidguild/design-system';
+  Tooltip,
+} from "@raidguild/design-system";
 import {
   useRaidPartyRemove,
   useRaidUpdate,
   useRemoveRolesRequired,
-} from '@raidguild/dm-hooks';
-import { IMember, IRaid } from '@raidguild/dm-types';
+} from "@raidguild/dm-hooks";
+import { IMember, IRaid } from "@raidguild/dm-types";
 import {
   GUILD_CLASS_DISPLAY,
   GUILD_CLASS_ICON,
   memberDisplayName,
   SIDEBAR_ACTION_STATES,
-} from '@raidguild/dm-utils';
-import _ from 'lodash';
-import { useSession } from 'next-auth/react';
-import { ReactNode, useState } from 'react';
-import { FiCheck, FiX } from 'react-icons/fi';
-import { HiSwitchVertical } from 'react-icons/hi';
+} from "@raidguild/dm-utils";
+import _ from "lodash";
+import { useSession } from "next-auth/react";
+import { ReactNode, useState } from "react";
+import { FiCheck, FiX } from "react-icons/fi";
+import { HiSwitchVertical } from "react-icons/hi";
 
-import ChakraNextLink from '../ChakraNextLink';
-import MemberAvatar from '../MemberAvatar';
+import ChakraNextLink from "../ChakraNextLink";
+import MemberAvatar from "../MemberAvatar";
 
 type RaidPartyCardProps = {
   /*
@@ -72,7 +69,7 @@ const RaidPartyCard = ({
   setButtonSelection,
 }: RaidPartyCardProps) => {
   const { data: session } = useSession();
-  const token = _.get(session, 'token');
+  const token = _.get(session, "token");
   const [updateCleric, setUpdateCleric] = useState(false);
   const [localRoles, setLocalRoles] = useState(roles);
   const [clearRoles, setClearRoles] = useState(false);
@@ -80,7 +77,7 @@ const RaidPartyCard = ({
 
   const { mutateAsync: updateRaid } = useRaidUpdate({
     token,
-    raidId: _.get(raid, 'id'),
+    raidId: _.get(raid, "id"),
   });
   const { mutateAsync: removeRaider } = useRaidPartyRemove({ token });
   const { mutateAsync: removeRolesRequired } = useRemoveRolesRequired({
@@ -90,11 +87,11 @@ const RaidPartyCard = ({
   // * fallback to current user
   const submitUpdatedCleric = async () => {
     const raidUpdates = {
-      cleric_id: clericToAdd || _.get(session, 'user.id'),
+      cleric_id: clericToAdd || _.get(session, "user.id"),
     };
 
     await updateRaid({
-      id: _.get(raid, 'id'),
+      id: _.get(raid, "id"),
       raid_updates: raidUpdates,
     });
     setTimeout(() => {
@@ -110,7 +107,7 @@ const RaidPartyCard = ({
 
   const submitRemoveRaider = async (memberId: string) => {
     await removeRaider({
-      raidId: _.get(raid, 'id'),
+      raidId: _.get(raid, "id"),
       memberId,
     });
   };
@@ -137,7 +134,7 @@ const RaidPartyCard = ({
     const rolesRemovedWhere = {
       _and: {
         role: { _in: rolesRemoved },
-        raid_id: { _eq: _.get(raid, 'id') },
+        raid_id: { _eq: _.get(raid, "id") },
       },
     };
 
@@ -149,24 +146,26 @@ const RaidPartyCard = ({
 
   const GeneralCard = ({ button, children }: GeneralCardProps) => (
     <Flex
-      key={_.get(member, 'id', 'roles')}
-      justify='space-between'
-      align='center'
+      key={_.get(member, "id", "roles")}
+      justify="space-between"
+      align="center"
     >
-      {(isCleric && (!member || updateCleric)) || isRole ? (
-        <>
-          {children}
-
-          <Box ml={2}>{button}</Box>
-        </>
-      ) : (
-        <>
-          <ChakraNextLink href={`/members/${member.ethAddress}/`}>
+      {(isCleric && (!member || updateCleric)) || isRole
+        ? (
+          <>
             {children}
-          </ChakraNextLink>
-          {button}
-        </>
-      )}
+
+            <Box ml={2}>{button}</Box>
+          </>
+        )
+        : (
+          <>
+            <ChakraNextLink href={`/members/${member.ethAddress}/`}>
+              {children}
+            </ChakraNextLink>
+            {button}
+          </>
+        )}
     </Flex>
   );
 
@@ -178,29 +177,29 @@ const RaidPartyCard = ({
             icon={
               <Icon
                 as={HiSwitchVertical}
-                color='whiteAlpha.600'
-                fontSize='1.5rem'
+                color="whiteAlpha.600"
+                fontSize="1.5rem"
               />
             }
-            aria-label='Switch Cleric'
-            variant='outline'
+            aria-label="Switch Cleric"
+            variant="outline"
             onClick={handleSwitchCleric}
           />
         }
       >
         <HStack
           spacing={4}
-          _hover={{ cursor: 'pointer', color: 'red.100' }}
-          transition='all ease-in-out 0.25'
+          _hover={{ cursor: "pointer", color: "red.100" }}
+          transition="all ease-in-out 0.25"
         >
           {member && <MemberAvatar member={member} />}
 
-          <Flex direction='column'>
-            <Text as='span' color='white' fontSize='md'>
-              {_.get(member, 'name')}
+          <Flex direction="column">
+            <Text as="span" color="white" fontSize="md">
+              {_.get(member, "name")}
             </Text>
-            <Text color='primary.500' fontSize='sm'>
-              {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
+            <Text color="primary.500" fontSize="sm">
+              {GUILD_CLASS_DISPLAY[_.get(member, "guildClass.guildClass")]}
             </Text>
           </Flex>
         </HStack>
@@ -210,43 +209,46 @@ const RaidPartyCard = ({
   if (isCleric) {
     return (
       <GeneralCard
-        button={
-          updateCleric ? (
-            <Button onClick={submitUpdatedCleric}>Go</Button>
-          ) : (
-            <Button variant='outline' onClick={submitUpdatedCleric}>
+        button={updateCleric
+          ? <Button onClick={submitUpdatedCleric}>Go</Button>
+          : (
+            <Button variant="outline" onClick={submitUpdatedCleric}>
               Claim
             </Button>
-          )
-        }
+          )}
       >
         <Flex>
-          {updateCleric ? (
-            <HStack w='100%'>
-              <IconButton
-                variant='outline'
-                icon={<Icon as={FiX} color='primary.300' />}
-                aria-label='Clear Set Raider for Raid'
-                onClick={() => setUpdateCleric(false)}
-              />
-              {!_.isEmpty(members) && (
-                <ChakraSelect
-                  value={clericToAdd}
-                  onChange={(e) => setClericToAdd(e.target.value)}
-                >
-                  {_.map(members, (m: Partial<IMember>) => (
-                    <option value={m.id} key={m.id}>
-                      {memberDisplayName(m)}
-                    </option>
-                  ))}
-                </ChakraSelect>
-              )}
-            </HStack>
-          ) : (
-            <Flex justify='space-between' w='100%' align='center'>
-              <Text px={2}>Unclaimed</Text>
-            </Flex>
-          )}
+          {updateCleric
+            ? (
+              <HStack w="100%">
+                <IconButton
+                  variant="outline"
+                  icon={<Icon as={FiX} color="primary.300" />}
+                  aria-label="Clear Set Raider for Raid"
+                  onClick={() => setUpdateCleric(false)}
+                />
+                {!_.isEmpty(members) && (
+                  <ChakraSelect
+                    value={clericToAdd}
+                    onChange={(e) => setClericToAdd(e.target.value)}
+                  >
+                    {_.map(
+                      members,
+                      (m: Partial<IMember>) => (
+                        <option value={m.id} key={m.id}>
+                          {memberDisplayName(m)}
+                        </option>
+                      ),
+                    )}
+                  </ChakraSelect>
+                )}
+              </HStack>
+            )
+            : (
+              <Flex justify="space-between" w="100%" align="center">
+                <Text px={2}>Unclaimed</Text>
+              </Flex>
+            )}
         </Flex>
       </GeneralCard>
     );
@@ -257,53 +259,54 @@ const RaidPartyCard = ({
       <GeneralCard
         button={
           <IconButton
-            variant='outline'
-            icon={
-              !clearRoles ? (
-                <Icon as={FiX} color='primary.500' fontSize='1.5rem' />
-              ) : (
-                <Icon as={FiCheck} color='primary.500' fontSize='1.5rem' />
-              )
-            }
-            aria-label='Remove roles'
+            variant="outline"
+            icon={!clearRoles
+              ? <Icon as={FiX} color="primary.500" fontSize="1.5rem" />
+              : <Icon as={FiCheck} color="primary.500" fontSize="1.5rem" />}
+            aria-label="Remove roles"
             onClick={!clearRoles ? clearRoleClick : saveUpdatedRoles}
             isDisabled
           />
         }
       >
         <HStack spacing={1}>
-          {!_.isEmpty(localRoles) ? (
-            _.map(localRoles, (role: string, i) => (
-              <Avatar
-                key={i}
-                icon={
-                  <RoleBadge
-                    roleName={GUILD_CLASS_ICON[role]}
-                    width='44px'
-                    height='44px'
-                    border='2px solid'
-                  />
-                }
-              >
-                {clearRoles && (
-                  <Icon
-                    as={FiX}
-                    bg='primary.500'
-                    color='white'
-                    position='absolute'
-                    borderRadius={10}
-                    top='-5px'
-                    right='-5px'
-                    aria-label={`Remove ${role} role`}
-                    _hover={{ cursor: 'pointer' }}
-                    onClick={() => removeLocalRole(role)}
-                  />
-                )}
-              </Avatar>
-            ))
-          ) : (
-            <Text color='whiteAlpha.600'>No Roles Needed</Text>
-          )}
+          {!_.isEmpty(localRoles)
+            ? (
+              _.map(localRoles, (role: string, i) => (
+                <Tooltip
+                  key={i}
+                  label={GUILD_CLASS_DISPLAY[role]}
+                  aria-label={GUILD_CLASS_DISPLAY[role]}
+                >
+                  <Avatar
+                    icon={
+                      <RoleBadge
+                        roleName={GUILD_CLASS_ICON[role]}
+                        width="44px"
+                        height="44px"
+                        border="2px solid"
+                      />
+                    }
+                  >
+                    {clearRoles && (
+                      <Icon
+                        as={FiX}
+                        bg="primary.500"
+                        color="white"
+                        position="absolute"
+                        borderRadius={10}
+                        top="-5px"
+                        right="-5px"
+                        aria-label={`Remove ${role} role`}
+                        _hover={{ cursor: "pointer" }}
+                        onClick={() => removeLocalRole(role)}
+                      />
+                    )}
+                  </Avatar>
+                </Tooltip>
+              ))
+            )
+            : <Text color="whiteAlpha.600">No Roles Needed</Text>}
         </HStack>
       </GeneralCard>
     );
@@ -328,26 +331,26 @@ const RaidPartyCard = ({
     <GeneralCard
       button={
         <IconButton
-          onClick={() => submitRemoveRaider(_.get(member, 'id'))}
-          icon={<Icon as={FiX} color='primary.500' fontSize='1.5rem' />}
-          aria-label='Remove Raider'
-          variant='outline'
+          onClick={() => submitRemoveRaider(_.get(member, "id"))}
+          icon={<Icon as={FiX} color="primary.500" fontSize="1.5rem" />}
+          aria-label="Remove Raider"
+          variant="outline"
         />
       }
     >
       <HStack
         spacing={4}
-        _hover={{ cursor: 'pointer', color: 'red.100' }}
-        transition='all ease-in-out 0.25'
+        _hover={{ cursor: "pointer", color: "red.100" }}
+        transition="all ease-in-out 0.25"
       >
         {member && <MemberAvatar member={member} />}
 
-        <Flex direction='column'>
-          <Text as='span' color='white' fontSize='md'>
-            {_.get(member, 'name')}
+        <Flex direction="column">
+          <Text as="span" color="white" fontSize="md">
+            {_.get(member, "name")}
           </Text>
-          <Text color='primary.500' fontSize='sm'>
-            {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
+          <Text color="primary.500" fontSize="sm">
+            {GUILD_CLASS_DISPLAY[_.get(member, "guildClass.guildClass")]}
           </Text>
         </Flex>
       </HStack>

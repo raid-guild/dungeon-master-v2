@@ -2,6 +2,40 @@ import { gql } from 'graphql-request';
 
 import { RAID_DETAIL_FRAGMENT, RAID_SLIM_DETAIL_FRAGMENT } from '../fragments';
 
+export const RAIDING_RAIDS_BY_LAST_UPDATE = gql`
+  query RaidsByLastUpdate($latest_update_order_by: order_by) {
+    raiding_raids_by_last_update(
+      order_by: { latest_update_created_at: $latest_update_order_by }
+    ) {
+      latest_update_created_at
+      latest_update
+      raid_id
+      raid_name
+    }
+  }
+`;
+
+export const RAIDS_LIST_AND_LAST_UPDATE_QUERY = gql`
+  query RaidsListQuery(
+    $offset: Int!
+    $limit: Int!
+    $where: raids_bool_exp
+    $order_by: [raids_order_by!]
+    $latest_update_order_by: [raiding_raids_by_last_update_order_by!]
+  ) {
+    raids(limit: $limit, offset: $offset, where: $where, order_by: $order_by) {
+      ...RaidDetail
+    }
+    raiding_raids_by_last_update(order_by: $latest_update_order_by) {
+      raid_id
+      raid_name
+      latest_update
+      latest_update_created_at
+    }
+  }
+  # ${RAID_DETAIL_FRAGMENT}
+`;
+
 export const RAIDS_LIST_QUERY = gql`
   query RaidsListQuery(
     $offset: Int!
