@@ -14,6 +14,7 @@ import {
   ChakraSelect,
   Button,
   Box,
+  Tooltip,
 } from '@raidguild/design-system';
 import {
   GUILD_CLASS_ICON,
@@ -274,32 +275,37 @@ const RaidPartyCard = ({
         <HStack spacing={1}>
           {!_.isEmpty(localRoles) ? (
             _.map(localRoles, (role: string, i) => (
-              <Avatar
+              <Tooltip
                 key={i}
-                icon={
-                  <RoleBadge
-                    roleName={GUILD_CLASS_ICON[role]}
-                    width='44px'
-                    height='44px'
-                    border='2px solid'
-                  />
-                }
+                label={GUILD_CLASS_DISPLAY[role]}
+                aria-label={GUILD_CLASS_DISPLAY[role]}
               >
-                {clearRoles && (
-                  <Icon
-                    as={FiX}
-                    bg='primary.500'
-                    color='white'
-                    position='absolute'
-                    borderRadius={10}
-                    top='-5px'
-                    right='-5px'
-                    aria-label={`Remove ${role} role`}
-                    _hover={{ cursor: 'pointer' }}
-                    onClick={() => removeLocalRole(role)}
-                  />
-                )}
-              </Avatar>
+                <Avatar
+                  icon={
+                    <RoleBadge
+                      roleName={GUILD_CLASS_ICON[role]}
+                      width='44px'
+                      height='44px'
+                      border='2px solid'
+                    />
+                  }
+                >
+                  {clearRoles && (
+                    <Icon
+                      as={FiX}
+                      bg='primary.500'
+                      color='white'
+                      position='absolute'
+                      borderRadius={10}
+                      top='-5px'
+                      right='-5px'
+                      aria-label={`Remove ${role} role`}
+                      _hover={{ cursor: 'pointer' }}
+                      onClick={() => removeLocalRole(role)}
+                    />
+                  )}
+                </Avatar>
+              </Tooltip>
             ))
           ) : (
             <Text color='whiteAlpha.600'>No Roles Needed</Text>

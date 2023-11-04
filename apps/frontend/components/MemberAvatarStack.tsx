@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Stack, HStack } from '@raidguild/design-system';
+import { Box } from '@raidguild/design-system';
 import { IMember } from '@raidguild/dm-utils';
 import MemberAvatar from './MemberAvatar';
 
@@ -16,22 +16,22 @@ const MemberAvatarStack = ({
   max = 5,
   horizontal = false,
 }: MemberAvatarStackProps) => {
-  if (horizontal) {
-    return (
-      <HStack spacing={4}>
-        {_.map(members, (member: IMember) => (
-          <MemberAvatar member={member} key={_.get(member, 'id')} />
-        ))}
-      </HStack>
-    );
-  }
-
   return (
-    <Stack align='center' spacing={4}>
-      {_.map(members, (member: IMember) => (
-        <MemberAvatar member={member} key={_.get(member, 'id')} />
+    <Box
+      display={horizontal ? 'flex' : 'flex'}
+      flexDirection={horizontal ? 'row' : 'column'}
+    >
+      {_.map(members, (member: IMember, index: number) => (
+        <Box
+          key={_.get(member, 'id')}
+          mt={!horizontal && index !== 0 ? '-12px' : '0'}
+          ml={horizontal && index !== 0 ? '-12px' : '0'}
+          zIndex={members.length - index}
+        >
+          <MemberAvatar member={member} />
+        </Box>
       ))}
-    </Stack>
+    </Box>
   );
 };
 

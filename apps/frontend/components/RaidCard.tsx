@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {
   Flex,
   Heading,
-  Button,
   Text,
   HStack,
   Card,
@@ -15,11 +14,15 @@ import {
   RoleBadge,
   Avatar,
   useMediaQuery,
+  LinkBox,
+  LinkOverlay,
+  Box,
 } from '@raidguild/design-system';
 import {
   PROJECT_TYPE_DISPLAY,
   RAID_CATEGORY_DISPLAY,
   BUDGET_DISPLAY,
+  GUILD_CLASS_DISPLAY,
   GUILD_CLASS_ICON,
   displayDate,
   IConsultation,
@@ -75,176 +78,190 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   return (
-    <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
-      <Flex
-        w='100%'
-        direction={{ base: 'column', md: 'row' }}
-        alignItems='space-apart'
-        justifyContent='space-between'
-      >
-        <Stack spacing={4}>
-          <Link href={link}>
-            <Heading
-              color='white'
-              as='h3'
-              fontSize='2xl'
-              transition='all ease-in-out .25s'
-              _hover={{ cursor: 'pointer', color: 'red.100' }}
-            >
-              {_.get(raid, 'name', _.get(consultation, 'name'))}
-            </Heading>
-          </Link>
-          <HStack>
-            <RaidStatusBadge
-              status={_.get(
-                raid,
-                'raidStatus.raidStatus',
-                _.get(consultation, 'consultationStatus.consultationStatus')
-              )}
-            />
-            {submissionType === 'PAID' && (
-              <Tooltip label='Paid Submission' placement='right' hasArrow>
-                <span>
-                  <Icon as={AiOutlineDollarCircle} w={6} h={6} color='white' />
-                </span>
-              </Tooltip>
-            )}
-          </HStack>
-        </Stack>
-        <Flex direction={{ base: 'column', md: 'row' }} align='flex-start'>
-          {!_.isEmpty(rolesRequired) && (
-            <HStack mb={{ base: 4, md: 0 }} mr={4}>
-              <Heading size='sm' color='white'>
-                Roles Required
+    <LinkBox h='100%'>
+      <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
+        <Flex
+          w='100%'
+          direction={{ base: 'column', md: 'row' }}
+          alignItems='space-apart'
+          justifyContent='space-between'
+        >
+          <Stack spacing={4}>
+            <LinkOverlay as={Link} href={link}>
+              <Heading
+                color='white'
+                as='h3'
+                fontSize='2xl'
+                transition='all ease-in-out .25s'
+                _hover={{ cursor: 'pointer', color: 'red.100' }}
+              >
+                {_.get(raid, 'name', _.get(consultation, 'name'))}
               </Heading>
-              <AvatarGroup>
-                {_.map(rolesRequired, (role: string) => (
-                  <Avatar
-                    key={role}
-                    icon={
-                      <RoleBadge
-                        roleName={GUILD_CLASS_ICON[role]}
-                        width='44px'
-                        height='44px'
-                        border='2px solid'
-                      />
-                    }
-                  />
-                ))}
-              </AvatarGroup>
+            </LinkOverlay>
+            <HStack>
+              <RaidStatusBadge
+                status={_.get(
+                  raid,
+                  'raidStatus.raidStatus',
+                  _.get(consultation, 'consultationStatus.consultationStatus')
+                )}
+              />
+              {submissionType === 'PAID' && (
+                <Tooltip label='Paid Submission' placement='right' hasArrow>
+                  <span>
+                    <Icon
+                      as={AiOutlineDollarCircle}
+                      w={6}
+                      h={6}
+                      color='white'
+                    />
+                  </span>
+                </Tooltip>
+              )}
             </HStack>
-          )}
-
-          <HStack mr={4} mb={{ base: 4, md: 0 }}>
-            {raid &&
-              (!raidCleric ? (
-                <Heading size='sm' color='white' mr={4} mb={{ base: 4, md: 0 }}>
-                  Needs Cleric!
+          </Stack>
+          <Flex direction={{ base: 'column', md: 'row' }} align='flex-start'>
+            {!_.isEmpty(rolesRequired) && (
+              <HStack mb={{ base: 4, md: 0 }} mr={4}>
+                <Heading size='sm' color='white'>
+                  Roles Required
                 </Heading>
-              ) : (
-                <>
-                  <Heading size='sm' color='white'>
-                    Cleric
-                  </Heading>
-                  <MemberAvatar member={raidCleric} />
-                </>
-              ))}
-          </HStack>
-
-          <Link href={link}>
-            <Button color='raid' borderColor='raid' variant='outline'>
-              View Details
-            </Button>
-          </Link>
-        </Flex>
-      </Flex>
-      <Flex direction='row' justifyContent='space-between' w='100%'>
-        <Stack w='90%'>
-          <Flex
-            direction='column'
-            width='100%'
-            alignItems='flex-start'
-            justifyContent='space-between'
-            maxWidth='80%'
-            paddingY={4}
-          >
-            {_.get(raid, 'createdAt') && (
-              <HStack>
-                <Text color='gray.100' fontSize='smaller'>
-                  {raidDateLabel}
-                </Text>
-                <Text color='gray.100' fontSize='smaller'>
-                  {displayDate(raidDate)}
-                </Text>
+                <AvatarGroup>
+                  {_.map(rolesRequired, (role: string) => (
+                    <Box>
+                      <Tooltip
+                        label={GUILD_CLASS_DISPLAY[role]}
+                        aria-label={GUILD_CLASS_DISPLAY[role]}
+                      >
+                        <Avatar
+                          key={role}
+                          bgColor={'transparent'}
+                          icon={
+                            <RoleBadge
+                              roleName={GUILD_CLASS_ICON[role]}
+                              width='44px'
+                              height='44px'
+                              border='2px solid'
+                            />
+                          }
+                        />
+                      </Tooltip>
+                    </Box>
+                  ))}
+                </AvatarGroup>
               </HStack>
             )}
-            <Text color='white'>
-              {_.gt(_.size(description), 300)
-                ? `${description?.slice(0, 300)}...`
-                : description}
-            </Text>
+
+            <HStack mr={4} mb={{ base: 4, md: 0 }}>
+              {raid &&
+                (!raidCleric ? (
+                  <Heading
+                    size='sm'
+                    color='white'
+                    mr={4}
+                    mb={{ base: 4, md: 0 }}
+                  >
+                    Needs Cleric!
+                  </Heading>
+                ) : (
+                  <>
+                    <Heading size='sm' color='white'>
+                      Cleric
+                    </Heading>
+                    <MemberAvatar member={raidCleric} />
+                  </>
+                ))}
+            </HStack>
           </Flex>
+        </Flex>
+        <Flex direction='row' justifyContent='space-between' w='100%'>
+          <Stack w='90%'>
+            <Flex
+              direction='column'
+              width='100%'
+              alignItems='flex-start'
+              justifyContent='space-between'
+              maxWidth='80%'
+              paddingY={4}
+            >
+              {_.get(raid, 'createdAt') && (
+                <HStack>
+                  <Text color='gray.100' fontSize='smaller'>
+                    {raidDateLabel}
+                  </Text>
+                  <Text color='gray.100' fontSize='smaller'>
+                    {displayDate(raidDate)}
+                  </Text>
+                </HStack>
+              )}
+              <Text color='white'>
+                {_.gt(_.size(description), 300)
+                  ? `${description?.slice(0, 300)}...`
+                  : description}
+              </Text>
+            </Flex>
 
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} width='100%'>
-            <InfoStack label='Budget' details={budget || '-'} />
-            {_.get(raid, 'raidCategory.raidCategory') && (
-              <InfoStack
-                label='Category'
-                details={
-                  RAID_CATEGORY_DISPLAY[
-                    _.get(raid, 'raidCategory.raidCategory', '-')
-                  ]
-                }
-              />
-            )}
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} width='100%'>
+              <InfoStack label='Budget' details={budget || '-'} />
+              {_.get(raid, 'raidCategory.raidCategory') && (
+                <InfoStack
+                  label='Category'
+                  details={
+                    RAID_CATEGORY_DISPLAY[
+                      _.get(raid, 'raidCategory.raidCategory', '-')
+                    ]
+                  }
+                />
+              )}
 
-            <InfoStack label='Project Type' details={projectType || '-'} />
-          </SimpleGrid>
-        </Stack>
+              <InfoStack label='Project Type' details={projectType || '-'} />
+            </SimpleGrid>
+          </Stack>
 
-        {!_.isEmpty(raidParty) && !upTo780 && (
-          <Stack spacing={4} minW='150px' align='center'>
+          {!_.isEmpty(raidParty) && !upTo780 && (
+            <Stack spacing={4} minW='150px' align='center'>
+              <Heading size='sm' color='white'>
+                Raid Party
+              </Heading>
+
+              <MemberAvatarStack members={raidParty} />
+            </Stack>
+          )}
+        </Flex>
+
+        {!_.isEmpty(raidParty) && upTo780 && (
+          <Stack spacing={4}>
             <Heading size='sm' color='white'>
               Raid Party
             </Heading>
 
-            <MemberAvatarStack members={raidParty} />
+            <MemberAvatarStack members={raidParty} horizontal />
           </Stack>
         )}
-      </Flex>
+        {latestUpdate && (
+          <Flex direction='column' paddingY={4} w='100%'>
+            <HStack spacing={10} align='center'>
+              <Heading size='sm' color='white'>
+                Last Status Update
+              </Heading>
+              <Text>{displayDate(latestUpdate.createdAt)}</Text>
+            </HStack>
 
-      {!_.isEmpty(raidParty) && upTo780 && (
-        <Stack spacing={4}>
-          <Heading size='sm' color='white'>
-            Raid Party
-          </Heading>
-
-          <MemberAvatarStack members={raidParty} horizontal />
-        </Stack>
-      )}
-      {latestUpdate && (
-        <Flex direction='column' paddingY={4} w='100%'>
-          <HStack spacing={10} align='center'>
-            <Heading size='sm' color='white'>
-              Last Status Update
-            </Heading>
-            <Text>{displayDate(latestUpdate.createdAt)}</Text>
-          </HStack>
-
-          <Flex direction='column'>
-            <Tooltip label={latestUpdate.update} placement='top' hasArrow>
-              <span>
-                <Text color='white'>
-                  {_.gt(_.size(latestUpdate.update), 140)
-                    ? `${latestUpdate.update?.slice(0, 140)}...`
-                    : latestUpdate.update}
-                </Text>
-              </span>
-            </Tooltip>
+            <Flex direction='column'>
+              <Tooltip label={latestUpdate.update} placement='top' hasArrow>
+                <span>
+                  <Text color='white'>
+                    {_.gt(_.size(latestUpdate.update), 140)
+                      ? `${latestUpdate.update?.slice(0, 140)}...`
+                      : latestUpdate.update}
+                  </Text>
+                </span>
+              </Tooltip>
+            </Flex>
           </Flex>
-        </Flex>
-      )}
-    </Card>
+        )}
+      </Card>
+    </LinkBox>
   );
 };
 
