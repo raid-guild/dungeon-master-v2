@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useMemo } from 'react';
 import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
-const ZAP_ADDRESS = '0x5eCE0C5d739FaB121796D9BC73cb6aAaE6896b8d';
+const ZAP_ADDRESS = '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628';
 
 const ZAP_DATA = {
   percentAllocations: [50 * 1e4, 50 * 1e4], // raid party split percent allocations // current split main is 100% = 1e6

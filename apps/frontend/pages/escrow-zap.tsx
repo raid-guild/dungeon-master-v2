@@ -39,6 +39,10 @@ const arbitrationOptions = [
 
 const tokenOptions = [
   {
+    label: 'Wrapped xDai',
+    value: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+  },
+  {
     label: 'Wrapped Ether',
     value: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
   },
