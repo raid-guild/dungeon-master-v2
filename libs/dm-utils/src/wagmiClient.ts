@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { createClient } from 'wagmi';
+import { createConfig } from 'wagmi';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
   injectedWallet,
@@ -12,7 +12,9 @@ import {
   ledgerWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 
-import { chains, provider } from './chains';
+import { chains, publicClient } from './chains';
+
+const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
 const connectors = connectorsForWallets([
   {
@@ -20,24 +22,24 @@ const connectors = connectorsForWallets([
 
     wallets: [
       injectedWallet({ chains }),
-      metaMaskWallet({ chains, shimDisconnect: false }),
-      walletConnectWallet({ chains }),
-      ledgerWallet({ chains }),
+      metaMaskWallet({ chains, shimDisconnect: false, projectId }),
+      walletConnectWallet({ chains, projectId }),
+      ledgerWallet({ chains, projectId }),
     ],
   },
   {
     groupName: 'Others',
     wallets: [
-      rainbowWallet({ chains }),
+      rainbowWallet({ chains, projectId }),
       coinbaseWallet({ chains, appName: 'Dungeon Master' }),
-      argentWallet({ chains }),
+      argentWallet({ chains, projectId }),
       braveWallet({ chains }),
     ],
   },
 ]);
 
-export const wagmiClient = createClient({
-  provider,
+export const wagmiConfig = createConfig({
+  publicClient,
   connectors,
   // turn off autoConnect in development
   autoConnect: true,

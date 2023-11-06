@@ -13,7 +13,7 @@ import { useToast, RGThemeProvider } from '@raidguild/design-system';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { wagmiClient, chains } from '@raidguild/dm-utils';
+import { wagmiConfig, chains } from '@raidguild/dm-utils';
 import { SmartEscrowContextProvider } from '../contexts/SmartEscrow';
 
 import '@rainbow-me/rainbowkit/styles.css';
@@ -65,7 +65,7 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
         }}
       />
 
-      <WagmiConfig client={wagmiClient}>
+      <WagmiConfig config={wagmiConfig}>
         <SessionProvider
           session={pageProps.session}
           refetchInterval={8 * 60 * 1000}

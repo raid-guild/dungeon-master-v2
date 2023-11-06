@@ -10,8 +10,11 @@ import { utils } from 'ethers';
 import { useContext, useState } from 'react';
 
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-import { getTxLink, parseTokenAddress } from '../../smartEscrow/utils/helpers';
-import { withdraw } from '../../smartEscrow/utils/invoice';
+import {
+  getTxLink,
+  parseTokenAddress,
+  withdraw,
+} from '@raidguild/escrow-utils';
 
 import { Loader } from './Loader';
 

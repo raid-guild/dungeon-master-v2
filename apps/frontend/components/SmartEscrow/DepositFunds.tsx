@@ -24,7 +24,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Loader } from './Loader';
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 import { QuestionIcon } from './icons/QuestionIcon';
-import { balanceOf } from '../../smartEscrow/utils/erc20';
+import { balanceOf } from '@raidguild/escrow-utils';
 
 import {
   getTxLink,
@@ -33,8 +33,8 @@ import {
   parseTokenAddress,
   checkedAtIndex,
   getCheckedStatus,
-} from '../../smartEscrow/utils/helpers';
-import { getInvoice } from '../../smartEscrow/graphql/getInvoice';
+} from '@raidguild/escrow-utils';
+import { getInvoice } from '@raidguild/escrow-gql';
 
 export const DepositFunds = ({ invoice, deposited, due }) => {
   const { address, token, amounts, currentMilestone } = invoice;

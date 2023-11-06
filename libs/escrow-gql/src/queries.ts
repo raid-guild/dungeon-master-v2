@@ -1,6 +1,8 @@
 // @ts-ignore
 import gql from 'fake-tag';
 
+// TODO migrate to gql-request
+
 export const ALL_INVOICES_QUERY = () => `query allInvoices {
     raids(where: {invoice_address: {_is_null: false}}) {
       id
@@ -58,7 +60,10 @@ export const RAID_BY_V1_ID_QUERY = gql`
   ${RAID_DETAILS_FRAGMENT}
 `;
 
-export const UPDATE_INVOICE_ADDRESS_QUERY = (raidId, invoice_address) => `
+export const UPDATE_INVOICE_ADDRESS_QUERY = (
+  raidId: string,
+  invoice_address: string
+) => `
   mutation MyMutation {
     update_raids(where: {id: {_eq: "${raidId}"}}, _set: {invoice_address: "${invoice_address}"}) {
       returning {

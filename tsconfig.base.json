@@ -19,7 +19,11 @@
       "@raidguild/dm-graphql": ["libs/dm-graphql/src/index.ts"],
       "@raidguild/dm-hooks": ["libs/dm-hooks/src/index.ts"],
       "@raidguild/dm-types": ["libs/dm-types/src/index.ts"],
-      "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"]
+      "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"],
+      "@raidguild/escrow-gql": ["libs/escrow-gql/src/index.ts"],
+      "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"],
+      "contexts/*": ["apps/frontend/contexts/*"],
+      "components/*": ["apps/frontend/components/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

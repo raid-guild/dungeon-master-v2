@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { UPDATE_INVOICE_ADDRESS_QUERY } from '../../smartEscrow/graphql/queries';
+import { UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/dm-graphql';
+
+// TODO gql-request & native client
+// ? user should have token from signing in. we could make this model public
 
 const handler = async (req, res) => {
   const { method } = req;
@@ -19,11 +22,15 @@ const handler = async (req, res) => {
         variables: {},
       };
 
-      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}`, graphqlQuery, {
-        headers: {
-          'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET,
-        },
-      });
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}`,
+        graphqlQuery,
+        {
+          headers: {
+            'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET,
+          },
+        }
+      );
 
       res.status(201).json(data.data);
     } catch (err) {

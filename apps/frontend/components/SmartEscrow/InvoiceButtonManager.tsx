@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 
-import { balanceOf } from '../../smartEscrow/utils/erc20';
+import { balanceOf } from '@raidguild/escrow-utils';
 
 import { DepositFunds } from './DepositFunds';
 import { ReleaseFunds } from './ReleaseFunds';

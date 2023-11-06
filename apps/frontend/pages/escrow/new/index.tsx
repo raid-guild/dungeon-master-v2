@@ -1,18 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
-import SiteLayout from '../../../components/SiteLayout';
+import { register } from '@raidguild/escrow-utils';
 import { Heading, Box, Flex } from '@raidguild/design-system';
 import { useRouter } from 'next/router';
 
-import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-import { PaymentDetailsForm } from '../../../components/SmartEscrow/PaymentDetailsForm';
-import { PaymentsChunkForm } from '../../../components/SmartEscrow/PaymentsChunkForm';
-import { EscrowConfirmation } from '../../../components/SmartEscrow/EscrowConfirmation';
-import { EscrowSuccess } from '../../../components/SmartEscrow/EscrowSuccess';
-import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
-
-import { register } from '../../../smartEscrow/utils/invoice';
+import SiteLayout from 'components/SiteLayout';
+import { SmartEscrowContext } from 'contexts/SmartEscrow';
+import { PaymentDetailsForm } from 'components/SmartEscrow/PaymentDetailsForm';
+import { PaymentsChunkForm } from 'components/SmartEscrow/PaymentsChunkForm';
+import { EscrowConfirmation } from 'components/SmartEscrow/EscrowConfirmation';
+import { EscrowSuccess } from 'components/SmartEscrow/EscrowSuccess';
+import { ProjectInfo } from 'components/SmartEscrow/ProjectInfo';
 
 const NewEscrow = () => {
   const { appState } = useContext(SmartEscrowContext);
