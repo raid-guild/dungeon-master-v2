@@ -2,10 +2,12 @@ import { ethers, BigNumber, utils } from 'ethers';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import _ from 'lodash';
 import { useMemo } from 'react';
-// import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
-import DAO_ESCROW_ZAP_ABI from './contracts/DaoEscrowZap.json';
+import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
 const ZAP_ADDRESS = '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628';
+const DAO_ADDRESS = {
+  100: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986',
+};
 
 const ZAP_DATA = {
   percentAllocations: [50 * 1e4, 50 * 1e4], // raid party split percent allocations // current split main is 100% = 1e6
@@ -15,7 +17,7 @@ const ZAP_DATA = {
   ],
   threshold: 2,
   saltNonce: Math.floor(new Date().getTime() / 1000),
-  arbitration: 1,
+  arbitration: 0,
   isDaoSplit: false,
   token: '0x',
   escrowDeadline: Math.floor(new Date().getTime() / 1000) + 30 * 24 * 60 * 60,
@@ -32,6 +34,10 @@ const separateOwnersAndAllocations = (ownersAndAllocations: any) => {
     ),
   };
 };
+
+// ! resolver should be lexdao for DAO split
+// ! resolver should be dao for non DAO split
+// ! arbitration should be constant
 
 const useEscrowZap = ({
   ownersAndAllocations,
@@ -116,7 +122,7 @@ const useEscrowZap = ({
   const { config, error: prepareError } = usePrepareContractWrite({
     chainId,
     address: ZAP_ADDRESS,
-    abi: DAO_ESCROW_ZAP_ABI,
+    abi: ESCROW_ZAP_ABI,
     functionName:
       'createSafeSplitEscrow(address[],uint32[],uint256[],bytes,bytes,bytes)',
     args: [

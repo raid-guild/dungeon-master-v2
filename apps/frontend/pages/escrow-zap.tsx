@@ -81,10 +81,6 @@ const validationSchema = Yup.object().shape({
   details: Yup.string(),
 });
 
-// ! resolver should be lexdao for DAO split
-// ! resolver should be dao for non DAO split
-// ! arbitration should be constant
-
 const EscrowZap = () => {
   const [hash, setHash] = useState<`0x${string}`>();
   const localForm = useForm({
@@ -149,6 +145,7 @@ const EscrowZap = () => {
   const ownersAndAllocations = watch('ownersAndAllocations');
   const milestones = watch('milestones');
 
+  // TODO handle details pin
   // TODO check decimals on token/milestones
   const { writeAsync } = useEscrowZap({
     ownersAndAllocations,
@@ -172,8 +169,6 @@ const EscrowZap = () => {
     setHash(result.hash);
   };
 
-  // handle pin to ipfs
-
   useEffect(() => {
     reset({
       threshold: 2,
@@ -193,7 +188,7 @@ const EscrowZap = () => {
 
   return (
     <SiteLayout>
-      <Heading>Escrow Zap</Heading>
+      <Heading>[WIP] Escrow Zap</Heading>
       <Box
         as='form'
         onSubmit={handleSubmit(onSubmit)}
@@ -300,6 +295,13 @@ const EscrowZap = () => {
             variant='outline'
             localForm={localForm}
           />
+          <Select
+            name='token'
+            label='Token'
+            variant='outline'
+            options={tokenOptions}
+            localForm={localForm}
+          />
           <Stack>
             <Heading size='sm'>Milestone Amounts</Heading>
             {_.map(milestonesFields, (field, index) => {
@@ -349,14 +351,6 @@ const EscrowZap = () => {
               </Text>
             </Flex>
           </Stack>
-          <Select
-            name='token'
-            label='Token'
-            variant='outline'
-            options={tokenOptions}
-            localForm={localForm}
-          />
-          {/* TODO use datepicker */}
           <DatePicker
             label='Escrow Deadline'
             name='escrowDeadline'

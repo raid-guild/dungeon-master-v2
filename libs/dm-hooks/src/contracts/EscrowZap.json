@@ -1,29 +1,10 @@
 [
-  {
-    "inputs": [],
-    "name": "EscrowNotCreated",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidAllocationsOwnersData",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotAuthorized",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ProjectTeamSplitNotCreated",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "SafeNotCreated",
-    "type": "error"
-  },
+  { "inputs": [], "name": "DaoSplitCreationFailed", "type": "error" },
+  { "inputs": [], "name": "EscrowNotCreated", "type": "error" },
+  { "inputs": [], "name": "InvalidAllocationsOwnersData", "type": "error" },
+  { "inputs": [], "name": "NotAuthorized", "type": "error" },
+  { "inputs": [], "name": "ProjectTeamSplitNotCreated", "type": "error" },
+  { "inputs": [], "name": "SafeNotCreated", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
@@ -130,6 +111,37 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "daoSplit",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "escrow",
+        "type": "address"
+      }
+    ],
+    "name": "SafeSplitsDaoEscrowCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "safe",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "projectTeamSplit",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "escrow",
         "type": "address"
       }
@@ -184,36 +196,20 @@
   {
     "inputs": [],
     "name": "ADMIN",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_owners",
-        "type": "address[]"
-      },
+      { "internalType": "address[]", "name": "_owners", "type": "address[]" },
       {
         "internalType": "uint32[]",
         "name": "_percentAllocations",
@@ -224,16 +220,30 @@
         "name": "_milestoneAmounts",
         "type": "uint256[]"
       },
+      { "internalType": "bytes", "name": "_safeData", "type": "bytes" },
+      { "internalType": "bytes", "name": "_splitsData", "type": "bytes" },
+      { "internalType": "bytes", "name": "_escrowData", "type": "bytes" }
+    ],
+    "name": "createSafeSplitEscrow",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address[]", "name": "_owners", "type": "address[]" },
       {
-        "internalType": "bytes",
-        "name": "_safeData",
-        "type": "bytes"
+        "internalType": "uint32[]",
+        "name": "_percentAllocations",
+        "type": "uint32[]"
       },
       {
-        "internalType": "bytes",
-        "name": "_escrowData",
-        "type": "bytes"
-      }
+        "internalType": "uint256[]",
+        "name": "_milestoneAmounts",
+        "type": "uint256[]"
+      },
+      { "internalType": "bytes", "name": "_safeData", "type": "bytes" },
+      { "internalType": "bytes", "name": "_escrowData", "type": "bytes" }
     ],
     "name": "createSafeSplitEscrow",
     "outputs": [],
@@ -244,36 +254,12 @@
     "inputs": [],
     "name": "getAddresses",
     "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -281,47 +267,23 @@
   {
     "inputs": [],
     "name": "getDistributorFee",
-    "outputs": [
-      {
-        "internalType": "uint32",
-        "name": "",
-        "type": "uint32"
-      }
-    ],
+    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" }
     ],
     "name": "getRoleAdmin",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "grantRole",
     "outputs": [],
@@ -330,36 +292,16 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "hasRole",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
-    ],
+    "inputs": [{ "internalType": "bytes", "name": "_data", "type": "bytes" }],
     "name": "init",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -374,16 +316,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "renounceRole",
     "outputs": [],
@@ -392,16 +326,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "bytes32", "name": "role", "type": "bytes32" },
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "revokeRole",
     "outputs": [],
@@ -410,31 +336,15 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
+      { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
     ],
     "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
-    ],
+    "inputs": [{ "internalType": "bytes", "name": "_data", "type": "bytes" }],
     "name": "updateAddresses",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -442,11 +352,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint32",
-        "name": "_distributorFee",
-        "type": "uint32"
-      }
+      { "internalType": "uint32", "name": "_distributorFee", "type": "uint32" }
     ],
     "name": "updateDistributorFee",
     "outputs": [],
