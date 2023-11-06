@@ -1,9 +1,9 @@
 {
   "build": {
     "builder": "nixpacks",
-    "buildCommand": "yarn build"
+    "buildCommand": "pnpm build"
   },
   "deploy": {
-    "startCommand": "yarn start:production"
+    "startCommand": "pnpm start:production"
   }
 }
