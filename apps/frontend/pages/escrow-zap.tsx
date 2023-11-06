@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SiteLayout from '../components/SiteLayout';
 import {
   Heading,
@@ -19,6 +19,7 @@ import {
 import { FieldValues, useForm, useFieldArray } from 'react-hook-form';
 import { useEscrowZap } from '@raidguild/dm-hooks';
 import _ from 'lodash';
+import { useWaitForTransaction } from 'wagmi';
 import { isAddress } from '@ethersproject/address';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -44,7 +45,7 @@ const tokenOptions = [
   },
   {
     label: 'Wrapped Ether',
-    value: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+    value: '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1',
   },
 ];
 
@@ -85,6 +86,7 @@ const validationSchema = Yup.object().shape({
 // ! arbitration should be constant
 
 const EscrowZap = () => {
+  const [hash, setHash] = useState<`0x${string}`>();
   const localForm = useForm({
     defaultValues: {
       ownersAndAllocations: [{ address: '', percent: '' }],
@@ -93,15 +95,25 @@ const EscrowZap = () => {
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
   });
+
   const {
     handleSubmit,
     reset,
     watch,
     control,
-    register,
+    // register,
     setValue,
     formState: { errors },
   } = localForm;
+  const { data } = useWaitForTransaction({
+    hash,
+  });
+  console.log(data.logs[1]);
+  const test = utils.defaultAbiCoder.decode(
+    ['address', 'address'],
+    data.logs[1].data
+  );
+  console.log(test);
 
   const {
     fields: ownersAndAllocationsFields,
@@ -151,10 +163,13 @@ const EscrowZap = () => {
     details: 'ipfs://',
   });
 
-  const onSubmit = (data: FieldValues) => {
+  const onSubmit = async (data: FieldValues) => {
     console.log(data);
 
-    writeAsync?.();
+    const result = await writeAsync?.();
+    console.log(result);
+
+    setHash(result.hash);
   };
 
   // handle pin to ipfs

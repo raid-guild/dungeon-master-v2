@@ -2,7 +2,8 @@ import { ethers, BigNumber, utils } from 'ethers';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
+// import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
+import DAO_ESCROW_ZAP_ABI from './contracts/DaoEscrowZap.json';
 
 const ZAP_ADDRESS = '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628';
 
@@ -21,11 +22,13 @@ const ZAP_DATA = {
   details: utils.formatBytes32String('ipfs://'),
 };
 
+// TODO sort
 const separateOwnersAndAllocations = (ownersAndAllocations: any) => {
   return {
     owners: _.map(ownersAndAllocations, 'address'),
-    percentAllocations: _.map(ownersAndAllocations, (o) =>
-      _.toNumber(o.percent)
+    percentAllocations: _.map(
+      ownersAndAllocations,
+      (o) => _.toNumber(o.percent) * 1e4
     ),
   };
 };
@@ -61,6 +64,11 @@ const useEscrowZap = ({
     );
   }, [threshold, saltNonce]);
 
+  const encodedSplitData = useMemo(() => {
+    return ethers.utils.defaultAbiCoder.encode(['bool'], [ZAP_DATA.isDaoSplit]);
+  }, [ZAP_DATA.isDaoSplit]);
+
+  console.log(ZAP_DATA.escrowDeadline, _.toNumber(escrowDeadline));
   const encodedEscrowData = useMemo(() => {
     if (
       !utils.isAddress(client) ||
@@ -87,7 +95,7 @@ const useEscrowZap = ({
         arbitration?.value,
         resolver,
         token?.value,
-        _.toNumber(escrowDeadline),
+        Math.floor(_.toNumber(escrowDeadline) / 1000),
         ZAP_DATA.saltNonce,
         utils.formatBytes32String(details),
       ]
@@ -100,17 +108,23 @@ const useEscrowZap = ({
     arbitration?.value,
     resolver,
   ]);
+  console.log('escrow data', encodedEscrowData);
+  console.log('split data', encodedSplitData);
+  console.log('safe data', encodedSafeData);
+  console.log(owners, percentAllocations, milestoneAmounts);
 
   const { config, error: prepareError } = usePrepareContractWrite({
     chainId,
     address: ZAP_ADDRESS,
-    abi: ESCROW_ZAP_ABI,
-    functionName: 'createSafeSplitEscrow',
+    abi: DAO_ESCROW_ZAP_ABI,
+    functionName:
+      'createSafeSplitEscrow(address[],uint32[],uint256[],bytes,bytes,bytes)',
     args: [
       owners,
       percentAllocations,
       milestoneAmounts,
       encodedSafeData,
+      encodedSplitData,
       encodedEscrowData,
     ],
     enabled:
@@ -119,9 +133,10 @@ const useEscrowZap = ({
       !_.isEmpty(percentAllocations) &&
       !_.isEmpty(milestoneAmounts) &&
       !!encodedSafeData &&
+      !!encodedSplitData &&
       !!encodedEscrowData,
   });
-  // console.log(config, prepareError);
+  console.log('prepare error', prepareError);
 
   const { writeAsync, error: writeError } = useContractWrite({
     ...config,
