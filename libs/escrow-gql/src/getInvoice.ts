@@ -27,6 +27,8 @@ export const getInvoice = async (chainId: number, queryAddress: string) => {
   const address = isAddress(queryAddress);
   if (!address) return null;
 
+  // TODO fix
+  // @ts-ignore
   const { data, error } = await clients[chainId]
     .query(invoiceQuery, { address })
     .toPromise();

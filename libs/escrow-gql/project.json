@@ -1,0 +1,37 @@
+{
+  "name": "escrow-gql",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/escrow-gql/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/escrow-gql",
+        "main": "libs/escrow-gql/src/index.ts",
+        "tsConfig": "libs/escrow-gql/tsconfig.lib.json",
+        "assets": ["libs/escrow-gql/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/escrow-gql/**/*.ts",
+          "libs/escrow-gql/package.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["coverage/libs/escrow-gql"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/libs/escrow-gql"
+      }
+    }
+  },
+  "tags": []
+}

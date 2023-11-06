@@ -1,5 +1,7 @@
 import { gql } from 'graphql-request';
 
+// TODO consolidate with escrow-gql lib
+
 export const ALL_INVOICES_QUERY = () => `query allInvoices {
     raids(where: {invoice_address: {_is_null: false}}) {
       id

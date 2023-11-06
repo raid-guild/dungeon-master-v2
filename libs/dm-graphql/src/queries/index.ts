@@ -4,5 +4,6 @@ export * from './consultations';
 export * from './dashboard';
 export * from './members';
 export * from './raids';
+export * from './rips';
 export * from './search';
 export * from './smartEscrow';

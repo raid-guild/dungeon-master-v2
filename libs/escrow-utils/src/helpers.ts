@@ -8,6 +8,7 @@ import {
   wrappedNativeToken,
 } from './constants';
 
+// TODO migrate to useClipboard
 export const copyToClipboard = (value: string) => {
   const tempInput = document.createElement('input');
   tempInput.value = value;
@@ -66,10 +67,11 @@ export const parseTokenAddress = (chainId: number, address: string) => {
   for (const [key, value] of Object.entries(
     NETWORK_CONFIG[chainId]['TOKENS']
   )) {
-    if (value['address'] === address.toLowerCase()) {
+    if ((value as any)['address'] === address.toLowerCase()) {
       return key;
     }
   }
+  return undefined;
 };
 
 export const checkedAtIndex = (index: number, checked: boolean[]) => {

@@ -1,11 +1,11 @@
-import LexDAOLogo from '../../assets/lex-dao.png';
+import LexDAOLogo from './assets/lex-dao.png';
 
-const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
+const INFURA_ID = process.env['NEXT_PUBLIC_INFURA_ID'];
 
 export const IPFS_ENDPOINT = 'https://ipfs.infura.io';
 export const BOX_ENDPOINT = 'https://ipfs.3box.io';
 
-export const NETWORK_CONFIG = {
+export const NETWORK_CONFIG: any = {
   // RaidGuild DAO treasury address V3
   RG_XDAI: '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f'.toLowerCase(),
   // RaidGuild Ethereum Mainnet multisig
@@ -116,7 +116,7 @@ export const NETWORK_CONFIG = {
   },
 };
 
-export const explorerUrls = {
+export const explorerUrls: { [key: number]: string } = {
   1: 'https://etherscan.io',
   4: 'https://rinkeby.etherscan.io',
   5: 'https://goerli.etherscan.io/',
@@ -124,7 +124,7 @@ export const explorerUrls = {
   100: 'https://blockscout.com/poa/xdai',
 };
 
-export const chainIds = {
+export const chainIds: { [key: string]: number } = {
   xdai: 100,
   mainnet: 1,
   rinkeby: 4,
@@ -132,7 +132,7 @@ export const chainIds = {
   goerli: 5,
 };
 
-export const hexChainIds = {
+export const hexChainIds: { [key: string]: string } = {
   xdai: '0x64',
   mainnet: '0x1',
   rinkeby: '0x4',
@@ -140,7 +140,7 @@ export const hexChainIds = {
   goerli: '0x5',
 };
 
-export const networkLabels = {
+export const networkLabels: { [key: number]: string } = {
   100: 'xDai',
   1: 'Ethereum',
   3: 'Ropsten',
@@ -168,7 +168,7 @@ export const rpcUrls = {
   100: 'https://rpc.gnosischain.com',
 };
 
-export const nativeSymbols = {
+export const nativeSymbols: { [key: number]: string } = {
   1: 'ETH',
   4: 'ETH',
   5: 'ETH',
@@ -176,14 +176,14 @@ export const nativeSymbols = {
   100: 'XDAI',
 };
 
-export const wrappedNativeToken = {
+export const wrappedNativeToken: { [key: number]: string } = {
   4: NETWORK_CONFIG[4].WRAPPED_NATIVE_TOKEN,
   5: NETWORK_CONFIG[5].WRAPPED_NATIVE_TOKEN,
   100: NETWORK_CONFIG[100].WRAPPED_NATIVE_TOKEN,
   1: NETWORK_CONFIG[1].WRAPPED_NATIVE_TOKEN,
 };
 
-export const tokenInfo = {
+export const tokenInfo: { [key: number]: string } = {
   4: NETWORK_CONFIG[4].TOKENS,
   5: NETWORK_CONFIG[5].TOKENS,
   100: NETWORK_CONFIG[100].TOKENS,

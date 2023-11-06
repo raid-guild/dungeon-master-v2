@@ -50,7 +50,7 @@ const raidSortOptions = [
   { label: 'Name', value: 'name' },
   { label: 'Start Date', value: 'startDate' },
   { label: 'End Date', value: 'endDate' },
-  { label: 'Create Date', value: 'createDate' },
+  { label: 'Created Date', value: 'createDate' },
 ];
 
 const RaidList = () => {

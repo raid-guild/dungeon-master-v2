@@ -17,6 +17,7 @@ import _ from 'lodash';
 import axios from 'axios';
 import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
+// ? slimmer client here? fetch?
 export const validateRaidId = async (raidId: string) => {
   const { data } = await axios.post('/api/validate', { raidId });
   return data;

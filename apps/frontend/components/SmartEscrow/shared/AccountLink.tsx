@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
 
-import { getAddressLink } from '../../../smartEscrow/utils/helpers';
+import { getAddressLink } from '@raidguild/escrow-utils';
 
 type AccountLinkProps = {
   address: string;

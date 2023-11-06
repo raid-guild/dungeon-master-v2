@@ -4,12 +4,12 @@ import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { AccountLink } from './shared/AccountLink';
 
-import { balanceOf } from '../../smartEscrow/utils/erc20';
 import {
+  balanceOf,
   NETWORK_CONFIG,
   IPFS_ENDPOINT,
-} from '../../smartEscrow/utils/constants';
-import { getTxLink } from '../../smartEscrow/utils/helpers';
+  getTxLink,
+} from '@raidguild/escrow-utils';
 
 const parseTokenAddress = (chainId, address) => {
   for (const [key, value] of Object.entries(

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
 
+// TODO use gql request & native client
+
 const DM_ENDPOINT = process.env.NEXT_PUBLIC_API_URL || '';
 const HASURA_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 

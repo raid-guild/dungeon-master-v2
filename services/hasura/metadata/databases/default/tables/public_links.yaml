@@ -1,0 +1,19 @@
+table:
+  name: links
+  schema: public
+object_relationships:
+  - name: application
+    using:
+      foreign_key_constraint_on: application_id
+  - name: consultation
+    using:
+      foreign_key_constraint_on: consultation_id
+  - name: link_type
+    using:
+      foreign_key_constraint_on: type
+  - name: member
+    using:
+      foreign_key_constraint_on: member_id
+  - name: raid
+    using:
+      foreign_key_constraint_on: raid_id

@@ -40,6 +40,15 @@ export const RAID_STATUS = [
   'Lost',
 ];
 
+export const RIP_STATUS = [
+  'Proposed',
+  'Consideration',
+  'Submitted',
+  'In Progress',
+  'Document',
+  'Final',
+];
+
 export const REGEX_ETH_ADDRESS = /^(0x[a-f0-9]{40})$/i;
 
 export const SERVICES = [

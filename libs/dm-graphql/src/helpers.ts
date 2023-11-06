@@ -5,3 +5,5 @@ export const memberAddressLookup = async () => {
   const result = await client({}).request(MEMBER_ADDRESS_LOOKUP_QUERY);
   return result;
 };
+
+// TODO move getInvoice here

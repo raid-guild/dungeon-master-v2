@@ -4,10 +4,7 @@ import { AccountLink } from './shared/AccountLink';
 import { utils } from 'ethers';
 import * as Web3Utils from 'web3-utils';
 
-import {
-  SPOILS_BASIS_POINTS,
-  NETWORK_CONFIG,
-} from '../../smartEscrow/utils/constants';
+import { SPOILS_BASIS_POINTS, NETWORK_CONFIG } from '@raidguild/escrow-utils';
 
 const REQUIRES_VERIFICATION = true;
 

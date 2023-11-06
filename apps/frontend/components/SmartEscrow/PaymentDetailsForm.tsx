@@ -17,8 +17,8 @@ import { RadioBox } from './RadioBox';
 
 import { QuestionIcon } from './icons/QuestionIcon';
 
-import { getResolverUrl, getSpoilsUrl } from '../../smartEscrow/utils/helpers';
-import { SUPPORTED_NETWORKS } from '../../smartEscrow/graphql/client';
+import { getResolverUrl, getSpoilsUrl } from '@raidguild/escrow-utils';
+import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
 
 const StyledInput = styled(Input)`
   width: 100%;

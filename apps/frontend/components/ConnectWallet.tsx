@@ -21,34 +21,32 @@ import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from '@raidguild/dm-utils';
 import Link from './ChakraNextLink';
 import { SmartEscrowContext } from '../contexts/SmartEscrow';
-import { useSigner } from 'wagmi';
+import { useWalletClient } from 'wagmi';
 import Web3 from 'web3';
-import { rpcUrls } from '../smartEscrow/utils/constants';
 import { ethers } from 'ethers';
 
 const ConnectWallet: React.FC = () => {
   const context = useContext(SmartEscrowContext);
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const { data: signer } = useSigner();
+  const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
-  const showNetwork = false; // maybe unhide, in some cases
 
   useEffect(() => {
-    if (address && signer && chain.id) {
-      const web3Provider = new Web3(window.ethereum);
+    if (address && walletClient && chain.id) {
+      const web3Provider = new Web3((window as any).ethereum);
       const gotProvider = new ethers.providers.Web3Provider(
         web3Provider.currentProvider as any
       );
       context.setAppState({
         ...context.appState,
-        provider: signer,
+        provider: walletClient,
         account: address,
         chainId: chain.id,
         web3Provider: gotProvider,
       });
     }
-  }, [address, signer, chain]);
+  }, [address, walletClient, chain]);
 
   return (
     <ConnectButton.Custom>
@@ -111,22 +109,20 @@ const ConnectWallet: React.FC = () => {
                     placement='bottom-end'
                     autoSelect={false}
                   >
-                    {showNetwork && (
-                      <Button
-                        variant='outline'
-                        width='fit'
-                        onClick={openChainModal}
-                      >
-                        <Image
-                          alt={chain.name ?? 'Chain icon'}
-                          src={chain.iconUrl}
-                          width={25}
-                          height={25}
-                          mr={2}
-                        />
-                        {chain.name}
-                      </Button>
-                    )}
+                    <Button
+                      variant='outline'
+                      width='fit'
+                      onClick={openChainModal}
+                    >
+                      <Image
+                        alt={chain.name ?? 'Chain icon'}
+                        src={chain.iconUrl}
+                        width={25}
+                        height={25}
+                        mr={2}
+                      />
+                      {chain.name}
+                    </Button>
 
                     <MenuButton as={Button} variant='outline' width='fit'>
                       <HStack spacing={3}>
