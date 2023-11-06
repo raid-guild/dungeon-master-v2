@@ -102,13 +102,25 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   consultation,
 }: RaidProps) => {
   const keyLinkItems = [
-    consultation?.link && {
-      label: 'Project Specs',
-      details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-        _.get(consultation, 'availableProjectSpec.availableProjectSpec')
-      ),
-      link: consultation?.link,
-    },
+    // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
+    // consultation form, so we handle edge cases here.
+    // Logic below should be simplified if it ever becomes a required field.
+    consultation?.link
+      ? {
+          label: 'Project Specs',
+          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
+              'YES'
+          ),
+          link: consultation?.link,
+        }
+      : {
+          label: 'Project Specs',
+          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
+              'NONE'
+          ),
+        },
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
       details:
@@ -258,6 +270,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
             _.get(raid, 'airtableId') ||
             _.get(raid, 'v1Id') ||
             _.get(raid, 'id'),
+          copy: true,
         },
         _.get(raid, 'escrowIndex') && {
           label: 'Escrow Index',
@@ -277,7 +290,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <Card variant='filled' padding={2}>
+    <Card variant='filled' padding={2} minWidth={'lg'}>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;
@@ -311,6 +324,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
                         link={_.get(item, 'link')}
+                        copy={_.get(item, 'copy')}
                         key={_.get(item, 'label')}
                       />
                     ))}

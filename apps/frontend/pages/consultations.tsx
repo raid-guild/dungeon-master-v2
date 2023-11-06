@@ -12,6 +12,7 @@ import {
   Spinner,
   Spacer,
   Text,
+  HStack,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
@@ -236,13 +237,17 @@ const ConsultationList = () => {
         subheader={
           <>
             <Flex w='100%' align='center'>
-              <Spacer />
               <Heading>{title} List</Heading>
               <Spacer />
               {count > 0 && (
-                <Text fontSize='3xl' fontWeight={800}>
-                  {count}
-                </Text>
+                <HStack alignItems={'baseline'} gap={1}>
+                  <Text fontSize='3xl' fontWeight={800}>
+                    {count}
+                  </Text>
+                  <Text fontSize='sm' fontWeight={'normal'}>
+                    consultation{count > 1 ? 's' : ''}
+                  </Text>
+                </HStack>
               )}
             </Flex>
             <ConsultationControls />

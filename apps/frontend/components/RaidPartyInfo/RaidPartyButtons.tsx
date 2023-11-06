@@ -1,8 +1,9 @@
-/* eslint-disable react/no-unstable-nested-components */
-// TODO fix these
 import { useState } from 'react';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
+import { FiPlus, FiX } from 'react-icons/fi';
+import { Controller, useForm } from 'react-hook-form';
+import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
 import {
   VStack,
   HStack,
@@ -12,18 +13,21 @@ import {
   Box,
   Icon,
   Flex,
+  Select,
 } from '@raidguild/design-system';
-import { FiPlus, FiX } from 'react-icons/fi';
 import {
-  memberDisplayName,
   GUILD_CLASS_DISPLAY,
+  GUILD_CLASS_OPTIONS,
   IMember,
   IRaid,
+  IRoleRemoveMany,
+  IRoleRequiredInsert,
+  memberDisplayName,
   membersExceptRaidParty,
-  SIDEBAR_ACTION_STATES,
   rolesExceptRequiredRoles,
+  SIDEBAR_ACTION_STATES,
 } from '@raidguild/dm-utils';
-import { useRaidPartyAdd, useAddRolesRequired } from '@raidguild/dm-hooks';
+import { useRaidPartyAdd, useUpdateRolesRequired } from '@raidguild/dm-hooks';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;
@@ -33,8 +37,6 @@ type RaidPartyButtonsProps = {
   button?: string;
   setButton?: (button: string) => void;
 };
-
-// TODO swap for better selects
 
 const RaidPartyButtons = ({
   raid,
@@ -47,39 +49,65 @@ const RaidPartyButtons = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const localMembers = membersExceptRaidParty(members, raidParty, cleric);
+  const requiredRoles: string[] = _.map(
+    _.get(raid, 'raidsRolesRequired'),
+    'role'
+  );
+  const rolesFormDefaultValues = _.map(requiredRoles, (role) => ({
+    value: role,
+    label: GUILD_CLASS_DISPLAY[role],
+  }));
+
   const localRoles = rolesExceptRequiredRoles(
     _.keys(GUILD_CLASS_DISPLAY),
     raid
   );
-  const [roleToAdd, setRoleToAdd] = useState<string>();
+  const localForm = useForm({
+    mode: 'all',
+  });
+  const { control, handleSubmit } = localForm;
+  const [selectedRoleOptions, setSelectedRoleOptions] = useState<Option>();
   const [raiderToAdd, setRaiderToAdd] = useState<string>();
 
-  const { mutateAsync: updateRolesRequired } = useAddRolesRequired({
+  const { mutateAsync: updateRolesRequired } = useUpdateRolesRequired({
     token,
   });
   const { mutateAsync: addRaider } = useRaidPartyAdd({ token });
 
-  const submitAddRole = async () => {
-    // TODO check against current localRoles
+  const submitUpdateRoles = async () => {
+    const selectedRoleValues: string[] = _.map(
+      selectedRoleOptions,
+      (selection: Option) => selection.value
+    );
+    const rolesAdded: string[] = _.difference(
+      selectedRoleValues,
+      requiredRoles
+    );
+    const rolesRemoved: string[] = _.difference(
+      requiredRoles,
+      selectedRoleValues
+    );
+    const raidId = _.get(raid, 'id');
+
+    const insertRoles: IRoleRequiredInsert[] = _.map(rolesAdded, (role) => ({
+      raid_id: raidId,
+      role,
+    }));
+    const rolesRemovedWhere: IRoleRemoveMany = {
+      _and: {
+        role: { _in: rolesRemoved },
+        raid_id: { _eq: raidId },
+      },
+    };
     await updateRolesRequired({
-      raidId: _.get(raid, 'id'),
-      role: roleToAdd,
+      insertRoles: insertRoles,
+      where: rolesRemovedWhere,
     });
+
     setTimeout(() => {
-      setRoleToAdd(undefined);
       setButton(SIDEBAR_ACTION_STATES.none);
     }, 250);
   };
-
-  // TODO clear click for selecting roles to remove in one save
-  // const clearRoleClick = () => {
-  //   if (clearRoles) {
-  //     // setClearRoles(false);
-  //     setLocalRoles(_.get(raid, 'rolesRequired'));
-  //   } else {
-  //     // setClearRoles(true);
-  //   }
-  // };
 
   const submitAddRaider = async () => {
     await addRaider({
@@ -99,7 +127,7 @@ const RaidPartyButtons = ({
       leftIcon={<FiPlus />}
       onClick={() => setButton(SIDEBAR_ACTION_STATES.select)}
     >
-      Add Role or Raider
+      Add Raider or Update Roles
     </Button>
   );
 
@@ -118,37 +146,54 @@ const RaidPartyButtons = ({
         variant='outline'
         onClick={() => {
           setButton(SIDEBAR_ACTION_STATES.role);
-          setRoleToAdd(_.keys(GUILD_CLASS_DISPLAY)[0]);
         }}
       >
-        Add Role
+        Update Roles
       </Button>
     </HStack>
   );
 
   const SelectRole = () => (
-    <Flex justify='space-between' gap={1} w='100%'>
-      <IconButton
-        variant='outline'
-        icon={<Icon as={FiX} color='primary.500' />}
-        aria-label='Clear Set Role Required for Raid'
-        onClick={() => {
-          setButton(SIDEBAR_ACTION_STATES.none);
-          setRoleToAdd(undefined);
-        }}
-      />
-      <ChakraSelect
-        onChange={(e) => setRoleToAdd(e.target.value)}
-        value={roleToAdd}
-      >
-        {_.map(localRoles, (key: string) => (
-          <option value={key} key={key}>
-            {GUILD_CLASS_DISPLAY[key]}
-          </option>
-        ))}
-      </ChakraSelect>
-      <Button onClick={submitAddRole}>Add</Button>
-    </Flex>
+    // Wrap this whole component in a Chakra component to make it fill the width of its container div
+
+    <Box width='full'>
+      <form onSubmit={handleSubmit(submitUpdateRoles)}>
+        <Controller
+          name='updateRolesSelect'
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              variant='outline'
+              isMulti
+              placeholder='Select Roles'
+              isClearable={false}
+              options={GUILD_CLASS_OPTIONS}
+              defaultValue={rolesFormDefaultValues}
+              localForm={localForm}
+              // Note: Below warning suggests this is a workaround to react hook form's intended use
+              // "Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?"
+              onChange={(values) => {
+                setSelectedRoleOptions(values);
+              }}
+              value={selectedRoleOptions}
+            />
+          )}
+        />
+        <HStack justify={'center'} gap={1} w='100%'>
+          <Button
+            variant={'outline'}
+            aria-label='Clear Set Role Required for Raid'
+            onClick={() => {
+              setButton(SIDEBAR_ACTION_STATES.none);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type='submit'>Update</Button>
+        </HStack>
+      </form>
+    </Box>
   );
 
   // TODO handle loading a bit better

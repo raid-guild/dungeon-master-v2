@@ -11,6 +11,7 @@ import {
   Text,
   ChakraSelect,
   SimpleGrid,
+  HStack,
 } from '@raidguild/design-system';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -51,7 +52,7 @@ const MemberList = () => {
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('ALL'); // Is Raiding
+  const [memberStatusFilter, setMemberStatusFilter] = useState<string>('true'); // Is Raiding
   const [memberSort, setMemberSort] = useState<string>('name'); // Name
   const [memberRolesFilter, setMemberRolesFilter] = useState<string>('ALL'); // All Roles
 
@@ -119,7 +120,7 @@ const MemberList = () => {
           name='memberStatus'
           id='raidRoles'
           value={memberStatusFilter}
-          defaultValue='ALL'
+          defaultValue='true'
           onChange={(e) => {
             handleMemberStatusFilterChange(e.target.value);
           }}
@@ -186,13 +187,17 @@ const MemberList = () => {
         subheader={
           <>
             <Flex w='100%' align='center'>
-              <Spacer />
               <Heading>{title} List</Heading>
               <Spacer />
               {count > 0 && (
-                <Text fontSize='3xl' fontWeight={800}>
-                  {count}
-                </Text>
+                <HStack alignItems={'baseline'} gap={1}>
+                  <Text fontSize='3xl' fontWeight={800}>
+                    {count}
+                  </Text>
+                  <Text fontSize='sm' fontWeight={'normal'}>
+                    member{count > 1 ? 's' : ''}
+                  </Text>
+                </HStack>
               )}
             </Flex>
             <MemberControls />
