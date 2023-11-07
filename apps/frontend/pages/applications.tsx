@@ -190,7 +190,7 @@ const ApplicationList = () => {
         subheader={
           <>
             <Flex w='100%' align='center'>
-              <Heading variant='noShadow'>{title} List</Heading>
+              <Heading>{title} List</Heading>
               <Spacer />
               {count > 0 && (
                 <HStack alignItems={'baseline'} gap={1}>

@@ -51,9 +51,7 @@ const Raid = ({ raidId }) => {
           >
             {startOrEnd && <Box w='15%' />}
 
-            <Heading size='lg' variant='noShadow'>
-              {_.get(raid, 'name')}
-            </Heading>
+            <Heading size='lg'>{_.get(raid, 'name')}</Heading>
 
             <RaidDate
               startDate={_.get(raid, 'startDate')}

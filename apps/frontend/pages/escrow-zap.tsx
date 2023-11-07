@@ -15,19 +15,22 @@ import {
   IconButton,
   Icon,
   DatePicker,
+  Link,
+  Card,
 } from '@raidguild/design-system';
 import { FieldValues, useForm, useFieldArray } from 'react-hook-form';
 import { useEscrowZap } from '@raidguild/dm-hooks';
 import _ from 'lodash';
-import { useWaitForTransaction } from 'wagmi';
+import { useChainId, useNetwork, useWaitForTransaction } from 'wagmi';
 import { isAddress } from '@ethersproject/address';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
 import { DevTool } from '@hookform/devtools';
 import { utils } from 'ethers';
+import { Hex, zeroAddress } from 'viem';
 
-const arbitrationOptions = [
+const ARBITRATION_OPTIONS = [
   {
     label: 'Something',
     value: 1,
@@ -38,16 +41,32 @@ const arbitrationOptions = [
   },
 ];
 
-const tokenOptions = [
-  {
-    label: 'Wrapped xDai',
-    value: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
-  },
-  {
-    label: 'Wrapped Ether',
-    value: '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1',
-  },
-];
+const TOKEN_OPTIONS = {
+  5: [
+    {
+      label: 'Wrapped xDai',
+      value: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+    },
+    {
+      label: 'Wrapped Ether',
+      value: '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1',
+    },
+  ],
+  100: [
+    {
+      label: 'Wrapped xDai',
+      value: '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d',
+    },
+    {
+      label: 'Wrapped Ether',
+      value: '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1',
+    },
+  ],
+};
+
+const SAFE_URL = 'https://app.safe.global/home';
+const SPLITS_URL = 'https://app.0xsplits.org';
+// const ESCROW_URL =
 
 const validationSchema = Yup.object().shape({
   ownersAndAllocations: Yup.array().of(
@@ -91,25 +110,28 @@ const EscrowZap = () => {
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
   });
+  const { chain } = useNetwork();
 
   const {
     handleSubmit,
     reset,
     watch,
     control,
-    // register,
     setValue,
     formState: { errors },
   } = localForm;
+
   const { data } = useWaitForTransaction({
     hash,
   });
-  console.log(data?.logs?.[1]);
-  // const test = utils.defaultAbiCoder.decode(
-  //   ['address', 'address'],
-  //   data.logs[1].data
-  // );
-  // console.log(test);
+  let addresses: Hex[];
+  if (data?.logs?.[6]?.data) {
+    addresses = utils.defaultAbiCoder.decode(
+      ['address', 'address', 'address', 'address'],
+      data?.logs?.[6]?.data
+    ) as Hex[];
+  }
+  const [safe, projectTeamSplit, daoSplit, escrow] = addresses || [];
 
   const {
     fields: ownersAndAllocationsFields,
@@ -144,6 +166,7 @@ const EscrowZap = () => {
   const isDaoSplit = watch('isDaoSplit');
   const ownersAndAllocations = watch('ownersAndAllocations');
   const milestones = watch('milestones');
+  console.log(isDaoSplit);
 
   // TODO handle details pin
   // TODO check decimals on token/milestones
@@ -164,7 +187,6 @@ const EscrowZap = () => {
     console.log(data);
 
     const result = await writeAsync?.();
-    console.log(result);
 
     setHash(result?.hash);
   };
@@ -172,8 +194,8 @@ const EscrowZap = () => {
   useEffect(() => {
     reset({
       threshold: 2,
-      arbitration: arbitrationOptions[0],
-      token: tokenOptions[0],
+      arbitration: ARBITRATION_OPTIONS[0],
+      token: TOKEN_OPTIONS[chain.id][0],
       isDaoSplit: false,
       // 30 days from now
       escrowDeadline:
@@ -183,12 +205,12 @@ const EscrowZap = () => {
 
   const percentAllocated = _.sumBy(
     ownersAndAllocations,
-    (owner) => _.toNumber(owner.percent) || 0
+    (owner: { percent: string }) => _.toNumber(owner.percent) || 0
   );
 
   return (
     <SiteLayout>
-      <Heading>[WIP] Escrow Zap</Heading>
+      <Heading>Escrow Zap</Heading>
       <Box
         as='form'
         onSubmit={handleSubmit(onSubmit)}
@@ -234,7 +256,7 @@ const EscrowZap = () => {
                       step={5}
                       min={0}
                       max={100}
-                      placeholder='40%'
+                      placeholder='40'
                       variant='outline'
                       localForm={localForm}
                     />
@@ -245,7 +267,7 @@ const EscrowZap = () => {
                     )}
                   </Stack>
                   <Box
-                    // a bit hacky here
+                    // a bit hacky here to keep the alignment
                     my={errors.ownersAndAllocations?.[index] && 'auto'}
                     position={
                       !errors.ownersAndAllocations?.[index]
@@ -299,7 +321,7 @@ const EscrowZap = () => {
             name='token'
             label='Token'
             variant='outline'
-            options={tokenOptions}
+            options={TOKEN_OPTIONS[chain?.id]}
             localForm={localForm}
           />
           <Stack>
@@ -382,7 +404,7 @@ const EscrowZap = () => {
             name='arbitration'
             label='Arbitration'
             variant='outline'
-            options={arbitrationOptions}
+            options={ARBITRATION_OPTIONS}
             localForm={localForm}
           />
 
@@ -392,6 +414,53 @@ const EscrowZap = () => {
             </Button>
           </Flex>
         </Stack>
+        {addresses && (
+          <Card bg='purple.300'>
+            <Stack>
+              <Heading size='md'>Safe, Split(s) & Escrow created</Heading>
+              <Text>
+                Safe:{' '}
+                <Link
+                  href={`${SAFE_URL}?safe=${chain.name.slice(0, 3)}:${safe}`}
+                  isExternal
+                >
+                  {safe}
+                </Link>
+              </Text>
+              <Text>
+                Project Team Split:{' '}
+                <Link
+                  href={`${SPLITS_URL}/accounts/${projectTeamSplit}?chainId=${chain.id}`}
+                  isExternal
+                >
+                  {projectTeamSplit}
+                </Link>
+              </Text>
+              {daoSplit !== zeroAddress && (
+                <Text>
+                  DAO Split:{' '}
+                  <Link
+                    href={`${SPLITS_URL}/accounts/${daoSplit}?chainId=${chain.id}`}
+                    isExternal
+                  >
+                    {daoSplit}
+                  </Link>
+                </Text>
+              )}
+              <Text>
+                Escrow:{' '}
+                <Link
+                  href={`${
+                    chain.blockExplorers?.etherscan ||
+                    chain.blockExplorers?.default
+                  }/address/${escrow}`}
+                >
+                  {escrow}
+                </Link>
+              </Text>
+            </Stack>
+          </Card>
+        )}
         <DevTool control={control} />
       </Box>
     </SiteLayout>

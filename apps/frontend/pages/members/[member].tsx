@@ -70,9 +70,7 @@ const Member = ({ memberAddress }: Props) => {
             direction={['column', null, null, 'row']}
           >
             <MemberAvatar member={member} />
-            <Heading size='lg' variant='noShadow'>
-              {memberDisplayName(member)}
-            </Heading>
+            <Heading size='lg'>{memberDisplayName(member)}</Heading>
             <HStack spacing={4}>
               <VStack align='flex-end'>
                 <Badge background='whiteAlpha.300' fontSize='sm'>

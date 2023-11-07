@@ -14,7 +14,11 @@ import {
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
 import { GetServerSidePropsContext } from 'next';
-import { useConsultationDetail, useConsultationUpdate, useRaidCreate } from '@raidguild/dm-hooks';
+import {
+  useConsultationDetail,
+  useConsultationUpdate,
+  useRaidCreate,
+} from '@raidguild/dm-hooks';
 
 import SiteLayout from '../../components/SiteLayout';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
@@ -71,7 +75,7 @@ const Consultation = ({ consultationId }: Props) => {
         subheader={
           <Flex w='100%' justify='space-between' align='center'>
             <Spacer />
-            <Heading variant='noShadow'>{_.get(consultation, 'name')}</Heading>
+            <Heading>{_.get(consultation, 'name')}</Heading>
             <Spacer />
             <Box>
               <Badge>

@@ -191,26 +191,20 @@ export const Accounting = () => {
           ...balances,
           ...Object.values(tokenPrices),
         ]}
-        subheader={<Heading variant='noShadow'>Accounting</Heading>}
+        subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase='No transactions'
         error={error}
       >
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
             <Tab>
-              <Heading size='sm' variant='noShadow'>
-                Balances
-              </Heading>
+              <Heading size='sm'>Balances</Heading>
             </Tab>
             <Tab>
-              <Heading size='sm' variant='noShadow'>
-                Transactions
-              </Heading>
+              <Heading size='sm'>Transactions</Heading>
             </Tab>
             <Tab>
-              <Heading size='sm' variant='noShadow'>
-                Spoils
-              </Heading>
+              <Heading size='sm'>Spoils</Heading>
             </Tab>
           </TabList>
 

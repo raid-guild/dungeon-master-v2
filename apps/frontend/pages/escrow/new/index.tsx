@@ -70,9 +70,7 @@ const NewEscrow = () => {
     <>
       <NextSeo title='Smart Escrow' />
 
-      <SiteLayout
-        subheader={<Heading variant='noShadow'>Register New Escrow</Heading>}
-      >
+      <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
         <Flex
           width='100%'
           direction='row'
