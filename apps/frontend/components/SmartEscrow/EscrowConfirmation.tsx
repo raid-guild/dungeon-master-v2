@@ -1,5 +1,4 @@
-import { Flex, HStack } from '@chakra-ui/react';
-import { Button, Text } from '@raidguild/design-system';
+import { Button, Text, Flex, HStack } from '@raidguild/design-system';
 import { AccountLink } from './shared/AccountLink';
 import { utils } from 'ethers';
 import * as Web3Utils from 'web3-utils';

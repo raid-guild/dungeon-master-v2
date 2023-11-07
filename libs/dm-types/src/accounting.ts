@@ -100,6 +100,7 @@ export type ITokenBalance = {
 };
 
 export type ITokenBalanceLineItem = ITokenBalance & {
+  id: string;
   tokenExplorerLink: string;
   inflow: {
     tokenValue: number;

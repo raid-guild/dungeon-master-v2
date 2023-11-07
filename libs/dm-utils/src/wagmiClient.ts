@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { createConfig } from 'wagmi';
+import { createConfig, WagmiConfig } from 'wagmi';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
   injectedWallet,
@@ -38,7 +38,7 @@ const connectors = connectorsForWallets([
   },
 ]);
 
-export const wagmiConfig = createConfig({
+export const wagmiConfig: any = createConfig({
   publicClient,
   connectors,
   // turn off autoConnect in development

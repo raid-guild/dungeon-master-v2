@@ -18,7 +18,7 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
     enabled: !!address,
   });
   const { data: ensAvatar, isFetched } = useEnsAvatar({
-    address,
+    name: ensName,
     chainId: mainnet.id,
     enabled: !!address,
     cacheTime: 6_000,

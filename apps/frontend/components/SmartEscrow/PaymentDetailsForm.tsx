@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { utils } from 'ethers';
 import {
   Flex,
-  Input,
+  ChakraInput as Input,
   Button,
   FormControl,
   FormLabel,
   Link,
   Tooltip,
   HStack,
-} from '@chakra-ui/react';
+} from '@raidguild/design-system';
 
 import styled from '@emotion/styled';
 

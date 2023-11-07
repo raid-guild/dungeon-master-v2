@@ -1,12 +1,13 @@
 import {
+  Text,
+  Button,
   Flex,
   FormControl,
   FormLabel,
   InputGroup,
-  Input,
+  ChakraInput as Input,
   InputRightElement,
-} from '@chakra-ui/react';
-import { Text, Button } from '@raidguild/design-system';
+} from '@raidguild/design-system';
 
 import styled from '@emotion/styled';
 

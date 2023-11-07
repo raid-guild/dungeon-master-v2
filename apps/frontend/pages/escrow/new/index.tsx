@@ -1,8 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { useToast } from '@chakra-ui/react';
 import { NextSeo } from 'next-seo';
 import { register } from '@raidguild/escrow-utils';
-import { Heading, Box, Flex } from '@raidguild/design-system';
+import {
+  Heading,
+  Box,
+  Flex,
+  useChakraToast as useToast,
+} from '@raidguild/design-system';
 import { useRouter } from 'next/router';
 
 import SiteLayout from 'components/SiteLayout';

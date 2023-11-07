@@ -1,5 +1,5 @@
 import { Link, Tooltip } from '@raidguild/design-system';
-import { createColumnHelper } from '@tanstack/react-table';
+import { createColumnHelper, ColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '@raidguild/dm-types';
 import { minMaxNumberFilter, sortNumeric } from '@raidguild/dm-utils';
 import DataTable from './DataTable';
@@ -83,7 +83,7 @@ const BalancesTable = ({ data }: BalancesTableProps) => (
     // @ts-ignore
     columns={columns}
     data={data}
-    sort={[{ id: 'tokenSymbol', desc: false }]}
+    sort={{ id: 'tokenSymbol', desc: false }}
   />
 );
 

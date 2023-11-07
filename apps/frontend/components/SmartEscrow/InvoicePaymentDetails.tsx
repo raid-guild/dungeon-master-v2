@@ -1,5 +1,13 @@
-import { Flex, HStack, VStack, Text, Divider, Link } from '@chakra-ui/react';
-import { Card, Stack } from '@raidguild/design-system';
+import {
+  Card,
+  Stack,
+  Flex,
+  HStack,
+  VStack,
+  Text,
+  Divider,
+  Link,
+} from '@raidguild/design-system';
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { AccountLink } from './shared/AccountLink';

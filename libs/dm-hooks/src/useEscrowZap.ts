@@ -9,6 +9,15 @@ const DAO_ADDRESS = {
   100: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986',
 };
 
+declare module 'wagmi' {
+  interface WriteContractResult {
+    txHash: string;
+    status: string;
+    error: string;
+    events: any[];
+  }
+}
+
 const ZAP_DATA = {
   percentAllocations: [50 * 1e4, 50 * 1e4], // raid party split percent allocations // current split main is 100% = 1e6
   milestoneAmounts: [
@@ -51,7 +60,11 @@ const useEscrowZap = ({
   token,
   escrowDeadline,
   details,
-}: UseEscrowZapProps) => {
+}: UseEscrowZapProps): {
+  writeAsync: () => Promise<any> | undefined;
+  prepareError: Error;
+  writeError: Error;
+} => {
   const chainId = useChainId();
 
   const { owners, percentAllocations } =
@@ -74,7 +87,7 @@ const useEscrowZap = ({
     return ethers.utils.defaultAbiCoder.encode(['bool'], [ZAP_DATA.isDaoSplit]);
   }, [ZAP_DATA.isDaoSplit]);
 
-  console.log(ZAP_DATA.escrowDeadline, _.toNumber(escrowDeadline));
+  // console.log(ZAP_DATA.escrowDeadline, _.toNumber(escrowDeadline));
   const encodedEscrowData = useMemo(() => {
     if (
       !utils.isAddress(client) ||
@@ -114,10 +127,10 @@ const useEscrowZap = ({
     arbitration?.value,
     resolver,
   ]);
-  console.log('escrow data', encodedEscrowData);
-  console.log('split data', encodedSplitData);
-  console.log('safe data', encodedSafeData);
-  console.log(owners, percentAllocations, milestoneAmounts);
+  // console.log('escrow data', encodedEscrowData);
+  // console.log('split data', encodedSplitData);
+  // console.log('safe data', encodedSafeData);
+  // console.log(owners, percentAllocations, milestoneAmounts);
 
   const { config, error: prepareError } = usePrepareContractWrite({
     chainId,

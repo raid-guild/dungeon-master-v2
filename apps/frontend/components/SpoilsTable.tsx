@@ -13,7 +13,7 @@ interface SpoilsTableProps {
   data: ISpoils[];
 }
 
-const columnHelper = createColumnHelper<ISpoils>();
+const columnHelper = createColumnHelper<any>();
 
 const columns = [
   columnHelper.accessor('date', {

@@ -293,7 +293,8 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
     })
   );
 
-  return tokenBalanceLineItems;
+  // TODO fix type
+  return tokenBalanceLineItems as unknown as any;
 };
 
 const formatSpoils = async (

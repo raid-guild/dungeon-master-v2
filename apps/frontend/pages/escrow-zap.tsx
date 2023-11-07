@@ -104,12 +104,12 @@ const EscrowZap = () => {
   const { data } = useWaitForTransaction({
     hash,
   });
-  console.log(data.logs[1]);
-  const test = utils.defaultAbiCoder.decode(
-    ['address', 'address'],
-    data.logs[1].data
-  );
-  console.log(test);
+  console.log(data?.logs?.[1]);
+  // const test = utils.defaultAbiCoder.decode(
+  //   ['address', 'address'],
+  //   data.logs[1].data
+  // );
+  // console.log(test);
 
   const {
     fields: ownersAndAllocationsFields,
@@ -166,7 +166,7 @@ const EscrowZap = () => {
     const result = await writeAsync?.();
     console.log(result);
 
-    setHash(result.hash);
+    setHash(result?.hash);
   };
 
   useEffect(() => {

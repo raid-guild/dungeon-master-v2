@@ -6,7 +6,7 @@ import {
   Text,
   VStack,
   Image,
-} from '@chakra-ui/react';
+} from '@raidguild/design-system';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useContext, useState } from 'react';
 import {

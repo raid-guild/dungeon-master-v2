@@ -1,4 +1,4 @@
-import { HStack, Text, Tooltip } from '@chakra-ui/react';
+import { HStack, Text, Tooltip } from '@raidguild/design-system';
 import { QuestionIcon } from './icons/QuestionIcon';
 
 import { AccountLink } from './shared/AccountLink';

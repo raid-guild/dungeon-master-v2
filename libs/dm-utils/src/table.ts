@@ -32,11 +32,7 @@ export const getUsdValue = <T extends { priceConversion?: number }>(
   return n * priceConversion;
 };
 
-export const sortNumeric = <T>(
-  rowA: Row<T>,
-  rowB: Row<T>,
-  columnId: string
-) => {
+export const sortNumeric = <T>(rowA: any, rowB: any, columnId: string) => {
   const n1 = Number(rowA.getValue(columnId));
   const n2 = Number(rowB.getValue(columnId));
   if (n1 < n2) return -1;
@@ -62,7 +58,7 @@ const rankValue = <T extends Date | number>(
 };
 
 export const minMaxNumberFilter = <TRow>(
-  row: Row<TRow>,
+  row: any, // Row<TRow>,
   columnId: string,
   columnFilter: number[],
   addMeta: (itemRank: RankingInfo) => void
@@ -86,7 +82,7 @@ export const minMaxNumberFilter = <TRow>(
 };
 
 export const minMaxDateFilter = <TRow>(
-  row: Row<TRow>,
+  row: any, // Row<TRow>,
   columnId: string,
   columnFilter: string[],
   addMeta: (itemRank: RankingInfo) => void

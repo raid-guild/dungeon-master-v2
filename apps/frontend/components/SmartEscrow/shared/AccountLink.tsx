@@ -1,4 +1,4 @@
-import { Flex, Link, Text } from '@chakra-ui/react';
+import { Flex, Link, Text } from '@raidguild/design-system';
 import React, { useContext } from 'react';
 
 import { SmartEscrowContext } from '../../../contexts/SmartEscrow';

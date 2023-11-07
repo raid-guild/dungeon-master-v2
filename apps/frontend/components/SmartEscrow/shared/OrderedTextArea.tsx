@@ -1,4 +1,10 @@
-import { VStack, Flex, Text, Tooltip, Textarea } from '@chakra-ui/react';
+import {
+  VStack,
+  Flex,
+  Text,
+  Tooltip,
+  ChakraTextarea as Textarea,
+} from '@raidguild/design-system';
 import { QuestionIcon } from '../icons/QuestionIcon';
 
 type OrderedTextAreaType = {

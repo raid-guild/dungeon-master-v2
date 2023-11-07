@@ -15,7 +15,7 @@ interface TransactionsTableProps {
   data: IVaultTransaction[];
 }
 
-const columnHelper = createColumnHelper<IVaultTransaction>();
+const columnHelper = createColumnHelper<any>();
 
 const columns = [
   columnHelper.accessor('date', {

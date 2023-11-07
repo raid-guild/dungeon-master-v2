@@ -5,16 +5,9 @@ import {
   useReactTable,
   flexRender,
   ColumnFiltersState,
-  getCoreRowModel,
-  getFilteredRowModel,
   ColumnDef,
   SortingState,
-  getSortedRowModel,
   RowData,
-  getFacetedRowModel,
-  getFacetedMinMaxValues,
-  getFacetedUniqueValues,
-  getPaginationRowModel,
 } from '@tanstack/react-table';
 import {
   Flex,
@@ -35,18 +28,10 @@ import {
 } from '@raidguild/design-system';
 import Filter from './Filter';
 
-declare module '@tanstack/table-core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData extends RowData, TValue> {
-    dataType?: 'numeric' | 'datetime' | 'enum' | 'string';
-    hidden?: boolean;
-  }
-}
-
-export type DataTableProps<Data extends object> = ThemingProps & {
+export type DataTableProps<TData extends object> = ThemingProps & {
   id: string;
-  data: Data[];
-  columns: ColumnDef<Data, unknown>[];
+  data: TData[];
+  columns: ColumnDef<any, unknown>[];
   sort?: SortingState;
 };
 
@@ -54,28 +39,24 @@ const DataTable = ({
   id,
   data,
   columns,
-  sort = [],
+  sort,
   ...props
 }: DataTableProps<object>) => {
-  const [sorting, setSorting] = useState<SortingState>(sort);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState | []>(sort);
+  const [columnFilters, setColumnFilters] = useState<
+    ColumnFiltersState<any> | undefined
+  >(undefined);
   const [columnVisibility, setColumnVisibility] = useState(
     Object.assign(
       {},
-      ...columns.map((c) => ({ [c.id]: !c.meta?.hidden ?? true }))
+      ...columns.map((c: any) => ({ [c.id]: !c.meta?.hidden ?? true }))
     )
   );
 
   const table = useReactTable({
     columns,
     data,
-    getCoreRowModel: getCoreRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
@@ -89,7 +70,6 @@ const DataTable = ({
         pageIndex: 0,
       },
     },
-    getPaginationRowModel: getPaginationRowModel(),
     // debugTable: true,
     // debugHeaders: true,
     // debugColumns: true,

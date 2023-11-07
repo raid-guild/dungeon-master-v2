@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { SimpleGrid, Button } from '@raidguild/design-system';
 import {
-  Modal,
+  SimpleGrid,
+  Button,
+  ChakraModal as Modal,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-} from '@chakra-ui/react';
+} from '@raidguild/design-system';
 import { BigNumber } from 'ethers';
 
 import { balanceOf } from '@raidguild/escrow-utils';

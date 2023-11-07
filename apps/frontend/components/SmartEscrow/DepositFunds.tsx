@@ -7,17 +7,15 @@ import {
   Tooltip,
   VStack,
   useToast,
-} from '@raidguild/design-system';
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  Input,
+  // Alert,
+  // AlertIcon,
+  // AlertTitle,
+  ChakraInput as Input,
   InputGroup,
   InputRightElement,
-  Select,
-  Checkbox,
-} from '@chakra-ui/react';
+  ChakraSelect as Select,
+  ChakraCheckbox as Checkbox,
+} from '@raidguild/design-system';
 import { BigNumber, BigNumberish, Contract, utils } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 
@@ -234,7 +232,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
           <InputRightElement w={isWRAPPED ? '6rem' : '3.5rem'}>
             {isWRAPPED ? (
               <Select
-                onChange={(e) => setPaymentType(Number(e.target.value))}
+                onChange={(e: any) => setPaymentType(Number(e.target.value))}
                 value={paymentType}
                 bg='black'
                 color='primary.300'
@@ -248,14 +246,14 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
             )}
           </InputRightElement>
         </InputGroup>
-        {amount.gt(due) && (
+        {/* {amount.gt(due) && (
           <Alert bg='none'>
             <AlertIcon color='primary.300' />
             <AlertTitle fontSize='sm'>
               Your deposit is greater than the due amount!
             </AlertTitle>
           </Alert>
-        )}
+        )} */}
       </VStack>
       <Flex
         color='white'

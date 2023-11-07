@@ -1,5 +1,11 @@
-import { Button, Heading, Link, Text, VStack } from '@chakra-ui/react';
-import { useToast } from '@raidguild/design-system';
+import {
+  useToast,
+  Button,
+  Heading,
+  Link,
+  ChakraText as Text,
+  VStack,
+} from '@raidguild/design-system';
 import { BigNumber, utils } from 'ethers';
 import React, { useContext, useState } from 'react';
 
