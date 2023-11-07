@@ -1,4 +1,5 @@
 import { Flex } from '@raidguild/design-system';
+// @ts-ignore
 import { Column } from '@tanstack/react-table';
 import { useCallback, useMemo } from 'react';
 import DebouncedInput from './DebouncedInput';

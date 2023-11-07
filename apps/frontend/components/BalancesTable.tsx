@@ -1,4 +1,5 @@
 import { Link, Tooltip } from '@raidguild/design-system';
+// @ts-ignore
 import { createColumnHelper, ColumnHelper } from '@tanstack/react-table';
 import { ITokenBalanceLineItem } from '@raidguild/dm-types';
 import { minMaxNumberFilter, sortNumeric } from '@raidguild/dm-utils';

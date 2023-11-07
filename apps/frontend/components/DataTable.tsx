@@ -4,10 +4,20 @@ import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {
   useReactTable,
   flexRender,
+  // @ts-ignore ? not sure why these aren't exported
   ColumnFiltersState,
+  // @ts-ignore
   ColumnDef,
+  // @ts-ignore
   SortingState,
+  // @ts-ignore
   RowData,
+  // @ts-ignore
+  getCoreRowModel,
+  // @ts-ignore
+  getPaginationRowModel,
+  // @ts-ignore
+  getSortedRowModel,
 } from '@tanstack/react-table';
 import {
   Flex,
@@ -32,20 +42,20 @@ export type DataTableProps<TData extends object> = ThemingProps & {
   id: string;
   data: TData[];
   columns: ColumnDef<any, unknown>[];
-  sort?: SortingState;
+  sort?: SortingState | (() => SortingState);
 };
 
 const DataTable = ({
   id,
   data,
   columns,
-  sort,
+  sort = [],
   ...props
 }: DataTableProps<object>) => {
-  const [sorting, setSorting] = useState<SortingState | []>(sort);
-  const [columnFilters, setColumnFilters] = useState<
-    ColumnFiltersState<any> | undefined
-  >(undefined);
+  const [sorting, setSorting] = useState<SortingState>(sort);
+  const [columnFilters, setColumnFilters] = useState<any | undefined>(
+    undefined
+  );
   const [columnVisibility, setColumnVisibility] = useState(
     Object.assign(
       {},
@@ -70,6 +80,9 @@ const DataTable = ({
         pageIndex: 0,
       },
     },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     // debugTable: true,
     // debugHeaders: true,
     // debugColumns: true,
@@ -101,14 +114,15 @@ const DataTable = ({
                         header.column.columnDef.header,
                         header.getContext()
                       )}
+                      {/* TODO fix missing method */}
                       {/* eslint-disable-next-line no-nested-ternary */}
-                      {header.column.getIsSorted() ? (
+                      {/* {header.column.getIsSorted() ? (
                         header.column.getIsSorted() === 'desc' ? (
                           <FiChevronDown aria-label='sorted descending' />
                         ) : (
                           <FiChevronUp aria-label='sorted ascending' />
                         )
-                      ) : null}
+                      ) : null} */}
                     </Flex>
                     {header.column.getCanFilter() ? (
                       <Box my='1'>

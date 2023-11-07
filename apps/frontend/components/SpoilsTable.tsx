@@ -1,4 +1,5 @@
 import { Link, Tooltip } from '@raidguild/design-system';
+// @ts-ignore
 import { createColumnHelper } from '@tanstack/react-table';
 import { ISpoils } from '@raidguild/dm-types';
 import {

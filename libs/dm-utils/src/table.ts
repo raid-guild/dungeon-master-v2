@@ -1,3 +1,4 @@
+// @ts-ignore
 import { CellContext, Row } from '@tanstack/react-table';
 import { rankings, RankingInfo } from '@tanstack/match-sorter-utils';
 import { BigNumber, utils } from 'ethers';

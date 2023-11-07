@@ -1,3 +1,4 @@
+// @ts-ignore
 import { CellContext } from '@tanstack/react-table';
 import { formatNumber, getUsdValue } from '@raidguild/dm-utils';
 
