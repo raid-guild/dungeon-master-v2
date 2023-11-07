@@ -27,9 +27,6 @@ export const RAIDS_LIST_AND_LAST_UPDATE_QUERY = gql`
     }
     raiding_raids_by_last_update(order_by: $latest_update_order_by) {
       raid_id
-      raid_name
-      latest_update
-      latest_update_created_at
     }
   }
   # ${RAID_DETAIL_FRAGMENT}

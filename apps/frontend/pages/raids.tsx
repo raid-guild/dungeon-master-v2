@@ -46,7 +46,7 @@ const raidRolesOptions = [
 const raidSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
   { label: 'Recent Comment', value: 'recentComment' },
-  { label: 'Recently Updated', value: 'recentlyUpdated' },
+  // { label: 'Recently Updated', value: 'recentlyUpdated' },
   { label: 'Name', value: 'name' },
   { label: 'Start Date', value: 'startDate' },
   { label: 'End Date', value: 'endDate' },
@@ -54,27 +54,31 @@ const raidSortOptions = [
 ];
 
 const RaidList = () => {
-  const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
-  const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
-  const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
-  const [sortChanged, setSortChanged] = useState(false);
   const title = useDefaultTitle();
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
+  const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
+  const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
+  const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
+
   const handleRaidStatusFilterChange = async (status: string) => {
     setRaidStatusFilter(status);
+    if (raidSort === 'oldestComment' || raidSort === 'recentComment') {
+      setRaidSort('name');
+    }
   };
-
   const handleRaidRolesFilterChange = async (role: string) => {
     setRaidRolesFilter(role);
+    if (raidSort === 'oldestComment' || raidSort === 'recentComment') {
+      setRaidSort('name');
+    }
   };
-
-  const handleRaidSortChange = async (sortOption: raidSortKeys) => {
+  const handleRaidSortFilterChange = async (sortOption: raidSortKeys) => {
     setRaidSort(sortOption);
-    setSortChanged(true);
-    if (sortOption === 'oldestComment') {
+    if (sortOption === 'oldestComment' || sortOption === 'recentComment') {
       setRaidStatusFilter('ACTIVE');
+      setRaidRolesFilter('ALL');
     }
   };
 
@@ -104,9 +108,6 @@ const RaidList = () => {
           defaultValue='Active'
           onChange={(e) => {
             handleRaidStatusFilterChange(e.target.value);
-            if (raidSort === 'oldestComment') {
-              handleRaidStatusFilterChange('ACTIVE');
-            }
           }}
         >
           {raidStatusOptions.map((status) => (
@@ -135,9 +136,6 @@ const RaidList = () => {
           defaultValue='Show All'
           onChange={(e) => {
             handleRaidRolesFilterChange(e.target.value);
-            if (sortChanged === true && raidSort === 'oldestComment') {
-              setRaidStatusFilter('ACTIVE');
-            }
           }}
         >
           {raidRolesOptions.map((role) => (
@@ -164,10 +162,7 @@ const RaidList = () => {
           value={raidSort}
           defaultValue='Name'
           onChange={(e) => {
-            handleRaidSortChange(e.target.value as raidSortKeys);
-            if (e.target.value === 'oldestComment') {
-              handleRaidStatusFilterChange('ACTIVE');
-            }
+            handleRaidSortFilterChange(e.target.value as raidSortKeys);
           }}
         >
           {raidSortOptions.map((sortOption) => (
