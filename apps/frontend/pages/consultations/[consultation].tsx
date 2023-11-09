@@ -10,6 +10,10 @@ import {
   Badge,
   Box,
   useMediaQuery,
+  Card,
+  Text,
+  HStack,
+  Icon,
 } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
 import { useSession } from 'next-auth/react';
@@ -22,16 +26,44 @@ import {
 
 import SiteLayout from '../../components/SiteLayout';
 import RaidDetailsCard from '../../components/RaidDetailsCard';
+import { BsArrowRight } from 'react-icons/bs';
+import ChakraNextLink from 'components/ChakraNextLink';
+import { IRaid } from '@raidguild/dm-types';
 
 type Props = {
   consultationId: string;
 };
 
+const MiniRaidCard = ({ raid }: { raid: IRaid }) => (
+  <Card variant='filled' minW='300px'>
+    <Stack spacing={4} w='100%'>
+      <Stack spacing={1}>
+        <Text fontFamily='mono' size='sm'>
+          Raid:
+        </Text>
+        <Heading size='sm'>{_.get(raid, 'name')}</Heading>
+      </Stack>
+
+      <HStack>
+        <Text>Status:</Text>
+        <Text fontSize='lg'>{_.get(raid, 'raidStatus.raidStatus')}</Text>
+      </HStack>
+      <Flex justify='end'>
+        <ChakraNextLink href={`/raids/${raid?.id}`}>
+          <Button variant='outline' rightIcon={<Icon as={BsArrowRight} />}>
+            Go to Raid
+          </Button>
+        </ChakraNextLink>
+      </Flex>
+    </Stack>
+  </Card>
+);
+
 const Consultation = ({ consultationId }: Props) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const { data: consultation } = useConsultationDetail({
+  const { data: consultation, isLoading } = useConsultationDetail({
     token,
     consultationId,
   });
@@ -39,6 +71,7 @@ const Consultation = ({ consultationId }: Props) => {
   const { mutateAsync: createRaid } = useRaidCreate({ token });
 
   const [upTo780] = useMediaQuery('(max-width: 780px)');
+  const raid = _.get(consultation, 'raids[0]');
 
   const handleCreateRaid = async () => {
     await createRaid({
@@ -79,7 +112,12 @@ const Consultation = ({ consultationId }: Props) => {
             <Spacer />
             <Box>
               <Badge>
-                {_.get(consultation, 'consultationStatus.consultationStatus')}
+                {raid?.name
+                  ? 'Accepted'
+                  : _.get(
+                      consultation,
+                      'consultationStatus.consultationStatus'
+                    )}
               </Badge>
             </Box>
           </Flex>
@@ -91,9 +129,13 @@ const Consultation = ({ consultationId }: Props) => {
           direction={['column', null, null, 'row']}
           gap={6}
         >
-          {upTo780 && <ConsultationButtons />}
+          {!isLoading &&
+            upTo780 &&
+            (!raid ? <ConsultationButtons /> : <MiniRaidCard raid={raid} />)}
           <RaidDetailsCard consultation={consultation} />
-          {!upTo780 && <ConsultationButtons />}
+          {!isLoading &&
+            !upTo780 &&
+            (!raid ? <ConsultationButtons /> : <MiniRaidCard raid={raid} />)}
         </Flex>
       </SiteLayout>
     </>
