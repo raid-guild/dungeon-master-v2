@@ -4,6 +4,31 @@ import _ from 'lodash';
 import { useMemo } from 'react';
 import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
+const zapAbi = [
+  {
+    inputs: [
+      { internalType: 'address[]', name: '_owners', type: 'address[]' },
+      {
+        internalType: 'uint32[]',
+        name: '_percentAllocations',
+        type: 'uint32[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_milestoneAmounts',
+        type: 'uint256[]',
+      },
+      { internalType: 'bytes', name: '_safeData', type: 'bytes' },
+      { internalType: 'bytes', name: '_splitsData', type: 'bytes' },
+      { internalType: 'bytes', name: '_escrowData', type: 'bytes' },
+    ],
+    name: 'createSafeSplitEscrow',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
 const ZAP_ADDRESS = '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628';
 const DAO_ADDRESS = {
   100: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986',
@@ -72,7 +97,7 @@ const useEscrowZap = ({
 
   const milestoneAmounts = _.map(
     milestones,
-    (a) => a.value && utils.parseEther(a.value)
+    (a: { value: string }) => a.value && utils.parseEther(a.value)
   );
 
   const encodedSafeData = useMemo(() => {
@@ -87,7 +112,6 @@ const useEscrowZap = ({
     return ethers.utils.defaultAbiCoder.encode(['bool'], [ZAP_DATA.isDaoSplit]);
   }, [ZAP_DATA.isDaoSplit]);
 
-  // console.log(ZAP_DATA.escrowDeadline, _.toNumber(escrowDeadline));
   const encodedEscrowData = useMemo(() => {
     if (
       !utils.isAddress(client) ||
@@ -111,7 +135,7 @@ const useEscrowZap = ({
       ],
       [
         client,
-        arbitration?.value,
+        0, // arbitration?.value,
         resolver,
         token?.value,
         Math.floor(_.toNumber(escrowDeadline) / 1000),
@@ -135,9 +159,8 @@ const useEscrowZap = ({
   const { config, error: prepareError } = usePrepareContractWrite({
     chainId,
     address: ZAP_ADDRESS,
-    abi: ESCROW_ZAP_ABI,
-    functionName:
-      'createSafeSplitEscrow(address[],uint32[],uint256[],bytes,bytes,bytes)',
+    abi: zapAbi,
+    functionName: 'createSafeSplitEscrow',
     args: [
       owners,
       percentAllocations,

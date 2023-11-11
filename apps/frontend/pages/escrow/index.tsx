@@ -119,7 +119,7 @@ export const Escrow = () => {
       <NextSeo title='Smart Escrow' />
 
       <SiteLayoutPublic
-        subheader={<Heading variant='noShadow'>Smart Escrow</Heading>}
+        subheader={<Heading>Smart Escrow</Heading>}
         minHeight={[null, null, '100vh']}
       >
         <Flex justify='center' width='100%'>

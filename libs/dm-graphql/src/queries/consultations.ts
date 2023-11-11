@@ -43,6 +43,20 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
   }
 `;
 
+export const CONSULTATION_DETAIL_WITH_RAID_FRAGMENT = gql`
+  fragment ConsultationDetailWithRaid on consultations {
+    raids {
+      id
+      name
+      raid_status {
+        raid_status
+      }
+    }
+    ...ConsultationDetail
+  }
+  ${CONSULTATION_DETAIL_FRAGMENT}
+`;
+
 export const CONSULTATION_LIST_QUERY = gql`
   query ConsultationsList(
     $offset: Int!
@@ -111,8 +125,8 @@ export const CONSULTATIONS_COUNT_QUERY = gql`
 export const CONSULTATION_DETAIL_QUERY = gql`
   query ConsultationDetail($id: uuid!) {
     consultations_by_pk(id: $id) {
-      ...ConsultationDetail
+      ...ConsultationDetailWithRaid
     }
   }
-  ${CONSULTATION_DETAIL_FRAGMENT}
+  ${CONSULTATION_DETAIL_WITH_RAID_FRAGMENT}
 `;

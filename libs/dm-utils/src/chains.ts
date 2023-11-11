@@ -28,8 +28,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const data: any = configureChains(supportedChains, [
-  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
   alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),
+  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
   publicProvider(),
 ]);
 

@@ -59,7 +59,7 @@ const Navbar = () => {
       <Flex justify='space-between' p={8}>
         <HStack>
           <Link href='/' mr={6}>
-            <Heading variant='noShadow'>🏰</Heading>
+            <Heading>🏰</Heading>
           </Link>
           <Flex display={{ base: 'none', md: 'flex' }}>
             <DesktopNav role={role} />
@@ -122,9 +122,7 @@ const DesktopNav = ({ role }: { role: string }) => (
 
       return (
         <Link key={href} href={href}>
-          <Heading size='sm' variant='noShadow'>
-            {label}
-          </Heading>
+          <Heading size='sm'>{label}</Heading>
         </Link>
       );
     })}
@@ -138,9 +136,7 @@ const DesktopNav = ({ role }: { role: string }) => (
           textTransform='capitalize'
         >
           <HStack>
-            <Heading size='sm' variant='noShadow'>
-              More
-            </Heading>
+            <Heading size='sm'>More</Heading>
             <Icon as={BsCaretDown} />
           </HStack>
         </MenuButton>
@@ -151,9 +147,7 @@ const DesktopNav = ({ role }: { role: string }) => (
             return (
               <Link href={href} key={href}>
                 <MenuItem>
-                  <Heading size='sm' variant='noShadow'>
-                    {label}
-                  </Heading>
+                  <Heading size='sm'>{label}</Heading>
                 </MenuItem>
               </Link>
             );
@@ -180,9 +174,7 @@ const MobileNav = ({ role }: { role: string }) => (
 const MobileNavItem = ({ href, label }: NavItem) => (
   <Stack spacing={4}>
     <Link key={href} href={href} py={2}>
-      <Heading size='sm' variant='noShadow'>
-        {label}
-      </Heading>
+      <Heading size='sm'>{label}</Heading>
     </Link>
   </Stack>
 );
