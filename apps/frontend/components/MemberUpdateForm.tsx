@@ -59,6 +59,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
         primary_class_key:
           values.guildClass?.value ?? member.guildClass.guildClass,
       },
+      skills_updates: [{skill_key: values.primarySkills?.value, skill_type_key: 'PRIMARY', member_id: memberAddress}, {skill_key: values.secondarySkills?.value, skill_type_key: 'SECONDARY', member_id: memberAddress}],
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member.contactInfo.email,
@@ -189,7 +190,10 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
-                        isDisabled
+                        defaultValue={
+                          SKILLS_DISPLAY_OPTIONS.find((option) =>
+                          option.value == member?.skills?.values().next().value.includes('PRIMARY')) ?? null
+                        }
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
@@ -205,7 +209,10 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
-                        isDisabled
+                      defaultValue={
+                        SKILLS_DISPLAY_OPTIONS.filter((option) =>
+                          option.value == member?.skills?.values().next().value.includes('SECONDARY')) ?? null
+                      }
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}

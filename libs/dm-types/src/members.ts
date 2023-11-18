@@ -41,16 +41,22 @@ export interface IMemberCreate {
 }
 
 export interface IMemberUpdate {
-  // for the mutation
-  id?: string;
+  id?: string; // Assuming the member ID is optional for the mutation
+
   member_updates?: {
     name?: string;
     primary_class_key?: string;
-    skills?: Skills[];
+    isRaiding?: boolean; 
   };
 
-  // CONTACT
-  contact_info_id: string;
+  skills_updates?: {
+    skill_key: string;
+    skill_type_key: string;
+    member_id: string;
+  }[];
+
+  contact_info_id: string; 
+
   contact_info_updates?: {
     email?: string;
     discord?: string;
