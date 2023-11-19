@@ -17,7 +17,10 @@ import {
   SKILLS_DISPLAY_OPTIONS,
   IMember,
   IApplication,
+  IMemberCreate,
 } from '@raidguild/dm-utils';
+import { sk } from 'date-fns/locale';
+import type { ISkill } from 'libs/dm-types/src/misc';
 
 interface UpdateMemberFormProps {
   memberId?: string;
@@ -53,13 +56,16 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
+    const primarySkills: ISkill[] = values.primarySkills?.map((skill) => ({ skill_key: skill.value, skill_type_key: 'PRIMARY', member_id: memberAddress }));
+  const secondarySkills: ISkill[] = values.secondarySkills?.map((skill) => ({ skill_key: skill.value, skill_type_key: 'SECONDARY', member_id: memberAddress }));
+
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
         primary_class_key:
           values.guildClass?.value ?? member.guildClass.guildClass,
       },
-      skills_updates: [{skill_key: values.primarySkills?.value, skill_type_key: 'PRIMARY', member_id: memberAddress}, {skill_key: values.secondarySkills?.value, skill_type_key: 'SECONDARY', member_id: memberAddress}],
+      skills_updates: [...primarySkills, ...secondarySkills],
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member.contactInfo.email,
@@ -72,6 +78,16 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     closeModal();
     setSending(false);
   }
+  const primarySkills = _.chain(member['membersSkills'])
+  .filter({ skillType: { skillType: 'PRIMARY' } })
+  .map('skill.skill')
+  .value()
+
+  const secondarySkills = _.chain(member['membersSkills'])
+  .filter({ skillType: { skillType: 'SECONDARY' } })
+  .map('skill.skill')
+  .value();
+  
 
   return (
     <Box as='section'>
@@ -190,9 +206,10 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                        isMulti
                         defaultValue={
-                          SKILLS_DISPLAY_OPTIONS.find((option) =>
-                          option.value == member?.skills?.values().next().value.includes('PRIMARY')) ?? null
+                          SKILLS_DISPLAY_OPTIONS.filter((option) =>
+                          primarySkills.includes(option.value))
                         }
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
@@ -209,9 +226,10 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Select
+                      isMulti
                       defaultValue={
                         SKILLS_DISPLAY_OPTIONS.filter((option) =>
-                          option.value == member?.skills?.values().next().value.includes('SECONDARY')) ?? null
+                        secondarySkills.includes(option.value))
                       }
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
