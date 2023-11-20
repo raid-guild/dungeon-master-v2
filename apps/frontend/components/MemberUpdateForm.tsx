@@ -15,6 +15,7 @@ import {
   IS_RAIDING_OPTIONS,
   SKILLS_DISPLAY_OPTIONS
 } from '@raidguild/dm-utils';
+import { sk } from 'date-fns/locale';
 import type { ISkill } from 'libs/dm-types/src/misc';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
@@ -59,7 +60,10 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
     console.log(values)
 
     const skills = _.flatMap(values.primarySkills, skill => ({ skill_key: skill.value, skill_type_key: 'PRIMARY', member_id: memberId })).concat(_.flatMap(values.secondarySkills, skill => ({ skill_key: skill.value, skill_type_key: 'SECONDARY', member_id: memberId })));
+  
+    const existingSkills =  _.flatMap(member['membersSkills'], skill => ({ skill_key: skill.skill.skill, skill_type_key: skill.skillType.skillType, member_id: memberId }));
 
+    const updateskills = (skills.length  != 0) ? skills : existingSkills
 
     await updateMemberStatus({
       member_updates: {
@@ -68,7 +72,7 @@ const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
           values.guildClass?.value ?? member.guildClass.guildClass,
           is_raiding: values?.isRaiding?.value ?? member.isRaiding,
       },
-      skills_updates: skills,
+      skills_updates: updateskills,
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member.contactInfo.email,
