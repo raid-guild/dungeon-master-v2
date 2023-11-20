@@ -46,7 +46,7 @@ export interface IMemberUpdate {
   member_updates?: {
     name?: string;
     primary_class_key?: string;
-    isRaiding?: boolean; 
+    is_raiding?: boolean; 
   };
 
   skills_updates?: {
