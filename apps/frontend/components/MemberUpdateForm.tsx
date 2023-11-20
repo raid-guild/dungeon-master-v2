@@ -16,6 +16,7 @@ import {
   IS_RAIDING_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
 } from "@raidguild/dm-utils";
+import { sk } from "date-fns/locale";
 import type { ISkill } from "libs/dm-types/src/misc";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
@@ -77,6 +78,17 @@ const UpdateMemberForm = ({
       ),
     );
 
+    const existingSkills = _.flatMap(
+      member["membersSkills"],
+      (skill) => ({
+        skill_key: skill.skill.skill,
+        skill_type_key: skill.skillType.skillType,
+        member_id: memberId,
+      }),
+    );
+
+    const updateskills = (skills.length != 0) ? skills : existingSkills;
+
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
@@ -84,7 +96,7 @@ const UpdateMemberForm = ({
           member.guildClass.guildClass,
         is_raiding: values?.isRaiding?.value ?? member.isRaiding,
       },
-      skills_updates: skills,
+      skills_updates: updateskills,
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member.contactInfo.email,
@@ -241,8 +253,10 @@ const UpdateMemberForm = ({
                         defaultValue={SKILLS_DISPLAY_OPTIONS.filter((option) =>
                           secondarySkills.includes(option.value)
                         )}
-                        {// eslint-disable-next-line react/jsx-props-no-spreading
-                        ...field}
+                        {
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          ...field
+                        }
                         options={SKILLS_DISPLAY_OPTIONS}
                         localForm={localForm}
                       />
@@ -259,8 +273,10 @@ const UpdateMemberForm = ({
                         defaultValue={IS_RAIDING_OPTIONS.filter((option) =>
                           option.value === member?.isRaiding
                         ) ?? { value: false, label: "Not Raiding" }}
-                        {// eslint-disable-next-line react/jsx-props-no-spreading
-                        ...field}
+                        {
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          ...field
+                        }
                         options={IS_RAIDING_OPTIONS}
                         localForm={localForm}
                       />
