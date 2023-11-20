@@ -4,20 +4,23 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Input,
   Select,
   Stack,
 } from "@raidguild/design-system";
 import { useMemberUpdate } from "@raidguild/dm-hooks";
-import { IApplication, IMember } from "@raidguild/dm-types";
 import {
   GUILD_CLASS_OPTIONS,
   IApplication,
   IMember,
-  IMemberCreate,
+  IS_RAIDING_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
 } from "@raidguild/dm-utils";
-import { sk } from "date-fns/locale";
 import type { ISkill } from "libs/dm-types/src/misc";
+import _ from "lodash";
+import { useSession } from "next-auth/react";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 interface UpdateMemberFormProps {
   memberId?: string;
@@ -53,24 +56,35 @@ const UpdateMemberForm = ({
 
   async function onSubmit(values) {
     setSending(true);
-    const primarySkills: ISkill[] = values.primarySkills?.map((skill) => ({
-      skill_key: skill.value,
-      skill_type_key: "PRIMARY",
-      member_id: memberAddress,
-    }));
-    const secondarySkills: ISkill[] = values.secondarySkills?.map((skill) => ({
-      skill_key: skill.value,
-      skill_type_key: "SECONDARY",
-      member_id: memberAddress,
-    }));
+
+    console.log(values);
+
+    const skills = _.flatMap(
+      values.primarySkills,
+      (skill) => ({
+        skill_key: skill.value,
+        skill_type_key: "PRIMARY",
+        member_id: memberId,
+      }),
+    ).concat(
+      _.flatMap(
+        values.secondarySkills,
+        (skill) => ({
+          skill_key: skill.value,
+          skill_type_key: "SECONDARY",
+          member_id: memberId,
+        }),
+      ),
+    );
 
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
         primary_class_key: values.guildClass?.value ??
           member.guildClass.guildClass,
+        is_raiding: values?.isRaiding?.value ?? member.isRaiding,
       },
-      skills_updates: [...primarySkills, ...secondarySkills],
+      skills_updates: skills,
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member.contactInfo.email,
@@ -92,6 +106,8 @@ const UpdateMemberForm = ({
     .filter({ skillType: { skillType: "SECONDARY" } })
     .map("skill.skill")
     .value();
+
+  console.log(member);
 
   return (
     <Box as="section">
@@ -179,8 +195,10 @@ const UpdateMemberForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
-                        {// eslint-disable-next-line react/jsx-props-no-spreading
-                        ...field}
+                        {
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          ...field
+                        }
                         options={GUILD_CLASS_OPTIONS}
                         defaultValue={GUILD_CLASS_OPTIONS.find(
                           (option) =>
@@ -202,8 +220,10 @@ const UpdateMemberForm = ({
                         defaultValue={SKILLS_DISPLAY_OPTIONS.filter((option) =>
                           primarySkills.includes(option.value)
                         )}
-                        {// eslint-disable-next-line react/jsx-props-no-spreading
-                        ...field}
+                        {
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          ...field
+                        }
                         options={SKILLS_DISPLAY_OPTIONS}
                         localForm={localForm}
                       />
@@ -224,6 +244,24 @@ const UpdateMemberForm = ({
                         {// eslint-disable-next-line react/jsx-props-no-spreading
                         ...field}
                         options={SKILLS_DISPLAY_OPTIONS}
+                        localForm={localForm}
+                      />
+                    )}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel color="raid">Raiding?</FormLabel>
+                  <Controller
+                    name="isRaiding"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        defaultValue={IS_RAIDING_OPTIONS.filter((option) =>
+                          option.value === member?.isRaiding
+                        ) ?? { value: false, label: "Not Raiding" }}
+                        {// eslint-disable-next-line react/jsx-props-no-spreading
+                        ...field}
+                        options={IS_RAIDING_OPTIONS}
                         localForm={localForm}
                       />
                     )}

@@ -260,8 +260,8 @@ export const GUILD_CLASS_OPTIONS = [
   { label: 'Cleric (Client Manager)', value: 'ACCOUNT_MANAGER' },
 ];
 
-export const IS_RAIDING_OPTIONS = [{ label: 'Yes', value: true },
-{ label: 'No', value: false },];
+export const IS_RAIDING_OPTIONS = [{ label: 'Raiding', value: true },
+{ label: 'Not Raiding', value: false },];
 
 export const GUILD_CLASS_DISPLAY = {
   COMMUNITY: 'Tavern Keeper (Community)',
