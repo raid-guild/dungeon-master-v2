@@ -70,9 +70,6 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
-  console.log("raid", raid);
-  // console.log(raid.consultationByConsultation.budgetOption.budgetOption)
-
   async function onSubmit(values) {
     setSending(true);
     await updateRaidStatus({
@@ -86,7 +83,8 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
       },
       consultation_update: {
         id: raid.consultationByConsultation.id,
-        budget_key: values.raidBudget.value,
+        budget_key: values.raidBudget.value ??
+          _.get(raid["consultation"], "budgetOption.budgetOption"),
       },
     });
     closeModal();
@@ -95,6 +93,10 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
 
   const selectedCategory = RAID_CATEGORY_OPTIONS.find(
     (v) => v.value === raid?.raidCategory.raidCategory,
+  );
+
+  const selectedBudget = BUDGET_DISPLAY_OPTIONS.find(
+    (v) => v.value === _.get(raid["consultation"], "budgetOption.budgetOption"),
   );
 
   const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
@@ -140,8 +142,10 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
                     control={control}
                     render={({ field }) => (
                       <Select
-                        {// eslint-disable-next-line react/jsx-props-no-spreading
-                        ...field}
+                        {
+                          // eslint-disable-next-line react/jsx-props-no-spreading
+                          ...field
+                        }
                         name="raidCategory"
                         options={RAID_CATEGORY_OPTIONS}
                         localForm={localForm}
@@ -151,27 +155,23 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
                 </FormControl>
 
                 {/* Raid Budget Select */}
-                {
-                  /* <FormControl>
-                  <FormLabel color='raid'>Raid Budget</FormLabel>
+                <FormControl>
+                  <FormLabel color="raid">Raid Budget</FormLabel>
                   <Controller
-                    name='raidBudget'
-                    defaultValue={selectedCategory}
+                    name="raidBudget"
+                    defaultValue={selectedBudget}
                     control={control}
                     render={({ field }) => (
                       <Select
-                      isMulti
-                      defaultValue={BUDGET_DISPLAY_OPTIONS.filter((budget) => budget.value === raid.consultationByConsultation.budgetOption.budgetOption)}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
-                        {...field}
-                        name='raidBudget'
+                        {// eslint-disable-next-line react/jsx-props-no-spreading
+                        ...field}
+                        name="raidBudget"
                         options={BUDGET_DISPLAY_OPTIONS}
                         localForm={localForm}
                       />
                     )}
                   />
-                </FormControl> */
-                }
+                </FormControl>
                 <Flex
                   direction={{ base: "column", lg: "row" }}
                   alignItems="center"
