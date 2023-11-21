@@ -10,18 +10,32 @@ import {
   Select,
   Flex,
   forwardRef,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  TabList,
+  Tab,
   DatePicker,
 } from '@raidguild/design-system';
-import { IRaid, RAID_CATEGORY_OPTIONS } from '@raidguild/dm-utils';
+import { BUDGET_DISPLAY_OPTIONS, IConsultation, IConsultationUpdate, IRaid, RAID_CATEGORY_OPTIONS } from '@raidguild/dm-utils';
 import { useRaidUpdate } from '@raidguild/dm-hooks';
 import { useSession } from 'next-auth/react';
 import { add } from 'date-fns';
 import { useForm, Controller } from 'react-hook-form';
 
+const raid_tabs = [
+  'Project Details',
+  'Key Links',
+  'Client PoC',
+  'Additional Info',
+  'Portfolio',
+];
+
 interface RaidUpdateFormProps {
   raidId?: string;
   closeModal?: () => void;
-  raid: Partial<IRaid>;
+  raid: Partial<IRaid> ;
+  // consultation:  Partial<IConsultation>; 
 }
 const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   raidId,
@@ -37,6 +51,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   );
   const { data: session } = useSession();
   const token = _.get(session, 'token');
+  
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
   const localForm = useForm({
@@ -49,17 +64,24 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
+  console.log('raid', raid)
+  // console.log(raid.consultationByConsultation.budgetOption.budgetOption)
+
   async function onSubmit(values) {
     setSending(true);
     await updateRaidStatus({
       raid_updates: {
         name: values.raidName ?? raid.raidName,
-        category_key:
-          values.raidCategory.value ?? raid.raidCategory.raidCategory,
+        category_key: values.raidCategory.value ?? raid.raidCategory.raidCategory,
         status_key: raid.status ?? raid.status,
         start_date: values.startDate ?? raid.startDate,
         end_date: values.endDate ?? raid.endDate,
       },
+      consultation_update: {
+        id: raid.consultationByConsultation.id,
+        budget_key: values.raidBudget.value
+      },
+      
     });
     closeModal();
     setSending(false);
@@ -77,15 +99,22 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
 
   return (
     <Box as='section'>
+      <Tabs variant={'enclosed-colored'} colorScheme='primary.500'>
+        <TabList>
+        {raid_tabs.map((tab) =>
+          <Tab>{tab}</Tab>)}
+          </TabList>
+          </Tabs>
+          
       <Box
         bg='gray.800'
-        shadow='lg'
         maxW={{ base: 'xl', md: '3xl' }}
         marginX='auto'
         paddingX={{ base: '6', md: '8' }}
         paddingY='6'
         rounded='lg'
       >
+        
         <Box maxW='md' marginX='auto'>
           <Box marginY='6'>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -115,7 +144,28 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                       />
                     )}
                   />
-                </FormControl>
+                  </FormControl>
+                  
+                  {/* Raid Budget Select */}
+                  {/* <FormControl>
+                  <FormLabel color='raid'>Raid Budget</FormLabel>
+                  <Controller
+                    name='raidBudget'
+                    defaultValue={selectedCategory}
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                      isMulti
+                      defaultValue={BUDGET_DISPLAY_OPTIONS.filter((budget) => budget.value === raid.consultationByConsultation.budgetOption.budgetOption)}
+                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        {...field}
+                        name='raidBudget'
+                        options={BUDGET_DISPLAY_OPTIONS}
+                        localForm={localForm}
+                      />
+                    )}
+                  />
+                </FormControl> */}
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   alignItems='center'

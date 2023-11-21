@@ -15,8 +15,7 @@ const useConsultationUpdate = ({ token }: { token: string }) => {
       const result = await client({ token }).request(
         CONSULTATION_UPDATE_MUTATION,
         {
-          id: args.id,
-          update: args.update,
+          ...args,
         }
       );
 

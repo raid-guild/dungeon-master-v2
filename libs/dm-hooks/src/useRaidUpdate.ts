@@ -3,18 +3,19 @@ import _ from 'lodash';
 import { useToast } from '@raidguild/design-system';
 
 import { client, RAID_UPDATE_MUTATION } from '@raidguild/dm-graphql';
-import { IRaidUpdate, camelize } from '@raidguild/dm-utils';
+import { IConsultation,IConsultationUpdate, IRaidUpdate, camelize } from '@raidguild/dm-utils';
 
 const useRaidUpdate = ({ token, raidId }: { token: string, raidId: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: IRaidUpdate) => {
+    async ({ ...args }: IRaidUpdate & IConsultationUpdate) => {
       if (!raidId || !token) return null;
       const result = await client({ token }).request(RAID_UPDATE_MUTATION, {
         id: raidId,
         raid_updates: args.raid_updates,
+        consultation_update: args.consultation_update,
       });
 
       return result;
