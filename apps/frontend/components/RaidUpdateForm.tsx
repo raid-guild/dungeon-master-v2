@@ -64,8 +64,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
-  console.log('raid', raid)
-  // console.log(raid.consultationByConsultation.budgetOption.budgetOption)
 
   async function onSubmit(values) {
     setSending(true);
@@ -79,7 +77,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
       },
       consultation_update: {
         id: raid.consultationByConsultation.id,
-        budget_key: values.raidBudget.value
+        budget_key: values.raidBudget.value ?? _.get(raid['consultation'], 'budgetOption.budgetOption')
       },
       
     });
@@ -90,6 +88,12 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   const selectedCategory = RAID_CATEGORY_OPTIONS.find(
     (v) => v.value === raid?.raidCategory.raidCategory
   );
+
+  const selectedBudget = BUDGET_DISPLAY_OPTIONS.find(
+    (v) => v.value === _.get(raid['consultation'], 'budgetOption.budgetOption')
+  );
+
+
 
   const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
     <Button onClick={onClick} ref={ref} variant='outline'>
@@ -147,16 +151,14 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   </FormControl>
                   
                   {/* Raid Budget Select */}
-                  {/* <FormControl>
+                  <FormControl>
                   <FormLabel color='raid'>Raid Budget</FormLabel>
                   <Controller
                     name='raidBudget'
-                    defaultValue={selectedCategory}
+                    defaultValue={selectedBudget}
                     control={control}
                     render={({ field }) => (
                       <Select
-                      isMulti
-                      defaultValue={BUDGET_DISPLAY_OPTIONS.filter((budget) => budget.value === raid.consultationByConsultation.budgetOption.budgetOption)}
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         name='raidBudget'
@@ -165,7 +167,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                       />
                     )}
                   />
-                </FormControl> */}
+                </FormControl>
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   alignItems='center'
