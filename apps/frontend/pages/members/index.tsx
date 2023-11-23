@@ -23,8 +23,8 @@ import {
   useDefaultTitle,
 } from '@raidguild/dm-hooks';
 import { GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
-import MemberCard from '../components/MemberCard';
-import SiteLayout from '../components/SiteLayout';
+import MemberCard from 'components/MemberCard';
+import SiteLayout from 'components/SiteLayout';
 
 const memberStatusOptions = [
   { label: 'Show All', value: 'ALL' },

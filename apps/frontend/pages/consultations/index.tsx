@@ -27,8 +27,8 @@ import {
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
-import RaidCard from '../components/RaidCard';
-import SiteLayout from '../components/SiteLayout';
+import RaidCard from '../../components/RaidCard';
+import SiteLayout from '../../components/SiteLayout';
 
 const consultationTypeOptions = [
   { label: 'Show All', value: 'ALL' },

@@ -8,16 +8,6 @@ import {
   wrappedNativeToken,
 } from './constants';
 
-// TODO migrate to useClipboard
-export const copyToClipboard = (value: string) => {
-  const tempInput = document.createElement('input');
-  tempInput.value = value;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  document.execCommand('copy');
-  document.body.removeChild(tempInput);
-};
-
 export const getExplorerUrl = (chainId: number | string) =>
   explorerUrls[Number(chainId)] || explorerUrls[4];
 

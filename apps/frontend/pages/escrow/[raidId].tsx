@@ -4,19 +4,19 @@ import _ from 'lodash';
 import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
 import { useAccount, useNetwork } from 'wagmi';
 import { NextSeo } from 'next-seo';
-import SiteLayoutPublic from '../../../components/SiteLayoutPublic';
+import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import { Heading, Flex, Text, VStack } from '@raidguild/design-system';
 import axios from 'axios';
 
-import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-import { Page404 } from '../../../components/SmartEscrow/shared/Page404';
+import { SmartEscrowContext } from '../../contexts/SmartEscrow';
+import { Page404 } from '../../components/SmartEscrow/shared/Page404';
 
-import { ProjectInfo } from '../../../components/SmartEscrow/ProjectInfo';
-import { InvoicePaymentDetails } from '../../../components/SmartEscrow/InvoicePaymentDetails';
-import { InvoiceMetaDetails } from '../../../components/SmartEscrow/InvoiceMetaDetails';
-import { InvoiceButtonManager } from '../../../components/SmartEscrow/InvoiceButtonManager';
+import { ProjectInfo } from '../../components/SmartEscrow/ProjectInfo';
+import { InvoicePaymentDetails } from '../../components/SmartEscrow/InvoicePaymentDetails';
+import { InvoiceMetaDetails } from '../../components/SmartEscrow/InvoiceMetaDetails';
+import { InvoiceButtonManager } from '../../components/SmartEscrow/InvoiceButtonManager';
 import { SUPPORTED_NETWORKS, getInvoice } from '@raidguild/escrow-gql';
-import Link from '../../../components/ChakraNextLink';
+import Link from '../../components/ChakraNextLink';
 
 // TODO use native client & gql-request
 

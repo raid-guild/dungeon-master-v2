@@ -23,8 +23,8 @@ import {
 } from '@raidguild/dm-hooks';
 import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
 import { raidSortKeys } from '@raidguild/dm-types';
-import RaidCard from '../components/RaidCard';
-import SiteLayout from '../components/SiteLayout';
+import RaidCard from 'components/RaidCard';
+import SiteLayout from 'components/SiteLayout';
 
 const raidStatusMapped = RAID_STATUS.map((status) => ({
   label: status,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import SiteLayout from '../components/SiteLayout';
+import SiteLayout from '../../components/SiteLayout';
 import {
   Heading,
   Stack,
@@ -21,7 +21,7 @@ import {
 import { FieldValues, useForm, useFieldArray } from 'react-hook-form';
 import { useEscrowZap } from '@raidguild/dm-hooks';
 import _ from 'lodash';
-import { useChainId, useNetwork, useWaitForTransaction } from 'wagmi';
+import { useNetwork, useWaitForTransaction } from 'wagmi';
 import { isAddress } from '@ethersproject/address';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -32,16 +32,17 @@ import { Hex, zeroAddress } from 'viem';
 
 const ARBITRATION_OPTIONS = [
   {
-    label: 'Something',
-    value: 1,
+    label: 'Individual',
+    value: 0,
   },
   {
-    label: 'Other',
-    value: 2,
+    label: 'Arbitrator',
+    value: 1,
   },
 ];
 
 const TOKEN_OPTIONS = {
+  1: [],
   5: [
     {
       label: 'Wrapped xDai',
@@ -52,6 +53,7 @@ const TOKEN_OPTIONS = {
       value: '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1',
     },
   ],
+  10: [],
   100: [
     {
       label: 'Wrapped xDai',

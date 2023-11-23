@@ -24,8 +24,8 @@ import {
   useRaidCreate,
 } from '@raidguild/dm-hooks';
 
-import SiteLayout from '../../components/SiteLayout';
-import RaidDetailsCard from '../../components/RaidDetailsCard';
+import SiteLayout from 'components/SiteLayout';
+import RaidDetailsCard from 'components/RaidDetailsCard';
 import { BsArrowRight } from 'react-icons/bs';
 import ChakraNextLink from 'components/ChakraNextLink';
 import { IRaid } from '@raidguild/dm-types';

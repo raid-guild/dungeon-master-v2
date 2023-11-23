@@ -6,6 +6,7 @@ import {
   Heading,
   VStack,
   ChakraText as Text,
+  useClipboard,
 } from '@raidguild/design-system';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -17,7 +18,6 @@ import { Loader } from './Loader';
 import {
   awaitInvoiceAddress,
   getTxLink,
-  copyToClipboard,
   updateRaidInvoice,
 } from '@raidguild/escrow-utils';
 import { getInvoice } from '@raidguild/escrow-gql';
@@ -52,6 +52,10 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
       clearInterval(interval);
     };
   };
+
+  const { onCopy } = useClipboard(
+    `https://${window.location.hostname}/escrow/${raidId}`
+  );
 
   useEffect(() => {
     if (tx && ethersProvider) {
@@ -144,11 +148,7 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
             {document.queryCommandSupported('copy') && (
               <Button
                 ml={4}
-                onClick={() =>
-                  copyToClipboard(
-                    `https://${window.location.hostname}/escrow/${raidId}`
-                  )
-                }
+                onClick={onCopy}
                 bgColor='black'
                 h='auto'
                 w='auto'

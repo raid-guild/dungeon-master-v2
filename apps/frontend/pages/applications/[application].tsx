@@ -5,9 +5,9 @@ import { useSession } from 'next-auth/react';
 import { GetServerSidePropsContext } from 'next';
 import { useApplicationDetail, useMemberCreate } from '@raidguild/dm-hooks';
 
-import SiteLayout from '../../components/SiteLayout';
-import MemberDetailsCard from '../../components/MemberDetailsCard';
-import Link from '../../components/ChakraNextLink';
+import SiteLayout from 'components/SiteLayout';
+import MemberDetailsCard from 'components/MemberDetailsCard';
+import Link from 'components/ChakraNextLink';
 
 const Application = ({ applicationId }) => {
   const { data: session } = useSession();
