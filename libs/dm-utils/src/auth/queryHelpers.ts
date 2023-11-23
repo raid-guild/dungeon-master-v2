@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import _ from 'lodash';
-import { isAddress } from '@ethersproject/address';
+import { isAddress } from 'viem';
 import {
   client,
   // USER_CREATE_MUTATION,

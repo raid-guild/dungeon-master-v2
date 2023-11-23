@@ -1,7 +1,7 @@
 // @ts-ignore
 import { CellContext, Row } from '@tanstack/react-table';
 import { rankings, RankingInfo } from '@tanstack/match-sorter-utils';
-import { BigNumber, utils } from 'ethers';
+import { formatUnits } from 'viem';
 
 const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;
 
@@ -17,12 +17,11 @@ export const exportToCsv = (csvString: string, fileName: string) => {
 
 export const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
-export const formatUnitsAsNumber = (value: BigNumber, decimals: string) =>
-  Number(utils.formatUnits(value, decimals));
+export const formatUnitsAsNumber = (value: bigint, decimals: number) =>
+  Number(formatUnits(value, decimals));
 
-export const formatNumber = <TRow>(
-  info: CellContext<TRow, number | BigNumber>
-) => info.getValue()?.toLocaleString();
+export const formatNumber = <TRow>(info: CellContext<TRow, number | bigint>) =>
+  info.getValue()?.toLocaleString();
 
 export const getUsdValue = <T extends { priceConversion?: number }>(
   info: CellContext<T, number>

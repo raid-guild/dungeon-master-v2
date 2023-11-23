@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
   Flex,
@@ -8,80 +7,69 @@ import {
   ChakraText as Text,
   useClipboard,
 } from '@raidguild/design-system';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { utils } from 'ethers';
+// import { isAddress } from 'viem';
 
 import { CopyIcon } from './icons/CopyIcon';
 import { Loader } from './Loader';
 
-import {
-  awaitInvoiceAddress,
-  getTxLink,
-  updateRaidInvoice,
-} from '@raidguild/escrow-utils';
-import { getInvoice } from '@raidguild/escrow-gql';
+import { getTxLink } from '@raidguild/dm-utils';
+// import { getInvoice } from '@raidguild/escrow-gql';
+import { useChainId } from 'wagmi';
 
 const POLL_INTERVAL = 5000;
 
-export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
-  const [smartInvoiceId, setSmartInvoiceId] = useState('');
+export const EscrowSuccess = ({ raidId }: { raidId: string }) => {
   const [invoice, setInvoice] = useState();
   const router = useRouter();
+  const chainId = useChainId();
 
   const [progressText, updateProgressText] = useState('');
 
-  const postInvoiceId = async () => {
-    await updateRaidInvoice(raidId, smartInvoiceId);
-  };
+  // const postInvoiceId = async () => {
+  //   await updateRaidInvoice(raidId, smartInvoiceId);
+  // };
 
-  const pollSubgraph = () => {
-    let isSubscribed = true;
-    const interval = setInterval(() => {
-      getInvoice(chainId, smartInvoiceId).then((inv) => {
-        if (isSubscribed && !!inv) {
-          setInvoice(inv);
-          updateProgressText(`Invoice data received.`);
-          clearInterval(interval);
-        }
-      });
-    }, POLL_INTERVAL);
-    return () => {
-      alert('clear interval is called');
-      isSubscribed = false;
-      clearInterval(interval);
-    };
-  };
+  // const pollSubgraph = () => {
+  //   let isSubscribed = true;
+  //   const interval = setInterval(() => {
+  //     getInvoice(chainId, smartInvoiceId).then((inv) => {
+  //       if (isSubscribed && !!inv) {
+  //         setInvoice(inv);
+  //         updateProgressText(`Invoice data received.`);
+  //         clearInterval(interval);
+  //       }
+  //     });
+  //   }, POLL_INTERVAL);
+  //   return () => {
+  //     alert('clear interval is called');
+  //     isSubscribed = false;
+  //     clearInterval(interval);
+  //   };
+  // };
 
   const { onCopy } = useClipboard(
     `https://${window.location.hostname}/escrow/${raidId}`
   );
 
-  useEffect(() => {
-    if (tx && ethersProvider) {
-      updateProgressText('Fetching Smart Invoice ID...');
-      awaitInvoiceAddress(ethersProvider, tx).then((id) => {
-        setSmartInvoiceId(id.toLowerCase());
-        updateProgressText(`Received Smart Invoice ID.`);
-      });
-    }
-  }, [tx, ethersProvider]);
+  // useEffect(() => {
+  //   if (!isAddress(smartInvoiceId) || !!invoice) return () => undefined;
 
-  useEffect(() => {
-    if (!utils.isAddress(smartInvoiceId) || !!invoice) return () => undefined;
+  //   updateProgressText('Indexing subgraph for invoice data..');
 
-    updateProgressText('Indexing subgraph for invoice data..');
+  //   setTimeout(() => {
+  //     pollSubgraph();
+  //   }, 10000);
+  // }, [chainId, smartInvoiceId, invoice]);
 
-    setTimeout(() => {
-      pollSubgraph();
-    }, 10000);
-  }, [chainId, smartInvoiceId, invoice]);
+  // useEffect(() => {
+  //   if (isAddress(smartInvoiceId)) {
+  //     postInvoiceId();
+  //   }
+  // }, [smartInvoiceId]);
 
-  useEffect(() => {
-    if (utils.isAddress(smartInvoiceId)) {
-      postInvoiceId();
-    }
-  }, [smartInvoiceId]);
+  // TODO redirect to new invoice page
 
   return (
     <Flex
@@ -107,11 +95,12 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
         fontFamily='texturina'
         mb='1rem'
       >
-        {smartInvoiceId
+        {/* {smartInvoiceId
           ? 'You can view your transaction '
-          : 'You can check the progress of your transaction '}
+          : 'You can check the progress of your transaction '} */}
+        Test
         <Link
-          href={getTxLink(chainId, tx.hash)}
+          href='#' // {getTxLink(chainId, tx.hash)}
           isExternal
           color='yellow.500'
           textDecoration='underline'
@@ -145,19 +134,18 @@ export const EscrowSuccess = ({ ethersProvider, tx, chainId, raidId }) => {
             >
               {`https://${window.location.hostname}/escrow/${raidId}`}
             </Link>
-            {document.queryCommandSupported('copy') && (
-              <Button
-                ml={4}
-                onClick={onCopy}
-                bgColor='black'
-                h='auto'
-                w='auto'
-                minW='2'
-                p={2}
-              >
-                <CopyIcon boxSize={4} />
-              </Button>
-            )}{' '}
+
+            <Button
+              ml={4}
+              onClick={onCopy}
+              bgColor='black'
+              h='auto'
+              w='auto'
+              minW='2'
+              p={2}
+            >
+              <CopyIcon boxSize={4} />
+            </Button>
           </Flex>
         </VStack>
       ) : (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   SimpleGrid,
   Button,
@@ -7,18 +7,23 @@ import {
   ModalContent,
   ModalOverlay,
 } from '@raidguild/design-system';
-import { BigNumber } from 'ethers';
-
-import { balanceOf } from '@raidguild/escrow-utils';
 
 import { DepositFunds } from './DepositFunds';
 import { ReleaseFunds } from './ReleaseFunds';
 import { ResolveFunds } from './ResolveFunds';
 import { LockFunds } from './LockFunds';
 import { WithdrawFunds } from './WithdrawFunds';
+import { Hex } from 'viem';
+import { Invoice } from '@raidguild/escrow-utils';
 
-export const InvoiceButtonManager = ({ invoice, account, provider }) => {
-  const [balance, setBalance] = useState(BigNumber.from(0));
+export const InvoiceButtonManager = ({
+  invoice,
+  account,
+}: {
+  invoice: Invoice;
+  account: Hex;
+}) => {
+  const [balance, setBalance] = useState(BigInt(0));
 
   const [selected, setSelected] = useState(0);
   const [modal, setModal] = useState(false);
@@ -54,19 +59,6 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
     }
   };
 
-  const checkBalance = (set, contractAddress) => {
-    balanceOf(provider, invoice.token, contractAddress)
-      .then((b) => {
-        set(b);
-      })
-      .catch((balanceError) => console.log(balanceError));
-  };
-
-  useEffect(() => {
-    checkBalance(setBalance, invoice.address);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const {
     client,
     isLocked,
@@ -88,26 +80,24 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
 
   const dispute =
     isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;
-  const deposited = BigNumber.from(released).add(balance);
-  const due = deposited.gte(total)
-    ? BigNumber.from(0)
-    : BigNumber.from(total).sub(deposited);
+  const deposited = BigInt(released) + balance;
+  const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
   const resolution =
     !isLocked && resolutions.length > 0
       ? resolutions[resolutions.length - 1]
       : undefined;
   const isExpired = terminationTime <= new Date().getTime() / 1000;
-  const amount = BigNumber.from(
+  const amount = BigInt(
     currentMilestone < amounts.length ? amounts[currentMilestone] : 0
   );
-  const isLockable = !isExpired && !isLocked && balance.gt(0);
+  const isLockable = !isExpired && !isLocked && balance > 0;
 
-  const isReleasable = !isLocked && balance.gte(amount) && balance.gt(0);
+  const isReleasable = !isLocked && balance >= amount && balance > 0;
 
   let gridColumns;
-  if (isReleasable && (isLockable || (isExpired && balance.gt(0)))) {
+  if (isReleasable && (isLockable || (isExpired && balance > 0))) {
     gridColumns = { base: 2, sm: 3 };
-  } else if (isLockable || isReleasable || (isExpired && balance.gt(0))) {
+  } else if (isLockable || isReleasable || (isExpired && balance > 0)) {
     gridColumns = 2;
   } else {
     gridColumns = 1;
@@ -148,7 +138,7 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
               Lock
             </Button>
           )}
-          {isExpired && balance.gt(0) && (
+          {isExpired && balance > 0 && (
             <Button
               variant='solid'
               textTransform='uppercase'
@@ -239,12 +229,7 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
               />
             )}
             {modal && selected === 4 && (
-              <WithdrawFunds
-                contractAddress={invoice.address}
-                token={invoice.token}
-                invoice={invoice}
-                balance={balance}
-              />
+              <WithdrawFunds invoice={invoice} balance={balance} />
             )}
           </ModalContent>
         </ModalOverlay>

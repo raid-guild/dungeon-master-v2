@@ -4,19 +4,20 @@ import _ from 'lodash';
 import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
 import { useAccount, useNetwork } from 'wagmi';
 import { NextSeo } from 'next-seo';
-import SiteLayoutPublic from '../../components/SiteLayoutPublic';
+import SiteLayoutPublic from 'components/SiteLayoutPublic';
 import { Heading, Flex, Text, VStack } from '@raidguild/design-system';
 import axios from 'axios';
 
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-import { Page404 } from '../../components/SmartEscrow/shared/Page404';
+import { Page404 } from 'components/SmartEscrow/shared/Page404';
 
-import { ProjectInfo } from '../../components/SmartEscrow/ProjectInfo';
-import { InvoicePaymentDetails } from '../../components/SmartEscrow/InvoicePaymentDetails';
-import { InvoiceMetaDetails } from '../../components/SmartEscrow/InvoiceMetaDetails';
-import { InvoiceButtonManager } from '../../components/SmartEscrow/InvoiceButtonManager';
+import { ProjectInfo } from 'components/SmartEscrow/ProjectInfo';
+import { InvoicePaymentDetails } from 'components/SmartEscrow/InvoicePaymentDetails';
+import { InvoiceMetaDetails } from 'components/SmartEscrow/InvoiceMetaDetails';
+import { InvoiceButtonManager } from 'components/SmartEscrow/InvoiceButtonManager';
 import { SUPPORTED_NETWORKS, getInvoice } from '@raidguild/escrow-gql';
-import Link from '../../components/ChakraNextLink';
+import Link from 'components/ChakraNextLink';
+import { GetServerSidePropsContext } from 'next';
+import { Invoice } from '@raidguild/escrow-utils';
 
 // TODO use native client & gql-request
 
@@ -40,72 +41,45 @@ const fetchRaid = async (query, raidId) => {
   return data.data?.raids;
 };
 
-export const getServerSideProps = async (context) => {
-  const { raidId } = context.params;
-
-  let raids;
-  if (raidId && raidId.includes('-')) {
-    raids = await fetchRaid(RAID_BY_ID_QUERY, raidId);
-  } else {
-    raids = await fetchRaid(RAID_BY_V1_ID_QUERY, raidId);
-  }
-
-  if (!raids || raids.length === 0) {
-    return {
-      props: {
-        raid: null,
-      },
-      // revalidate: 1
-    };
-  }
-
-  return {
-    props: {
-      raid: raids ? raids[0] : null,
-    },
-  };
-};
-
 const Escrow = ({ raid }) => {
-  const { appState, setAppState } = useContext(SmartEscrowContext);
   const { address } = useAccount();
   const { chain } = useNetwork();
 
   const [invoiceFetchError, setInvoiceFetchError] = useState(false);
-  const [invoice, setInvoice] = useState();
+  const [invoice, setInvoice] = useState<Invoice | undefined>();
 
   const [statusText, setStatusText] = useState<any>(
     'Connect your wallet to fetch invoice information.'
   );
   const [validRaid, setValidRaid] = useState(true);
 
-  useEffect(() => {
-    if (raid) {
-      setAppState({
-        ...appState,
-        invoice_id: raid.invoice_address,
-        v1_id: raid.v1Id,
-        raid_id: raid.id,
-        project_name: raid.name,
-        client_name:
-          raid.consultationByConsultation?.consultationContacts[0]?.contact
-            ?.name,
-        start_date: new Date(Number(raid.startDate)) || 'Not Specified',
-        end_date: new Date(Number(raid.endDate)) || 'Not Specified',
-        link_to_details: 'Not Specified',
-        brief_description: 'Not Specified',
-      });
+  // useEffect(() => {
+  //   if (raid) {
+  //     setAppState({
+  //       ...appState,
+  //       invoice_id: raid.invoice_address,
+  //       v1_id: raid.v1Id,
+  //       raid_id: raid.id,
+  //       project_name: raid.name,
+  //       client_name:
+  //         raid.consultationByConsultation?.consultationContacts[0]?.contact
+  //           ?.name,
+  //       start_date: new Date(Number(raid.startDate)) || 'Not Specified',
+  //       end_date: new Date(Number(raid.endDate)) || 'Not Specified',
+  //       link_to_details: 'Not Specified',
+  //       brief_description: 'Not Specified',
+  //     });
 
-      if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1) {
-        getSmartInvoiceData();
-      } else if ((address as string) !== '') {
-        setInvoiceFetchError(true);
-        setStatusText(WRONG_NETWORK_MESSAGE);
-      }
-    } else {
-      setValidRaid(false);
-    }
-  }, []);
+  //     if (SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1) {
+  //       getSmartInvoiceData();
+  //     } else if ((address as string) !== '') {
+  //       setInvoiceFetchError(true);
+  //       setStatusText(WRONG_NETWORK_MESSAGE);
+  //     }
+  //   } else {
+  //     setValidRaid(false);
+  //   }
+  // }, []);
 
   const getSmartInvoiceData = async () => {
     try {
@@ -167,7 +141,7 @@ const Escrow = ({ raid }) => {
                 justifyContent='space-evenly'
               >
                 <Flex direction='column' minW='30%'>
-                  <ProjectInfo appState={appState} />
+                  <ProjectInfo invoice={invoice} />
                   <InvoiceMetaDetails invoice={invoice} />
                 </Flex>
 
@@ -175,12 +149,12 @@ const Escrow = ({ raid }) => {
                   <InvoicePaymentDetails
                     invoice={invoice}
                     chainId={chain.id}
-                    provider={appState.provider}
+                    // provider={appState.provider}
                   />
                   <InvoiceButtonManager
                     invoice={invoice}
                     account={address}
-                    provider={appState.provider}
+                    // provider={appState.provider}
                   />
                 </Flex>
               </Flex>
@@ -192,6 +166,35 @@ const Escrow = ({ raid }) => {
       </SiteLayoutPublic>
     </>
   );
+};
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  // TODO use fetch helper
+  const { raidId } = _.pick(context.params, ['raidId']);
+
+  let raids;
+  if (raidId && raidId.includes('-')) {
+    raids = await fetchRaid(RAID_BY_ID_QUERY, raidId);
+  } else {
+    raids = await fetchRaid(RAID_BY_V1_ID_QUERY, raidId);
+  }
+
+  if (!raids || raids.length === 0) {
+    return {
+      props: {
+        raid: null,
+      },
+      // revalidate: 1
+    };
+  }
+
+  return {
+    props: {
+      raid: raids ? raids[0] : null,
+    },
+  };
 };
 
 export default Escrow;

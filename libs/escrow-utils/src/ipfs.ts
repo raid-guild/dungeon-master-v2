@@ -1,7 +1,7 @@
 import Base58 from 'base-58';
 import { create } from 'ipfs-http-client';
 
-import { INVOICE_VERSION } from './constants';
+import { INVOICE_VERSION, IPFS_ENDPOINT } from './constants';
 
 // TODO migrate to pinata
 
@@ -49,3 +49,5 @@ export const uploadDisputeDetails = async (meta: {
   const bytes = Buffer.from(Base58.decode(hash));
   return `0x${bytes.slice(2).toString('hex')}`;
 };
+
+export const getIpfsLink = (hash: string) => `${IPFS_ENDPOINT}/ipfs/${hash}`;

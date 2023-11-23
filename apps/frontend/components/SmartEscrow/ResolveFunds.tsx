@@ -8,25 +8,19 @@ import {
   Text,
   VStack,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
-import { useCallback, useContext, useState } from 'react';
+import { useState } from 'react';
+import { formatUnits, parseUnits } from 'viem';
+import { getTxLink } from '@raidguild/dm-utils';
+import { parseTokenAddress } from '@raidguild/escrow-utils';
+import { useChainId } from 'wagmi';
 
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 import { OrderedTextarea } from './shared/OrderedTextArea';
 import { Loader } from './Loader';
-
-import {
-  getTxLink,
-  parseTokenAddress,
-  resolve,
-  uploadDisputeDetails,
-} from '@raidguild/escrow-utils';
+import { useResolve } from '@raidguild/escrow-hooks';
 
 export const ResolveFunds = ({ invoice, balance, close }) => {
   const { address, resolutionRate, token, isLocked } = invoice;
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
+  const chainId = useChainId();
 
   const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState<any>();
@@ -34,65 +28,28 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
   try {
     resolverAward =
       resolutionRate === '0'
-        ? BigNumber.from('0')
+        ? BigInt(0)
         : balance.gt(0)
         ? balance.div(resolutionRate)
-        : BigNumber.from(0);
+        : BigInt(0);
   } catch (e) {
     console.error('error in ResoleFunds component ', e);
   }
 
   const availableFunds = balance.sub(resolverAward);
   const [clientAward, setClientAward] = useState(availableFunds);
-  const [providerAward, setProviderAward] = useState(BigNumber.from(0));
+  const [providerAward, setProviderAward] = useState(BigInt(0));
   const [clientAwardInput, setClientAwardInput] = useState(
-    utils.formatUnits(availableFunds, 18)
+    formatUnits(availableFunds, 18)
   );
   const [providerAwardInput, setProviderAwardInput] = useState('0');
   const [comments, setComments] = useState('');
 
-  const resolveFunds = useCallback(async () => {
-    if (
-      provider &&
-      isLocked &&
-      comments &&
-      balance.eq(clientAward.add(providerAward).add(resolverAward)) &&
-      balance.gt(0)
-    ) {
-      try {
-        setLoading(true);
-        const detailsHash = await uploadDisputeDetails({
-          reason: comments,
-          invoice: address,
-          amount: balance.toString(),
-        });
-        const tx = await resolve(
-          provider,
-          address,
-          clientAward,
-          providerAward,
-          detailsHash
-        );
-        setTransaction(tx);
-        await tx.wait();
-        setTimeout(() => {
-          window.location.reload();
-        }, 20000);
-      } catch (depositError) {
-        setLoading(false);
-        console.error(depositError);
-      }
-    }
-  }, [
-    provider,
-    isLocked,
-    balance,
-    comments,
-    clientAward,
-    providerAward,
-    resolverAward,
-    address,
-  ]);
+  const { writeAsync } = useResolve({
+    invoice,
+    clientAward: 0,
+    providerAward: 0,
+  });
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -108,7 +65,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
       </Heading>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {isLocked
-          ? `You’ll need to distribute the total balance of ${utils.formatUnits(
+          ? `You’ll need to distribute the total balance of ${formatUnits(
               balance,
               18
             )} ${parseTokenAddress(
@@ -149,15 +106,15 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 onChange={(e) => {
                   setClientAwardInput(e.target.value);
                   if (e.target.value) {
-                    let award = utils.parseUnits(e.target.value, 18);
-                    if (award.gt(availableFunds)) {
+                    let award = parseUnits(e.target.value, 18);
+                    if (award > availableFunds) {
                       award = availableFunds;
-                      setClientAwardInput(utils.formatUnits(award, 18));
+                      setClientAwardInput(formatUnits(award, 18));
                     }
                     setClientAward(award);
                     award = availableFunds.sub(award);
                     setProviderAward(award);
-                    setProviderAwardInput(utils.formatUnits(award, 18));
+                    setProviderAwardInput(formatUnits(award, 18));
                   }
                 }}
                 placeholder='Client Award'
@@ -185,15 +142,15 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 onChange={(e) => {
                   setProviderAwardInput(e.target.value);
                   if (e.target.value) {
-                    let award = utils.parseUnits(e.target.value, 18);
-                    if (award.gt(availableFunds)) {
+                    let award = parseUnits(e.target.value, 18);
+                    if (award > availableFunds) {
                       award = availableFunds;
-                      setProviderAwardInput(utils.formatUnits(award, 18));
+                      setProviderAwardInput(formatUnits(award, 18));
                     }
                     setProviderAward(award);
                     award = availableFunds.sub(award);
                     setClientAward(award);
-                    setClientAwardInput(utils.formatUnits(award, 18));
+                    setClientAwardInput(formatUnits(award, 18));
                   }
                 }}
                 placeholder='Provider Award'
@@ -217,7 +174,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 color='yellow'
                 border='none'
                 type='number'
-                value={utils.formatUnits(resolverAward, 18)}
+                value={formatUnits(resolverAward, 18)}
                 pr='3.5rem'
                 isDisabled
               />
@@ -231,7 +188,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
 
           {!loading && (
             <Button
-              onClick={resolveFunds}
+              // onClick={resolveFunds}
               isDisabled={resolverAward.lte(0) || !comments}
               textTransform='uppercase'
               variant='solid'

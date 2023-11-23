@@ -20,33 +20,10 @@ import { CgProfile } from 'react-icons/cg';
 import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from '@raidguild/dm-utils';
 import Link from './ChakraNextLink';
-import { SmartEscrowContext } from '../contexts/SmartEscrow';
-import { useWalletClient } from 'wagmi';
-import Web3 from 'web3';
-import { ethers } from 'ethers';
 
 const ConnectWallet: React.FC = () => {
-  const context = useContext(SmartEscrowContext);
   const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
-
-  useEffect(() => {
-    if (address && walletClient && chain.id) {
-      const web3Provider = new Web3((window as any).ethereum);
-      const gotProvider = new ethers.providers.Web3Provider(
-        web3Provider.currentProvider as any
-      );
-      context.setAppState({
-        ...context.appState,
-        provider: walletClient,
-        account: address,
-        chainId: chain.id,
-        web3Provider: gotProvider,
-      });
-    }
-  }, [address, walletClient, chain]);
 
   return (
     <ConnectButton.Custom>

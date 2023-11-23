@@ -11,6 +11,7 @@ import {
   IRoleRequiredInsert,
   IRoleRemoveMany,
   camelize,
+  IRoleRequiredInsertDb,
 } from '@raidguild/dm-utils';
 
 export const useAddRolesRequired = ({ token }: { token: string }) => {
@@ -110,7 +111,7 @@ export const useUpdateRolesRequired = ({ token }: { token: string }) => {
       insertRoles,
       where,
     }: {
-      insertRoles: IRoleRequiredInsert[];
+      insertRoles: IRoleRequiredInsertDb[];
       where: IRoleRemoveMany;
     }) => {
       // if (!where) return null;

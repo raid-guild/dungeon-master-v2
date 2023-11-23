@@ -1,16 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NextSeo } from 'next-seo';
-import { register } from '@raidguild/escrow-utils';
-import {
-  Heading,
-  Box,
-  Flex,
-  useChakraToast as useToast,
-} from '@raidguild/design-system';
-import { useRouter } from 'next/router';
+import { Heading, Flex } from '@raidguild/design-system';
+import { useForm } from 'react-hook-form';
 
 import SiteLayout from 'components/SiteLayout';
-import { SmartEscrowContext } from 'contexts/SmartEscrow';
 import { PaymentDetailsForm } from 'components/SmartEscrow/PaymentDetailsForm';
 import { PaymentsChunkForm } from 'components/SmartEscrow/PaymentsChunkForm';
 import { EscrowConfirmation } from 'components/SmartEscrow/EscrowConfirmation';
@@ -18,53 +11,26 @@ import { EscrowSuccess } from 'components/SmartEscrow/EscrowSuccess';
 import { ProjectInfo } from 'components/SmartEscrow/ProjectInfo';
 
 const NewEscrow = () => {
-  const { appState } = useContext(SmartEscrowContext);
-  const router = useRouter();
+  const escrowForm = useForm();
+  const { watch } = escrowForm;
 
-  const [client, setClient] = useState<string>('');
-  const [serviceProvider, setServiceProvider] = useState<string>('');
+  const [step, setStep] = useState<number>(1);
 
-  const [paymentDue, setPaymentDue] = useState<string>('1');
-  const [milestones, setMilestones] = useState<string>('1');
-  const [selectedDay, setSelectedDay] = useState<string>('');
-
-  const [tokenType, setTokenType] = useState<string>('');
-
-  const [payments, setPayments] = useState<string | undefined[]>(
-    Array.from(Array(Number(milestones)))
-  );
-
-  const [tx, setTx] = useState<string>('');
-
-  const [step, updateStep] = useState<number>(1);
-  const [isLoading, setLoading] = useState<boolean>(false);
-
-  const toast = useToast();
-
-  useEffect(() => {
-    if (!appState.raid_id) {
-      router.push(`/escrow`);
-    }
-  }, []);
-
-  const sendToast = (msg, duration = 3000) => {
-    toast({
-      duration,
-      position: 'top',
-      render: () => (
-        <Box
-          color='white'
-          p={3}
-          mt='2rem'
-          bg='#ff3864'
-          fontFamily='texturina'
-          textTransform='uppercase'
-        >
-          {msg}
-        </Box>
-      ),
-    });
+  const updateStep = () => {
+    setStep((prev) => prev + 1);
   };
+
+  const backStep = () => {
+    setStep((prev) => prev - 1);
+  };
+
+  const { raidId, projectName, clientName } = watch();
+
+  // useEffect(() => {
+  //   if (!appState.raid_id) {
+  //     router.push(`/escrow`);
+  //   }
+  // }, []);
 
   return (
     <>
@@ -78,62 +44,29 @@ const NewEscrow = () => {
           justifyContent='space-evenly'
           mt='6'
         >
-          <ProjectInfo appState={appState} />
+          <ProjectInfo invoice={{ raidId, clientName, projectName }} />
           {step === 1 && (
             <PaymentDetailsForm
-              appState={appState}
-              client={client}
-              serviceProvider={serviceProvider}
-              tokenType={tokenType}
-              paymentDue={paymentDue}
-              milestones={milestones}
-              selectedDay={selectedDay}
-              setClient={setClient}
-              setServiceProvider={setServiceProvider}
-              setTokenType={setTokenType}
-              setPaymentDue={setPaymentDue}
-              setMilestones={setMilestones}
-              setSelectedDay={setSelectedDay}
-              sendToast={sendToast}
+              escrowForm={escrowForm}
               updateStep={updateStep}
+              backStep={backStep}
             />
           )}
           {step === 2 && (
             <PaymentsChunkForm
-              tokenType={tokenType}
-              paymentDue={paymentDue}
-              milestones={milestones}
-              payments={payments}
-              setPayments={setPayments}
-              sendToast={sendToast}
+              escrowForm={escrowForm}
               updateStep={updateStep}
+              backStep={backStep}
             />
           )}
           {step === 3 && (
             <EscrowConfirmation
-              appState={appState}
-              client={client}
-              serviceProvider={serviceProvider}
-              tokenType={tokenType}
-              paymentDue={paymentDue}
-              milestones={milestones}
-              payments={payments}
-              selectedDay={selectedDay}
-              isLoading={isLoading}
-              setLoading={setLoading}
+              escrowForm={escrowForm}
               updateStep={updateStep}
-              register={register}
-              setTx={setTx}
+              backStep={backStep}
             />
           )}
-          {step === 4 && (
-            <EscrowSuccess
-              ethersProvider={appState.web3Provider}
-              tx={tx}
-              chainId={appState.chainId}
-              raidId={appState.raid_id}
-            />
-          )}
+          {step === 4 && <EscrowSuccess raidId={raidId} />}
         </Flex>
       </SiteLayout>
     </>

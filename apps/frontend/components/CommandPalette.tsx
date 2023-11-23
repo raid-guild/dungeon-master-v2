@@ -190,9 +190,9 @@ const CommandPalette = () => {
         )}
       </CmdkCommandPalette.Page>
 
-      <CmdkCommandPalette.Page id='projects'>
-        {/* Projects page */}
-      </CmdkCommandPalette.Page>
+      {/* <CmdkCommandPalette.Page id='projects'> */}
+      {/* Projects page */}
+      {/* </CmdkCommandPalette.Page> */}
     </CmdkCommandPalette>
   );
 };

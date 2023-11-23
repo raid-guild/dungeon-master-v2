@@ -3,6 +3,8 @@ import { QuestionIcon } from './icons/QuestionIcon';
 
 import { AccountLink } from './shared/AccountLink';
 
+// TODO use array
+
 export const InvoiceMetaDetails = ({ invoice }) => {
   return (
     <>

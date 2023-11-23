@@ -14,7 +14,6 @@ import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { wagmiConfig, chains } from '@raidguild/dm-utils';
-import { SmartEscrowContextProvider } from '../contexts/SmartEscrow';
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
@@ -75,10 +74,8 @@ const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
             <RainbowKitProvider chains={chains || []} theme={darkTheme()}>
               <QueryClientProvider client={queryClient}>
                 <OverlayContextProvider>
-                  <SmartEscrowContextProvider>
-                    <Component {...pageProps} />
-                    <ReactQueryDevtools initialIsOpen={false} />
-                  </SmartEscrowContextProvider>
+                  <Component {...pageProps} />
+                  <ReactQueryDevtools initialIsOpen={false} />
                 </OverlayContextProvider>
               </QueryClientProvider>
             </RainbowKitProvider>

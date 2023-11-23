@@ -21,7 +21,7 @@ import {
   IMember,
   IRaid,
   IRoleRemoveMany,
-  IRoleRequiredInsert,
+  IRoleRequiredInsertDb,
   memberDisplayName,
   membersExceptRaidParty,
   rolesExceptRequiredRoles,
@@ -75,7 +75,7 @@ const RaidPartyButtons = ({
   const { mutateAsync: addRaider } = useRaidPartyAdd({ token });
 
   const submitUpdateRoles = async () => {
-    const selectedRoleValues: string[] = _.map(
+    const selectedRoleValues: any[] = _.map(
       selectedRoleOptions,
       (selection: Option) => selection.value
     );
@@ -89,7 +89,7 @@ const RaidPartyButtons = ({
     );
     const raidId = _.get(raid, 'id');
 
-    const insertRoles: IRoleRequiredInsert[] = _.map(rolesAdded, (role) => ({
+    const insertRoles: IRoleRequiredInsertDb[] = _.map(rolesAdded, (role) => ({
       raid_id: raidId,
       role,
     }));

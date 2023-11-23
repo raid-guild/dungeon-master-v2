@@ -1,13 +1,13 @@
-// @ts-ignore
-import gql from 'fake-tag';
-import { utils } from 'ethers';
+import { gql } from 'graphql-request';
+import _ from 'lodash';
+import { getAddress } from 'viem';
 
-import { clients } from './client';
+import { client } from './client';
 import { InvoiceDetails } from './fragments';
 
 const isAddress = (value: string) => {
   try {
-    return utils.getAddress(value).toLowerCase();
+    return _.toLower(getAddress(value));
   } catch {
     return false;
   }
@@ -27,18 +27,14 @@ export const getInvoice = async (chainId: number, queryAddress: string) => {
   const address = isAddress(queryAddress);
   if (!address) return null;
 
-  // TODO fix
-  // @ts-ignore
-  const { data, error } = await clients[chainId]
-    .query(invoiceQuery, { address })
-    .toPromise();
+  try {
+    const result = await client(chainId).request(invoiceQuery, {
+      address,
+    });
 
-  if (!data) {
-    if (error) {
-      console.error(error);
-    }
+    return _.get(result, 'data.invoice');
+  } catch (err) {
+    console.error(err);
     return null;
   }
-
-  return data.invoice;
 };

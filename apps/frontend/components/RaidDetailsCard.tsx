@@ -26,6 +26,9 @@ import {
   AVAILABLE_PROJECT_SPECS_DISPLAY,
   PROJECT_TYPE_DISPLAY,
   RAID_CATEGORY_DISPLAY,
+  AvailableSpecsKey,
+  ProjectTypeKey,
+  PriorityKey,
 } from '@raidguild/dm-utils';
 import InfoStack from './InfoStack';
 
@@ -109,16 +112,20 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
       ? {
           label: 'Project Specs',
           details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
-              'YES'
+            (_.get(
+              consultation,
+              'availableProjectSpec.availableProjectSpec'
+            ) as AvailableSpecsKey) || 'YES'
           ),
           link: consultation?.link,
         }
       : {
           label: 'Project Specs',
           details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
-              'NONE'
+            (_.get(
+              consultation,
+              'availableProjectSpec.availableProjectSpec'
+            ) as AvailableSpecsKey) || 'NONE'
           ),
         },
     _.get(consultation, 'consultationHash') && {
@@ -177,7 +184,11 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
         {
           label: 'Project Type',
           details: PROJECT_TYPE_DISPLAY(
-            _.get(consultation, 'projectType.projectType', '-')
+            _.get(
+              consultation,
+              'projectType.projectType',
+              '-'
+            ) as ProjectTypeKey
           ),
         },
         {
@@ -187,13 +198,17 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
               consultation,
               'availableProjectSpec.availableProjectSpec',
               '-'
-            )
+            ) as AvailableSpecsKey
           ),
         },
         {
           label: 'Delivery Priority',
           details: DELIVERY_PRIORITIES_DISPLAY(
-            _.get(consultation, 'deliveryPriority.deliveryPriority', '-')
+            _.get(
+              consultation,
+              'deliveryPriority.deliveryPriority',
+              '-'
+            ) as PriorityKey
           ),
         },
       ].filter((x) => x),

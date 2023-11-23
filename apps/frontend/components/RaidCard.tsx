@@ -24,6 +24,7 @@ import {
   displayDate,
   IConsultation,
   IRaid,
+  ProjectTypeKey,
 } from '@raidguild/dm-utils';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 
@@ -51,7 +52,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const budget =
     BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
   const projectType = PROJECT_TYPE_DISPLAY(
-    _.get(consultation, 'projectType.projectType')
+    _.get(consultation, 'projectType.projectType') as ProjectTypeKey
   );
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
 

@@ -112,7 +112,7 @@ const Consultation = ({ consultationId }: Props) => {
             <Spacer />
             <Box>
               <Badge>
-                {raid?.name
+                {_.get(raid, 'name')
                   ? 'Accepted'
                   : _.get(
                       consultation,

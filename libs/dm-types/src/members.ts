@@ -1,6 +1,7 @@
 import { IContactInfo } from './index';
 import { IApplication } from './applications';
 import { Skills } from './misc';
+import { Hex } from 'viem';
 
 export interface IMember {
   id: string;
@@ -22,7 +23,7 @@ export interface IMember {
 
   // ETH
   ensName?: string;
-  ethAddress?: string;
+  ethAddress?: Hex;
 
   // RELATIONSHIPS
   application: IApplication;

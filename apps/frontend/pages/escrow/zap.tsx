@@ -19,16 +19,15 @@ import {
   Card,
 } from '@raidguild/design-system';
 import { FieldValues, useForm, useFieldArray } from 'react-hook-form';
-import { useEscrowZap } from '@raidguild/dm-hooks';
+import { useEscrowZap } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
 import { useNetwork, useWaitForTransaction } from 'wagmi';
-import { isAddress } from '@ethersproject/address';
+import { isAddress } from 'viem';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
 import { DevTool } from '@hookform/devtools';
-import { utils } from 'ethers';
-import { Hex, zeroAddress } from 'viem';
+import { Hex, zeroAddress, decodeAbiParameters } from 'viem';
 
 const ARBITRATION_OPTIONS = [
   {
@@ -128,7 +127,7 @@ const EscrowZap = () => {
   });
   let addresses: Hex[];
   if (data?.logs?.[6]?.data) {
-    addresses = utils.defaultAbiCoder.decode(
+    addresses = decodeAbiParameters(
       ['address', 'address', 'address', 'address'],
       data?.logs?.[6]?.data
     ) as Hex[];
@@ -365,12 +364,12 @@ const EscrowZap = () => {
               </Button>
               <Text>
                 Total:{' '}
-                {utils.commify(
+                {/* {_.toLocaleString(
                   _.sumBy(
                     milestones,
                     (milestone) => _.toNumber(milestone.value) || 0
                   )
-                )}{' '}
+                )}{' '} */}
                 {token?.label}
               </Text>
             </Flex>

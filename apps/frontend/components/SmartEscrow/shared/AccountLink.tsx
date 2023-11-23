@@ -1,25 +1,22 @@
 import { Flex, Link, Text } from '@raidguild/design-system';
-import React, { useContext } from 'react';
+import _ from 'lodash';
 
-import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-
-import { getAddressLink } from '@raidguild/escrow-utils';
+import { getAddressLink } from '@raidguild/dm-utils';
+import { useChainId } from 'wagmi';
 
 type AccountLinkProps = {
   address: string;
-  chainId?: string;
+  chainId?: number;
 };
 
 export const AccountLink = ({
   address: inputAddress,
-  chainId: inputChainId,
+  chainId,
 }: AccountLinkProps) => {
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
+  const currentChainId = useChainId();
 
   const address =
-    typeof inputAddress === 'string' ? inputAddress.toLowerCase() : '';
+    typeof inputAddress === 'string' ? _.toLower(inputAddress) : '';
 
   let displayString = address;
 
@@ -27,7 +24,7 @@ export const AccountLink = ({
 
   return (
     <Link
-      href={getAddressLink(chainId, address)}
+      href={getAddressLink(chainId || currentChainId, address)}
       isExternal
       display='inline-flex'
       textAlign='right'

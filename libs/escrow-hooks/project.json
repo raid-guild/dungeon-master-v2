@@ -1,0 +1,37 @@
+{
+  "name": "escrow-hooks",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/escrow-hooks/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/escrow-hooks",
+        "main": "libs/escrow-hooks/src/index.ts",
+        "tsConfig": "libs/escrow-hooks/tsconfig.lib.json",
+        "assets": ["libs/escrow-hooks/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/escrow-hooks/**/*.ts",
+          "libs/escrow-hooks/package.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/libs/escrow-hooks"
+      }
+    }
+  },
+  "tags": []
+}

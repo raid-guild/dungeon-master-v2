@@ -222,7 +222,7 @@ const MemberCard: React.FC<MemberProps> = ({
           <Flex wrap='wrap' width='100%' maxWidth='100%'>
             {_.map(
               clearNonObjects(socials),
-              ({ href, icon, label, tooltip, onClick }, i: number) => (
+              ({ href, icon, label, tooltip, onClick }: any, i: number) => (
                 <SocialButton
                   key={`${label}-${href}-${i}`}
                   href={href}

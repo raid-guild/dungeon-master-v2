@@ -7,22 +7,19 @@ import {
   VStack,
   Image,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
 import { useCallback, useContext, useState } from 'react';
-import {
-  getTxLink,
-  lock,
-  uploadDisputeDetails,
-  NETWORK_CONFIG,
-} from '@raidguild/escrow-utils';
+import { uploadDisputeDetails, NETWORK_CONFIG } from '@raidguild/escrow-utils';
 
 import LockImage from '../../assets/lock.svg';
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
 import { AccountLink } from './shared/AccountLink';
 import { OrderedTextarea } from './shared/OrderedTextArea';
 
 import { Loader } from './Loader';
+import { formatUnits } from 'viem';
+import { useChainId } from 'wagmi';
+import { useLock } from '@raidguild/escrow-hooks';
+import { getTxLink } from '@raidguild/dm-utils';
 
 const parseTokenAddress = (chainId, address) => {
   for (const [key, value] of Object.entries(
@@ -65,44 +62,22 @@ const getResolverString = (chainId, resolver) => {
 };
 
 export const LockFunds = ({ invoice, balance }) => {
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
+  const chainId = useChainId();
   const { address, resolver, token, resolutionRate } = invoice;
 
   const [disputeReason, setDisputeReason] = useState('');
 
-  const fee = `${utils.formatUnits(
-    resolutionRate === '0'
-      ? BigNumber.from('0')
-      : BigNumber.from(balance).div(resolutionRate),
+  const fee = `${formatUnits(
+    resolutionRate === '0' ? BigInt(0) : BigInt(balance) / resolutionRate,
     18
   )} ${parseTokenAddress(chainId, token)}`;
 
   const [locking, setLocking] = useState<boolean>(false);
   const [transaction, setTransaction] = useState<any>();
 
-  const lockFunds = useCallback(async () => {
-    if (provider && !locking && balance.gt(0) && disputeReason) {
-      try {
-        setLocking(true);
-        const detailsHash = await uploadDisputeDetails({
-          reason: disputeReason,
-          invoice: address,
-          amount: balance.toString(),
-        });
-        const tx = await lock(provider, address, detailsHash);
-        setTransaction(tx);
-        await tx.wait();
-        setTimeout(() => {
-          window.location.reload();
-        }, 20000);
-      } catch (lockError) {
-        setLocking(false);
-        console.error(lockError);
-      }
-    }
-  }, [provider, locking, balance, disputeReason, address]);
+  const { writeAsync: lockFunds } = useLock({
+    invoice,
+  });
 
   if (locking) {
     return (
@@ -193,7 +168,7 @@ export const LockFunds = ({ invoice, balance }) => {
         textTransform='uppercase'
         variant='solid'
       >
-        {`Lock ${utils.formatUnits(balance, 18)} ${parseTokenAddress(
+        {`Lock ${formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,
           token
         )}`}

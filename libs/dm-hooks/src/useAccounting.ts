@@ -3,7 +3,6 @@
 // All credit to @midgerate, @xivanc, @daniel-ivanco, and the DAOHaus team for the original code
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, TRANSACTIONS_QUERY } from '@raidguild/dm-graphql';
 import {
@@ -43,30 +42,30 @@ class CalculateTokenBalances {
   initTokenBalance(tokenAddress: string) {
     if (!(tokenAddress in this.calculatedTokenBalances)) {
       this.calculatedTokenBalances[tokenAddress] = {
-        out: BigNumber.from(0),
-        in: BigNumber.from(0),
-        balance: BigNumber.from(0),
+        out: BigInt(0),
+        in: BigInt(0),
+        balance: BigInt(0),
       };
     }
   }
 
-  incrementInflow(tokenAddress: string, inValue: BigNumber) {
+  incrementInflow(tokenAddress: string, inValue: bigint) {
     this.initTokenBalance(tokenAddress);
     const tokenStats = this.calculatedTokenBalances[tokenAddress];
     this.calculatedTokenBalances[tokenAddress] = {
       ...tokenStats,
-      in: tokenStats.in.add(inValue),
-      balance: tokenStats.balance.add(inValue),
+      in: tokenStats.in + inValue,
+      balance: tokenStats.balance + inValue,
     };
   }
 
-  incrementOutflow(tokenAddress: string, outValue: BigNumber) {
+  incrementOutflow(tokenAddress: string, outValue: bigint) {
     this.initTokenBalance(tokenAddress);
     const tokenStats = this.calculatedTokenBalances[tokenAddress];
     this.calculatedTokenBalances[tokenAddress] = {
       ...tokenStats,
-      out: tokenStats.out.add(outValue),
-      balance: tokenStats.balance.sub(outValue),
+      out: tokenStats.out + outValue,
+      balance: tokenStats.balance + outValue,
     };
   }
 
@@ -92,10 +91,9 @@ const formatBalancesAsTransactions = async (
            * so instead, we track the previous balance of the token in the calculatedTokenBalances class state
            * and subtract from current balance to get the amount.
            */
-          const tokenValue = calculatedTokenBalances
-            .getBalance(molochStatBalance.tokenAddress)
-            .sub(BigNumber.from(molochStatBalance.balance))
-            .abs();
+          const tokenValue =
+            calculatedTokenBalances.getBalance(molochStatBalance.tokenAddress) -
+            BigInt(molochStatBalance.balance);
           const tokenFormattedValue = formatUnitsAsNumber(
             tokenValue,
             molochStatBalance.tokenDecimals
@@ -114,10 +112,10 @@ const formatBalancesAsTransactions = async (
               );
 
               return {
-                in: 0,
-                out: 0,
-                net: 0,
-                balance,
+                in: BigInt(0),
+                out: BigInt(0),
+                net: BigInt(0),
+                balance: BigInt(balance),
               };
             }
             if (
@@ -137,10 +135,10 @@ const formatBalancesAsTransactions = async (
               );
 
               return {
-                in: tokenFormattedValue,
-                out: 0,
-                net: tokenFormattedValue,
-                balance,
+                in: BigInt(tokenFormattedValue),
+                out: BigInt(0),
+                net: BigInt(tokenFormattedValue),
+                balance: BigInt(balance),
               };
             }
 
@@ -161,10 +159,10 @@ const formatBalancesAsTransactions = async (
               );
 
               return {
-                in: 0,
-                out: tokenFormattedValue,
-                net: -tokenFormattedValue,
-                balance,
+                in: BigInt(0),
+                out: BigInt(tokenFormattedValue),
+                net: -BigInt(tokenFormattedValue),
+                balance: BigInt(balance),
               };
             }
 
@@ -176,10 +174,10 @@ const formatBalancesAsTransactions = async (
             );
 
             return {
-              in: 0,
-              out: 0,
-              net: 0,
-              balance,
+              in: BigInt(0),
+              out: BigInt(0),
+              net: BigInt(0),
+              balance: BigInt(balance),
             };
           })();
 
@@ -221,10 +219,10 @@ const formatBalancesAsTransactions = async (
             proposalId: proposal?.proposalId ?? '',
             proposalLink,
             proposalShares: proposal?.sharesRequested
-              ? BigNumber.from(proposal.sharesRequested)
+              ? BigInt(proposal.sharesRequested)
               : undefined,
             proposalLoot: proposal?.lootRequested
-              ? BigNumber.from(proposal.lootRequested)
+              ? BigInt(proposal.lootRequested)
               : undefined,
             proposalApplicant: proposal?.applicant ?? '',
             proposalTitle,
@@ -273,13 +271,13 @@ const mapMolochTokenBalancesToTokenBalanceLineItem = async (
         tokenExplorerLink,
         inflow: {
           tokenValue: formatUnitsAsNumber(
-            calculatedTokenBalance?.in || BigNumber.from(0),
+            calculatedTokenBalance?.in || BigInt(0),
             molochTokenBalance.token.decimals
           ),
         },
         outflow: {
           tokenValue: formatUnitsAsNumber(
-            calculatedTokenBalance?.out || BigNumber.from(0),
+            calculatedTokenBalance?.out || BigInt(0),
             molochTokenBalance.token.decimals
           ),
         },
@@ -330,8 +328,8 @@ const formatSpoils = async (
         raidLink: `/raids/${raid.id}`,
         raidName: raid.name,
         // TODO: This will probably always be wxDAI, but we should update subgraph to index decimals and token symbol
-        childShare: formatUnitsAsNumber(withdrawal.childShare, '18'),
-        parentShare: formatUnitsAsNumber(withdrawal.parentShare, '18'),
+        childShare: formatUnitsAsNumber(withdrawal.childShare, 18),
+        parentShare: formatUnitsAsNumber(withdrawal.parentShare, 18),
         priceConversion: 1,
         date: new Date(Number(withdrawal.timestamp) * 1000),
         tokenSymbol: 'wxDAI',

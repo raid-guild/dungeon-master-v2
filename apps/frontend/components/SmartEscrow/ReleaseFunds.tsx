@@ -6,15 +6,14 @@ import {
   ChakraText as Text,
   VStack,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
-import React, { useContext, useState } from 'react';
+import { parseTokenAddress } from '@raidguild/escrow-utils';
+import { getTxLink } from '@raidguild/dm-utils';
+import React, { useState } from 'react';
+import { formatUnits } from 'viem';
+import { useChainId } from 'wagmi';
 
 import { Loader } from './Loader';
-
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-
-import { getTxLink, parseTokenAddress, release } from '@raidguild/escrow-utils';
-import { getInvoice } from '@raidguild/escrow-gql';
+import { useRelease } from '@raidguild/escrow-hooks';
 
 type ReleaseFundsProp = {
   invoice: any;
@@ -24,30 +23,31 @@ type ReleaseFundsProp = {
 export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-  const {
-    appState: { chainId, invoice_id, provider },
-  } = useContext(SmartEscrowContext);
+  const chainId = useChainId();
+
   const { currentMilestone, amounts, address, token } = invoice;
 
-  const pollSubgraph = async () => {
-    let isSubscribed = true;
+  const { writeAsync: releaseFunds } = useRelease({ invoice });
 
-    const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainId), invoice_id);
+  // const pollSubgraph = async () => {
+  //   let isSubscribed = true;
 
-      if (isSubscribed && !!inv) {
-        if (
-          utils.formatUnits(inv.released, 18) >
-          utils.formatUnits(invoice.released, 18)
-        ) {
-          isSubscribed = false;
-          clearInterval(interval);
+  //   const interval = setInterval(async () => {
+  //     let inv = await getInvoice(parseInt(chainId), invoice_id);
 
-          window.location.reload();
-        }
-      }
-    }, 5000);
-  };
+  //     if (isSubscribed && !!inv) {
+  //       if (
+  //         utils.formatUnits(inv.released, 18) >
+  //         utils.formatUnits(invoice.released, 18)
+  //       ) {
+  //         isSubscribed = false;
+  //         clearInterval(interval);
+
+  //         window.location.reload();
+  //       }
+  //     }
+  //   }, 5000);
+  // };
 
   const getReleaseAmount = (currentMilestone, amounts, balance) => {
     if (
@@ -57,35 +57,7 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
     ) {
       return balance;
     }
-    return BigNumber.from(amounts[currentMilestone]);
-  };
-
-  const [transaction, setTransaction] = useState<any>();
-
-  const releaseFunds = async () => {
-    if (
-      !loading &&
-      provider &&
-      balance &&
-      balance.gte(getReleaseAmount(currentMilestone, amounts, balance))
-    ) {
-      try {
-        setLoading(true);
-        const tx = await release(provider, address);
-        setTransaction(tx);
-        await tx.wait();
-        await pollSubgraph();
-      } catch (releaseError) {
-        console.error(releaseError);
-        setLoading(false);
-        toast.error({
-          title: 'Oops there was an error',
-          iconName: 'alert',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
+    return BigInt(amounts[currentMilestone]);
   };
 
   return (
@@ -113,12 +85,12 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-        >{`${utils.formatUnits(
+        >{`${formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
           18
         )} ${parseTokenAddress(chainId, token)}`}</Text>
       </VStack>
-      {transaction && (
+      {/* {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
@@ -130,7 +102,7 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
             here
           </Link>
         </Text>
-      )}
+      )} */}
       {loading && <Loader />}
 
       {!loading && (

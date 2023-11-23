@@ -1,228 +1,170 @@
-import { useEffect, useState } from 'react';
-import { utils } from 'ethers';
 import {
   Flex,
-  ChakraInput as Input,
+  Input,
   Button,
   FormControl,
   FormLabel,
   Link,
-  Tooltip,
-  HStack,
+  RadioBox,
+  NumberInput,
+  ChakraInput,
+  DatePicker,
 } from '@raidguild/design-system';
-
-import styled from '@emotion/styled';
-
-import { RadioBox } from './RadioBox';
-
-import { QuestionIcon } from './icons/QuestionIcon';
-
 import { getResolverUrl, getSpoilsUrl } from '@raidguild/escrow-utils';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
+import { UseFormReturn, useForm } from 'react-hook-form';
+import { useChainId } from 'wagmi';
 
-const StyledInput = styled(Input)`
-  width: 100%;
-  outline: none;
-  border: none;
-  color: white;
-  font-size: 1rem;
-  background-color: black;
-  margin-bottom: 15px;
-  padding: 10px;
-  &::placeholder {
-    color: #ff3864;
-    opacity: 1;
+// TODO migrate to design system
+// TODO migrate to react-hook-form
+
+const tokens = (chainId: number) => {
+  if (chainId === 100) {
+    return ['WETH', 'WXDAI'];
+  } else if (chainId === 1) {
+    return ['WETH', 'DAI'];
+  } else {
+    return ['WETH', 'DAI', 'TEST'];
   }
-`;
+};
 
-const StyledFormLabel = styled(FormLabel)`
-  font-weight: bold;
-`;
+const unsupportedNetwork = (chainId: number) => {
+  return SUPPORTED_NETWORKS.indexOf(chainId) === -1;
+};
+
+// if (SUPPORTED_NETWORKS.indexOf(parseInt(appState.chainId)) === -1)
+//   return sendToast('Switch to a supported network.');
+// if (!utils.isAddress(client)) return sendToast('Invalid Client Address.');
+// if (!utils.isAddress(serviceProvider))
+//   return sendToast('Invalid Raid Party Address.');
+// if (client === serviceProvider)
+//   return sendToast('Client and Raid party address cannot be the same.');
+// if (tokenType === '') return sendToast('Select a Payment Token.');
+// if (paymentDue <= 0 || paymentDue === '')
+//   return sendToast('Invalid Payment Due Amount.');
+// if (!selectedDay) return sendToast('Safety valve date required.');
+// if (new Date(selectedDay).getTime() < new Date().getTime())
+//   return sendToast('Safety valve date needs to be in future.');
 
 export const PaymentDetailsForm = ({
-  appState,
-  client,
-  serviceProvider,
-  tokenType,
-  paymentDue,
-  milestones,
-  selectedDay,
-  setClient,
-  setServiceProvider,
-  setTokenType,
-  setPaymentDue,
-  setMilestones,
-  setSelectedDay,
-  sendToast,
+  escrowForm,
   updateStep,
+  backStep,
+}: {
+  escrowForm: UseFormReturn;
+  updateStep: () => void;
+  backStep: () => void;
 }) => {
-  const [tokens, setTokens] = useState([]);
+  const chainId = useChainId();
+  const { watch, setValue } = escrowForm;
+  const localForm = useForm();
+  const { handleSubmit } = localForm;
 
-  const updateTokenList = () => {
-    if (parseInt(appState.chainId) === 100) {
-      setTokens(['WETH', 'WXDAI']);
-    } else if (parseInt(appState.chainId) === 1) {
-      setTokens(['WETH', 'DAI']);
-    } else {
-      setTokens(['WETH', 'DAI', 'TEST']);
-    }
+  const serviceProvider = watch('serviceProvider');
+
+  const onSubmit = (values: object) => {
+    console.log(values);
+    setValue('paymentToken', tokens(chainId)[0]);
+    updateStep();
   };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => updateTokenList(), []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => updateTokenList(), [appState.chainId]);
 
   return (
     <Flex
+      as='form'
+      onSubmit={handleSubmit(onSubmit)}
       direction='column'
       background='#262626'
       padding='1.5rem'
       minWidth='50%'
     >
       <FormControl isRequired>
-        <HStack alignItems='baseline' justifyContent='space-between'>
-          <StyledFormLabel>Client Address</StyledFormLabel>
-          <Tooltip
-            label='This will be the address used to access the invoice'
-            placement='auto-start'
-          >
-            <QuestionIcon boxSize='0.85rem' />
-          </Tooltip>
-        </HStack>
-        <StyledInput
+        <Input
+          label='Client Address'
+          tooltip='This will be the address used to access the invoice'
           name='client'
-          onChange={(e) => setClient(e.target.value)}
-          value={client}
+          localForm={localForm}
         />
       </FormControl>
 
       <FormControl isRequired>
-        <HStack alignItems='baseline' justifyContent='space-between'>
-          <StyledFormLabel>Raid Party Address</StyledFormLabel>
-          <Tooltip label='Recipient of the funds' placement='auto-start'>
-            <QuestionIcon boxSize='0.85rem' />
-          </Tooltip>
-        </HStack>
-        <StyledInput
+        <Input
+          label='Raid Party Address'
+          tooltip='Recipient of the funds'
           name='serviceProvider'
-          onChange={(e) => setServiceProvider(e.target.value)}
-          value={serviceProvider}
+          localForm={localForm}
         />
       </FormControl>
 
       <Flex direction='row'>
         <FormControl isRequired>
-          <StyledFormLabel>Payment Token</StyledFormLabel>
           <RadioBox
             options={tokens}
-            updateRadio={setTokenType}
+            label='Payment Token'
             name='paymentToken'
-            defaultValue={tokenType}
-            value={tokenType}
+            localForm={localForm}
           />
         </FormControl>
         <FormControl isRequired mr='.5em'>
-          <StyledFormLabel>Total Payment Due</StyledFormLabel>
-          <StyledInput
-            type='number'
+          <NumberInput
+            label='Total Payment Due'
             name='paymentDue'
-            min='1'
-            onChange={(e) => setPaymentDue(e.target.value)}
-            value={paymentDue}
+            min={1}
+            localForm={localForm}
           />
         </FormControl>
         <FormControl isRequired>
-          <HStack alignItems='baseline' justifyContent='space-between'>
-            <StyledFormLabel>No of Payments</StyledFormLabel>
-            <Tooltip
-              label='Number of milestones in which the total payment will be processed'
-              placement='auto-start'
-            >
-              <QuestionIcon boxSize='0.85rem' />
-            </Tooltip>
-          </HStack>
-          <StyledInput
-            type='number'
+          <NumberInput
+            label='No of Payments'
             name='milestones'
-            min='1'
-            onChange={(e) => setMilestones(e.target.value)}
-            value={milestones}
+            // tooltip='Number of milestones in which the total payment will be processed'
+            min={1}
+            localForm={localForm}
           />
         </FormControl>
       </Flex>
 
       <Flex direction='row'>
         <FormControl isReadOnly mr='.5em'>
-          <Link
-            href={getResolverUrl(parseInt(appState.chainId))}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <StyledFormLabel cursor='pointer'>
+          <Link href={getResolverUrl(chainId)} isExternal>
+            <FormLabel cursor='pointer' fontWeight='bold'>
               Arbitration Provider
-            </StyledFormLabel>
+            </FormLabel>
           </Link>
-          <StyledInput value='LexDAO' isDisabled />
+          <ChakraInput value='LexDAO' isDisabled />
         </FormControl>
 
         <FormControl isReadOnly mr='.5em'>
-          <Link
-            href={getSpoilsUrl(parseInt(appState.chainId), serviceProvider)}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <StyledFormLabel cursor='pointer'>Spoils Percent</StyledFormLabel>
+          <Link href={getSpoilsUrl(chainId, serviceProvider)} isExternal>
+            <FormLabel cursor='pointer' fontWeight='bold'>
+              Spoils Percent
+            </FormLabel>
           </Link>
-          <StyledInput value='10%' readOnly isDisabled />
+          <ChakraInput value='10%' readOnly isDisabled />
         </FormControl>
 
         <FormControl isRequired>
-          <HStack alignItems='baseline' justifyContent='space-between'>
-            <StyledFormLabel>Safety Valve Date </StyledFormLabel>
-            <Tooltip
-              label='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
-              placement='auto-start'
-            >
-              <QuestionIcon boxSize='0.85rem' />
-            </Tooltip>
-          </HStack>
-
-          <StyledInput
-            type='date'
-            color='white'
+          <DatePicker
+            label='Safety Valve Date'
             name='safetyValveDate'
-            onChange={(e) => setSelectedDay(e.target.value)}
-            value={selectedDay}
+            // tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
+            onChange={(date) => {
+              setValue('safetyValveDate', date);
+            }}
+            selected={watch('safetyValveDate')}
+            localForm={localForm}
           />
         </FormControl>
       </Flex>
 
-      <Button
-        variant='solid'
-        onClick={() => {
-          if (SUPPORTED_NETWORKS.indexOf(parseInt(appState.chainId)) === -1)
-            return sendToast('Switch to a supported network.');
-          if (!utils.isAddress(client))
-            return sendToast('Invalid Client Address.');
-          if (!utils.isAddress(serviceProvider))
-            return sendToast('Invalid Raid Party Address.');
-          if (client === serviceProvider)
-            return sendToast(
-              'Client and Raid party address cannot be the same.'
-            );
-          if (tokenType === '') return sendToast('Select a Payment Token.');
-          if (paymentDue <= 0 || paymentDue === '')
-            return sendToast('Invalid Payment Due Amount.');
-          if (!selectedDay) return sendToast('Safety valve date required.');
-          if (new Date(selectedDay).getTime() < new Date().getTime())
-            return sendToast('Safety valve date needs to be in future.');
-
-          updateStep((prevStep) => prevStep + 1);
-        }}
-      >
-        Next: Set Payment Amounts
-      </Button>
+      <Flex justify='center'>
+        <Button
+          type='submit'
+          variant='solid'
+          isDisabled={unsupportedNetwork(chainId)}
+        >
+          Next: Set Payment Amounts
+        </Button>
+      </Flex>
     </Flex>
   );
 };

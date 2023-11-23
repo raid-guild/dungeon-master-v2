@@ -22,20 +22,20 @@ interface RipProps {
 
 const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const description = _.get(rip, 'bodyText');
+  const description = _.get(rip, 'bodyText', '');
   const link = _.get(rip, 'url');
   const ripStatus = _.get(rip, 'ripCategory');
   const raidDate = _.get(rip, 'createdAt');
   const ripDateLabel = 'Created on: ';
   const ripNumber = _.get(rip, 'number');
-  const updates = _.map(rip.comments.nodes, (node) => {
+  const updates = _.map(rip.comments.nodes, (node: any) => {
     return {
-      createdAt: node.createdAt,
-      id: node.id,
+      createdAt: node?.createdAt,
+      id: node?.id,
       member: {
         name: _.get(node, 'author.login'),
       },
-      update: node.bodyText,
+      update: node?.bodyText,
     };
   });
   const latestUpdate = updates ? updates[updates.length - 1] : null;

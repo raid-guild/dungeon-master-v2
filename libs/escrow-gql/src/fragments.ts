@@ -1,5 +1,4 @@
-// @ts-ignore
-import gql from 'fake-tag';
+import { gql } from 'graphql-request';
 
 export const InvoiceDetails = gql`
   fragment InvoiceDetails on Invoice {

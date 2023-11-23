@@ -100,6 +100,11 @@ export interface IRoleRequiredInsert {
   role: string;
 }
 
+export interface IRoleRequiredInsertDb {
+  raid_id: string;
+  role: string;
+}
+
 export interface IRoleRemoveMany {
   _and: {
     role: { _in: string[] }; // ENUM

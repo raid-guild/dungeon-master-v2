@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ControlledInput,
@@ -10,12 +10,12 @@ import {
   HStack,
   Flex,
 } from '@raidguild/design-system';
-
-import SiteLayoutPublic from '../../components/SiteLayoutPublic';
+import SiteLayoutPublic from 'components/SiteLayoutPublic';
 import { NextSeo } from 'next-seo';
 import _ from 'lodash';
 import axios from 'axios';
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
+import { useForm } from 'react-hook-form';
+import { useInvoiceDetails } from '@raidguild/escrow-hooks';
 
 // ? slimmer client here? fetch?
 export const validateRaidId = async (raidId: string) => {
@@ -23,11 +23,24 @@ export const validateRaidId = async (raidId: string) => {
   return data;
 };
 
+const ActionButtons = ({ raid }) => (
+  <Stack>
+    <Link href='/escrow/new' passHref key='register'>
+      <Button variant='outline' isDisabled={!raid || raid.invoiceAddress}>
+        Register Escrow
+      </Button>
+    </Link>
+    <Link href={`/escrow/${raid?.id}`} passHref key='view'>
+      <Button variant='outline' isDisabled={!raid || !raid.invoiceAddress}>
+        View Escrow
+      </Button>
+    </Link>
+  </Stack>
+);
+
 export const Escrow = () => {
-  const { appState, setAppState } = useContext(SmartEscrowContext);
   const [raidId, setRaidId] = useState('');
   const [validId, setValidId] = useState<boolean | undefined>(undefined);
-  const [raid, setRaid] = useState<any>();
 
   useEffect(() => {
     if (validId === true || validId === false) {
@@ -35,66 +48,10 @@ export const Escrow = () => {
     }
   }, [raidId]);
 
-  const validateID = async () => {
-    const raid = await validateRaidId(raidId);
-    setRaid(raid);
-
-    if (raid) {
-      setValidId(true);
-
-      setAppState({
-        ...appState,
-        invoice_id: raid.invoice_address,
-        v1_id: raid.v1_id,
-        raid_id: raid.id,
-        project_name: raid.name,
-        client_name:
-          raid.consultationByConsultation?.consultationContacts[0]?.contact
-            ?.name,
-        start_date: new Date(Number(raid.start_date)) || 'Not Specified',
-        end_date: new Date(Number(raid.end_date)) || 'Not Specified',
-        link_to_details: 'Not Specified',
-        brief_description: 'Not Specified',
-      });
-    } else {
-      setValidId(false);
-    }
-  };
-  const renderActionButton = () => {
-    const buttons = [];
-    buttons.push(
-      <Button
-        variant='outline'
-        onClick={validateID}
-        disabled={!raidId}
-        _hover={{
-          opacity: 0.8,
-        }}
-        mb='4'
-        key='validate'
-      >
-        Validate ID
-      </Button>
-    );
-    if (validId === true && raid && !raid.invoice_address) {
-      buttons.push(
-        <Link href='/escrow/new' passHref key='register'>
-          <Button variant='outline' mb='4'>
-            Register Escrow
-          </Button>
-        </Link>
-      );
-    } else if (validId === true && raid && raid.invoice_address) {
-      buttons.push(
-        <Link href={`/escrow/${raidId}`} passHref key='view'>
-          <Button disabled={!raid} variant='outline' mb='4'>
-            View Escrow
-          </Button>
-        </Link>
-      );
-    }
-    return buttons;
-  };
+  const localForm = useForm();
+  const { watch } = localForm;
+  const invoiceId = watch('invoiceId');
+  const { data: raid } = useInvoiceDetails(invoiceId);
 
   const renderValidationMessage = () => {
     if (validId === true) {
@@ -137,7 +94,7 @@ export const Escrow = () => {
             <Flex justify='flex-end'>
               <HStack>
                 {renderValidationMessage()}
-                {renderActionButton()}
+                <ActionButtons raid={raid} />
               </HStack>
             </Flex>
           </Stack>

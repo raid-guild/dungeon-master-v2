@@ -5,6 +5,7 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
+    "declarationMap": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -21,11 +22,12 @@
       "@raidguild/dm-types": ["libs/dm-types/src/index.ts"],
       "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"],
       "@raidguild/escrow-gql": ["libs/escrow-gql/src/index.ts"],
+      "@raidguild/escrow-hooks": ["libs/escrow-hooks/src/index.ts"],
       "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"],
-      "contexts/*": ["apps/frontend/contexts/*"],
-      "components/*": ["apps/frontend/components/*"]
+      "components/*": ["apps/frontend/components/*"],
+      "contexts/*": ["apps/frontend/contexts/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
   "exclude": ["node_modules", "tmp"]
 }

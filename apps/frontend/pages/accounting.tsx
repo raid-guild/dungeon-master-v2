@@ -24,14 +24,11 @@ import {
   formatDate,
 } from '@raidguild/dm-utils';
 import { useAccounting, useMemberList } from '@raidguild/dm-hooks';
-
 import { useSession } from 'next-auth/react';
-import SiteLayout from '../components/SiteLayout';
-
-import TransactionsTable from '../components/TransactionsTable';
-import BalancesTable from '../components/BalancesTable';
-
-import SpoilsTable from '../components/SpoilsTable';
+import SiteLayout from 'components/SiteLayout';
+import TransactionsTable from 'components/TransactionsTable';
+import BalancesTable from 'components/BalancesTable';
+import SpoilsTable from 'components/SpoilsTable';
 
 export const Accounting = () => {
   const { data: session } = useSession();
@@ -47,7 +44,9 @@ export const Accounting = () => {
   const { balances, spoils, transactions, tokenPrices } = data;
 
   const members = useMemo(() => {
-    const memberArray = _.flatten(_.get(memberData, 'pages')) as IMember[];
+    const memberArray = _.flatten(
+      _.get(memberData, 'pages')
+    ) as unknown as IMember[];
     return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
   }, [memberData]);
 
@@ -128,15 +127,15 @@ export const Accounting = () => {
           ['Token Address']: t.tokenAddress,
           ['Inflow']: t.in,
           ['Inflow USD']: t.priceConversion
-            ? `$${(t.in * t.priceConversion).toLocaleString()}`
+            ? `$${(t.in * BigInt(t.priceConversion)).toLocaleString()}`
             : '$-',
           ['Outflow']: t.out,
           ['Outflow USD']: t.priceConversion
-            ? `$${(t.out * t.priceConversion).toLocaleString()}`
+            ? `$${(t.out * BigInt(t.priceConversion)).toLocaleString()}`
             : '$-',
           ['Balance']: t.balance,
           ['Balance USD']: t.priceConversion
-            ? `$${(t.balance * t.priceConversion).toLocaleString()}`
+            ? `$${(t.balance * BigInt(t.priceConversion)).toLocaleString()}`
             : '$-',
         }));
         csvString = Papa.unparse(formattedTransactions);
@@ -147,18 +146,20 @@ export const Accounting = () => {
             ['Tx Explorer Link']: b.tokenExplorerLink,
             ['Inflow']: b.inflow.tokenValue,
             ['Inflow USD']: b.priceConversion
-              ? `$${(b.inflow.tokenValue * b.priceConversion).toLocaleString()}`
+              ? `$${(
+                  b.inflow.tokenValue * BigInt(b.priceConversion)
+                ).toLocaleString()}`
               : '$-',
             ['Outflow']: b.outflow.tokenValue,
             ['Outflow USD']: b.priceConversion
               ? `$${(
-                  b.outflow.tokenValue * b.priceConversion
+                  b.outflow.tokenValue * BigInt(b.priceConversion)
                 ).toLocaleString()}`
               : '$-',
             ['Balance']: b.closing.tokenValue,
             ['Balance USD']: b.priceConversion
               ? `$${(
-                  b.closing.tokenValue * b.priceConversion
+                  b.closing.tokenValue * BigInt(b.priceConversion)
                 ).toLocaleString()}`
               : '$-',
           }));

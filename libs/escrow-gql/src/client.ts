@@ -1,4 +1,4 @@
-import { createClient, fetchExchange } from 'urql';
+import { GraphQLClient } from 'graphql-request';
 
 // TODO use gql-request
 
@@ -12,13 +12,6 @@ export const SUPPORTED_NETWORKS = Object.keys(NETWORK_CONFIG)
   .map((n) => Number(n))
   .filter((n) => !isNaN(n));
 
-export const clients = SUPPORTED_NETWORKS.reduce(
-  (o, chainId) => ({
-    ...o,
-    [chainId]: createClient({
-      url: graphUrl(chainId),
-      exchanges: [fetchExchange],
-    }),
-  }),
-  {}
-);
+export const client = (chainId: number) => {
+  return new GraphQLClient(graphUrl(chainId));
+};

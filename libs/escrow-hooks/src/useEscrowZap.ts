@@ -1,8 +1,15 @@
-import { ethers, BigNumber, utils } from 'ethers';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
+// @ts-ignore
 import _ from 'lodash';
 import { useMemo } from 'react';
-import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
+import {
+  Hex,
+  encodeAbiParameters,
+  parseEther,
+  stringToHex,
+  isAddress,
+} from 'viem';
+// import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
 const zapAbi = [
   {
@@ -34,20 +41,14 @@ const DAO_ADDRESS = {
   100: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986',
 };
 
-declare module 'wagmi' {
-  interface WriteContractResult {
-    txHash: string;
-    status: string;
-    error: string;
-    events: any[];
-  }
-}
+const encodeDetailsString = (details: string) =>
+  stringToHex(details, { size: 32 });
 
 const ZAP_DATA = {
   percentAllocations: [50 * 1e4, 50 * 1e4], // raid party split percent allocations // current split main is 100% = 1e6
   milestoneAmounts: [
-    BigNumber.from(10).mul(BigNumber.from(10).pow(18)),
-    BigNumber.from(10).mul(BigNumber.from(10).pow(18)),
+    BigInt(10) * BigInt(10) ** BigInt(18),
+    BigInt(10) * BigInt(10) ** BigInt(18),
   ],
   threshold: 2,
   saltNonce: Math.floor(new Date().getTime() / 1000),
@@ -55,7 +56,7 @@ const ZAP_DATA = {
   isDaoSplit: false,
   token: '0x',
   escrowDeadline: Math.floor(new Date().getTime() / 1000) + 30 * 24 * 60 * 60,
-  details: utils.formatBytes32String('ipfs://'),
+  details: encodeDetailsString('ipfs://'),
 };
 
 // TODO sort
@@ -64,7 +65,7 @@ const separateOwnersAndAllocations = (ownersAndAllocations: any) => {
     owners: _.map(ownersAndAllocations, 'address'),
     percentAllocations: _.map(
       ownersAndAllocations,
-      (o) => _.toNumber(o.percent) * 1e4
+      (o: any) => _.toNumber(o.percent) * 1e4
     ),
   };
 };
@@ -86,9 +87,9 @@ const useEscrowZap = ({
   escrowDeadline,
   details,
 }: UseEscrowZapProps): {
-  writeAsync: () => Promise<any> | undefined;
-  prepareError: Error;
-  writeError: Error;
+  writeAsync: any;
+  prepareError: any;
+  writeError: any;
 } => {
   const chainId = useChainId();
 
@@ -97,50 +98,50 @@ const useEscrowZap = ({
 
   const milestoneAmounts = _.map(
     milestones,
-    (a: { value: string }) => a.value && utils.parseEther(a.value)
+    (a: { value: string }) => a.value && parseEther(a.value)
   );
 
   const encodedSafeData = useMemo(() => {
     if (!threshold || !saltNonce) return undefined;
-    return ethers.utils.defaultAbiCoder.encode(
-      ['uint256', 'uint256'],
-      [threshold, saltNonce]
+    return encodeAbiParameters(
+      [{ type: 'uint256' }, { type: 'uint256' }],
+      [BigInt(threshold), BigInt(saltNonce)]
     );
   }, [threshold, saltNonce]);
 
   const encodedSplitData = useMemo(() => {
-    return ethers.utils.defaultAbiCoder.encode(['bool'], [ZAP_DATA.isDaoSplit]);
+    return encodeAbiParameters([{ type: 'bool' }], [ZAP_DATA.isDaoSplit]);
   }, [ZAP_DATA.isDaoSplit]);
 
   const encodedEscrowData = useMemo(() => {
     if (
-      !utils.isAddress(client) ||
+      !isAddress(client) ||
       !arbitration?.value ||
       !details ||
-      !utils.isAddress(resolver) ||
-      !utils.isAddress(token?.value) ||
+      !isAddress(resolver) ||
+      !isAddress(token?.value || '') ||
       !escrowDeadline
     )
       return undefined;
 
-    return utils.defaultAbiCoder.encode(
+    return encodeAbiParameters(
       [
-        'address',
-        'uint32',
-        'address',
-        'address',
-        'uint256',
-        'uint256',
-        'bytes32',
+        { type: 'address' },
+        { type: 'uint32' },
+        { type: 'address' },
+        { type: 'address' },
+        { type: 'uint256' },
+        { type: 'uint256' },
+        { type: 'bytes32' },
       ],
       [
-        client,
+        client as Hex,
         0, // arbitration?.value,
         resolver,
-        token?.value,
-        Math.floor(_.toNumber(escrowDeadline) / 1000),
-        ZAP_DATA.saltNonce,
-        utils.formatBytes32String(details),
+        token?.value as Hex,
+        BigInt(Math.floor(_.toNumber(escrowDeadline) / 1000)),
+        BigInt(ZAP_DATA.saltNonce),
+        encodeDetailsString(details),
       ]
     );
   }, [
@@ -171,7 +172,7 @@ const useEscrowZap = ({
     ],
     enabled:
       !_.isEmpty(owners) &&
-      _.every(owners, utils.isAddress) &&
+      _.every(owners, isAddress) &&
       !_.isEmpty(percentAllocations) &&
       !_.isEmpty(milestoneAmounts) &&
       !!encodedSafeData &&

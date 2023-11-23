@@ -6,50 +6,43 @@ import {
   VStack,
   useToast,
 } from '@raidguild/design-system';
-import { utils } from 'ethers';
-import { useContext, useState } from 'react';
-
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-import {
-  getTxLink,
-  parseTokenAddress,
-  withdraw,
-} from '@raidguild/escrow-utils';
+import { formatUnits } from 'viem';
+import { useState } from 'react';
+import { parseTokenAddress } from '@raidguild/escrow-utils';
+import { getTxLink } from '@raidguild/dm-utils';
 
 import { Loader } from './Loader';
+import { useChainId } from 'wagmi';
 
-export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
-  const [loading, setLoading] = useState(false);
+export const WithdrawFunds = ({ invoice, balance }) => {
   const toast = useToast();
+  const chainId = useChainId();
 
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
-
+  const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState<any>();
 
   const withdrawFunds = async () => {
-    if (!loading && provider && balance.gte(0)) {
-      try {
-        setLoading(true);
-        const tx = await withdraw(provider, contractAddress);
-        setTransaction(tx);
-        await tx.wait();
-        setLoading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 20000);
-      } catch (withdrawError) {
-        console.error(withdrawError);
-        toast.error({
-          title: 'Oops there was an error',
-          iconName: 'alert',
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-      }
-    }
+    // if (!loading && provider && balance.gte(0)) {
+    //   try {
+    //     setLoading(true);
+    //     const tx = await withdraw(provider, contractAddress);
+    //     setTransaction(tx);
+    //     await tx.wait();
+    //     setLoading(false);
+    //     setTimeout(() => {
+    //       window.location.reload();
+    //     }, 20000);
+    //   } catch (withdrawError) {
+    //     console.error(withdrawError);
+    //     toast.error({
+    //       title: 'Oops there was an error',
+    //       iconName: 'alert',
+    //       duration: 3000,
+    //       isClosable: true,
+    //     });
+    //     setLoading(false);
+    //   }
+    // }
   };
 
   return (
@@ -77,9 +70,9 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-        >{`${utils.formatUnits(balance, 18)} ${parseTokenAddress(
+        >{`${formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,
-          token
+          invoice?.token
         )}`}</Text>
       </VStack>
       {transaction && (

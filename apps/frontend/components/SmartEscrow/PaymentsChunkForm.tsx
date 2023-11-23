@@ -5,40 +5,35 @@ import {
   FormControl,
   FormLabel,
   InputGroup,
-  ChakraInput as Input,
+  ChakraInput,
   InputRightElement,
 } from '@raidguild/design-system';
+import _ from 'lodash';
+import { UseFormReturn, useForm } from 'react-hook-form';
 
-import styled from '@emotion/styled';
-
-const StyledInput = styled(Input)`
-  width: 100%;
-  outline: none;
-  border: none;
-  color: white;
-  font-size: 1rem;
-  background-color: black;
-  margin-bottom: 15px;
-  padding: 10px;
-  &::placeholder {
-    color: #ff3864;
-    opacity: 1;
-  }
-`;
-
-const StyledFormLabel = styled(FormLabel)`
-  font-weight: bold;
-`;
+// TODO migrate to design system
 
 export const PaymentsChunkForm = ({
-  tokenType,
-  paymentDue,
-  milestones,
-  payments,
-  setPayments,
-  sendToast,
+  escrowForm,
   updateStep,
+  backStep,
+}: {
+  escrowForm: UseFormReturn;
+  updateStep: () => void;
+  backStep: () => void;
 }) => {
+  const { watch } = escrowForm;
+  const { paymentDue, milestones, tokenType, payments } = watch();
+  const localForm = useForm();
+  const { setValue } = localForm;
+
+  let sum = _.sum(payments);
+
+  const onSubmit = (values) => {
+    console.log(values);
+    updateStep();
+  };
+
   return (
     <Flex
       direction='column'
@@ -47,19 +42,19 @@ export const PaymentsChunkForm = ({
       minWidth='40%'
     >
       <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-        {Array.from(Array(Number(milestones)).keys()).map((count, index) => {
+        {Array.from(Array(_.size(milestones))).map((count, index) => {
           return (
             <FormControl key={count} isRequired>
-              <StyledFormLabel>{`Payment #${index + 1}`}</StyledFormLabel>
+              <FormLabel>{`Payment #${index + 1}`}</FormLabel>
               <InputGroup>
-                <StyledInput
+                <ChakraInput
                   focusBorderColor='none'
                   name={`payment${index + 1}`}
                   type='number'
                   onChange={(e) => {
                     let temp = [...payments];
                     temp[index] = e.target.value;
-                    setPayments(temp);
+                    setValue('payments', temp);
                   }}
                   value={payments[index]}
                 />
@@ -87,19 +82,15 @@ export const PaymentsChunkForm = ({
           minW='25%'
           p='5px'
           mr='.5rem'
-          onClick={() => updateStep((prevStep) => prevStep - 1)}
+          onClick={backStep}
         >
           Back
         </Button>
         <Button
+          type='submit'
           variant='solid'
           width='100%'
-          onClick={() => {
-            let sum = payments.reduce((acc, num) => Number(acc) + Number(num));
-            if (Number(sum) !== Number(paymentDue))
-              return sendToast("Payments didn't add up to due amount.");
-            updateStep((prevStep) => prevStep + 1);
-          }}
+          isDisabled={_.size(payments) !== milestones || !(sum === paymentDue)}
         >
           Next: Confirmation
         </Button>

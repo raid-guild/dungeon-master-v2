@@ -88,9 +88,9 @@ export const extendSessionWithUserAndToken = ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
     address: _.get(token, 'sub'),
-    id: _.get(token, 'user.id'),
-    role: _.get(token, 'role'),
-    roles: _.get(token, 'roles'),
+    id: _.get(token, 'user.id') as string,
+    role: _.get(token, 'role') as string,
+    roles: _.get(token, 'roles') as string[],
   },
   token: encodeToken(token),
 });

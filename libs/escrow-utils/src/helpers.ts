@@ -1,21 +1,5 @@
-import { BigNumber } from 'ethers';
-
-import {
-  explorerUrls,
-  networkLabels,
-  NETWORK_CONFIG,
-  nativeSymbols,
-  wrappedNativeToken,
-} from './constants';
-
-export const getExplorerUrl = (chainId: number | string) =>
-  explorerUrls[Number(chainId)] || explorerUrls[4];
-
-export const getTxLink = (chainId: number, hash: string) =>
-  `${getExplorerUrl(chainId)}/tx/${hash}`;
-
-export const getAddressLink = (chainId: number | string, hash: string) =>
-  `${getExplorerUrl(chainId)}/address/${hash}`;
+import { getExplorerUrl } from '@raidguild/dm-utils';
+import { NETWORK_CONFIG, nativeSymbols, wrappedNativeToken } from './constants';
 
 export const getResolverUrl = (chainId: number) => {
   const resolverAddress = NETWORK_CONFIG[chainId]
@@ -29,13 +13,10 @@ export const getSpoilsUrl = (chainId: number, address: string) => {
   return `${getExplorerUrl(chainId)}/address/${spoilsAddress}`;
 };
 
-export const getNetworkLabel = (chainId: number) =>
-  networkLabels[chainId] || 'unknown';
-
 export const getAccountString = (account: string) => {
   const len = account.length;
-  return `0x${account.substr(2, 3).toUpperCase()}...${account
-    .substr(len - 3, len - 1)
+  return `0x${account.slice(2, 3).toUpperCase()}...${account
+    .slice(len - 3, len - 1)
     .toUpperCase()}`;
 };
 
@@ -45,11 +26,11 @@ export const getNativeTokenSymbol = (chainId: number) =>
 export const getWrappedNativeToken = (chainId: number) =>
   wrappedNativeToken[chainId] || wrappedNativeToken[4];
 
-export const getCheckedStatus = (deposited: BigNumber, amounts: number[]) => {
-  let sum = BigNumber.from(0);
+export const getCheckedStatus = (deposited: bigint, amounts: number[]) => {
+  let sum = BigInt(0);
   return amounts.map((a) => {
-    sum = sum.add(a);
-    return deposited.gte(sum);
+    sum = sum + BigInt(a);
+    return deposited >= sum;
   });
 };
 
