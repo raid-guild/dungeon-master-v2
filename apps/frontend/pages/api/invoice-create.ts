@@ -1,4 +1,4 @@
-import { UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/dm-graphql';
+import { UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/escrow-gql';
 import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
@@ -42,6 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(201).json(data.data);
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error(err);
     return res.status(500).json('Internal server error');
   }

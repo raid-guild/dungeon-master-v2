@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-import { RAID_DETAIL_FRAGMENT } from '../fragments';
+import { RAID_DETAIL_FRAGMENT, RAID_SLIM_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAIDS_LIST_QUERY = gql`
   query RaidsListQuery(
@@ -121,4 +121,22 @@ export const RAID_DETAIL_QUERY = gql`
       updated_at
     }
   }
+`;
+
+export const RAID_BY_ID_QUERY = gql`
+  query validateRaidId($raidId: uuid) {
+    raids(where: { id: { _eq: $raidId } }) {
+      ...RaidDetails
+    }
+  }
+  ${RAID_SLIM_DETAIL_FRAGMENT}
+`;
+
+export const RAID_BY_V1_ID_QUERY = gql`
+  query validateRaidId($v1Id: String) {
+    raids(where: { v1_id: { _eq: $v1Id } }) {
+      ...RaidDetails
+    }
+  }
+  ${RAID_SLIM_DETAIL_FRAGMENT}
 `;

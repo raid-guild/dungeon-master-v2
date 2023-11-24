@@ -1,16 +1,13 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Flex, Heading, Text, VStack } from '@raidguild/design-system';
-import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
-import { getInvoice, SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
-import { Invoice } from '@raidguild/escrow-utils';
-import axios from 'axios';
+import { Flex, Heading, Text } from '@raidguild/design-system';
+import { useRaidDetail } from '@raidguild/dm-hooks';
+import { useInvoiceDetails } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
 import { GetServerSidePropsContext } from 'next';
+import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useState } from 'react';
 import { useAccount, useNetwork } from 'wagmi';
 
-import Link from '../../components/ChakraNextLink';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import InvoiceButtonManager from '../../components/SmartEscrow/InvoiceButtonManager';
 import InvoiceMetaDetails from '../../components/SmartEscrow/InvoiceMetaDetails';
@@ -18,39 +15,23 @@ import InvoicePaymentDetails from '../../components/SmartEscrow/InvoicePaymentDe
 import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
 import Page404 from '../../components/SmartEscrow/shared/Page404';
 
-// TODO use native client & gql-request
+// const WRONG_NETWORK_MESSAGE =
+//   'This network is not supported: Switch to Gnosis Network';
 
-const DM_ENDPOINT = process.env.NEXT_PUBLIC_API_URL;
-const HASURA_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
-const WRONG_NETWORK_MESSAGE =
-  'This network is not supported: Switch to Gnosis Network';
-
-// TODO move to helper
-const fetchRaid = async (query, raidId) => {
-  const graphqlQuery = {
-    operationName: 'validateRaidId',
-    query,
-    variables: { raidId },
-  };
-
-  const { data } = await axios.post(`${DM_ENDPOINT}`, graphqlQuery, {
-    headers: { 'x-hasura-admin-secret': HASURA_SECRET },
-  });
-
-  return data.data?.raids;
-};
-
-const Escrow = ({ raid }: { raid: any }) => {
+const Escrow = ({ raidId }: { raidId: string }) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
 
-  const [invoiceFetchError, setInvoiceFetchError] = useState(false);
-  const [invoice, setInvoice] = useState<Invoice | undefined>();
+  // const [invoiceFetchError, setInvoiceFetchError] = useState(false);
+  // const [invoice, setInvoice] = useState<Invoice | undefined>();
 
   const [statusText, setStatusText] = useState<any>(
     'Connect your wallet to fetch invoice information.'
   );
-  const [validRaid, setValidRaid] = useState(true);
+
+  const { data: raid } = useRaidDetail({ raidId, token });
 
   // useEffect(() => {
   //   if (raid) {
@@ -80,50 +61,56 @@ const Escrow = ({ raid }: { raid: any }) => {
   //   }
   // }, []);
 
-  const getSmartInvoiceData = async () => {
-    try {
-      if (raid.invoice_address) {
-        const currInvoice = await getInvoice(chain.id, raid.invoice_address);
-        if (!currInvoice) {
-          setInvoiceFetchError(true);
-          setStatusText(
-            <VStack>
-              <Text>
-                Data for invoice with address {raid.invoice_address} was not
-                found.
-              </Text>
-              <Text>
-                If it was created before August 2023, try looking in the V1 App{' '}
-                <Link
-                  href={`https://smartescrow.raidguild.org/escrow/${
-                    raid && raid.id
-                  }`}
-                  target='_blank'
-                  isExternal
-                  color='primary.300'
-                  textDecoration='underline'
-                >
-                  here
-                </Link>
-              </Text>
-            </VStack>
-          );
-        } else {
-          setInvoice(currInvoice);
-        }
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-    }
-  };
+  const { data: invoice, error: invoiceError } = useInvoiceDetails({
+    invoiceAddress: raid?.invoiceAddress,
+    chainId: chain?.id,
+  });
+  console.log(invoice);
+
+  // const getSmartInvoiceData = async () => {
+  //   try {
+  //     if (raid.invoiceAddress) {
+  //       const currInvoice = await getInvoice(chain.id, raid.invoiceAddress);
+  //       if (!currInvoice) {
+  //         setInvoiceFetchError(true);
+  //         setStatusText(
+  //           <VStack>
+  //             <Text>
+  //               Data for invoice with address {raid.invoiceAddress} was not
+  //               found.
+  //             </Text>
+  //             <Text>
+  //               If it was created before August 2023, try looking in the V1 App{' '}
+  //               <Link
+  //                 href={`https://smartescrow.raidguild.org/escrow/${
+  //                   raid && raid.id
+  //                 }`}
+  //                 target='_blank'
+  //                 isExternal
+  //                 color='primary.300'
+  //                 textDecoration='underline'
+  //               >
+  //                 here
+  //               </Link>
+  //             </Text>
+  //           </VStack>
+  //         );
+  //       } else {
+  //         setInvoice(currInvoice);
+  //       }
+  //     }
+  //   } catch (e) {
+  //     // eslint-disable-next-line no-console
+  //     console.error(e);
+  //   }
+  // };
 
   return (
     <>
       <NextSeo title='Smart Escrow' />
 
       <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
-        {validRaid ? (
+        {raid ? (
           <>
             {!address && (
               <Flex direction='column' alignItems='center'>
@@ -131,9 +118,9 @@ const Escrow = ({ raid }: { raid: any }) => {
               </Flex>
             )}
 
-            {invoiceFetchError && <Text variant='textOne'>{statusText}</Text>}
+            {invoiceError && <Text variant='textOne'>{statusText}</Text>}
 
-            {invoice && SUPPORTED_NETWORKS.indexOf(chain?.id) !== -1 && (
+            {invoice && (
               <Flex
                 width='100%'
                 direction={{ md: 'column', lg: 'row' }}
@@ -141,7 +128,7 @@ const Escrow = ({ raid }: { raid: any }) => {
                 justifyContent='space-evenly'
               >
                 <Flex direction='column' minW='30%'>
-                  <ProjectInfo invoice={invoice} />
+                  <ProjectInfo raid={raid} />
                   <InvoiceMetaDetails invoice={invoice} />
                 </Flex>
 
@@ -163,28 +150,12 @@ const Escrow = ({ raid }: { raid: any }) => {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  // TODO use fetch helper
-  const { raidId } = _.pick(context.params, ['raidId']);
-
-  let raids;
-  if (raidId && raidId.includes('-')) {
-    raids = await fetchRaid(RAID_BY_ID_QUERY, raidId);
-  } else {
-    raids = await fetchRaid(RAID_BY_V1_ID_QUERY, raidId);
-  }
-
-  if (!raids || raids.length === 0) {
-    return {
-      props: {
-        raid: null,
-      },
-      // revalidate: 1
-    };
-  }
+  const { raidId: raidIdParam } = _.pick(context.params, ['raidId']);
+  const raidId = _.isArray(raidIdParam) ? _.first(raidIdParam) : raidIdParam;
 
   return {
     props: {
-      raid: raids ? raids[0] : null,
+      raidId: raidId || null,
     },
   };
 };

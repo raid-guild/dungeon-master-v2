@@ -12,15 +12,15 @@ import { useLock } from '@raidguild/escrow-hooks';
 import {
   Invoice,
   NETWORK_CONFIG,
-  uploadDisputeDetails,
+  // uploadDisputeDetails,
 } from '@raidguild/escrow-utils';
-import { useCallback, useContext, useState } from 'react';
+import { useState } from 'react';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
 import LockImage from '../../assets/lock.svg';
 import Loader from './Loader';
-import { AccountLink } from './shared/AccountLink';
+import AccountLink from './shared/AccountLink';
 import { OrderedTextarea } from './shared/OrderedTextArea';
 
 const parseTokenAddress = (chainId: number, address: any) => {
@@ -34,7 +34,6 @@ const parseTokenAddress = (chainId: number, address: any) => {
 };
 
 const resolverInfo = {
-  4: NETWORK_CONFIG[4].RESOLVERS,
   100: NETWORK_CONFIG[100].RESOLVERS,
   1: NETWORK_CONFIG[1].RESOLVERS,
 };
@@ -43,7 +42,6 @@ const getResolverInfo = (chainId, resolver) =>
   (resolverInfo[chainId] || resolverInfo[4])[resolver];
 
 const resolvers = {
-  4: Object.keys(NETWORK_CONFIG[4].RESOLVERS),
   100: Object.keys(NETWORK_CONFIG[100].RESOLVERS),
   1: Object.keys(NETWORK_CONFIG[1].RESOLVERS),
 };

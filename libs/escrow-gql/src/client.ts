@@ -1,17 +1,10 @@
-import { GraphQLClient } from 'graphql-request';
-
-// TODO use gql-request
-
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import { GraphQLClient } from 'graphql-request';
+import _ from 'lodash';
 
-const graphUrl = (chainId: number = 4) => {
-  return `https://api.thegraph.com/subgraphs/name/${NETWORK_CONFIG[chainId].SUBGRAPH}`;
-};
+const graphUrl = (chainId: number = 4) =>
+  `https://api.thegraph.com/subgraphs/name/${NETWORK_CONFIG[chainId].SUBGRAPH}`;
 
-export const SUPPORTED_NETWORKS = Object.keys(NETWORK_CONFIG)
-  .map((n) => Number(n))
-  .filter((n) => !isNaN(n));
+export const SUPPORTED_NETWORKS = _.map(_.keys(NETWORK_CONFIG), _.toNumber);
 
-export const client = (chainId: number) => {
-  return new GraphQLClient(graphUrl(chainId));
-};
+export const client = (chainId: number) => new GraphQLClient(graphUrl(chainId));

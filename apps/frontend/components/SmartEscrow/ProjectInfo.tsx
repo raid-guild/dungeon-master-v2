@@ -1,27 +1,28 @@
-import { Box, Flex, Heading, Text } from '@raidguild/design-system';
-import { Invoice } from '@raidguild/escrow-utils';
+import { Flex, Heading, Stack, Text } from '@raidguild/design-system';
+import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 
-const ProjectInfo = ({ invoice }: { invoice: Partial<Invoice> }) => {
-  const { clientName, projectName, raidId } = _.pick(invoice, [
-    'clientName',
-    'projectName',
-    'raidId',
-  ]);
+const ProjectInfo = ({ raid }: { raid: IRaid }) => {
+  const clientName = _.get(
+    raid,
+    'consultation.consultationsContacts[0].contact.name'
+  );
 
   return (
-    <Flex direction='column' alignItems='flex-start'>
-      <Heading size='sm' fontFamily='texturina' color='primary.300'>
-        {clientName}
+    <Flex justify='space-between' align='center'>
+      <Heading size='md' fontFamily='spaceMono' color='white' maxWidth='400px'>
+        {raid?.name}
       </Heading>
 
-      <Heading size='md' fontFamily='spaceMono' color='white' maxWidth='300px'>
-        {projectName}
-      </Heading>
+      <Stack align='flex-end' spacing={1}>
+        <Heading size='sm' fontFamily='texturina' color='primary.300'>
+          {clientName}
+        </Heading>
 
-      <Box marginTop='15px' marginBottom='.7rem' fontFamily='texturina'>
-        <Text color='#a7a9be'>Raid ID: {raidId}</Text>
-      </Box>
+        <Text color='gray.400' fontFamily='texturina'>
+          Raid ID: {raid?.v1Id || raid?.id}
+        </Text>
+      </Stack>
     </Flex>
   );
 };

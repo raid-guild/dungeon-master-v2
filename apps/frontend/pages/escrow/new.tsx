@@ -1,4 +1,8 @@
-import { Flex, Heading } from '@raidguild/design-system';
+import { Heading, Stack } from '@raidguild/design-system';
+import { useRaidDetail } from '@raidguild/dm-hooks';
+import _ from 'lodash';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -12,7 +16,12 @@ import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
 
 const NewEscrow = () => {
   const escrowForm = useForm();
-  const { watch } = escrowForm;
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  // const { watch } = escrowForm;
+  const raidId = _.get(router, 'query.raidId') as string;
+  const token = _.get(session, 'token');
 
   const [step, setStep] = useState<number>(1);
 
@@ -24,7 +33,7 @@ const NewEscrow = () => {
     setStep((prev) => prev - 1);
   };
 
-  const { raidId, projectName, clientName } = watch();
+  const { data: raid } = useRaidDetail({ raidId, token });
 
   // useEffect(() => {
   //   if (!appState.raid_id) {
@@ -37,19 +46,12 @@ const NewEscrow = () => {
       <NextSeo title='Smart Escrow' />
 
       <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
-        <Flex
-          width='100%'
-          direction='row'
-          alignItems='center'
-          justifyContent='space-evenly'
-          mt='6'
-        >
-          <ProjectInfo invoice={{ raidId, clientName, projectName }} />
+        <Stack mt='6' w='80%' spacing={6}>
+          <ProjectInfo raid={raid} />
           {step === 1 && (
             <PaymentDetailsForm
               escrowForm={escrowForm}
               updateStep={updateStep}
-              backStep={backStep}
             />
           )}
           {step === 2 && (
@@ -62,12 +64,13 @@ const NewEscrow = () => {
           {step === 3 && (
             <EscrowConfirmation
               escrowForm={escrowForm}
+              raid={raid}
               updateStep={updateStep}
               backStep={backStep}
             />
           )}
           {step === 4 && <EscrowSuccess raidId={raidId} />}
-        </Flex>
+        </Stack>
       </SiteLayout>
     </>
   );

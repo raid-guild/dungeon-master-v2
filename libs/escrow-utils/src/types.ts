@@ -1,10 +1,11 @@
 import { Hex } from 'viem';
 
+// clientName: string;
+// projectName: string;
+// raidId: string;
+
 export interface Invoice {
   address: Hex;
-  clientName: string;
-  projectName: string;
-  raidId: string;
   // onchain
   client: Hex;
   provider: Hex;
@@ -21,4 +22,8 @@ export interface Invoice {
   total: number;
   resolver: Hex;
   resolutionRate: number;
+  // form
+  safetyValveDate?: Date;
+  milestones?: number;
+  payments?: number[];
 }

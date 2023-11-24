@@ -1,7 +1,7 @@
 import { Flex, Link, Text } from '@raidguild/design-system';
-import _ from 'lodash';
-
 import { getAddressLink } from '@raidguild/dm-utils';
+import blockies from 'blockies-ts';
+import _ from 'lodash';
 import { useChainId } from 'wagmi';
 
 type AccountLinkProps = {
@@ -9,18 +9,15 @@ type AccountLinkProps = {
   chainId?: number;
 };
 
-export const AccountLink = ({
-  address: inputAddress,
-  chainId,
-}: AccountLinkProps) => {
+const AccountLink = ({ address: inputAddress, chainId }: AccountLinkProps) => {
   const currentChainId = useChainId();
 
   const address =
     typeof inputAddress === 'string' ? _.toLower(inputAddress) : '';
 
-  let displayString = address;
+  const displayString = address;
 
-  let imageUrl;
+  const imageUrl = blockies.create({ seed: inputAddress }).toDataURL();
 
   return (
     <Link
@@ -41,13 +38,12 @@ export const AccountLink = ({
       <Flex
         as='span'
         borderRadius='50%'
-        w='1.1rem'
-        h='1.1rem'
+        w='14px'
+        h='14px'
         overflow='hidden'
         justify='center'
         align='center'
-        bgColor='black'
-        bgImage={imageUrl && `url(${imageUrl})`}
+        bgImage={imageUrl && imageUrl}
         bgSize='cover'
         bgRepeat='no-repeat'
         bgPosition='center center'
@@ -65,3 +61,5 @@ export const AccountLink = ({
     </Link>
   );
 };
+
+export default AccountLink;

@@ -15,20 +15,22 @@ import {
   parseTokenAddress,
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { useState } from 'react';
 import { formatEther, formatUnits } from 'viem';
 import { useBalance, useChainId } from 'wagmi';
 
-import { AccountLink } from './shared/AccountLink';
+import AccountLink from './shared/AccountLink';
 
 const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
   const chainId = useChainId();
-  const [balance, setBalance] = useState(BigInt(0));
 
+  console.log(invoice.address, invoice.token, chainId);
   const { data } = useBalance({
     address: invoice.address,
     token: invoice.token,
+    chainId,
   });
+  const balance = data?.value || BigInt(0);
+  console.log('balance', balance);
 
   const {
     client,
@@ -44,6 +46,8 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
     releases,
     resolver,
   } = invoice;
+
+  if (!balance) return null;
   const deposited = BigInt(released) + balance;
   const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
   const dispute =
@@ -85,7 +89,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                 tot += deposits[i].amount;
                 if (tot > sum) {
                   ind = i;
-                  if (tot - sum >= amt) {
+                  if (tot - sum >= BigInt(amt)) {
                     full = true;
                     break;
                   }

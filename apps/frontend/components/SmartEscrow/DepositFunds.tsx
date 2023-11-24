@@ -27,6 +27,7 @@ import {
   Invoice,
   parseTokenAddress,
 } from '@raidguild/escrow-utils';
+import _ from 'lodash';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { formatUnits, isAddress, parseUnits } from 'viem';
@@ -51,7 +52,7 @@ const DepositFunds = ({
 
   const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
   const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
-  const isWRAPPED = token.toLowerCase() === WRAPPED_NATIVE_TOKEN;
+  const isWRAPPED = _.eq(_.toLower(token), WRAPPED_NATIVE_TOKEN);
 
   const [paymentType, setPaymentType] = useState(0); // 0 = Wrapped 1 = native token
   const [amount, setAmount] = useState(BigInt(0));
@@ -80,6 +81,8 @@ const DepositFunds = ({
   const { writeAsync } = useDeposit({
     invoice,
     amount,
+    balance: balance?.value,
+    // hasAmount: balance > amount (+ gas)
   });
 
   console.log(balance);

@@ -36,7 +36,7 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   const toast = useToast();
   const chainId = useChainId();
 
-  const { currentMilestone, amounts, address, token } = invoice;
+  const { currentMilestone, amounts, token } = invoice;
 
   const { writeAsync: releaseFunds } = useRelease({ invoice });
 
@@ -103,9 +103,9 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
           </Link>
         </Text>
       )} */}
-      {loading && <Loader />}
-
-      {!loading && (
+      {loading ? (
+        <Loader />
+      ) : (
         <Button
           onClick={releaseFunds}
           textTransform='uppercase'

@@ -2,16 +2,20 @@ import _ from 'lodash';
 
 import LexDAOLogo from './assets/lex-dao.png';
 
-const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
-
 export const IPFS_ENDPOINT = 'https://ipfs.infura.io';
-export const BOX_ENDPOINT = 'https://ipfs.3box.io';
+
+export const SPOILS_BASIS_POINTS = 1000;
+
+export const INVOICE_VERSION = 'smart-escrow-v1';
+
+// RaidGuild DAO treasury address V3
+export const RG_XDAI = _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986');
+// RaidGuild Ethereum Mainnet multisig
+export const RG_MULTISIG = _.toLower(
+  '0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'
+);
 
 export const NETWORK_CONFIG: any = {
-  // RaidGuild DAO treasury address V3
-  RG_XDAI: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986'),
-  // RaidGuild Ethereum Mainnet multisig
-  RG_MULTISIG: _.toLower('0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'),
   100: {
     SUBGRAPH: 'geovgy/v1-gnosis-chain-smart-invoice',
     INVOICE_FACTORY: _.toLower('0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'),
@@ -110,7 +114,3 @@ export const tokenInfo: { [key: number]: string } = {
   5: NETWORK_CONFIG[5].TOKENS,
   100: NETWORK_CONFIG[100].TOKENS,
 };
-
-export const SPOILS_BASIS_POINTS = 1000;
-
-export const INVOICE_VERSION = 'smart-escrow-v1';

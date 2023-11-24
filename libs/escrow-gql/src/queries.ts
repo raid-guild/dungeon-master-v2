@@ -1,74 +1,37 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
-// TODO migrate to gql-request
+import { INVOICE_DETAILS_FRAGMENT } from './fragments';
 
-export const ALL_INVOICES_QUERY = () => `query allInvoices {
-    raids(where: {invoice_address: {_is_null: false}}) {
-      id
-      invoice_address
-      name
-      start_date
-      end_date
-      consultation {
-        name
-      }
-    }}`;
+// export const ALL_INVOICES_QUERY = gql`
+//   query allInvoices {
+//     raids(where: { invoice_address: { _is_null: false } }) {
+//       id
+//       invoice_address
+//       name
+//       start_date
+//       end_date
+//       consultation {
+//         name
+//       }
+//     }
+//   }
+// `;
 
-export const ALL_RAIDS_QUERY = gql`
-  query fetchRaids {
-    raids {
-      id
-      v1_id
+// export const ALL_RAIDS_QUERY = gql`
+//   query fetchRaids {
+//     raids {
+//       id
+//       v1_id
+//     }
+//   }
+// `;
+
+export const INVOICE_QUERY = gql`
+  query GetInvoice($address: ID!) {
+    invoice(id: $address) {
+      ...InvoiceDetails
     }
   }
-`;
-
-const RAID_DETAILS_FRAGMENT = gql`
-  fragment RaidDetails on raids {
-    id
-    v1_id
-    invoice_address
-    name
-    start_date
-    end_date
-    consultation {
-      consultations_contacts {
-        contact {
-          name
-        }
-      }
-    }
-  }
-`;
-
-export const RAID_BY_ID_QUERY = gql`
-  query validateRaidId($raidId: uuid) {
-    raids(where: { id: { _eq: $raidId } }) {
-      ...RaidDetails
-    }
-  }
-  ${RAID_DETAILS_FRAGMENT}
-`;
-
-export const RAID_BY_V1_ID_QUERY = gql`
-  query validateRaidId($v1Id: String) {
-    raids(where: { v1_id: { _eq: $v1Id } }) {
-      ...RaidDetails
-    }
-  }
-  ${RAID_DETAILS_FRAGMENT}
-`;
-
-export const UPDATE_INVOICE_ADDRESS_QUERY = (
-  raidId: string,
-  invoice_address: string
-) => `
-  mutation MyMutation {
-    update_raids(where: {id: {_eq: "${raidId}"}}, _set: {invoice_address: "${invoice_address}"}) {
-      returning {
-        ...RaidDetails
-      }
-    }
-  }
-  ${RAID_DETAILS_FRAGMENT}
+  ${INVOICE_DETAILS_FRAGMENT}
 `;

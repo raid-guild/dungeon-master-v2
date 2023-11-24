@@ -5,7 +5,15 @@ import {
   useSendTransaction,
 } from 'wagmi';
 
-const useDeposit = ({ invoice, amount }: { invoice: any; amount: bigint }) => {
+const useDeposit = ({
+  invoice,
+  amount,
+  balance,
+}: {
+  invoice: any;
+  amount: bigint;
+  balance: bigint;
+}) => {
   console.log('useDeposit', invoice?.address);
   const chainId = useChainId();
   const token = invoice?.token;

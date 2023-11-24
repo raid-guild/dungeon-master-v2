@@ -1,38 +1,46 @@
-import { Button, Flex, HStack, Text } from '@raidguild/design-system';
+import { Button, Flex, Stack, Text } from '@raidguild/design-system';
+import { IRaid } from '@raidguild/dm-types';
+import { commify } from '@raidguild/dm-utils';
 import { useRegister } from '@raidguild/escrow-hooks';
+import _ from 'lodash';
 import { UseFormReturn } from 'react-hook-form';
-import { useChainId } from 'wagmi';
 
-import { AccountLink } from './shared/AccountLink';
+import AccountLink from './shared/AccountLink';
 
 const EscrowConfirmation = ({
   escrowForm,
+  raid,
   updateStep,
   backStep,
 }: {
   escrowForm: UseFormReturn;
+  raid: IRaid;
   updateStep: () => void;
   backStep: () => void;
 }) => {
   const { watch } = escrowForm;
-  const {
-    client,
-    serviceProvider,
-    tokenType,
-    paymentDue,
-    milestones,
-    payments,
-    selectedDay,
-    projectName,
-  } = watch();
-
-  const chainId = useChainId();
-
-  const createInvoice = async () => {};
+  const { client, provider, token, total, milestones } = watch();
 
   const { writeAsync, isLoading } = useRegister({
     escrowForm,
   });
+
+  const createInvoice = async () => {
+    await writeAsync?.();
+
+    // move to next step
+    updateStep();
+  };
+
+  const invoiceDetails = [
+    { label: 'Project Name', value: raid?.name },
+    { label: 'Client Address', value: <AccountLink address={client} /> },
+    { label: 'Raid Party Address', value: <AccountLink address={provider} /> },
+    { label: 'Arbitration Provider', value: 'LexDAO' },
+    { label: 'Payment Token', value: token },
+    { label: 'Payment Due', value: commify(total) },
+    { label: 'No of Payments', value: milestones },
+  ];
 
   return (
     <Flex
@@ -41,78 +49,44 @@ const EscrowConfirmation = ({
       padding='1.5rem'
       minWidth='50%'
     >
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Project Name:
-        </Text>
-        <Text variant='textOne' color='white' maxWidth='200px' isTruncated>
-          {projectName}
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Client Address:
-        </Text>
-        <AccountLink address={client} />
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Raid Party Address:
-        </Text>
-        <AccountLink address={serviceProvider} />
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Arbitration Provider:
-        </Text>
-        <Text variant='textOne' color='white'>
-          LexDAO
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Payment Token:
-        </Text>
-        <Text variant='textOne' color='yellow.500'>
-          {tokenType}
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Payment Due:
-        </Text>
-        <Text variant='textOne' color='yellow.500'>
-          {paymentDue}
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          No of Payments:
-        </Text>
-        <Text variant='textOne' color='yellow.500'>
-          {milestones}
-        </Text>
-      </HStack>
+      <Stack spacing={6}>
+        <Stack>
+          {_.map(invoiceDetails, ({ label, value }) => (
+            <Flex justify='space-between' key={label}>
+              <Text fontWeight='bold' variant='textOne'>
+                {label}:
+              </Text>
+              {typeof value === 'string' ? (
+                <Text variant='textOne' color='yellow.500'>
+                  {value}
+                </Text>
+              ) : (
+                value
+              )}
+            </Flex>
+          ))}
+        </Stack>
 
-      <Flex direction='row' width='100%' justify='center'>
-        <Button
-          variant='outline'
-          minW='25%'
-          mr='.5rem'
-          isDisabled={isLoading}
-          onClick={backStep}
-        >
-          Back
-        </Button>
-        <Button
-          variant='solid'
-          w='100%'
-          isDisabled={isLoading}
-          onClick={createInvoice}
-        >
-          {isLoading ? 'Creating Escrow..' : 'Create Escrow'}
-        </Button>
-      </Flex>
+        <Flex direction='row' width='100%' justify='center'>
+          <Button
+            variant='outline'
+            minW='25%'
+            mr='.5rem'
+            isDisabled={isLoading}
+            onClick={backStep}
+          >
+            Back
+          </Button>
+          <Button
+            variant='solid'
+            w='100%'
+            isDisabled={isLoading || !writeAsync}
+            onClick={createInvoice}
+          >
+            {isLoading ? 'Creating Escrow..' : 'Create Escrow'}
+          </Button>
+        </Flex>
+      </Stack>
     </Flex>
   );
 };
