@@ -1,41 +1,43 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState } from 'react';
-import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import {
-  useReactTable,
-  flexRender,
-  // @ts-ignore ? not sure why these aren't exported
-  ColumnFiltersState,
+  Box,
+  Button,
+  ChakraInput,
+  ChakraSelect,
+  Flex,
+  FormLabel,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  ThemingProps,
+  Tr,
+} from '@raidguild/design-system';
+import {
   // @ts-ignore
   ColumnDef,
-  // @ts-ignore
-  SortingState,
-  // @ts-ignore
-  RowData,
+  // @ts-ignore ? not sure why these aren't exported
+  ColumnFiltersState,
+  flexRender,
   // @ts-ignore
   getCoreRowModel,
   // @ts-ignore
   getPaginationRowModel,
   // @ts-ignore
   getSortedRowModel,
+  // @ts-ignore
+  RowData,
+  // @ts-ignore
+  SortingState,
+  useReactTable,
 } from '@tanstack/react-table';
-import {
-  Flex,
-  FormLabel,
-  Button,
-  Text,
-  TableContainer,
-  Box,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  ThemingProps,
-  Tr,
-  ChakraSelect,
-  ChakraInput,
-} from '@raidguild/design-system';
+import { useState } from 'react';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
+
 import Filter from './Filter';
 
 export type DataTableProps<TData extends object> = ThemingProps & {

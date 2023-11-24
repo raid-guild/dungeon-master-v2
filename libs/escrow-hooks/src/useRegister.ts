@@ -1,8 +1,8 @@
-import { UseFormReturn } from 'react-hook-form';
-import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { SPOILS_BASIS_POINTS, NETWORK_CONFIG } from '@raidguild/escrow-utils';
-import { Hex, encodeAbiParameters, stringToHex, parseEther } from 'viem';
+import { NETWORK_CONFIG, SPOILS_BASIS_POINTS } from '@raidguild/escrow-utils';
 import _ from 'lodash';
+import { UseFormReturn } from 'react-hook-form';
+import { encodeAbiParameters, Hex, parseEther, stringToHex } from 'viem';
+import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 const REQUIRES_VERIFICATION = true;
 
@@ -31,9 +31,9 @@ const useRegister = ({
   let daoAddress: Hex = '0x';
 
   if (chainId === 100) {
-    daoAddress = NETWORK_CONFIG['RG_XDAI'];
+    daoAddress = NETWORK_CONFIG.RG_XDAI;
   } else if (chainId === 1) {
-    daoAddress = NETWORK_CONFIG['RG_MULTISIG'];
+    daoAddress = NETWORK_CONFIG.RG_MULTISIG;
   } else {
     daoAddress = serviceProvider;
   }
@@ -89,7 +89,7 @@ const useRegister = ({
       resolver, // address _resolver (LEX DAO resolver address)
       tokenAddress, // address _token (payment token address)
       BigInt(terminationTime), // safety valve date
-      '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
+      '0x0000000000000000000000000000000000000000000000000000000000000000', // bytes32 _details detailHash
       wrappedNativeToken,
       REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
       factoryAddress,

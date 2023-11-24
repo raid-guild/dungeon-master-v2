@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import SiteLayout from '../../components/SiteLayout';
+import { DevTool } from '@hookform/devtools';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Heading,
-  Stack,
   Box,
+  Button,
+  Card,
+  DatePicker,
+  Flex,
+  Heading,
+  HStack,
+  Icon,
+  IconButton,
+  Input,
+  Link,
   NumberInput,
   Select,
+  Stack,
   Switch,
-  Input,
-  Button,
-  Flex,
   Text,
-  HStack,
-  IconButton,
-  Icon,
-  DatePicker,
-  Link,
-  Card,
 } from '@raidguild/design-system';
-import { FieldValues, useForm, useFieldArray } from 'react-hook-form';
 import { useEscrowZap } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
-import { useNetwork, useWaitForTransaction } from 'wagmi';
-import { isAddress } from 'viem';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
+import React, { useEffect, useState } from 'react';
+import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
-import { DevTool } from '@hookform/devtools';
-import { Hex, zeroAddress, decodeAbiParameters } from 'viem';
+import { decodeAbiParameters, Hex, isAddress, zeroAddress } from 'viem';
+import { useNetwork, useWaitForTransaction } from 'wagmi';
+import * as Yup from 'yup';
+
+import SiteLayout from '../../components/SiteLayout';
 
 const ARBITRATION_OPTIONS = [
   {
@@ -184,8 +184,8 @@ const EscrowZap = () => {
     details: 'ipfs://',
   });
 
-  const onSubmit = async (data: FieldValues) => {
-    console.log(data);
+  const onSubmit = async (_data: FieldValues) => {
+    console.log(_data);
 
     const result = await writeAsync?.();
 

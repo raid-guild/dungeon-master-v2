@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-const API_URL = process.env['NEXT_PUBLIC_API_URL'];
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const fetchInvoiceDetails = async (invoiceId: string) => {
   const response = await fetch(`${API_URL}/invoice/${invoiceId}`);

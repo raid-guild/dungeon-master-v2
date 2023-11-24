@@ -9,7 +9,7 @@ const statusColorScheme = {
   Final: 'purple',
 };
 
-const RipStatusBadge = ({ status }) => (
+const RipStatusBadge = ({ status }: { status: string }) => (
   <Badge colorScheme={statusColorScheme[status]}>{status}</Badge>
 );
 

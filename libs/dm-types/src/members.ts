@@ -1,7 +1,8 @@
-import { IContactInfo } from './index';
-import { IApplication } from './applications';
-import { Skills } from './misc';
 import { Hex } from 'viem';
+
+import { IApplication } from './applications';
+import { IContactInfo } from './index';
+import { Skills } from './misc';
 
 export interface IMember {
   id: string;

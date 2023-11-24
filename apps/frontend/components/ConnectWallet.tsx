@@ -1,24 +1,25 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useContext } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import _ from 'lodash';
-import { useAccount, useDisconnect, useNetwork } from 'wagmi';
 import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Image,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  Icon,
-  HStack,
-  Box,
-  Flex,
-  Image,
+  MenuList,
   Text,
-  Button,
 } from '@raidguild/design-system';
-import { CgProfile } from 'react-icons/cg';
-import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from '@raidguild/dm-utils';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import _ from 'lodash';
+import React, { useContext, useEffect } from 'react';
+import { CgProfile } from 'react-icons/cg';
+import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
+import { useAccount, useDisconnect, useNetwork } from 'wagmi';
+
 import Link from './ChakraNextLink';
 
 const ConnectWallet: React.FC = () => {

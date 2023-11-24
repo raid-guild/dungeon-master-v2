@@ -1,11 +1,11 @@
-import { Button, Text, Flex, HStack } from '@raidguild/design-system';
-import { AccountLink } from './shared/AccountLink';
-
+import { Button, Flex, HStack, Text } from '@raidguild/design-system';
+import { useRegister } from '@raidguild/escrow-hooks';
 import { UseFormReturn } from 'react-hook-form';
 import { useChainId } from 'wagmi';
-import { useRegister } from '@raidguild/escrow-hooks';
 
-export const EscrowConfirmation = ({
+import { AccountLink } from './shared/AccountLink';
+
+const EscrowConfirmation = ({
   escrowForm,
   updateStep,
   backStep,
@@ -116,3 +116,5 @@ export const EscrowConfirmation = ({
     </Flex>
   );
 };
+
+export default EscrowConfirmation;

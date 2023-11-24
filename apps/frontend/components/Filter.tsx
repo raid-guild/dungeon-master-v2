@@ -1,7 +1,8 @@
 import { Flex } from '@raidguild/design-system';
-// @ts-ignore
+// @ts-expect-error - no types from RT
 import { Column } from '@tanstack/react-table';
 import { useCallback, useMemo } from 'react';
+
 import DebouncedInput from './DebouncedInput';
 
 export type FilterProps<TData, TValue> = {
@@ -15,8 +16,7 @@ const Filter = <TData, TValue>({ column }: FilterProps<TData, TValue>) => {
   const sortedUniqueValues = useMemo(
     () =>
       columnDataType === 'enum'
-        ? // @ts-ignore
-          Array.from(column.getFacetedUniqueValues().keys()).sort()
+        ? Array.from(column.getFacetedUniqueValues().keys()).sort()
         : [],
     [column, columnDataType]
   );

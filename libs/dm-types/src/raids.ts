@@ -1,5 +1,5 @@
-import { IMember } from './members';
 import { IConsultation } from './consultations';
+import { IMember } from './members';
 import { IStatusUpdate } from './statusUpdates';
 
 export type raidSortKeys =

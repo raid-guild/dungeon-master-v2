@@ -1,5 +1,5 @@
 import { Invoice } from '@raidguild/escrow-utils';
-import { usePrepareContractWrite, useContractWrite, useChainId } from 'wagmi';
+import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 const useRelease = ({
   invoice,

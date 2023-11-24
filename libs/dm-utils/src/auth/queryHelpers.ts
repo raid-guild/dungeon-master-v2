@@ -1,12 +1,12 @@
 /* eslint-disable import/prefer-default-export */
-import _ from 'lodash';
-import { isAddress } from 'viem';
 import {
   client,
-  // USER_CREATE_MUTATION,
   MEMBER_ADDRESS_LOOKUP_QUERY,
+  // USER_CREATE_MUTATION,
 } from '@raidguild/dm-graphql';
 import { IUser } from '@raidguild/dm-types';
+import _ from 'lodash';
+import { isAddress } from 'viem';
 
 const fetchExistingUser = async (address: string): Promise<IUser | null> =>
   client({})

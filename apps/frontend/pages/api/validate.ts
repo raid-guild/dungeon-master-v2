@@ -43,10 +43,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    res.status(201).json(data.data.raids?.[0] ? data.data.raids[0] : null);
+    return res
+      .status(201)
+      .json(data.data.raids?.[0] ? data.data.raids[0] : null);
   } catch (err) {
     console.error(err);
-    res.status(500).json('Internal server error');
+    return res.status(500).json('Internal server error');
   }
 };
 

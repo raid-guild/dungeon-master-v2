@@ -55,7 +55,6 @@ const useDeposit = ({ invoice, amount }: { invoice: any; amount: bigint }) => {
     // }
 
     await writeAsync?.();
-    return;
   };
 
   return {

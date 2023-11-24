@@ -1,6 +1,7 @@
+import { RankingInfo, rankings } from '@tanstack/match-sorter-utils';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { CellContext, Row } from '@tanstack/react-table';
-import { rankings, RankingInfo } from '@tanstack/match-sorter-utils';
+import { CellContext } from '@tanstack/react-table';
 import { formatUnits } from 'viem';
 
 const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;

@@ -1,18 +1,18 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import _ from 'lodash';
 import { useToast } from '@raidguild/design-system';
 import {
   client,
-  ROLES_REQUIRED_INSERT_MUTATION,
   ROLES_REQUIRED_DELETE_MUTATION,
+  ROLES_REQUIRED_INSERT_MUTATION,
   ROLES_REQUIRED_UPDATE_MUTATION,
 } from '@raidguild/dm-graphql';
 import {
-  IRoleRequiredInsert,
   IRoleRemoveMany,
-  camelize,
+  IRoleRequiredInsert,
   IRoleRequiredInsertDb,
-} from '@raidguild/dm-utils';
+} from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import _ from 'lodash';
 
 export const useAddRolesRequired = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
@@ -113,14 +113,13 @@ export const useUpdateRolesRequired = ({ token }: { token: string }) => {
     }: {
       insertRoles: IRoleRequiredInsertDb[];
       where: IRoleRemoveMany;
-    }) => {
+    }) =>
       // if (!where) return null;
 
-      return client({ token }).request(ROLES_REQUIRED_UPDATE_MUTATION, {
+      client({ token }).request(ROLES_REQUIRED_UPDATE_MUTATION, {
         insertRoles,
         where,
-      });
-    },
+      }),
     {
       onSuccess: (data) => {
         const raid = camelize(

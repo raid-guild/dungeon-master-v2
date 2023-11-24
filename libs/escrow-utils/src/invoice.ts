@@ -1,7 +1,9 @@
+/* eslint-disable import/prefer-default-export */
 // TODO migrate to wagmi hooks
 
 import _ from 'lodash';
 import { Hex } from 'viem';
+
 import { NETWORK_CONFIG } from './constants';
 
 export const getInvoiceFactoryAddress = (chainId: number) => {

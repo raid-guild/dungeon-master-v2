@@ -1,7 +1,8 @@
+import { client, DASHBOARD_QUERY } from '@raidguild/dm-graphql';
+import { IRaid } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { DASHBOARD_QUERY, client } from '@raidguild/dm-graphql';
-import { camelize, IRaid } from '@raidguild/dm-utils';
 
 const ACTIVE_RAID_STATUSES = ['AWAITING', 'PREPARING', 'RAIDING'];
 

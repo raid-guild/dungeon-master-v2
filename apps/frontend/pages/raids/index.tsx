@@ -1,30 +1,31 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-import { useState } from 'react';
-import _ from 'lodash';
 import {
-  Stack,
-  Heading,
-  Spinner,
+  ChakraSelect,
   Flex,
   FormLabel,
-  ChakraSelect,
-  Text,
-  Spacer,
+  Heading,
   HStack,
+  Spacer,
+  Spinner,
+  Stack,
+  Text,
 } from '@raidguild/design-system';
-import { useSession } from 'next-auth/react';
-import { NextSeo } from 'next-seo';
-import InfiniteScroll from 'react-infinite-scroller';
 import {
   useDefaultTitle,
   useRaidList,
   useRaidsCount,
 } from '@raidguild/dm-hooks';
-import { IRaid, RAID_STATUS, GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
-import { raidSortKeys } from '@raidguild/dm-types';
-import RaidCard from 'components/RaidCard';
-import SiteLayout from 'components/SiteLayout';
+import { IRaid, raidSortKeys } from '@raidguild/dm-types';
+import { GUILD_CLASS_OPTIONS, RAID_STATUS } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+
+import RaidCard from '../../components/RaidCard';
+import SiteLayout from '../../components/SiteLayout';
 
 const raidStatusMapped = RAID_STATUS.map((status) => ({
   label: status,
@@ -208,11 +209,11 @@ const RaidList = () => {
               <Heading>{title}</Heading>
               <Spacer />
               {count > 0 && (
-                <HStack alignItems={'baseline'} gap={1}>
+                <HStack alignItems='baseline' gap={1}>
                   <Text fontSize='3xl' fontWeight={800}>
                     {count}
                   </Text>
-                  <Text fontSize='sm' fontWeight={'normal'}>
+                  <Text fontSize='sm' fontWeight='normal'>
                     raid{count > 1 ? 's' : ''}
                   </Text>
                 </HStack>

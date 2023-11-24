@@ -1,21 +1,23 @@
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import {
-  ControlledInput,
-  Heading,
-  Button,
-  Text,
   Box,
-  Stack,
-  HStack,
+  Button,
+  ControlledInput,
   Flex,
+  Heading,
+  HStack,
+  Stack,
+  Text,
 } from '@raidguild/design-system';
-import SiteLayoutPublic from 'components/SiteLayoutPublic';
-import { NextSeo } from 'next-seo';
-import _ from 'lodash';
-import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import { IRaid } from '@raidguild/dm-types';
 import { useInvoiceDetails } from '@raidguild/escrow-hooks';
+import axios from 'axios';
+import _ from 'lodash';
+import Link from 'next/link';
+import { NextSeo } from 'next-seo';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 
 // ? slimmer client here? fetch?
 export const validateRaidId = async (raidId: string) => {
@@ -23,10 +25,10 @@ export const validateRaidId = async (raidId: string) => {
   return data;
 };
 
-const ActionButtons = ({ raid }) => (
+const ActionButtons = ({ raid }: { raid: IRaid }) => (
   <Stack>
     <Link href='/escrow/new' passHref key='register'>
-      <Button variant='outline' isDisabled={!raid || raid.invoiceAddress}>
+      <Button variant='outline' isDisabled={!raid?.invoiceAddress}>
         Register Escrow
       </Button>
     </Link>
@@ -60,15 +62,15 @@ export const Escrow = () => {
           Raid ID is valid!
         </Text>
       );
-    } else if (validId === false) {
+    }
+    if (validId === false) {
       return (
         <Text color='primary.300' mb='2'>
           Raid ID is not valid!
         </Text>
       );
-    } else {
-      return <Box height='30px' mb='2'></Box>;
     }
+    return <Box height='30px' mb='2' />;
   };
 
   return (

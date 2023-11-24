@@ -1,17 +1,16 @@
 /* eslint-disable no-nested-ternary */
 // TODO fix ternary
-import React from 'react';
-
 import {
-  Stack,
-  Text,
+  Button,
   HStack,
   Icon,
+  Stack,
+  Text,
   Tooltip,
   useClipboard,
-  Button,
 } from '@raidguild/design-system';
-import { FaExternalLinkAlt, FaInfoCircle, FaCopy } from 'react-icons/fa';
+import { FaCopy, FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
+
 import Link from './ChakraNextLink';
 
 interface InfoStackProps {
@@ -22,17 +21,11 @@ interface InfoStackProps {
   copy?: boolean;
 }
 
-const InfoStack: React.FC<InfoStackProps> = ({
-  label,
-  details,
-  link,
-  tooltip,
-  copy,
-}: InfoStackProps) => {
+const InfoStack = ({ label, details, link, tooltip, copy }: InfoStackProps) => {
   const copyText = useClipboard(details);
 
   return (
-    <Stack justify='center' minWidth={'0.5'}>
+    <Stack justify='center' minWidth='0.5'>
       <HStack>
         <Text color='white' fontSize='sm'>
           {label}
@@ -60,7 +53,7 @@ const InfoStack: React.FC<InfoStackProps> = ({
           <Button
             variant='unstyled'
             onClick={copyText.onCopy}
-            height={'-webkit-fit-content'}
+            height='-webkit-fit-content'
           >
             <HStack>
               <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>

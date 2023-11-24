@@ -1,14 +1,15 @@
-import _ from 'lodash';
 import {
   Card,
   Flex,
   Heading,
-  Stack,
   HStack,
+  Stack,
   Text,
 } from '@raidguild/design-system';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import { format } from 'date-fns';
-import { IRaid, IConsultation } from '@raidguild/dm-types';
+import _ from 'lodash';
+
 import ChakraNextLink from './ChakraNextLink';
 import MemberAvatar from './MemberAvatar';
 import RaidStatusBadge from './RaidStatusBadge';

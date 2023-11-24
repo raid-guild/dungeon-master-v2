@@ -1,23 +1,28 @@
 import {
   Card,
-  Stack,
+  Divider,
   Flex,
   HStack,
-  VStack,
-  Text,
-  Divider,
   Link,
+  Stack,
+  Text,
+  VStack,
 } from '@raidguild/design-system';
+import { getTxLink } from '@raidguild/dm-utils';
+import {
+  getIpfsLink,
+  Invoice,
+  parseTokenAddress,
+} from '@raidguild/escrow-utils';
+import _ from 'lodash';
 import { useState } from 'react';
+import { formatEther, formatUnits } from 'viem';
+import { useBalance, useChainId } from 'wagmi';
+
 import { AccountLink } from './shared/AccountLink';
 
-import { getTxLink } from '@raidguild/dm-utils';
-import { parseTokenAddress, getIpfsLink } from '@raidguild/escrow-utils';
-import { formatEther, formatUnits } from 'viem';
-import _ from 'lodash';
-import { useBalance } from 'wagmi';
-
-export const InvoicePaymentDetails = ({ invoice, chainId }) => {
+const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
+  const chainId = useChainId();
   const [balance, setBalance] = useState(BigInt(0));
 
   const { data } = useBalance({
@@ -66,7 +71,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId }) => {
         >
           <Text variant='textOne'>Total Project Amount</Text>
           <Text variant='textOne'>
-            {formatEther(invoice.total)}{' '}
+            {formatEther(BigInt(invoice.total))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
@@ -77,7 +82,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId }) => {
             let full = false;
             if (deposits.length > 0) {
               for (let i = 0; i < deposits.length; i += 1) {
-                tot = tot + deposits[i].amount;
+                tot += deposits[i].amount;
                 if (tot > sum) {
                   ind = i;
                   if (tot - sum >= amt) {
@@ -87,10 +92,11 @@ export const InvoicePaymentDetails = ({ invoice, chainId }) => {
                 }
               }
             }
-            sum = sum + amt;
+            sum += BigInt(amt);
 
             return (
               <Flex
+                // eslint-disable-next-line react/no-array-index-key
                 key={index.toString()}
                 justify='space-between'
                 align='stretch'
@@ -131,7 +137,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId }) => {
                     variant='textOne'
                     textAlign='right'
                     fontWeight='500'
-                  >{`${formatUnits(amt, 18)} ${parseTokenAddress(
+                  >{`${formatUnits(BigInt(amt), 18)} ${parseTokenAddress(
                     chainId,
                     invoice.token
                   )}`}</Text>
@@ -152,7 +158,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId }) => {
         <HStack justifyContent='space-between' mb='.2rem'>
           <Text variant='textOne'>Total Released</Text>
           <Text variant='textOne'>
-            {formatUnits(released, 18)}{' '}
+            {formatUnits(BigInt(released), 18)}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
@@ -300,3 +306,5 @@ export const InvoicePaymentDetails = ({ invoice, chainId }) => {
     </Card>
   );
 };
+
+export default InvoicePaymentDetails;

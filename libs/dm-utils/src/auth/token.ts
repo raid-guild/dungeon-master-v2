@@ -1,8 +1,9 @@
-import _ from 'lodash';
-import jwt from 'jsonwebtoken';
-import { JWT } from 'next-auth/jwt';
-import { Session, User } from 'next-auth';
 import { CreateTokenParams, HasuraAuthToken } from '@raidguild/dm-types';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
+import { Session, User } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+
 import { getOrCreateUser } from './queryHelpers';
 
 const { NEXTAUTH_SECRET } = process.env;

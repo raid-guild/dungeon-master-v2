@@ -2,33 +2,35 @@ import {
   Button,
   Flex,
   Heading,
+  Image,
   Link,
   Text,
   VStack,
-  Image,
 } from '@raidguild/design-system';
+import { getTxLink } from '@raidguild/dm-utils';
+import { useLock } from '@raidguild/escrow-hooks';
+import {
+  Invoice,
+  NETWORK_CONFIG,
+  uploadDisputeDetails,
+} from '@raidguild/escrow-utils';
 import { useCallback, useContext, useState } from 'react';
-import { uploadDisputeDetails, NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import { formatUnits } from 'viem';
+import { useChainId } from 'wagmi';
 
 import LockImage from '../../assets/lock.svg';
-
+import Loader from './Loader';
 import { AccountLink } from './shared/AccountLink';
 import { OrderedTextarea } from './shared/OrderedTextArea';
 
-import { Loader } from './Loader';
-import { formatUnits } from 'viem';
-import { useChainId } from 'wagmi';
-import { useLock } from '@raidguild/escrow-hooks';
-import { getTxLink } from '@raidguild/dm-utils';
-
-const parseTokenAddress = (chainId, address) => {
-  for (const [key, value] of Object.entries(
-    NETWORK_CONFIG[parseInt(chainId)]['TOKENS']
-  )) {
-    if (value['address'] === address.toLowerCase()) {
+const parseTokenAddress = (chainId: number, address: any) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
+    if ((value as any).address === address.toLowerCase()) {
       return key;
     }
   }
+  return address;
 };
 
 const resolverInfo = {
@@ -61,14 +63,20 @@ const getResolverString = (chainId, resolver) => {
   return info ? info.name : getAccountString(resolver);
 };
 
-export const LockFunds = ({ invoice, balance }) => {
+const LockFunds = ({
+  invoice,
+  balance,
+}: {
+  invoice: Invoice;
+  balance: bigint;
+}) => {
   const chainId = useChainId();
   const { address, resolver, token, resolutionRate } = invoice;
 
   const [disputeReason, setDisputeReason] = useState('');
 
   const fee = `${formatUnits(
-    resolutionRate === '0' ? BigInt(0) : BigInt(balance) / resolutionRate,
+    resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
     18
   )} ${parseTokenAddress(chainId, token)}`;
 
@@ -168,7 +176,7 @@ export const LockFunds = ({ invoice, balance }) => {
         textTransform='uppercase'
         variant='solid'
       >
-        {`Lock ${formatUnits(balance, 18)} ${parseTokenAddress(
+        {`Lock ${formatUnits(BigInt(balance), 18)} ${parseTokenAddress(
           chainId,
           token
         )}`}
@@ -187,3 +195,5 @@ export const LockFunds = ({ invoice, balance }) => {
     </VStack>
   );
 };
+
+export default LockFunds;

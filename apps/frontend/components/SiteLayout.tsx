@@ -1,11 +1,12 @@
-import React, { ReactNode } from 'react';
-import { useRouter } from 'next/router';
-import _ from 'lodash';
 import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
+import _ from 'lodash';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import React, { ReactNode } from 'react';
+
 import CommandPalette from './CommandPalette';
+import Footer from './Footer';
+import Navbar from './Navbar';
 import ScrollToTopButton from './ScrollToTopButton';
 
 interface SiteLayoutProps {

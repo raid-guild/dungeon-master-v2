@@ -1,23 +1,24 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-import { useState } from 'react';
-import _ from 'lodash';
 import {
-  Stack,
-  Heading,
-  Spinner,
+  ChakraSelect,
   Flex,
   FormLabel,
-  ChakraSelect,
-  Text,
-  Spacer,
+  Heading,
   HStack,
+  Spacer,
+  Spinner,
+  Stack,
+  Text,
 } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import InfiniteScroll from 'react-infinite-scroller';
 import { useRipList, useRipsCount } from '@raidguild/dm-hooks';
-import { RIP_STATUS } from '@raidguild/dm-utils';
 import { IRip, ripSortKeys } from '@raidguild/dm-types';
+import { RIP_STATUS } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { NextSeo } from 'next-seo';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+
 import RipCard from '../components/RipCard';
 import SiteLayout from '../components/SiteLayout';
 
@@ -89,9 +90,9 @@ const RipList = () => {
             handleRipStatusFilterChange(e.target.value);
           }}
         >
-          {ripStatusOptions.map((status) => (
-            <option key={status.value} value={status.value}>
-              {status.label}
+          {ripStatusOptions.map((_status) => (
+            <option key={_status.value} value={_status.value}>
+              {_status.label}
             </option>
           ))}
         </ChakraSelect>
@@ -139,11 +140,11 @@ const RipList = () => {
               <Heading>{title}</Heading>
               <Spacer />
               {ripCount > 0 && (
-                <HStack alignItems={'baseline'} gap={1}>
+                <HStack alignItems='baseline' gap={1}>
                   <Text fontSize='3xl' fontWeight={800}>
                     {ripCount}
                   </Text>
-                  <Text fontSize='sm' fontWeight={'normal'}>
+                  <Text fontSize='sm' fontWeight='normal'>
                     proposal{ripCount > 1 ? 's' : ''}
                   </Text>
                 </HStack>

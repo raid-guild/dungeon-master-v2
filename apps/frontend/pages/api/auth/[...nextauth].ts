@@ -1,14 +1,14 @@
+import {
+  authorizeSiweMessage,
+  CONFIG,
+  decodeAuth,
+  encodeAuth,
+  extendSessionWithUserAndToken,
+  siweCredentials,
+} from '@raidguild/dm-utils';
+import { NextApiRequest, NextApiResponse } from 'next';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { NextApiRequest, NextApiResponse } from 'next';
-import {
-  siweCredentials,
-  authorizeSiweMessage,
-  extendSessionWithUserAndToken,
-  encodeAuth,
-  decodeAuth,
-  CONFIG,
-} from '@raidguild/dm-utils';
 
 const { NEXTAUTH_SECRET } = process.env;
 
@@ -21,14 +21,6 @@ const siweProvider = CredentialsProvider({
 
 type NextAuthOptions = Parameters<typeof NextAuth>[2];
 
-const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
-  const options: NextAuthOptions = authOptions;
-
-  return NextAuth(req, res, options);
-};
-
-export default Auth;
-
 export const authOptions: NextAuthOptions = {
   providers: [siweProvider],
   session: { strategy: 'jwt', maxAge: CONFIG.defaultMaxAge },
@@ -40,3 +32,11 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: { session: extendSessionWithUserAndToken },
 };
+
+const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
+  const options: NextAuthOptions = authOptions;
+
+  return NextAuth(req, res, options);
+};
+
+export default Auth;

@@ -8,7 +8,7 @@ const statusColorScheme = {
   AWAITING: 'red',
 };
 
-const RaidStatusBadge = ({ status }) => (
+const RaidStatusBadge = ({ status }: { status: any }) => (
   <Badge colorScheme={statusColorScheme[status]}>{status}</Badge>
 );
 

@@ -1,19 +1,19 @@
 import {
-  Text,
   Button,
+  ChakraInput,
   Flex,
   FormControl,
   FormLabel,
   InputGroup,
-  ChakraInput,
   InputRightElement,
+  Text,
 } from '@raidguild/design-system';
 import _ from 'lodash';
-import { UseFormReturn, useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 
 // TODO migrate to design system
 
-export const PaymentsChunkForm = ({
+const PaymentsChunkForm = ({
   escrowForm,
   updateStep,
   backStep,
@@ -27,7 +27,7 @@ export const PaymentsChunkForm = ({
   const localForm = useForm();
   const { setValue } = localForm;
 
-  let sum = _.sum(payments);
+  const sum = _.sum(payments);
 
   const onSubmit = (values) => {
     console.log(values);
@@ -42,34 +42,32 @@ export const PaymentsChunkForm = ({
       minWidth='40%'
     >
       <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-        {Array.from(Array(_.size(milestones))).map((count, index) => {
-          return (
-            <FormControl key={count} isRequired>
-              <FormLabel>{`Payment #${index + 1}`}</FormLabel>
-              <InputGroup>
-                <ChakraInput
-                  focusBorderColor='none'
-                  name={`payment${index + 1}`}
-                  type='number'
-                  onChange={(e) => {
-                    let temp = [...payments];
-                    temp[index] = e.target.value;
-                    setValue('payments', temp);
-                  }}
-                  value={payments[index]}
-                />
-                <InputRightElement
-                  fontFamily='texturina'
-                  color='yellow'
-                  w='3.5rem'
-                  mr='.5rem'
-                >
-                  {tokenType}
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-          );
-        })}
+        {Array.from(Array(_.size(milestones))).map((count, index) => (
+          <FormControl key={count} isRequired>
+            <FormLabel>{`Payment #${index + 1}`}</FormLabel>
+            <InputGroup>
+              <ChakraInput
+                focusBorderColor='none'
+                name={`payment${index + 1}`}
+                type='number'
+                onChange={(e) => {
+                  const temp = [...payments];
+                  temp[index] = e.target.value;
+                  setValue('payments', temp);
+                }}
+                value={payments[index]}
+              />
+              <InputRightElement
+                fontFamily='texturina'
+                color='yellow'
+                w='3.5rem'
+                mr='.5rem'
+              >
+                {tokenType}
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+        ))}
       </div>
 
       <Text color='white' textTransform='uppercase' fontFamily='texturina'>
@@ -98,3 +96,5 @@ export const PaymentsChunkForm = ({
     </Flex>
   );
 };
+
+export default PaymentsChunkForm;

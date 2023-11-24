@@ -1,11 +1,12 @@
-import _ from 'lodash';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
-  client,
   APPLICATION_LIST_QUERY,
   APPLICATIONS_LIST_COUNT_QUERY,
+  client,
 } from '@raidguild/dm-graphql';
-import { camelize, IApplication } from '@raidguild/dm-utils';
+import { IApplication } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 const where = (
   applicationSkillTypeFilterKey: string,

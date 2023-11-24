@@ -1,33 +1,36 @@
-import { useState } from 'react';
-import _ from 'lodash';
-import { useSession } from 'next-auth/react';
-import { FiPlus, FiX } from 'react-icons/fi';
-import { Controller, useForm } from 'react-hook-form';
-import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
+/* eslint-disable react/no-unstable-nested-components */
 import {
-  VStack,
-  HStack,
-  Button,
-  IconButton,
-  ChakraSelect,
   Box,
-  Icon,
+  Button,
+  ChakraSelect,
   Flex,
+  HStack,
+  Icon,
+  IconButton,
   Select,
+  VStack,
 } from '@raidguild/design-system';
+import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
+import { useRaidPartyAdd, useUpdateRolesRequired } from '@raidguild/dm-hooks';
 import {
-  GUILD_CLASS_DISPLAY,
-  GUILD_CLASS_OPTIONS,
   IMember,
   IRaid,
   IRoleRemoveMany,
   IRoleRequiredInsertDb,
+} from '@raidguild/dm-types';
+import {
+  GUILD_CLASS_DISPLAY,
+  GUILD_CLASS_OPTIONS,
   memberDisplayName,
   membersExceptRaidParty,
   rolesExceptRequiredRoles,
   SIDEBAR_ACTION_STATES,
 } from '@raidguild/dm-utils';
-import { useRaidPartyAdd, useUpdateRolesRequired } from '@raidguild/dm-hooks';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { FiPlus, FiX } from 'react-icons/fi';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;
@@ -100,7 +103,7 @@ const RaidPartyButtons = ({
       },
     };
     await updateRolesRequired({
-      insertRoles: insertRoles,
+      insertRoles,
       where: rolesRemovedWhere,
     });
 
@@ -163,6 +166,7 @@ const RaidPartyButtons = ({
           control={control}
           render={({ field }) => (
             <Select
+              // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
               variant='outline'
               isMulti
@@ -180,9 +184,9 @@ const RaidPartyButtons = ({
             />
           )}
         />
-        <HStack justify={'center'} gap={1} w='100%'>
+        <HStack justify='center' gap={1} w='100%'>
           <Button
-            variant={'outline'}
+            variant='outline'
             aria-label='Clear Set Role Required for Raid'
             onClick={() => {
               setButton(SIDEBAR_ACTION_STATES.none);

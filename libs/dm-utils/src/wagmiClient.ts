@@ -1,16 +1,16 @@
 /* eslint-disable import/prefer-default-export */
-import { createConfig, WagmiConfig } from 'wagmi';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
-  injectedWallet,
-  metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
   argentWallet,
   braveWallet,
   coinbaseWallet,
+  injectedWallet,
   ledgerWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+import { createConfig, WagmiConfig } from 'wagmi';
 
 import { chains, publicClient } from './chains';
 

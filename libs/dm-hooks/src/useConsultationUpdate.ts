@@ -1,9 +1,9 @@
+import { useToast } from '@raidguild/design-system';
+import { client, CONSULTATION_UPDATE_MUTATION } from '@raidguild/dm-graphql';
+import { IConsultationUpdate } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useToast } from '@raidguild/design-system';
-
-import { client, CONSULTATION_UPDATE_MUTATION } from '@raidguild/dm-graphql';
-import { IConsultationUpdate, camelize } from '@raidguild/dm-utils';
 
 const useConsultationUpdate = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
@@ -42,6 +42,8 @@ const useConsultationUpdate = ({ token }: { token: string }) => {
         });
       },
       onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log(error);
         toast.error({
           title: 'Unable to update Consultation',
           iconName: 'alert',

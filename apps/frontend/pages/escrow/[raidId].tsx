@@ -1,23 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from 'react';
-import _ from 'lodash';
+import { Flex, Heading, Text, VStack } from '@raidguild/design-system';
 import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
-import { useAccount, useNetwork } from 'wagmi';
-import { NextSeo } from 'next-seo';
-import SiteLayoutPublic from 'components/SiteLayoutPublic';
-import { Heading, Flex, Text, VStack } from '@raidguild/design-system';
-import axios from 'axios';
-
-import { Page404 } from 'components/SmartEscrow/shared/Page404';
-
-import { ProjectInfo } from 'components/SmartEscrow/ProjectInfo';
-import { InvoicePaymentDetails } from 'components/SmartEscrow/InvoicePaymentDetails';
-import { InvoiceMetaDetails } from 'components/SmartEscrow/InvoiceMetaDetails';
-import { InvoiceButtonManager } from 'components/SmartEscrow/InvoiceButtonManager';
-import { SUPPORTED_NETWORKS, getInvoice } from '@raidguild/escrow-gql';
-import Link from 'components/ChakraNextLink';
-import { GetServerSidePropsContext } from 'next';
+import { getInvoice, SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
 import { Invoice } from '@raidguild/escrow-utils';
+import axios from 'axios';
+import _ from 'lodash';
+import { GetServerSidePropsContext } from 'next';
+import { NextSeo } from 'next-seo';
+import { useState } from 'react';
+import { useAccount, useNetwork } from 'wagmi';
+
+import Link from '../../components/ChakraNextLink';
+import SiteLayoutPublic from '../../components/SiteLayoutPublic';
+import InvoiceButtonManager from '../../components/SmartEscrow/InvoiceButtonManager';
+import InvoiceMetaDetails from '../../components/SmartEscrow/InvoiceMetaDetails';
+import InvoicePaymentDetails from '../../components/SmartEscrow/InvoicePaymentDetails';
+import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
+import Page404 from '../../components/SmartEscrow/shared/Page404';
 
 // TODO use native client & gql-request
 
@@ -30,8 +29,8 @@ const WRONG_NETWORK_MESSAGE =
 const fetchRaid = async (query, raidId) => {
   const graphqlQuery = {
     operationName: 'validateRaidId',
-    query: query,
-    variables: { raidId: raidId },
+    query,
+    variables: { raidId },
   };
 
   const { data } = await axios.post(`${DM_ENDPOINT}`, graphqlQuery, {
@@ -41,7 +40,7 @@ const fetchRaid = async (query, raidId) => {
   return data.data?.raids;
 };
 
-const Escrow = ({ raid }) => {
+const Escrow = ({ raid }: { raid: any }) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
 
@@ -99,7 +98,7 @@ const Escrow = ({ raid }) => {
                   href={`https://smartescrow.raidguild.org/escrow/${
                     raid && raid.id
                   }`}
-                  target={'_blank'}
+                  target='_blank'
                   isExternal
                   color='primary.300'
                   textDecoration='underline'
@@ -114,6 +113,7 @@ const Escrow = ({ raid }) => {
         }
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   };
@@ -146,16 +146,8 @@ const Escrow = ({ raid }) => {
                 </Flex>
 
                 <Flex direction='column' minW='45%'>
-                  <InvoicePaymentDetails
-                    invoice={invoice}
-                    chainId={chain.id}
-                    // provider={appState.provider}
-                  />
-                  <InvoiceButtonManager
-                    invoice={invoice}
-                    account={address}
-                    // provider={appState.provider}
-                  />
+                  <InvoicePaymentDetails invoice={invoice} />
+                  <InvoiceButtonManager invoice={invoice} account={address} />
                 </Flex>
               </Flex>
             )}

@@ -1,36 +1,35 @@
-import React from 'react';
-import _ from 'lodash';
 import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Card,
   Flex,
   Heading,
-  Button,
-  Text,
   HStack,
-  Card,
   Icon,
-  Tooltip,
+  RoleBadge,
   SimpleGrid,
   Stack,
-  AvatarGroup,
-  RoleBadge,
-  Avatar,
+  Text,
+  Tooltip,
   useMediaQuery,
 } from '@raidguild/design-system';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
-  PROJECT_TYPE_DISPLAY,
-  RAID_CATEGORY_DISPLAY,
   BUDGET_DISPLAY,
-  GUILD_CLASS_ICON,
   displayDate,
-  IConsultation,
-  IRaid,
+  GUILD_CLASS_ICON,
+  PROJECT_TYPE_DISPLAY,
   ProjectTypeKey,
+  RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import React from 'react';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 
-import MemberAvatar from './MemberAvatar';
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
+import MemberAvatar from './MemberAvatar';
 import MemberAvatarStack from './MemberAvatarStack';
 import RaidStatusBadge from './RaidStatusBadge';
 

@@ -1,32 +1,32 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-
-import { useState } from 'react';
-import _ from 'lodash';
 import {
-  Stack,
-  Heading,
+  ChakraSelect,
   Flex,
   FormLabel,
-  ChakraSelect,
-  Spinner,
-  Spacer,
-  Text,
+  Heading,
   HStack,
+  Spacer,
+  Spinner,
+  Stack,
+  Text,
 } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
-import InfiniteScroll from 'react-infinite-scroller';
 import {
   useConsultationList,
   useConsultationsCount,
   useDefaultTitle,
 } from '@raidguild/dm-hooks';
+import { IConsultation } from '@raidguild/dm-types';
 import {
-  IConsultation,
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+
 import RaidCard from '../../components/RaidCard';
 import SiteLayout from '../../components/SiteLayout';
 
@@ -240,11 +240,11 @@ const ConsultationList = () => {
               <Heading>{title} List</Heading>
               <Spacer />
               {count > 0 && (
-                <HStack alignItems={'baseline'} gap={1}>
+                <HStack alignItems='baseline' gap={1}>
                   <Text fontSize='3xl' fontWeight={800}>
                     {count}
                   </Text>
-                  <Text fontSize='sm' fontWeight={'normal'}>
+                  <Text fontSize='sm' fontWeight='normal'>
                     consultation{count > 1 ? 's' : ''}
                   </Text>
                 </HStack>

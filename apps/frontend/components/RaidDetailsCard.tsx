@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
-import _ from 'lodash';
 import {
   Accordion,
-  AccordionItem,
   AccordionButton,
-  AccordionPanel,
   AccordionIcon,
-  Flex,
-  Grid,
+  AccordionItem,
+  AccordionPanel,
   Button,
   Card,
+  Collapse,
+  Flex,
+  Grid,
+  Heading,
+  Stack,
   Text,
   VStack,
-  Stack,
-  Heading,
-  Collapse,
 } from '@raidguild/design-system';
-import { format } from 'date-fns';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
-  IConsultation,
-  IRaid,
-  BUDGET_DISPLAY,
-  truncateAddress,
-  DELIVERY_PRIORITIES_DISPLAY,
   AVAILABLE_PROJECT_SPECS_DISPLAY,
-  PROJECT_TYPE_DISPLAY,
-  RAID_CATEGORY_DISPLAY,
   AvailableSpecsKey,
-  ProjectTypeKey,
+  BUDGET_DISPLAY,
+  DELIVERY_PRIORITIES_DISPLAY,
   PriorityKey,
+  PROJECT_TYPE_DISPLAY,
+  ProjectTypeKey,
+  RAID_CATEGORY_DISPLAY,
+  truncateAddress,
 } from '@raidguild/dm-utils';
+import { format } from 'date-fns';
+import _ from 'lodash';
+import React, { useState } from 'react';
+
 import InfoStack from './InfoStack';
 
 interface RaidProps {
@@ -305,7 +305,7 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
   ];
 
   return (
-    <Card variant='filled' padding={2} minWidth={'lg'}>
+    <Card variant='filled' padding={2} minWidth='lg'>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;

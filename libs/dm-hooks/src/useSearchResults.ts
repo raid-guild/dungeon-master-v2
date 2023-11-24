@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { client, SEARCH_QUERY } from '@raidguild/dm-graphql';
+// import {
+//   IApplication,
+//   IConsultation,
+//   IMember,
+//   IRaid,
+// } from '@raidguild/dm-types';
 import { useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
-import { client } from '@raidguild/dm-graphql';
-import { SEARCH_QUERY } from '@raidguild/dm-graphql';
-import {
-  IApplication,
-  IConsultation,
-  IMember,
-  IRaid,
-} from '@raidguild/dm-types';
 
 const keyIcons: { [key: string]: string } = {
   applications: 'UserPlusIcon',

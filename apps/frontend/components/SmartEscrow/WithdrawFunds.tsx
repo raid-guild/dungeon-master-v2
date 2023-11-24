@@ -3,18 +3,24 @@ import {
   Heading,
   Link,
   Text,
-  VStack,
   useToast,
+  VStack,
 } from '@raidguild/design-system';
-import { formatUnits } from 'viem';
-import { useState } from 'react';
-import { parseTokenAddress } from '@raidguild/escrow-utils';
 import { getTxLink } from '@raidguild/dm-utils';
-
-import { Loader } from './Loader';
+import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import { useState } from 'react';
+import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-export const WithdrawFunds = ({ invoice, balance }) => {
+import Loader from './Loader';
+
+const WithdrawFunds = ({
+  invoice,
+  balance,
+}: {
+  invoice: Invoice;
+  balance: bigint;
+}) => {
   const toast = useToast();
   const chainId = useChainId();
 
@@ -95,3 +101,5 @@ export const WithdrawFunds = ({ invoice, balance }) => {
     </VStack>
   );
 };
+
+export default WithdrawFunds;

@@ -1,7 +1,7 @@
-import { JWT } from 'next-auth/jwt';
 import { NextApiRequest } from 'next';
-import { SiweMessage } from 'siwe';
 import { User } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+import { SiweMessage } from 'siwe';
 
 // camelized version of DB columns
 

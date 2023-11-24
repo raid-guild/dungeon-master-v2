@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+
 import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAID_UPDATE_MUTATION = gql`

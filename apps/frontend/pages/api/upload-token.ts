@@ -6,6 +6,7 @@ import { authOptions } from './auth/[...nextauth]';
 
 const { PINATA_JWT } = process.env;
 
+// eslint-disable-next-line no-use-before-define
 const generateApiKey = async (keyRestrictions: KeyRestrictions) => {
   const options = {
     method: 'POST',
@@ -94,11 +95,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     const apiKey = await generateApiKey(localRestrictions);
-    res.send(apiKey);
+    return res.send(apiKey);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(e);
-    res.status(500).send('Server Error');
+    return res.status(500).send('Server Error');
   }
 };
 

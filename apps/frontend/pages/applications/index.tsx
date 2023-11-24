@@ -1,32 +1,33 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
 
-import { useState } from 'react';
-import _ from 'lodash';
 import {
-  Heading,
+  ChakraSelect,
   Flex,
   FormLabel,
-  ChakraSelect,
-  Spinner,
-  Spacer,
-  SimpleGrid,
-  Text,
+  Heading,
   HStack,
+  SimpleGrid,
+  Spacer,
+  Spinner,
+  Text,
 } from '@raidguild/design-system';
-import { useSession } from 'next-auth/react';
-import { NextSeo } from 'next-seo';
-import InfiniteScroll from 'react-infinite-scroller';
 import {
-  useApplicationsCount,
   useApplicationList,
+  useApplicationsCount,
   useDefaultTitle,
 } from '@raidguild/dm-hooks';
+import { IApplication } from '@raidguild/dm-types';
 import {
-  IApplication,
   APPLICATION_SKILL_TYPE_DISPLAY_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
+
 import MemberCard from '../../components/MemberCard';
 import SiteLayout from '../../components/SiteLayout';
 
@@ -193,11 +194,11 @@ const ApplicationList = () => {
               <Heading>{title} List</Heading>
               <Spacer />
               {count > 0 && (
-                <HStack alignItems={'baseline'} gap={1}>
+                <HStack alignItems='baseline' gap={1}>
                   <Text fontSize='3xl' fontWeight={800}>
                     {count}
                   </Text>
-                  <Text fontSize='sm' fontWeight={'normal'}>
+                  <Text fontSize='sm' fontWeight='normal'>
                     application{count > 1 ? 's' : ''}
                   </Text>
                 </HStack>

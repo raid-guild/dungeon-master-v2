@@ -1,8 +1,8 @@
-import { Flex, Heading, Box, Text } from '@raidguild/design-system';
-import _ from 'lodash';
+import { Box, Flex, Heading, Text } from '@raidguild/design-system';
 import { Invoice } from '@raidguild/escrow-utils';
+import _ from 'lodash';
 
-export const ProjectInfo = ({ invoice }: { invoice: Partial<Invoice> }) => {
+const ProjectInfo = ({ invoice }: { invoice: Partial<Invoice> }) => {
   const { clientName, projectName, raidId } = _.pick(invoice, [
     'clientName',
     'projectName',
@@ -25,3 +25,5 @@ export const ProjectInfo = ({ invoice }: { invoice: Partial<Invoice> }) => {
     </Flex>
   );
 };
+
+export default ProjectInfo;

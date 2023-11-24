@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import _ from 'lodash';
 import { IMember } from '@raidguild/dm-types';
+import _ from 'lodash';
 
 export const truncateAddress = (addr: string | undefined): string =>
   addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : '';

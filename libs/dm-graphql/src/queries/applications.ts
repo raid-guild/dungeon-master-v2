@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+
 import {
   APPLICATION_DETAIL_FRAGMENT,
   SLIM_APPLICATION_DETAIL_FRAGMENT,

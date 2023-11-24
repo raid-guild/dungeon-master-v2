@@ -1,8 +1,8 @@
-// import { useRouter } from 'next/router';
-import _ from 'lodash';
-import { useQuery } from '@tanstack/react-query';
 import { client, MEMBER_ADDRESS_LOOKUP_QUERY } from '@raidguild/dm-graphql';
-import { camelize, IMember, IRaid } from '@raidguild/dm-utils';
+import { IMember, IRaid } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 const activeStatus = ['AWAITING', 'PREPARING', 'RAIDING'];
 

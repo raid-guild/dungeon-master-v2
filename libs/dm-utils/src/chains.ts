@@ -1,20 +1,20 @@
+import _ from 'lodash';
 import { Chain, configureChains } from 'wagmi';
 import {
-  mainnet,
-  polygon,
   arbitrum,
-  optimism,
   gnosis,
   goerli,
-  sepolia,
   hardhat,
+  mainnet,
+  optimism,
+  polygon,
+  sepolia,
 } from 'wagmi/chains';
-import { infuraProvider } from 'wagmi/providers/infura';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
-import _ from 'lodash';
 
-let chainsList: { [key: number]: Chain } = {
+const chainsList: { [key: number]: Chain } = {
   1: mainnet,
   100: gnosis,
   137: polygon,
@@ -26,9 +26,7 @@ let chainsList: { [key: number]: Chain } = {
 if (process.env.NODE_ENV === 'development') {
   chainsList[31337] = hardhat;
 }
-const chainsMap = (chainId: number) => {
-  return chainsList[chainId];
-};
+const chainsMap = (chainId: number) => chainsList[chainId];
 
 const data: any = configureChains(_.values(chainsList), [
   alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),

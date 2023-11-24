@@ -1,11 +1,17 @@
+import { useToast } from '@raidguild/design-system';
+import { client, RAID_UPDATE_MUTATION } from '@raidguild/dm-graphql';
+import { IRaidUpdate } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useToast } from '@raidguild/design-system';
 
-import { client, RAID_UPDATE_MUTATION } from '@raidguild/dm-graphql';
-import { IRaidUpdate, camelize } from '@raidguild/dm-utils';
-
-const useRaidUpdate = ({ token, raidId }: { token: string, raidId: string }) => {
+const useRaidUpdate = ({
+  token,
+  raidId,
+}: {
+  token: string;
+  raidId: string;
+}) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 

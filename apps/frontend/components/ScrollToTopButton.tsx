@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Box, IconButton } from '@raidguild/design-system';
+import { useEffect, useState } from 'react';
 import { FiChevronUp } from 'react-icons/fi';
 
 const handleScroll = () => {

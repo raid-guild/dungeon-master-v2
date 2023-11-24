@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useEffect, useState } from 'react';
 import { ChakraInput, ChakraInputProps } from '@raidguild/design-system';
+import { useEffect, useState } from 'react';
 
 type DebouncedInputProps<T extends string | number> = {
   value: T;

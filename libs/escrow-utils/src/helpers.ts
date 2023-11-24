@@ -1,15 +1,16 @@
 import { getExplorerUrl } from '@raidguild/dm-utils';
-import { NETWORK_CONFIG, nativeSymbols, wrappedNativeToken } from './constants';
+
+import { nativeSymbols, NETWORK_CONFIG, wrappedNativeToken } from './constants';
 
 export const getResolverUrl = (chainId: number) => {
   const resolverAddress = NETWORK_CONFIG[chainId]
-    ? NETWORK_CONFIG[chainId]['RESOLVERS']['LexDAO']['address']
+    ? NETWORK_CONFIG[chainId].RESOLVERS.LexDAO.address
     : undefined;
   return `${getExplorerUrl(chainId)}/address/${resolverAddress}`;
 };
 
 export const getSpoilsUrl = (chainId: number, address: string) => {
-  const spoilsAddress = chainId === 100 ? NETWORK_CONFIG['RG_XDAI'] : address;
+  const spoilsAddress = chainId === 100 ? NETWORK_CONFIG.RG_XDAI : address;
   return `${getExplorerUrl(chainId)}/address/${spoilsAddress}`;
 };
 
@@ -29,22 +30,20 @@ export const getWrappedNativeToken = (chainId: number) =>
 export const getCheckedStatus = (deposited: bigint, amounts: number[]) => {
   let sum = BigInt(0);
   return amounts.map((a) => {
-    sum = sum + BigInt(a);
+    sum += BigInt(a);
     return deposited >= sum;
   });
 };
 
 export const parseTokenAddress = (chainId: number, address: string) => {
-  for (const [key, value] of Object.entries(
-    NETWORK_CONFIG[chainId]['TOKENS']
-  )) {
-    if ((value as any)['address'] === address.toLowerCase()) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
+    if ((value as any).address === address.toLowerCase()) {
       return key;
     }
   }
   return undefined;
 };
 
-export const checkedAtIndex = (index: number, checked: boolean[]) => {
-  return checked.map((_c, i) => i <= index);
-};
+export const checkedAtIndex = (index: number, checked: boolean[]) =>
+  checked.map((_c, i) => i <= index);

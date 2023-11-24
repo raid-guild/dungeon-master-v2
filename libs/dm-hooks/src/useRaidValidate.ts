@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
 import {
   client,
   RAID_BY_ID_QUERY,
   RAID_BY_V1_ID_QUERY,
 } from '@raidguild/dm-graphql';
+import { useQuery } from '@tanstack/react-query';
 
 const useRaidValidate = ({
   token,

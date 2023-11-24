@@ -1,37 +1,37 @@
-import React, { useEffect } from 'react';
-import _ from 'lodash';
 import {
+  Badge,
+  Button,
+  Card,
+  Divider,
   Flex,
   Heading,
-  Button,
-  Text,
   HStack,
-  VStack,
-  Badge,
-  Card,
   Link as ChakraLink,
   LinkBox,
   LinkOverlay,
-  Divider,
-  Tooltip,
   RoleBadge,
-  useClipboard,
   Stack,
+  Text,
+  Tooltip,
+  useClipboard,
+  VStack,
 } from '@raidguild/design-system';
+import { IApplication, IMember } from '@raidguild/dm-types';
 import {
-  FaGithub,
-  FaTwitter,
+  clearNonObjects,
+  GUILD_CLASS_ICON,
+  truncateAddress,
+} from '@raidguild/dm-utils';
+import _ from 'lodash';
+import React, { ReactElement, useEffect } from 'react';
+import {
   FaDiscord,
   FaEthereum,
+  FaGithub,
   FaTelegramPlane,
+  FaTwitter,
 } from 'react-icons/fa';
-import {
-  GUILD_CLASS_ICON,
-  IApplication,
-  IMember,
-  truncateAddress,
-  clearNonObjects,
-} from '@raidguild/dm-utils';
+
 import Link from './ChakraNextLink';
 
 // unused props are commented out for now
@@ -40,7 +40,19 @@ interface MemberProps {
   member?: IMember;
 }
 
-const SocialButton = ({ href, icon, label, tooltip, onClick }) => (
+const SocialButton = ({
+  href,
+  icon,
+  label,
+  tooltip,
+  onClick,
+}: {
+  href: string;
+  icon: ReactElement;
+  label: string;
+  tooltip: string;
+  onClick?: () => void;
+}) => (
   <Tooltip label={tooltip} size='sm' hasArrow>
     <Button
       as={ChakraLink}

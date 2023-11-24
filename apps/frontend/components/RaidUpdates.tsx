@@ -1,6 +1,6 @@
-import React from 'react';
-import { Flex, HStack, Text, Divider } from '@raidguild/design-system';
+import { Divider, Flex, HStack, Text } from '@raidguild/design-system';
 import { format } from 'date-fns';
+import React from 'react';
 
 interface RaidUpdateProps {
   // id?: string;

@@ -1,25 +1,26 @@
-import React from 'react';
-import _ from 'lodash';
 import {
+  Box,
   Flex,
   Heading,
   Stack,
+  Tab,
+  TabList,
+  TabPanel,
   TabPanels,
   Tabs,
-  TabList,
-  Tab,
-  TabPanel,
   Text,
-  Box,
 } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
-import { useAccount } from 'wagmi';
-import { IConsultation, IRaid } from '@raidguild/dm-types';
 import { useDashboardList } from '@raidguild/dm-hooks';
-import SiteLayout from '../components/SiteLayout';
-import MiniRaidCard from '../components/MiniRaidCard';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
+import _ from 'lodash';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import React from 'react';
+import { useAccount } from 'wagmi';
+
+import MiniRaidCard from '../components/MiniRaidCard';
+import SiteLayout from '../components/SiteLayout';
 
 const Home: React.FC = () => {
   const { data: session } = useSession();

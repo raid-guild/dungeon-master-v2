@@ -1,8 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import _ from 'lodash';
 import { useToast } from '@raidguild/design-system';
 import { client, MEMBER_UPDATE_MUTATION } from '@raidguild/dm-graphql';
-import { IMemberUpdate } from '@raidguild/dm-utils';
+import { IMemberUpdate } from '@raidguild/dm-types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type MemberUpdateType = {
   token: string;
@@ -42,6 +41,8 @@ const useMemberUpdate = ({
         });
       },
       onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.error(error);
         toast.error({
           title: 'Unable to Update Member',
           iconName: 'alert',

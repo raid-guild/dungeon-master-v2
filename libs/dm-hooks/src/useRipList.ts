@@ -1,7 +1,9 @@
-import _ from 'lodash';
+/* eslint-disable no-case-declarations */
+import { IRip, ripSortKeys } from '@raidguild/dm-types';
+import { RIP_STATUS } from '@raidguild/dm-utils';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { IRip, RIP_STATUS, ripSortKeys } from '@raidguild/dm-utils';
 import axios from 'axios';
+import _ from 'lodash';
 
 type RipListType = {
   ripStatusFilterKey: string;
@@ -26,16 +28,16 @@ const useRipList = ({ ripStatusFilterKey, ripSortKey }: RipListType) => {
 
     const fullRipList: IRip[] = _.flatMap(
       data.data.repository.project.columns.nodes,
-      (node) => {
-        return _.map(node.cards.edges, (edge) => {
-          return { ...edge.node.content, ripCategory: node.name };
-        });
-      }
+      (node) =>
+        _.map(node.cards.edges, (edge) => ({
+          ...edge.node.content,
+          ripCategory: node.name,
+        }))
     );
 
-    const filteredRipList = fullRipList.filter((rip) => {
-      return ripListFilter.includes(rip.ripCategory);
-    });
+    const filteredRipList = fullRipList.filter((rip) =>
+      ripListFilter.includes(rip.ripCategory)
+    );
 
     const sortedRipList = (() => {
       switch (ripSortKey) {
@@ -51,14 +53,10 @@ const useRipList = ({ ripStatusFilterKey, ripSortKey }: RipListType) => {
           });
           const recentCommentRipList = oldestCommentRipList.reverse();
           const sortedRipListWithComments = recentCommentRipList.filter(
-            (rip) => {
-              return _.get(rip, 'comments.nodes.length', 0) > 0;
-            }
+            (rip) => _.get(rip, 'comments.nodes.length', 0) > 0
           );
           const sortedRipListWithoutComments = recentCommentRipList.filter(
-            (rip) => {
-              return _.get(rip, 'comments.nodes.length', 0) === 0;
-            }
+            (rip) => _.get(rip, 'comments.nodes.length', 0) === 0
           );
           const recentCommentCorrectlySortedRipList = [
             ...sortedRipListWithComments,
@@ -133,16 +131,16 @@ export const useRipsCount = ({
 
     const fullRipList: IRip[] = _.flatMap(
       data.data.repository.project.columns.nodes,
-      (node) => {
-        return _.map(node.cards.edges, (edge) => {
-          return { ...edge.node.content, ripCategory: node.name };
-        });
-      }
+      (node) =>
+        _.map(node.cards.edges, (edge) => ({
+          ...edge.node.content,
+          ripCategory: node.name,
+        }))
     );
 
-    const filteredRipList = fullRipList.filter((rip) => {
-      return ripListFilter.includes(rip.ripCategory);
-    });
+    const filteredRipList = fullRipList.filter((rip) =>
+      ripListFilter.includes(rip.ripCategory)
+    );
 
     return filteredRipList.length;
   };

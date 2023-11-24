@@ -1,9 +1,10 @@
+import { Avatar, Tooltip } from '@raidguild/design-system';
+import { IMember } from '@raidguild/dm-types';
+import { memberDisplayName } from '@raidguild/dm-utils';
+import * as blockies from 'blockies-ts';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
-import { Avatar, Tooltip } from '@raidguild/design-system';
-import { useEnsAvatar, useEnsName, mainnet } from 'wagmi';
-import * as blockies from 'blockies-ts';
-import { IMember, memberDisplayName } from '@raidguild/dm-utils';
+import { useEnsAvatar, useEnsName } from 'wagmi';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
@@ -14,12 +15,12 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
   const [avatarSrc, setAvatarSrc] = useState<string>('');
   const { data: ensName } = useEnsName({
     address,
-    chainId: mainnet.id,
+    chainId: 1,
     enabled: !!address,
   });
   const { data: ensAvatar, isFetched } = useEnsAvatar({
     name: ensName,
-    chainId: mainnet.id,
+    chainId: 1,
     enabled: !!address,
     cacheTime: 6_000,
   });

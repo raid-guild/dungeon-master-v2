@@ -1,30 +1,31 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect, useMemo } from 'react';
-import _ from 'lodash';
 import {
-  Flex,
-  Box,
-  Card,
-  Stack,
-  Button,
-  Text,
-  Textarea,
-  HStack,
-  Heading,
   Accordion,
   AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  IconButton,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  HStack,
   Icon,
+  IconButton,
+  Stack,
+  Text,
+  Textarea,
   useMediaQuery,
 } from '@raidguild/design-system';
-import { useForm } from 'react-hook-form';
-import { useSession } from 'next-auth/react';
-import { FaPlus } from 'react-icons/fa';
-import { IStatusUpdate, IRaid } from '@raidguild/dm-utils';
 import { useUpdateCreate } from '@raidguild/dm-hooks';
+import { IRaid, IStatusUpdate } from '@raidguild/dm-types';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { FaPlus } from 'react-icons/fa';
+
 import RaidUpdate from './RaidUpdates';
 
 interface UpdatesProps {
@@ -146,7 +147,7 @@ const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
         <Accordion
           allowMultiple
           onChange={() => setExpanded(!expanded)}
-          width={'full'}
+          width='full'
         >
           <AccordionItem border='none' key={0}>
             <h2>

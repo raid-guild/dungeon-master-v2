@@ -71,7 +71,7 @@ export const PREFERRED_CONTACT = ['Discord', 'Email', 'Telegram'];
 export const PROJECT_TYPE = ['New', 'Existing'];
 
 export type ProjectTypeKey = 'NEW' | 'EXISTING';
-export const PROJECT_TYPE_DISPLAY = (projectType: ProjectTypeKey) => {
+export function PROJECT_TYPE_DISPLAY(projectType: ProjectTypeKey) {
   const projectTypeMap = {
     NEW: 'New',
     EXISTING: 'Existing',
@@ -80,12 +80,12 @@ export const PROJECT_TYPE_DISPLAY = (projectType: ProjectTypeKey) => {
   if (!_.includes(_.keys(projectTypeMap), projectType)) return null;
 
   return projectTypeMap[projectType];
-};
+}
 
 export const AVAILABLE_PROJECT_SPECS = ['Yes', 'Partial', 'None'];
 
 export type AvailableSpecsKey = 'YES' | 'PARTIAL' | 'NONE';
-export const AVAILABLE_PROJECT_SPECS_DISPLAY = (spec: AvailableSpecsKey) => {
+export function AVAILABLE_PROJECT_SPECS_DISPLAY(spec: AvailableSpecsKey) {
   const specsMap = {
     YES: 'Yes',
     PARTIAL: 'Partial',
@@ -95,7 +95,7 @@ export const AVAILABLE_PROJECT_SPECS_DISPLAY = (spec: AvailableSpecsKey) => {
   if (!_.includes(_.keys(specsMap), spec)) return null;
 
   return specsMap[spec];
-};
+}
 
 export const BUDGET = [
   'LESS_THAN_FIVE_THOUSAND',
@@ -136,7 +136,7 @@ export type PriorityKey =
   | 'FAST_AND_POLISHED'
   | 'FAST_AND_INEXPENSIVE'
   | 'POLISHED_AND_INEXPENSIVE';
-export const DELIVERY_PRIORITIES_DISPLAY = (priority: PriorityKey) => {
+export function DELIVERY_PRIORITIES_DISPLAY(priority: PriorityKey) {
   const deliveryPrioritiesMap = {
     FAST_AND_POLISHED: 'Fast & Polished',
     FAST_AND_INEXPENSIVE: 'Fast & Inexpensive',
@@ -146,7 +146,7 @@ export const DELIVERY_PRIORITIES_DISPLAY = (priority: PriorityKey) => {
   if (!_.includes(_.keys(deliveryPrioritiesMap), priority)) return null;
 
   return deliveryPrioritiesMap[priority];
-};
+}
 
 export const SUBMISSION_TYPE = ['Paid', 'Unpaid'];
 
@@ -190,7 +190,7 @@ export const SKILLS_DISPLAY_OPTIONS = [
   { label: 'Accounting', value: 'ACCOUNTING' },
 ];
 
-export const SKILLS_DISPLAY = (skill: string) => {
+export function SKILLS_DISPLAY(skill: string) {
   const skillsMap: { [key: string]: string } = {
     FRONTEND: 'Frontend Dev',
     BACKEND: 'Backend Dev',
@@ -216,7 +216,7 @@ export const SKILLS_DISPLAY = (skill: string) => {
   if (!_.includes(_.keys(skillsMap), skill)) return null;
 
   return skillsMap[skill];
-};
+}
 
 export const SKILL_TYPE = ['NA', 'Technical', 'Non - Technical', 'Other'];
 

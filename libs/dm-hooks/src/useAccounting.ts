@@ -1,29 +1,29 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-use-before-define */
 // All credit to @midgerate, @xivanc, @daniel-ivanco, and the DAOHaus team for the original code
-import _ from 'lodash';
-import { useEffect, useState } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { client, TRANSACTIONS_QUERY } from '@raidguild/dm-graphql';
 import {
-  camelize,
-  GUILD_GNOSIS_DAO_ADDRESS,
-  formatUnitsAsNumber,
-  formatDate,
-} from '@raidguild/dm-utils';
-import {
+  IAccountingRaid,
   ICalculatedTokenBalances,
-  IVaultTransaction,
+  IMappedTokenPrice,
   IMolochStatsBalance,
   ISmartEscrow,
   ISmartEscrowWithdrawal,
-  IAccountingRaid,
   ISpoils,
   ITokenBalance,
   ITokenBalanceLineItem,
   ITokenPrice,
-  IMappedTokenPrice,
+  IVaultTransaction,
 } from '@raidguild/dm-types';
+import {
+  camelize,
+  formatDate,
+  formatUnitsAsNumber,
+  GUILD_GNOSIS_DAO_ADDRESS,
+} from '@raidguild/dm-utils';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import _ from 'lodash';
+import { useEffect, useState } from 'react';
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 

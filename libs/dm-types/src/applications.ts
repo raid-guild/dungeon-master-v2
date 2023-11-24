@@ -1,5 +1,5 @@
-import { Skills } from './misc';
 import { IContactInfo } from './contacts';
+import { Skills } from './misc';
 
 export interface IApplication {
   id: string;

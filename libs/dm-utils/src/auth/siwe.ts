@@ -1,12 +1,12 @@
+import {
+  SiweAuthorizeParams,
+  SiweCredentialParams,
+  SiweMessageAuthorizeParams,
+} from '@raidguild/dm-types';
 import _ from 'lodash';
 import { User } from 'next-auth';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
-import {
-  SiweAuthorizeParams,
-  SiweMessageAuthorizeParams,
-  SiweCredentialParams,
-} from '@raidguild/dm-types';
 
 const { NEXTAUTH_URL } = process.env;
 

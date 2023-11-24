@@ -1,22 +1,22 @@
-import { useState } from 'react';
 import {
-  SimpleGrid,
   Button,
   ChakraModal as Modal,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  SimpleGrid,
 } from '@raidguild/design-system';
-
-import { DepositFunds } from './DepositFunds';
-import { ReleaseFunds } from './ReleaseFunds';
-import { ResolveFunds } from './ResolveFunds';
-import { LockFunds } from './LockFunds';
-import { WithdrawFunds } from './WithdrawFunds';
-import { Hex } from 'viem';
 import { Invoice } from '@raidguild/escrow-utils';
+import { useState } from 'react';
+import { Hex } from 'viem';
 
-export const InvoiceButtonManager = ({
+import DepositFunds from './DepositFunds';
+import LockFunds from './LockFunds';
+import ReleaseFunds from './ReleaseFunds';
+import ResolveFunds from './ResolveFunds';
+import WithdrawFunds from './WithdrawFunds';
+
+const InvoiceButtonManager = ({
   invoice,
   account,
 }: {
@@ -27,37 +27,6 @@ export const InvoiceButtonManager = ({
 
   const [selected, setSelected] = useState(0);
   const [modal, setModal] = useState(false);
-
-  const onLock = () => {
-    setSelected(0);
-    setModal(true);
-  };
-
-  const onDeposit = () => {
-    setSelected(1);
-    setModal(true);
-  };
-
-  const onRelease = async () => {
-    if (isReleasable && isClient) {
-      setSelected(2);
-      setModal(true);
-    }
-  };
-
-  const onResolve = async () => {
-    if (isResolver) {
-      setSelected(3);
-      setModal(true);
-    }
-  };
-
-  const onWithdraw = async () => {
-    if (isExpired && isClient) {
-      setSelected(4);
-      setModal(true);
-    }
-  };
 
   const {
     client,
@@ -93,6 +62,37 @@ export const InvoiceButtonManager = ({
   const isLockable = !isExpired && !isLocked && balance > 0;
 
   const isReleasable = !isLocked && balance >= amount && balance > 0;
+
+  const onLock = () => {
+    setSelected(0);
+    setModal(true);
+  };
+
+  const onDeposit = () => {
+    setSelected(1);
+    setModal(true);
+  };
+
+  const onRelease = async () => {
+    if (isReleasable && isClient) {
+      setSelected(2);
+      setModal(true);
+    }
+  };
+
+  const onResolve = async () => {
+    if (isResolver) {
+      setSelected(3);
+      setModal(true);
+    }
+  };
+
+  const onWithdraw = async () => {
+    if (isExpired && isClient) {
+      setSelected(4);
+      setModal(true);
+    }
+  };
 
   let gridColumns;
   if (isReleasable && (isLockable || (isExpired && balance > 0))) {
@@ -237,3 +237,5 @@ export const InvoiceButtonManager = ({
     </>
   );
 };
+
+export default InvoiceButtonManager;

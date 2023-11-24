@@ -1,26 +1,37 @@
 import {
-  useToast,
   Button,
+  ChakraText as Text,
   Heading,
   Link,
-  ChakraText as Text,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
-import { parseTokenAddress } from '@raidguild/escrow-utils';
 import { getTxLink } from '@raidguild/dm-utils';
+import { useRelease } from '@raidguild/escrow-hooks';
+import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
 import React, { useState } from 'react';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-import { Loader } from './Loader';
-import { useRelease } from '@raidguild/escrow-hooks';
+import Loader from './Loader';
 
 type ReleaseFundsProp = {
-  invoice: any;
-  balance: any;
+  invoice: Invoice;
+  balance: bigint;
 };
 
-export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
+const getReleaseAmount = (currentMilestone, amounts, balance) => {
+  if (
+    currentMilestone >= amounts.length ||
+    (currentMilestone === amounts.length - 1 &&
+      balance.gte(amounts[currentMilestone]))
+  ) {
+    return balance;
+  }
+  return BigInt(amounts[currentMilestone]);
+};
+
+const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const chainId = useChainId();
@@ -48,17 +59,6 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   //     }
   //   }, 5000);
   // };
-
-  const getReleaseAmount = (currentMilestone, amounts, balance) => {
-    if (
-      currentMilestone >= amounts.length ||
-      (currentMilestone === amounts.length - 1 &&
-        balance.gte(amounts[currentMilestone]))
-    ) {
-      return balance;
-    }
-    return BigInt(amounts[currentMilestone]);
-  };
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -117,3 +117,5 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
     </VStack>
   );
 };
+
+export default ReleaseFunds;

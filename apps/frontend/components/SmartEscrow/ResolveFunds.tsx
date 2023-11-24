@@ -1,24 +1,32 @@
 import {
   Button,
-  Heading,
   ChakraInput as Input,
+  Heading,
   InputGroup,
   InputRightElement,
   Link,
   Text,
   VStack,
 } from '@raidguild/design-system';
+import { getTxLink } from '@raidguild/dm-utils';
+import { useResolve } from '@raidguild/escrow-hooks';
+import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
 import { useState } from 'react';
 import { formatUnits, parseUnits } from 'viem';
-import { getTxLink } from '@raidguild/dm-utils';
-import { parseTokenAddress } from '@raidguild/escrow-utils';
 import { useChainId } from 'wagmi';
 
+import Loader from './Loader';
 import { OrderedTextarea } from './shared/OrderedTextArea';
-import { Loader } from './Loader';
-import { useResolve } from '@raidguild/escrow-hooks';
 
-export const ResolveFunds = ({ invoice, balance, close }) => {
+const ResolveFunds = ({
+  invoice,
+  balance,
+  close,
+}: {
+  invoice: Invoice;
+  balance: bigint;
+  close: () => void;
+}) => {
   const { address, resolutionRate, token, isLocked } = invoice;
   const chainId = useChainId();
 
@@ -26,17 +34,15 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
   const [transaction, setTransaction] = useState<any>();
   let resolverAward;
   try {
-    resolverAward =
-      resolutionRate === '0'
-        ? BigInt(0)
-        : balance.gt(0)
-        ? balance.div(resolutionRate)
-        : BigInt(0);
+    resolverAward = BigInt(0);
+    if (resolutionRate !== 0 && balance > BigInt(0)) {
+      resolverAward = balance / BigInt(resolutionRate);
+    }
   } catch (e) {
     console.error('error in ResoleFunds component ', e);
   }
 
-  const availableFunds = balance.sub(resolverAward);
+  const availableFunds = balance / BigInt(resolverAward);
   const [clientAward, setClientAward] = useState(availableFunds);
   const [providerAward, setProviderAward] = useState(BigInt(0));
   const [clientAwardInput, setClientAwardInput] = useState(
@@ -72,7 +78,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
               chainId,
               token
             )} between the client and provider, excluding the ${
-              resolutionRate === '0' ? '0' : 100 / resolutionRate
+              resolutionRate === 0 ? '0' : 100 / resolutionRate
             }% arbitration fee which you shall receive.`
           : `Invoice is not locked`}
       </Text>
@@ -84,7 +90,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
             placeholder='Resolution Comments'
             value={comments}
             setValue={setComments}
-            infoText={''}
+            infoText=''
             maxLength={10000}
           />
 
@@ -112,7 +118,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                       setClientAwardInput(formatUnits(award, 18));
                     }
                     setClientAward(award);
-                    award = availableFunds.sub(award);
+                    award = availableFunds - BigInt(award);
                     setProviderAward(award);
                     setProviderAwardInput(formatUnits(award, 18));
                   }
@@ -148,7 +154,7 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                       setProviderAwardInput(formatUnits(award, 18));
                     }
                     setProviderAward(award);
-                    award = availableFunds.sub(award);
+                    award = availableFunds - BigInt(award);
                     setClientAward(award);
                     setClientAwardInput(formatUnits(award, 18));
                   }
@@ -224,3 +230,5 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
     </VStack>
   );
 };
+
+export default ResolveFunds;

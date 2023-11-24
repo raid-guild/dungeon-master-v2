@@ -1,12 +1,13 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
+  HStack,
   useRadio,
   useRadioGroup,
-  HStack,
   VStack,
 } from '@raidguild/design-system';
 
-function RadioCard(props) {
+const RadioCard = ({ children, ...props }: any) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
 
   const input = getInputProps();
@@ -32,26 +33,26 @@ function RadioCard(props) {
         px={2}
         py={2}
       >
-        {props.children}
+        {children}
       </Box>
     </Box>
   );
-}
+};
 
-export const RadioBox = (props) => {
+const RadioBox = ({ name, defaultValue, updateRadio, stack, options }: any) => {
   const { getRootProps, getRadioProps } = useRadioGroup({
-    name: props.name,
-    defaultValue: props.defaultValue,
+    name,
+    defaultValue,
     onChange: (e) => {
-      props.updateRadio(e);
+      updateRadio(e);
     },
   });
 
   const group = getRootProps();
 
-  return props.stack === 'vertical' ? (
+  return stack === 'vertical' ? (
     <VStack {...group} style={{ alignItems: 'inherit' }}>
-      {props.options.map((value) => {
+      {options.map((value) => {
         const radio = getRadioProps({ value });
         return (
           <RadioCard key={value} {...radio}>
@@ -62,7 +63,7 @@ export const RadioBox = (props) => {
     </VStack>
   ) : (
     <HStack {...group}>
-      {props.options.map((value) => {
+      {options.map((value) => {
         const radio = getRadioProps({ value });
         return (
           <RadioCard key={value} {...radio}>
@@ -73,3 +74,5 @@ export const RadioBox = (props) => {
     </HStack>
   );
 };
+
+export default RadioBox;

@@ -1,6 +1,5 @@
 import { Invoice, uploadDisputeDetails } from '@raidguild/escrow-utils';
-
-import { usePrepareContractWrite, useContractWrite } from 'wagmi';
+import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 const useResolve = ({
   invoice,

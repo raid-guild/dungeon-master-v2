@@ -1,21 +1,22 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
-import { AppProps } from 'next/app';
-import { DefaultSeo } from 'next-seo';
-import { SessionProvider } from 'next-auth/react';
-import { WagmiConfig } from 'wagmi';
+import '@rainbow-me/rainbowkit/styles.css';
+
+import { RGThemeProvider, useToast } from '@raidguild/design-system';
+import { chains, wagmiConfig } from '@raidguild/dm-utils';
+import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import {
+  QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryCache,
 } from '@tanstack/react-query';
-import { useToast, RGThemeProvider } from '@raidguild/design-system';
-import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
-import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { wagmiConfig, chains } from '@raidguild/dm-utils';
+import { AppProps } from 'next/app';
+import { SessionProvider } from 'next-auth/react';
+import { DefaultSeo } from 'next-seo';
+import React from 'react';
+import { WagmiConfig } from 'wagmi';
 
-import '@rainbow-me/rainbowkit/styles.css';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
 
 const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {

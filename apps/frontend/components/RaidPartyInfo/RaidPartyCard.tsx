@@ -1,36 +1,36 @@
 /* eslint-disable react/no-unstable-nested-components */
 // TODO don't nest this component
-import _ from 'lodash';
-import { ReactNode, useState } from 'react';
 import {
-  Flex,
-  HStack,
-  Text,
-  RoleBadge,
-  IconButton,
-  Icon,
   Avatar,
   // AvatarGroup,
-  ChakraSelect,
-  Button,
   Box,
+  Button,
+  ChakraSelect,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  RoleBadge,
+  Text,
 } from '@raidguild/design-system';
 import {
-  GUILD_CLASS_ICON,
-  GUILD_CLASS_DISPLAY,
-  IMember,
-  memberDisplayName,
-  SIDEBAR_ACTION_STATES,
-  IRaid,
-} from '@raidguild/dm-utils';
-import {
-  useRaidUpdate,
   useRaidPartyRemove,
+  useRaidUpdate,
   useRemoveRolesRequired,
 } from '@raidguild/dm-hooks';
+import { IMember, IRaid } from '@raidguild/dm-types';
+import {
+  GUILD_CLASS_DISPLAY,
+  GUILD_CLASS_ICON,
+  memberDisplayName,
+  SIDEBAR_ACTION_STATES,
+} from '@raidguild/dm-utils';
+import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { FiX, FiCheck } from 'react-icons/fi';
+import { ReactNode, useState } from 'react';
+import { FiCheck, FiX } from 'react-icons/fi';
 import { HiSwitchVertical } from 'react-icons/hi';
+
 import ChakraNextLink from '../ChakraNextLink';
 import MemberAvatar from '../MemberAvatar';
 

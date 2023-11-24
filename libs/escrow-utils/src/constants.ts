@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import LexDAOLogo from './assets/lex-dao.png';
 
-const INFURA_ID = process.env['NEXT_PUBLIC_INFURA_ID'];
+const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_ID;
 
 export const IPFS_ENDPOINT = 'https://ipfs.infura.io';
 export const BOX_ENDPOINT = 'https://ipfs.3box.io';

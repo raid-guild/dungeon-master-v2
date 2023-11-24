@@ -1,9 +1,9 @@
 import React, {
   createContext,
-  useState,
-  useContext,
   ReactNode,
+  useContext,
   useMemo,
+  useState,
 } from 'react';
 
 export type IModals = {

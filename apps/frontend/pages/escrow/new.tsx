@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { Flex, Heading } from '@raidguild/design-system';
 import { NextSeo } from 'next-seo';
-import { Heading, Flex } from '@raidguild/design-system';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import SiteLayout from 'components/SiteLayout';
-import { PaymentDetailsForm } from 'components/SmartEscrow/PaymentDetailsForm';
-import { PaymentsChunkForm } from 'components/SmartEscrow/PaymentsChunkForm';
-import { EscrowConfirmation } from 'components/SmartEscrow/EscrowConfirmation';
-import { EscrowSuccess } from 'components/SmartEscrow/EscrowSuccess';
-import { ProjectInfo } from 'components/SmartEscrow/ProjectInfo';
+import SiteLayout from '../../components/SiteLayout';
+import EscrowConfirmation from '../../components/SmartEscrow/EscrowConfirmation';
+import EscrowSuccess from '../../components/SmartEscrow/EscrowSuccess';
+import PaymentDetailsForm from '../../components/SmartEscrow/PaymentDetailsForm';
+import PaymentsChunkForm from '../../components/SmartEscrow/PaymentsChunkForm';
+import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
 
 const NewEscrow = () => {
   const escrowForm = useForm();

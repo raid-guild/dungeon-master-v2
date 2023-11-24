@@ -1,30 +1,31 @@
 /* eslint-disable no-use-before-define */
-import _ from 'lodash';
 import {
   Box,
+  Button,
+  Collapse,
   Flex,
   Heading,
   HStack,
-  Tooltip,
   Icon,
-  Stack,
-  Collapse,
-  useDisclosure,
   IconButton,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Menu,
-  Button,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Stack,
+  Tooltip,
+  useDisclosure,
 } from '@raidguild/design-system';
-import { GiHamburgerMenu } from 'react-icons/gi';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
 import { AiOutlineClose } from 'react-icons/ai';
+import { BsCaretDown } from 'react-icons/bs';
+import { GiHamburgerMenu } from 'react-icons/gi';
 import { HiSearch } from 'react-icons/hi';
+
+import { useOverlay } from '../contexts/OverlayContext';
 import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
-import { useOverlay } from '../contexts/OverlayContext';
-import { useSession } from 'next-auth/react';
-import { BsCaretDown } from 'react-icons/bs';
 
 const links = [
   { href: '/raids', label: 'Raids', role: 'member', primary: true },

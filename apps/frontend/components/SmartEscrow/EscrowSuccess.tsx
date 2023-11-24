@@ -1,26 +1,25 @@
 import {
   Button,
-  Flex,
-  Link,
-  Heading,
-  VStack,
   ChakraText as Text,
+  Flex,
+  Heading,
+  Link,
   useClipboard,
+  VStack,
 } from '@raidguild/design-system';
-import { useState } from 'react';
 import { useRouter } from 'next/router';
-// import { isAddress } from 'viem';
-
-import { CopyIcon } from './icons/CopyIcon';
-import { Loader } from './Loader';
-
-import { getTxLink } from '@raidguild/dm-utils';
-// import { getInvoice } from '@raidguild/escrow-gql';
+import { useState } from 'react';
 import { useChainId } from 'wagmi';
+
+// import { getTxLink } from '@raidguild/dm-utils';
+import { CopyIcon } from './icons/CopyIcon';
+import Loader from './Loader';
+
+// import { getInvoice } from '@raidguild/escrow-gql';
 
 const POLL_INTERVAL = 5000;
 
-export const EscrowSuccess = ({ raidId }: { raidId: string }) => {
+const EscrowSuccess = ({ raidId }: { raidId: string }) => {
   const [invoice, setInvoice] = useState();
   const router = useRouter();
   const chainId = useChainId();
@@ -100,7 +99,7 @@ export const EscrowSuccess = ({ raidId }: { raidId: string }) => {
           : 'You can check the progress of your transaction '} */}
         Test
         <Link
-          href='#' // {getTxLink(chainId, tx.hash)}
+          href='https://raidguild.org' // {getTxLink(chainId, tx.hash)}
           isExternal
           color='yellow.500'
           textDecoration='underline'
@@ -168,3 +167,5 @@ export const EscrowSuccess = ({ raidId }: { raidId: string }) => {
     </Flex>
   );
 };
+
+export default EscrowSuccess;

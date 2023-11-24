@@ -1,27 +1,23 @@
-import React, { useEffect } from 'react';
-import _ from 'lodash';
 import {
-  Flex,
+  Badge,
+  Box,
   Button,
   Card,
-  Text,
+  Divider,
+  Flex,
   Heading,
-  VStack,
-  Badge,
   Icon,
   Link as ChakraLink,
-  Divider,
+  Text,
   Tooltip,
-  Box,
   useClipboard,
+  VStack,
 } from '@raidguild/design-system';
-import { FaGithub, FaTwitter, FaDiscord, FaEthereum } from 'react-icons/fa';
-import {
-  truncateAddress,
-  IMember,
-  IApplication,
-  SKILLS_DISPLAY,
-} from '@raidguild/dm-utils';
+import { IApplication, IMember } from '@raidguild/dm-types';
+import { SKILLS_DISPLAY, truncateAddress } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import React, { useEffect } from 'react';
+import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 
 interface MemberProps {
   member?: IMember;

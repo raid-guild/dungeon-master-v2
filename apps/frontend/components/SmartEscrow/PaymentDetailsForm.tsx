@@ -1,18 +1,18 @@
 import {
-  Flex,
-  Input,
   Button,
-  FormControl,
-  FormLabel,
-  Link,
-  RadioBox,
-  NumberInput,
   ChakraInput,
   DatePicker,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Link,
+  NumberInput,
+  RadioBox,
 } from '@raidguild/design-system';
-import { getResolverUrl, getSpoilsUrl } from '@raidguild/escrow-utils';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
-import { UseFormReturn, useForm } from 'react-hook-form';
+import { getResolverUrl, getSpoilsUrl } from '@raidguild/escrow-utils';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 
 // TODO migrate to design system
@@ -21,16 +21,15 @@ import { useChainId } from 'wagmi';
 const tokens = (chainId: number) => {
   if (chainId === 100) {
     return ['WETH', 'WXDAI'];
-  } else if (chainId === 1) {
-    return ['WETH', 'DAI'];
-  } else {
-    return ['WETH', 'DAI', 'TEST'];
   }
+  if (chainId === 1) {
+    return ['WETH', 'DAI'];
+  }
+  return ['WETH', 'DAI', 'TEST'];
 };
 
-const unsupportedNetwork = (chainId: number) => {
-  return SUPPORTED_NETWORKS.indexOf(chainId) === -1;
-};
+const unsupportedNetwork = (chainId: number) =>
+  SUPPORTED_NETWORKS.indexOf(chainId) === -1;
 
 // if (SUPPORTED_NETWORKS.indexOf(parseInt(appState.chainId)) === -1)
 //   return sendToast('Switch to a supported network.');
@@ -46,7 +45,7 @@ const unsupportedNetwork = (chainId: number) => {
 // if (new Date(selectedDay).getTime() < new Date().getTime())
 //   return sendToast('Safety valve date needs to be in future.');
 
-export const PaymentDetailsForm = ({
+const PaymentDetailsForm = ({
   escrowForm,
   updateStep,
   backStep,
@@ -168,3 +167,5 @@ export const PaymentDetailsForm = ({
     </Flex>
   );
 };
+
+export default PaymentDetailsForm;

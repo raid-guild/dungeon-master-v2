@@ -1,39 +1,49 @@
+/* eslint-disable react/no-array-index-key */
 import {
-  Button,
-  Flex,
-  Heading,
-  Link,
-  Text,
-  Tooltip,
-  VStack,
-  useToast,
   // Alert,
   // AlertIcon,
   // AlertTitle,
+  Button,
+  ChakraCheckbox as Checkbox,
   ChakraInput as Input,
+  ChakraSelect as Select,
+  Flex,
+  Heading,
   InputGroup,
   InputRightElement,
-  ChakraSelect as Select,
-  ChakraCheckbox as Checkbox,
+  Link,
+  Text,
+  Tooltip,
+  useToast,
+  VStack,
 } from '@raidguild/design-system';
-import { useState } from 'react';
-import { isAddress, formatUnits, parseUnits } from 'viem';
-import { Loader } from './Loader';
-import { QuestionIcon } from './icons/QuestionIcon';
-
 import { getTxLink } from '@raidguild/dm-utils';
+import { useDeposit } from '@raidguild/escrow-hooks';
 import {
-  getNativeTokenSymbol,
-  getWrappedNativeToken,
-  parseTokenAddress,
   checkedAtIndex,
   getCheckedStatus,
+  getNativeTokenSymbol,
+  getWrappedNativeToken,
+  Invoice,
+  parseTokenAddress,
 } from '@raidguild/escrow-utils';
-import { useAccount, useBalance, useChainId } from 'wagmi';
-import { useDeposit } from '@raidguild/escrow-hooks';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { formatUnits, isAddress, parseUnits } from 'viem';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 
-export const DepositFunds = ({ invoice, deposited, due }) => {
+import { QuestionIcon } from './icons/QuestionIcon';
+import Loader from './Loader';
+
+const DepositFunds = ({
+  invoice,
+  deposited,
+  due,
+}: {
+  invoice: Invoice;
+  deposited: bigint;
+  due: bigint;
+}) => {
   const { address: invoiceAddress, token, amounts, currentMilestone } = invoice;
   const toast = useToast();
   const chainId = useChainId();
@@ -50,7 +60,7 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
   const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState<any>();
 
-  const initialStatus: boolean[] = getCheckedStatus(deposited, amounts);
+  const initialStatus: boolean[] = getCheckedStatus(BigInt(deposited), amounts);
   const [checked, setChecked] = useState(initialStatus);
 
   const localForm = useForm();
@@ -87,46 +97,45 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
       </Heading>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         At a minimum, you’ll need to deposit enough to cover the{' '}
-        {currentMilestone === '0' ? 'first' : 'next'} project payment.
+        {currentMilestone === 0 ? 'first' : 'next'} project payment.
       </Text>
       <Text textAlign='center' color='primary.500' fontFamily='texturina'>
         How much will you be depositing today?
       </Text>
       <VStack spacing='0.5rem'>
-        {amounts.map((a: bigint, i: number) => {
-          return (
-            <Checkbox
-              minW='300px'
-              key={i.toString()}
-              isChecked={checked[i]}
-              isDisabled={initialStatus[i]}
-              onChange={(e) => {
-                const newChecked = e.target.checked
-                  ? checkedAtIndex(i, checked)
-                  : checkedAtIndex(i - 1, checked);
-                const totAmount = amounts.reduce(
-                  (tot, cur, ind) => (newChecked[ind] ? tot.add(cur) : tot),
-                  BigInt(0)
-                );
-                const newAmount = totAmount.gte(deposited)
-                  ? totAmount.sub(deposited)
+        {amounts.map((a: number, i: number) => (
+          <Checkbox
+            minW='300px'
+            key={i.toString()}
+            isChecked={checked[i]}
+            isDisabled={initialStatus[i]}
+            onChange={(e) => {
+              const newChecked = e.target.checked
+                ? checkedAtIndex(i, checked)
+                : checkedAtIndex(i - 1, checked);
+              const totAmount = amounts.reduce(
+                (tot, cur, ind) => (newChecked[ind] ? tot + BigInt(cur) : tot),
+                BigInt(0)
+              );
+              const newAmount =
+                totAmount > BigInt(deposited)
+                  ? totAmount - BigInt(deposited)
                   : BigInt(0);
 
-                setChecked(newChecked);
-                setAmount(newAmount);
-                setAmountInput(formatUnits(newAmount, 18));
-              }}
-              color='yellow.500'
-              border='none'
-              size='lg'
-              fontSize='1rem'
-              fontFamily='texturina'
-            >
-              Payment #{i + 1} &nbsp; &nbsp;
-              {formatUnits(a, 18)} {parseTokenAddress(chainId, token)}
-            </Checkbox>
-          );
-        })}
+              setChecked(newChecked);
+              setAmount(newAmount);
+              setAmountInput(formatUnits(newAmount, 18));
+            }}
+            color='yellow.500'
+            border='none'
+            size='lg'
+            fontSize='1rem'
+            fontFamily='texturina'
+          >
+            Payment #{i + 1} &nbsp; &nbsp;
+            {formatUnits(BigInt(a), 18)} {parseTokenAddress(chainId, token)}
+          </Checkbox>
+        ))}
       </VStack>
 
       <Text variant='textOne'>OR</Text>
@@ -165,7 +174,9 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
               if (newAmountInput) {
                 const newAmount = parseUnits(newAmountInput, 18);
                 setAmount(newAmount);
-                setChecked(getCheckedStatus(deposited.add(newAmount), amounts));
+                setChecked(
+                  getCheckedStatus(BigInt(deposited) + newAmount, amounts)
+                );
               } else {
                 setAmount(BigInt(0));
                 setChecked(initialStatus);
@@ -210,19 +221,23 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
         {deposited && (
           <VStack align='flex-start'>
             <Text fontWeight='bold'>Total Deposited</Text>
-            <Text>{`${formatUnits(deposited, 18)} ${parseTokenAddress(
-              chainId,
-              token
-            )}`}</Text>
+            <Text>
+              {`${formatUnits(BigInt(deposited), 18)} ${parseTokenAddress(
+                chainId,
+                token
+              )}`}
+            </Text>
           </VStack>
         )}
         {due && (
           <VStack>
             <Text fontWeight='bold'>Total Due</Text>
-            <Text>{`${formatUnits(due, 18)} ${parseTokenAddress(
-              chainId,
-              token
-            )}`}</Text>
+            <Text>
+              {`${formatUnits(BigInt(due), 18)} ${parseTokenAddress(
+                chainId,
+                token
+              )}`}
+            </Text>
           </VStack>
         )}
         {balance && (
@@ -267,3 +282,5 @@ export const DepositFunds = ({ invoice, deposited, due }) => {
     </VStack>
   );
 };
+
+export default DepositFunds;

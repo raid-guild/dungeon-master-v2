@@ -1,14 +1,13 @@
-import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
-// @ts-ignore
 import _ from 'lodash';
 import { useMemo } from 'react';
 import {
-  Hex,
   encodeAbiParameters,
+  Hex,
+  isAddress,
   parseEther,
   stringToHex,
-  isAddress,
 } from 'viem';
+import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 // import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
 const zapAbi = [
@@ -60,15 +59,13 @@ const ZAP_DATA = {
 };
 
 // TODO sort
-const separateOwnersAndAllocations = (ownersAndAllocations: any) => {
-  return {
-    owners: _.map(ownersAndAllocations, 'address'),
-    percentAllocations: _.map(
-      ownersAndAllocations,
-      (o: any) => _.toNumber(o.percent) * 1e4
-    ),
-  };
-};
+const separateOwnersAndAllocations = (ownersAndAllocations: any) => ({
+  owners: _.map(ownersAndAllocations, 'address'),
+  percentAllocations: _.map(
+    ownersAndAllocations,
+    (o: any) => _.toNumber(o.percent) * 1e4
+  ),
+});
 
 // ! resolver should be lexdao for DAO split
 // ! resolver should be dao for non DAO split
@@ -86,7 +83,8 @@ const useEscrowZap = ({
   token,
   escrowDeadline,
   details,
-}: UseEscrowZapProps): {
+}: // eslint-disable-next-line no-use-before-define
+UseEscrowZapProps): {
   writeAsync: any;
   prepareError: any;
   writeError: any;
@@ -109,9 +107,10 @@ const useEscrowZap = ({
     );
   }, [threshold, saltNonce]);
 
-  const encodedSplitData = useMemo(() => {
-    return encodeAbiParameters([{ type: 'bool' }], [ZAP_DATA.isDaoSplit]);
-  }, [ZAP_DATA.isDaoSplit]);
+  const encodedSplitData = useMemo(
+    () => encodeAbiParameters([{ type: 'bool' }], [ZAP_DATA.isDaoSplit]),
+    [ZAP_DATA.isDaoSplit]
+  );
 
   const encodedEscrowData = useMemo(() => {
     if (
