@@ -10,8 +10,10 @@
       "options": {
         "outputPath": "dist/libs/escrow-hooks",
         "main": "libs/escrow-hooks/src/index.ts",
+        "packageJson": "libs/escrow-hooks/package.json",
         "tsConfig": "libs/escrow-hooks/tsconfig.lib.json",
-        "assets": ["libs/escrow-hooks/*.md"]
+        "assets": ["libs/escrow-hooks/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

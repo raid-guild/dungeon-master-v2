@@ -1,20 +1,35 @@
+// import { FlexDirection, ResponsiveValue } from '@chakra-ui/react';
 import { Flex, Heading, Stack, Text } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 
-const ProjectInfo = ({ raid }: { raid: IRaid }) => {
+const ProjectInfo = ({
+  raid,
+  direction,
+}: {
+  raid: IRaid;
+  direction?: any; // ResponsiveValue<FlexDirection>;
+}) => {
   const clientName = _.get(
     raid,
     'consultation.consultationsContacts[0].contact.name'
   );
 
   return (
-    <Flex justify='space-between' align='center'>
+    <Flex
+      direction={direction}
+      justify='space-between'
+      align={direction === 'column' ? 'flex-start' : 'center'}
+      minW='400px'
+    >
       <Heading size='md' fontFamily='spaceMono' color='white' maxWidth='400px'>
         {raid?.name}
       </Heading>
 
-      <Stack align='flex-end' spacing={1}>
+      <Stack
+        align={direction === 'column' ? 'flex-start' : 'flex-end'}
+        spacing={1}
+      >
         <Heading size='sm' fontFamily='texturina' color='primary.300'>
           {clientName}
         </Heading>

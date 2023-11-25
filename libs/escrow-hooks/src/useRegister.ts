@@ -3,6 +3,7 @@ import {
   RG_MULTISIG,
   RG_XDAI,
   SPOILS_BASIS_POINTS,
+  updateRaidInvoice,
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -14,7 +15,13 @@ import INVOICE_FACTORY_ABI from './contracts/InvoiceFactory.json';
 
 const REQUIRES_VERIFICATION = true;
 
-const useRegister = ({ escrowForm }: { escrowForm: UseFormReturn }) => {
+const useRegister = ({
+  raidId,
+  escrowForm,
+}: {
+  raidId: string;
+  escrowForm: UseFormReturn;
+}) => {
   const { watch } = escrowForm;
   const {
     payments,
@@ -144,9 +151,11 @@ const useRegister = ({ escrowForm }: { escrowForm: UseFormReturn }) => {
     error: writeError,
   } = useContractWrite({
     ...config,
-    onSuccess: (tx) => {
+    onSuccess: async (tx) => {
       console.log('success', tx);
-      // await updateRaidInvoice(raidId, smartInvoiceId);
+      // TODO parse invoice address
+      const smartInvoiceId = _.get(tx, 'events[0].args.invoice');
+      await updateRaidInvoice(raidId, smartInvoiceId);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console

@@ -17,7 +17,7 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
   );
 
   return (
-    <Stack mt='2rem'>
+    <Stack mt='2rem' w='100%'>
       <Flex justifyContent='space-between' fontSize='sm'>
         <Text fontWeight='bold' fontFamily='texturina'>
           Safety Valve Date:
@@ -34,7 +34,11 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
       </Flex>
 
       {_.map(dataValues, (dataValue) => (
-        <Flex justifyContent='space-between' fontSize='sm'>
+        <Flex
+          justifyContent='space-between'
+          fontSize='sm'
+          key={dataValue.label}
+        >
           <Text fontWeight='bold' fontFamily='texturina'>
             {dataValue.label}
           </Text>

@@ -1,17 +1,40 @@
 import { getInvoice } from '@raidguild/escrow-gql';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { Hex } from 'viem';
+import { useContractRead } from 'wagmi';
+
+import WRAPPED_INVOICE_ABI from './contracts/WrappedInvoice.json';
 
 const useInvoiceDetails = ({
-  invoiceAddress,
+  invoiceAddress: wrappedInvoiceAddress,
   chainId,
 }: {
-  invoiceAddress: string;
+  invoiceAddress: Hex;
   chainId: number;
 }) => {
+  const {
+    data: invoiceAddress,
+    isLoading: invoiceAddressLoading,
+    error: invoiceAddressError,
+  } = useContractRead({
+    address: wrappedInvoiceAddress,
+    abi: WRAPPED_INVOICE_ABI,
+    functionName: 'invoice',
+    chainId,
+  });
+
+  const address = useMemo(() => {
+    if (invoiceAddressError?.name === 'ContractFunctionExecutionError') {
+      return wrappedInvoiceAddress;
+    }
+    return invoiceAddress;
+  }, [invoiceAddressError, wrappedInvoiceAddress]);
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['invoiceDetails', invoiceAddress && chainId],
-    queryFn: () => getInvoice(chainId, invoiceAddress),
-    enabled: !!invoiceAddress && !!chainId,
+    queryKey: ['invoiceDetails', address, chainId],
+    queryFn: () => getInvoice(chainId, address as Hex),
+    enabled: !!address && !!chainId && !invoiceAddressLoading,
   });
 
   return { data, isLoading, error };

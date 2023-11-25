@@ -19,9 +19,17 @@ interface InfoStackProps {
   link?: string;
   tooltip?: string;
   copy?: boolean;
+  isExternal?: boolean;
 }
 
-const InfoStack = ({ label, details, link, tooltip, copy }: InfoStackProps) => {
+const InfoStack = ({
+  label,
+  details,
+  link,
+  tooltip,
+  copy,
+  isExternal,
+}: InfoStackProps) => {
   const copyText = useClipboard(details);
 
   return (
@@ -40,12 +48,12 @@ const InfoStack = ({ label, details, link, tooltip, copy }: InfoStackProps) => {
       </HStack>
 
       {link ? (
-        <Link href={link} isExternal>
+        <Link href={link} isExternal={isExternal}>
           <HStack>
             <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
               {details}
             </Text>
-            <Icon as={FaExternalLinkAlt} />
+            {isExternal && <Icon as={FaExternalLinkAlt} />}
           </HStack>
         </Link>
       ) : copy ? (

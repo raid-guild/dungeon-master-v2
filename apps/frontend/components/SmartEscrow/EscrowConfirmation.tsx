@@ -1,4 +1,4 @@
-import { Button, Flex, Stack, Text } from '@raidguild/design-system';
+import { Button, Card, Flex, Stack, Text } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { commify } from '@raidguild/dm-utils';
 import { useRegister } from '@raidguild/escrow-hooks';
@@ -22,6 +22,7 @@ const EscrowConfirmation = ({
   const { client, provider, token, total, milestones } = watch();
 
   const { writeAsync, isLoading } = useRegister({
+    raidId: _.get(raid, 'id'),
     escrowForm,
   });
 
@@ -43,13 +44,8 @@ const EscrowConfirmation = ({
   ];
 
   return (
-    <Flex
-      direction='column'
-      background='#262626'
-      padding='1.5rem'
-      minWidth='50%'
-    >
-      <Stack spacing={6}>
+    <Card as={Flex} variant='filled' direction='column' minWidth='50%'>
+      <Stack spacing={6} w='100%'>
         <Stack>
           {_.map(invoiceDetails, ({ label, value }) => (
             <Flex justify='space-between' key={label}>
@@ -87,7 +83,7 @@ const EscrowConfirmation = ({
           </Button>
         </Flex>
       </Stack>
-    </Flex>
+    </Card>
   );
 };
 

@@ -1,5 +1,5 @@
-import { UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/escrow-gql';
-import axios from 'axios';
+import { client, UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/dm-graphql';
+import _ from 'lodash';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 
@@ -8,9 +8,8 @@ import { authOptions } from './auth/[...nextauth]';
 // TODO gql-request & native client
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method } = req;
+  const { method, body } = req;
   const session = await getServerSession(req, res, authOptions);
-  console.log(session);
 
   if (method !== 'POST') {
     return res.status(405).json('Method not allowed');
@@ -20,27 +19,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json('Unauthorized');
   }
 
+  const { raidId, invoiceAddress } = _.pick(body, ['raidId', 'invoiceAddress']);
+
   try {
-    const graphqlQuery = {
-      // operationName: 'updateInvoiceAddress',
-      query: UPDATE_INVOICE_ADDRESS_QUERY(
-        req.body.raidId,
-        req.body.invoiceAddress
-      ),
-      variables: {},
-    };
+    // TODO move to helper
+    const result: any = await client({}).request(UPDATE_INVOICE_ADDRESS_QUERY, {
+      raidId,
+      invoiceAddress,
+    });
+    console.log(result);
 
-    const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}`,
-      graphqlQuery,
-      {
-        headers: {
-          'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET,
-        },
-      }
-    );
-
-    return res.status(201).json(data.data);
+    return res.status(201).json(result?.data);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err);

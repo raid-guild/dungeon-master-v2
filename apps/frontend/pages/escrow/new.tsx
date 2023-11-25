@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import SiteLayout from '../../components/SiteLayout';
@@ -19,7 +19,6 @@ const NewEscrow = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // const { watch } = escrowForm;
   const raidId = _.get(router, 'query.raidId') as string;
   const token = _.get(session, 'token');
 
@@ -35,11 +34,12 @@ const NewEscrow = () => {
 
   const { data: raid } = useRaidDetail({ raidId, token });
 
-  // useEffect(() => {
-  //   if (!appState.raid_id) {
-  //     router.push(`/escrow`);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!raidId) {
+      router.push(`/escrow`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

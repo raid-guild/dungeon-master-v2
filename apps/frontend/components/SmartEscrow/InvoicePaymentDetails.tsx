@@ -8,14 +8,14 @@ import {
   Text,
   VStack,
 } from '@raidguild/design-system';
-import { getTxLink } from '@raidguild/dm-utils';
+import { commify, getTxLink } from '@raidguild/dm-utils';
 import {
   getIpfsLink,
   Invoice,
   parseTokenAddress,
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { formatEther, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { useBalance, useChainId } from 'wagmi';
 
 import AccountLink from './shared/AccountLink';
@@ -23,19 +23,12 @@ import AccountLink from './shared/AccountLink';
 const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
   const chainId = useChainId();
 
-  console.log(invoice.address, invoice.token, chainId);
-  const { data } = useBalance({
-    address: invoice.address,
-    token: invoice.token,
-    chainId,
-  });
-  const balance = data?.value || BigInt(0);
-  console.log('balance', balance);
-
   const {
     client,
     released,
     total,
+    token,
+    address: invoiceAddress,
     isLocked,
     disputes,
     resolutions,
@@ -47,7 +40,14 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
     resolver,
   } = invoice;
 
-  if (!balance) return null;
+  console.log(invoiceAddress, token, chainId);
+  const { data, isLoading, error, status } = useBalance({
+    address: invoiceAddress,
+    token,
+  });
+  const balance = data?.value || BigInt(0);
+  console.log('balance', balance, isLoading, error, status);
+
   const deposited = BigInt(released) + balance;
   const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
   const dispute =
@@ -62,7 +62,9 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
   );
   const isReleasable = !isLocked && balance >= amount && balance > 0;
 
-  let sum = BigInt(0);
+  const sum = BigInt(0);
+
+  console.log(amounts);
 
   return (
     <Card variant='filled' p={1} direction='column' width='100%'>
@@ -75,28 +77,38 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
         >
           <Text variant='textOne'>Total Project Amount</Text>
           <Text variant='textOne'>
-            {formatEther(BigInt(invoice.total))}{' '}
-            {parseTokenAddress(chainId, invoice.token)}
+            {commify(formatUnits(BigInt(total), 18))}{' '}
+            {parseTokenAddress(chainId, token)}
           </Text>
         </HStack>
         <VStack align='stretch' spacing='0.25rem'>
-          {invoice.amounts.map((amt, index) => {
-            let tot = BigInt(0);
-            let ind = -1;
-            let full = false;
-            if (deposits.length > 0) {
-              for (let i = 0; i < deposits.length; i += 1) {
-                tot += deposits[i].amount;
-                if (tot > sum) {
-                  ind = i;
-                  if (tot - sum >= BigInt(amt)) {
-                    full = true;
-                    break;
-                  }
-                }
-              }
-            }
-            sum += BigInt(amt);
+          {amounts.map((amt, index) => {
+            // let tot = BigInt(0);
+            // let ind = -1;
+            // let full = false;
+            // if (deposits.length > 0) {
+            //   for (let i = 0; i < deposits.length; i += 1) {
+            //     tot += deposits[i].amount;
+            //     console.log(tot);
+            //     if (tot > sum) {
+            //       ind = i;
+            //       console.log(tot, sum, amt, full);
+            //       if (tot - sum >= BigInt(amt)) {
+            //         full = true;
+            //         break;
+            //       }
+            //     }
+            //   }
+            // }
+            // sum += BigInt(amt);
+
+            const totalPayments = _.sum(amounts);
+            const paidPayments = _.difference(
+              amounts,
+              _.map(deposits, 'amount')
+            );
+            const totalDeposits = _.sumBy(deposits, 'amount');
+            console.log(totalPayments, paidPayments, totalDeposits);
 
             return (
               <Flex
@@ -106,8 +118,8 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                 align='stretch'
                 direction='row'
               >
-                <Text variant='textOne'>Payment Milestone #{index + 1}</Text>
-                <HStack align='center' justify='flex-end'>
+                <Stack spacing='2px'>
+                  <Text variant='textOne'>Payment Milestone #{index + 1}</Text>
                   {index < currentMilestone && releases.length > index && (
                     <Link
                       fontSize='xs'
@@ -122,7 +134,10 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                       ).toLocaleDateString()}
                     </Link>
                   )}
-                  {!(index < currentMilestone && releases.length > index) &&
+                </Stack>
+
+                <HStack align='center' justify='flex-end'>
+                  {/* {!(index < currentMilestone && releases.length > index) &&
                     ind !== -1 && (
                       <Link
                         fontSize='xs'
@@ -136,15 +151,14 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                           deposits[ind].timestamp * 1000
                         ).toLocaleDateString()}
                       </Link>
-                    )}
+                    )} */}
                   <Text
                     variant='textOne'
                     textAlign='right'
                     fontWeight='500'
-                  >{`${formatUnits(BigInt(amt), 18)} ${parseTokenAddress(
-                    chainId,
-                    invoice.token
-                  )}`}</Text>
+                  >{`${commify(
+                    formatUnits(BigInt(amt), 18)
+                  )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
                 </HStack>
               </Flex>
             );
@@ -155,21 +169,22 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
         <HStack mt='1rem' mb='.2rem' justifyContent='space-between'>
           <Text variant='textOne'>Total Deposited</Text>
           <Text variant='textOne'>
-            {formatUnits(deposited, 18)}{' '}
+            {commify(formatUnits(deposited, 18))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <HStack justifyContent='space-between' mb='.2rem'>
           <Text variant='textOne'>Total Released</Text>
           <Text variant='textOne'>
-            {formatUnits(BigInt(released), 18)}{' '}
+            {commify(formatUnits(BigInt(released), 18))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <HStack justifyContent='space-between'>
           <Text variant='textOne'>Remaining Amount Due</Text>
           <Text variant='textOne'>
-            {formatUnits(due, 18)} {parseTokenAddress(chainId, invoice.token)}
+            {commify(formatUnits(due, 18))}{' '}
+            {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <Divider mt='1rem' mb='1rem' />

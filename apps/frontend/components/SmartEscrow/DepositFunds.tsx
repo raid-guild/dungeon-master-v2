@@ -9,15 +9,15 @@ import {
   ChakraSelect as Select,
   Flex,
   Heading,
+  HStack,
   InputGroup,
   InputRightElement,
   Link,
   Text,
   Tooltip,
-  useToast,
   VStack,
 } from '@raidguild/design-system';
-import { getTxLink } from '@raidguild/dm-utils';
+import { commify, getTxLink } from '@raidguild/dm-utils';
 import { useDeposit } from '@raidguild/escrow-hooks';
 import {
   checkedAtIndex,
@@ -30,11 +30,11 @@ import {
 import _ from 'lodash';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { formatUnits, isAddress, parseUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { QuestionIcon } from './icons/QuestionIcon';
-import Loader from './Loader';
+// import Loader from './Loader';
 
 const DepositFunds = ({
   invoice,
@@ -46,7 +46,6 @@ const DepositFunds = ({
   due: bigint;
 }) => {
   const { address: invoiceAddress, token, amounts, currentMilestone } = invoice;
-  const toast = useToast();
   const chainId = useChainId();
   const { address } = useAccount();
 
@@ -57,8 +56,6 @@ const DepositFunds = ({
   const [paymentType, setPaymentType] = useState(0); // 0 = Wrapped 1 = native token
   const [amount, setAmount] = useState(BigInt(0));
   const [amountInput, setAmountInput] = useState('');
-
-  const [loading, setLoading] = useState(false);
   const [transaction, setTransaction] = useState<any>();
 
   const initialStatus: boolean[] = getCheckedStatus(BigInt(deposited), amounts);
@@ -68,7 +65,9 @@ const DepositFunds = ({
 
   const { data: nativeBalance } = useBalance({ address });
   const { data: tokenBalance } = useBalance({ address, token });
-  const balance = paymentType === 0 ? nativeBalance : tokenBalance;
+  const balance = paymentType === 0 ? nativeBalance.value : tokenBalance.value;
+  const displayBalance =
+    paymentType === 0 ? nativeBalance.formatted : tokenBalance.formatted;
 
   const { data: invoiceNativeBalance } = useBalance({
     address: invoiceAddress,
@@ -78,12 +77,18 @@ const DepositFunds = ({
     token,
   });
 
-  const { writeAsync } = useDeposit({
+  const { writeAsync, isLoading } = useDeposit({
     invoice,
     amount,
-    balance: balance?.value,
-    // hasAmount: balance > amount (+ gas)
+    balance,
+    hasAmount: balance > amount, // (+ gas)
+    paymentType,
   });
+
+  const handleDeposit = async () => {
+    const hash = await writeAsync();
+    setTransaction(hash);
+  };
 
   console.log(balance);
 
@@ -105,39 +110,45 @@ const DepositFunds = ({
       <Text textAlign='center' color='primary.500' fontFamily='texturina'>
         How much will you be depositing today?
       </Text>
-      <VStack spacing='0.5rem'>
+      <VStack spacing='0.5rem' align='center'>
         {amounts.map((a: number, i: number) => (
-          <Checkbox
-            minW='300px'
-            key={i.toString()}
-            isChecked={checked[i]}
-            isDisabled={initialStatus[i]}
-            onChange={(e) => {
-              const newChecked = e.target.checked
-                ? checkedAtIndex(i, checked)
-                : checkedAtIndex(i - 1, checked);
-              const totAmount = amounts.reduce(
-                (tot, cur, ind) => (newChecked[ind] ? tot + BigInt(cur) : tot),
-                BigInt(0)
-              );
-              const newAmount =
-                totAmount > BigInt(deposited)
-                  ? totAmount - BigInt(deposited)
-                  : BigInt(0);
+          <HStack>
+            <Checkbox
+              mx='auto'
+              key={i.toString()}
+              isChecked={checked[i]}
+              isDisabled={initialStatus[i]}
+              onChange={(e) => {
+                const newChecked = e.target.checked
+                  ? checkedAtIndex(i, checked)
+                  : checkedAtIndex(i - 1, checked);
+                const totAmount = amounts.reduce(
+                  (tot, cur, ind) =>
+                    newChecked[ind] ? tot + BigInt(cur) : tot,
+                  BigInt(0)
+                );
+                const newAmount =
+                  totAmount > BigInt(deposited)
+                    ? totAmount - BigInt(deposited)
+                    : BigInt(0);
 
-              setChecked(newChecked);
-              setAmount(newAmount);
-              setAmountInput(formatUnits(newAmount, 18));
-            }}
-            color='yellow.500'
-            border='none'
-            size='lg'
-            fontSize='1rem'
-            fontFamily='texturina'
-          >
-            Payment #{i + 1} &nbsp; &nbsp;
-            {formatUnits(BigInt(a), 18)} {parseTokenAddress(chainId, token)}
-          </Checkbox>
+                setChecked(newChecked);
+                setAmount(newAmount);
+                setAmountInput(formatUnits(newAmount, 18));
+              }}
+              color='yellow.500'
+              border='none'
+              size='lg'
+              fontSize='1rem'
+              fontFamily='texturina'
+            >
+              <Text>
+                Payment #{i + 1} -{'  '}
+                {commify(formatUnits(BigInt(a), 18))}{' '}
+                {parseTokenAddress(chainId, token)}
+              </Text>
+            </Checkbox>
+          </HStack>
         ))}
       </VStack>
 
@@ -188,7 +199,7 @@ const DepositFunds = ({
             placeholder='Value..'
             pr={isWRAPPED ? '6rem' : '3.5rem'}
           />
-          <InputRightElement w={isWRAPPED ? '6rem' : '3.5rem'}>
+          <InputRightElement w={isWRAPPED ? '7rem' : '3.5rem'}>
             {isWRAPPED ? (
               <Select
                 onChange={(e: any) => setPaymentType(Number(e.target.value))}
@@ -217,7 +228,7 @@ const DepositFunds = ({
       <Flex
         color='white'
         justify='space-between'
-        w='100%'
+        w='50%'
         fontSize='sm'
         fontFamily='texturina'
       >
@@ -225,10 +236,9 @@ const DepositFunds = ({
           <VStack align='flex-start'>
             <Text fontWeight='bold'>Total Deposited</Text>
             <Text>
-              {`${formatUnits(BigInt(deposited), 18)} ${parseTokenAddress(
-                chainId,
-                token
-              )}`}
+              {`${commify(
+                formatUnits(BigInt(deposited), 18)
+              )} ${parseTokenAddress(chainId, token)}`}
             </Text>
           </VStack>
         )}
@@ -243,32 +253,29 @@ const DepositFunds = ({
             </Text>
           </VStack>
         )}
-        {balance && (
+        {displayBalance && (
           <VStack align='flex-end'>
             <Text fontWeight='bold'>Your Balance</Text>
             <Text>
-              {/* {`${formatUnits(balance, 18)} ${
+              {`${_.toNumber(displayBalance).toFixed(2)} ${
                 paymentType === 0
                   ? parseTokenAddress(chainId, token)
                   : NATIVE_TOKEN_SYMBOL
-              }`} */}
-              Test
+              }`}
             </Text>
           </VStack>
         )}
       </Flex>
-      {loading && <Loader />}
 
-      {!loading && (
-        <Button
-          onClick={writeAsync}
-          isDisabled={amount <= 0}
-          textTransform='uppercase'
-          variant='solid'
-        >
-          Deposit
-        </Button>
-      )}
+      <Button
+        onClick={writeAsync}
+        isDisabled={amount <= 0}
+        isLoading={isLoading}
+        textTransform='uppercase'
+        variant='solid'
+      >
+        Deposit
+      </Button>
       {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}

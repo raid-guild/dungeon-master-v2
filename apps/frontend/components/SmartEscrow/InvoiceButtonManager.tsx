@@ -7,8 +7,9 @@ import {
   SimpleGrid,
 } from '@raidguild/design-system';
 import { Invoice } from '@raidguild/escrow-utils';
+import _ from 'lodash';
 import { useState } from 'react';
-import { Hex } from 'viem';
+import { useAccount } from 'wagmi';
 
 import DepositFunds from './DepositFunds';
 import LockFunds from './LockFunds';
@@ -16,13 +17,8 @@ import ReleaseFunds from './ReleaseFunds';
 import ResolveFunds from './ResolveFunds';
 import WithdrawFunds from './WithdrawFunds';
 
-const InvoiceButtonManager = ({
-  invoice,
-  account,
-}: {
-  invoice: Invoice;
-  account: Hex;
-}) => {
+const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
+  const { address } = useAccount();
   const [balance, setBalance] = useState(BigInt(0));
 
   const [selected, setSelected] = useState(0);
@@ -41,11 +37,9 @@ const InvoiceButtonManager = ({
     resolver,
   } = invoice;
 
-  const isRaidParty =
-    account.toLowerCase() === invoice?.provider?.toLowerCase();
-
-  const isClient = account.toLowerCase() === client;
-  const isResolver = account.toLowerCase() === resolver.toLowerCase();
+  const isRaidParty = _.toLower(address) === _.toLower(invoice?.provider);
+  const isClient = _.toLower(address) === _.toLower(client);
+  const isResolver = _.toLower(address) === _.toLower(resolver);
 
   const dispute =
     isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;

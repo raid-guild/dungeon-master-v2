@@ -118,7 +118,7 @@ export const UPDATE_INVOICE_ADDRESS_QUERY = gql`
       _set: { invoice_address: $invoiceAddress }
     ) {
       returning {
-        ...RaidDetails
+        ...RaidDetail
       }
     }
   }

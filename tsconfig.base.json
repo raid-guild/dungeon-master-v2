@@ -27,6 +27,6 @@
       "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "**/*.json"],
   "exclude": ["node_modules", "tmp"]
 }

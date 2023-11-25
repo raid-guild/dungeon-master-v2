@@ -2,15 +2,18 @@ import { Flex, Link, Text } from '@raidguild/design-system';
 import { getAddressLink } from '@raidguild/dm-utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
-import { useChainId } from 'wagmi';
+import { Hex } from 'viem';
+import { useChainId, useEnsName } from 'wagmi';
 
 type AccountLinkProps = {
-  address: string;
+  address: Hex;
   chainId?: number;
 };
 
 const AccountLink = ({ address: inputAddress, chainId }: AccountLinkProps) => {
   const currentChainId = useChainId();
+  const { data: ensName } = useEnsName({ address: inputAddress, chainId: 1 });
+  console.log(ensName);
 
   const address =
     typeof inputAddress === 'string' ? _.toLower(inputAddress) : '';
@@ -50,13 +53,13 @@ const AccountLink = ({ address: inputAddress, chainId }: AccountLinkProps) => {
       />
       <Text
         as='span'
-        pl='0.25rem'
+        px='0.25rem'
         fontSize='sm'
         maxW='12rem'
         color='white'
         isTruncated
       >
-        {displayString}
+        {ensName || displayString}
       </Text>
     </Link>
   );

@@ -1,5 +1,6 @@
-import { Flex, Heading, Text } from '@raidguild/design-system';
+import { Card, Flex, Heading, Text } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
+import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
 import { useInvoiceDetails } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
 import { GetServerSidePropsContext } from 'next';
@@ -24,14 +25,22 @@ const Escrow = ({ raidId }: { raidId: string }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  // const [invoiceFetchError, setInvoiceFetchError] = useState(false);
-  // const [invoice, setInvoice] = useState<Invoice | undefined>();
-
   const [statusText, setStatusText] = useState<any>(
     'Connect your wallet to fetch invoice information.'
   );
 
   const { data: raid } = useRaidDetail({ raidId, token });
+  console.log(raid?.invoiceAddress);
+  const { data: invoice, error: invoiceError } = useInvoiceDetails({
+    invoiceAddress: raid?.invoiceAddress,
+    chainId: chain?.id,
+  });
+  console.log(invoice);
+
+  const wrongChain = !_.includes(
+    _.map(_.keys(SUPPORTED_NETWORKS), _.toNumber),
+    chain?.id
+  );
 
   // useEffect(() => {
   //   if (raid) {
@@ -61,50 +70,6 @@ const Escrow = ({ raidId }: { raidId: string }) => {
   //   }
   // }, []);
 
-  const { data: invoice, error: invoiceError } = useInvoiceDetails({
-    invoiceAddress: raid?.invoiceAddress,
-    chainId: chain?.id,
-  });
-  console.log(invoice);
-
-  // const getSmartInvoiceData = async () => {
-  //   try {
-  //     if (raid.invoiceAddress) {
-  //       const currInvoice = await getInvoice(chain.id, raid.invoiceAddress);
-  //       if (!currInvoice) {
-  //         setInvoiceFetchError(true);
-  //         setStatusText(
-  //           <VStack>
-  //             <Text>
-  //               Data for invoice with address {raid.invoiceAddress} was not
-  //               found.
-  //             </Text>
-  //             <Text>
-  //               If it was created before August 2023, try looking in the V1 App{' '}
-  //               <Link
-  //                 href={`https://smartescrow.raidguild.org/escrow/${
-  //                   raid && raid.id
-  //                 }`}
-  //                 target='_blank'
-  //                 isExternal
-  //                 color='primary.300'
-  //                 textDecoration='underline'
-  //               >
-  //                 here
-  //               </Link>
-  //             </Text>
-  //           </VStack>
-  //         );
-  //       } else {
-  //         setInvoice(currInvoice);
-  //       }
-  //     }
-  //   } catch (e) {
-  //     // eslint-disable-next-line no-console
-  //     console.error(e);
-  //   }
-  // };
-
   return (
     <>
       <NextSeo title='Smart Escrow' />
@@ -127,14 +92,14 @@ const Escrow = ({ raidId }: { raidId: string }) => {
                 alignItems='center'
                 justifyContent='space-evenly'
               >
-                <Flex direction='column' minW='30%'>
-                  <ProjectInfo raid={raid} />
+                <Card as={Flex} variant='filled' direction='column' minW='30%'>
+                  <ProjectInfo raid={raid} direction='column' />
                   <InvoiceMetaDetails invoice={invoice} />
-                </Flex>
+                </Card>
 
                 <Flex direction='column' minW='45%'>
                   <InvoicePaymentDetails invoice={invoice} />
-                  <InvoiceButtonManager invoice={invoice} account={address} />
+                  <InvoiceButtonManager invoice={invoice} />
                 </Flex>
               </Flex>
             )}

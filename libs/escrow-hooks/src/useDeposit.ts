@@ -5,20 +5,24 @@ import {
   useSendTransaction,
 } from 'wagmi';
 
+import TOKEN_ABI from './contracts/Token.json';
+
 const useDeposit = ({
   invoice,
   amount,
   balance,
+  hasAmount,
+  paymentType,
 }: {
   invoice: any;
   amount: bigint;
   balance: bigint;
+  hasAmount: boolean;
+  paymentType: number;
 }) => {
   console.log('useDeposit', invoice?.address);
   const chainId = useChainId();
   const token = invoice?.token;
-
-  const paymentType = 1; // 1 = native token, 2 = token
 
   const {
     config,
@@ -27,7 +31,7 @@ const useDeposit = ({
   } = usePrepareContractWrite({
     chainId,
     address: token,
-    abi: ['transfer(address,uint256)'],
+    abi: TOKEN_ABI,
     functionName: 'transfer',
     args: [invoice?.address, amount],
   });

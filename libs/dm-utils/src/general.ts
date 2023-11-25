@@ -27,6 +27,6 @@ export const displayDate = (date: string) => {
   return formattedDate;
 };
 
-export function commify(x: number | bigint) {
+export function commify(x: number | bigint | string) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

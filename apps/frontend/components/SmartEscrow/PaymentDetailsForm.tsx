@@ -31,7 +31,6 @@ const tokens = (chainId: number) => {
   return ['WETH', 'DAI', 'TEST'];
 };
 
-console.log('SUPPORTED_NETWORKS', SUPPORTED_NETWORKS);
 const unsupportedNetwork = (chainId: number) =>
   !_.includes(SUPPORTED_NETWORKS, chainId);
 
