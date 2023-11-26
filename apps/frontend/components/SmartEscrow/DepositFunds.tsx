@@ -5,14 +5,14 @@ import {
   // AlertTitle,
   Button,
   ChakraCheckbox as Checkbox,
-  ChakraInput as Input,
-  ChakraSelect as Select,
+  ControlledSelect,
   Flex,
   Heading,
   HStack,
   InputGroup,
   InputRightElement,
   Link,
+  NumberInput,
   Text,
   Tooltip,
   VStack,
@@ -21,16 +21,17 @@ import { commify, getTxLink } from '@raidguild/dm-utils';
 import { useDeposit } from '@raidguild/escrow-hooks';
 import {
   checkedAtIndex,
-  getCheckedStatus,
+  depositedMilestones,
   getNativeTokenSymbol,
   getWrappedNativeToken,
   Invoice,
   parseTokenAddress,
+  PAYMENT_TYPES,
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits, Hex, parseUnits } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { QuestionIcon } from './icons/QuestionIcon';
@@ -45,52 +46,83 @@ const DepositFunds = ({
   deposited: bigint;
   due: bigint;
 }) => {
-  const { address: invoiceAddress, token, amounts, currentMilestone } = invoice;
+  const { token, amounts, currentMilestone } = invoice;
   const chainId = useChainId();
   const { address } = useAccount();
 
-  const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
-  const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
-  const isWRAPPED = _.eq(_.toLower(token), WRAPPED_NATIVE_TOKEN);
+  const TOKEN_DATA = useMemo(
+    () => ({
+      nativeSymbol: getNativeTokenSymbol(chainId),
+      wrappedToken: getWrappedNativeToken(chainId),
+      isWrapped: _.eq(_.toLower(token), getWrappedNativeToken(chainId)),
+    }),
+    [chainId, token]
+  );
+  // const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
+  // const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
+  // const isWRAPPED = _.eq(_.toLower(token), WRAPPED_NATIVE_TOKEN);
 
-  const [paymentType, setPaymentType] = useState(0); // 0 = Wrapped 1 = native token
-  const [amount, setAmount] = useState(BigInt(0));
-  const [amountInput, setAmountInput] = useState('');
-  const [transaction, setTransaction] = useState<any>();
-
-  const initialStatus: boolean[] = getCheckedStatus(BigInt(deposited), amounts);
-  const [checked, setChecked] = useState(initialStatus);
+  const [transaction, setTransaction] = useState<Hex | undefined>();
 
   const localForm = useForm();
+  const { watch, setValue } = localForm;
+
+  const paymentType = watch('paymentType');
+  const amount = watch('amount', 0);
+  const checked = watch('checked');
+
+  const paidMilestones = depositedMilestones(BigInt(deposited), amounts);
 
   const { data: nativeBalance } = useBalance({ address });
   const { data: tokenBalance } = useBalance({ address, token });
-  const balance = paymentType === 0 ? nativeBalance.value : tokenBalance.value;
+  const balance =
+    paymentType === PAYMENT_TYPES.NATIVE
+      ? nativeBalance.value
+      : tokenBalance.value;
   const displayBalance =
-    paymentType === 0 ? nativeBalance.formatted : tokenBalance.formatted;
-
-  const { data: invoiceNativeBalance } = useBalance({
-    address: invoiceAddress,
-  });
-  const { data: invoiceTokenBalance } = useBalance({
-    address: invoiceAddress,
-    token,
-  });
+    paymentType === PAYMENT_TYPES.NATIVE
+      ? nativeBalance.formatted
+      : tokenBalance.formatted;
 
   const { writeAsync, isLoading } = useDeposit({
     invoice,
     amount,
-    balance,
     hasAmount: balance > amount, // (+ gas)
     paymentType,
   });
 
   const handleDeposit = async () => {
-    const hash = await writeAsync();
-    setTransaction(hash);
+    const result = await writeAsync();
+    setTransaction(result.hash);
   };
 
-  console.log(balance);
+  const paymentTypeOptions = [
+    { value: PAYMENT_TYPES.TOKEN, label: parseTokenAddress(chainId, token) },
+    { value: PAYMENT_TYPES.NATIVE, label: TOKEN_DATA.nativeSymbol },
+  ];
+
+  useEffect(() => {
+    setValue('paymentType', PAYMENT_TYPES.TOKEN);
+    setValue('amount', 0);
+  }, []);
+
+  useEffect(() => {
+    if (!amount) return;
+    // console.log(
+    //   'in effect',
+    //   BigInt(deposited) + BigInt(amount),
+    //   amounts,
+    //   depositedMilestones(BigInt(deposited) + parseUnits(amount, 18), amounts)
+    // );
+    setValue(
+      'checked',
+      depositedMilestones(BigInt(deposited) + parseUnits(amount, 18), amounts)
+    );
+  }, [amount, deposited, amounts, setValue]);
+
+  console.log(checked);
+  // console.log(amounts);
+  // console.log(paymentType);
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -115,9 +147,10 @@ const DepositFunds = ({
           <HStack>
             <Checkbox
               mx='auto'
+              // options={_.map(amounts, _.toString)}
               key={i.toString()}
-              isChecked={checked[i]}
-              isDisabled={initialStatus[i]}
+              isChecked={checked?.[i]}
+              isDisabled={paidMilestones[i]}
               onChange={(e) => {
                 const newChecked = e.target.checked
                   ? checkedAtIndex(i, checked)
@@ -132,9 +165,10 @@ const DepositFunds = ({
                     ? totAmount - BigInt(deposited)
                     : BigInt(0);
 
-                setChecked(newChecked);
-                setAmount(newAmount);
-                setAmountInput(formatUnits(newAmount, 18));
+                // setChecked(newChecked);
+                setValue('amount', formatUnits(newAmount, 18));
+                // setAmount(newAmount);
+                // setAmountInput();
               }}
               color='yellow.500'
               border='none'
@@ -154,18 +188,16 @@ const DepositFunds = ({
 
       <Text variant='textOne'>OR</Text>
 
-      <VStack
-        spacing='0.5rem'
-        align='stretch'
-        color='primary.500'
-        mb='1rem'
-        fontFamily='texturina'
-      >
+      <VStack spacing='0.5rem' align='stretch' fontFamily='texturina'>
         <Flex justify='space-between' w='100%'>
-          <Text fontWeight='500'>Enter a Manual Deposit Amount</Text>
+          <Text fontWeight='500' color='whiteAlpha.700'>
+            Enter a Manual Deposit Amount
+          </Text>
           {paymentType === 1 && (
             <Tooltip
-              label={`Your ${NATIVE_TOKEN_SYMBOL} will be automagically wrapped to ${parseTokenAddress(
+              label={`Your ${
+                TOKEN_DATA.nativeSymbol
+              } will be automagically wrapped to ${parseTokenAddress(
                 chainId,
                 token
               )} tokens`}
@@ -175,42 +207,25 @@ const DepositFunds = ({
             </Tooltip>
           )}
         </Flex>
-        <InputGroup>
-          <Input
-            bg='black'
-            color='white'
-            border='none'
+        <InputGroup w='400px'>
+          <NumberInput
+            localForm={localForm}
+            name='amount'
             type='number'
-            value={amountInput}
-            onChange={(e) => {
-              const newAmountInput = e.target.value;
-              setAmountInput(newAmountInput);
-              if (newAmountInput) {
-                const newAmount = parseUnits(newAmountInput, 18);
-                setAmount(newAmount);
-                setChecked(
-                  getCheckedStatus(BigInt(deposited) + newAmount, amounts)
-                );
-              } else {
-                setAmount(BigInt(0));
-                setChecked(initialStatus);
-              }
-            }}
+            variant='outline'
+            color='yellow.500'
             placeholder='Value..'
-            pr={isWRAPPED ? '6rem' : '3.5rem'}
+            mr={TOKEN_DATA.isWrapped ? '6rem' : '3.5rem'}
           />
-          <InputRightElement w={isWRAPPED ? '7rem' : '3.5rem'}>
-            {isWRAPPED ? (
-              <Select
-                onChange={(e: any) => setPaymentType(Number(e.target.value))}
+          <InputRightElement w={TOKEN_DATA.isWrapped ? '8.5rem' : '3.5rem'}>
+            {TOKEN_DATA.isWrapped ? (
+              <ControlledSelect
+                options={paymentTypeOptions}
                 value={paymentType}
-                bg='black'
-                color='primary.300'
-                border='none'
-              >
-                <option value='0'>{parseTokenAddress(chainId, token)}</option>
-                <option value='1'>{NATIVE_TOKEN_SYMBOL}</option>
-              </Select>
+                onChange={(e) => {
+                  setValue('paymentType', e.value);
+                }}
+              />
             ) : (
               parseTokenAddress(chainId, token)
             )}
@@ -260,7 +275,7 @@ const DepositFunds = ({
               {`${_.toNumber(displayBalance).toFixed(2)} ${
                 paymentType === 0
                   ? parseTokenAddress(chainId, token)
-                  : NATIVE_TOKEN_SYMBOL
+                  : TOKEN_DATA.nativeSymbol
               }`}
             </Text>
           </VStack>
@@ -268,8 +283,8 @@ const DepositFunds = ({
       </Flex>
 
       <Button
-        onClick={writeAsync}
-        isDisabled={amount <= 0}
+        onClick={handleDeposit}
+        isDisabled={amount <= 0 || !writeAsync}
         isLoading={isLoading}
         textTransform='uppercase'
         variant='solid'
@@ -280,7 +295,7 @@ const DepositFunds = ({
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
-            href={getTxLink(chainId, transaction.hash)}
+            href={getTxLink(chainId, transaction)}
             isExternal
             color='primary.300'
             textDecoration='underline'

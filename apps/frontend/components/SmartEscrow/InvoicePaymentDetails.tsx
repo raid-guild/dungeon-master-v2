@@ -14,7 +14,7 @@ import {
   Invoice,
   parseTokenAddress,
 } from '@raidguild/escrow-utils';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { formatUnits } from 'viem';
 import { useBalance, useChainId } from 'wagmi';
 
@@ -35,18 +35,18 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
     terminationTime,
     currentMilestone,
     amounts,
-    deposits,
+    // deposits,
     releases,
     resolver,
   } = invoice;
 
-  console.log(invoiceAddress, token, chainId);
-  const { data, isLoading, error, status } = useBalance({
+  // console.log(invoiceAddress, token, chainId);
+  const { data } = useBalance({
     address: invoiceAddress,
     token,
   });
   const balance = data?.value || BigInt(0);
-  console.log('balance', balance, isLoading, error, status);
+  // console.log('balance', balance, isLoading, error, status);
 
   const deposited = BigInt(released) + balance;
   const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
@@ -62,9 +62,9 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
   );
   const isReleasable = !isLocked && balance >= amount && balance > 0;
 
-  const sum = BigInt(0);
+  // const sum = BigInt(0);
 
-  console.log(amounts);
+  // console.log(amounts);
 
   return (
     <Card variant='filled' p={1} direction='column' width='100%'>
@@ -82,7 +82,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
           </Text>
         </HStack>
         <VStack align='stretch' spacing='0.25rem'>
-          {amounts.map((amt, index) => {
+          {amounts.map((amt, index) => (
             // let tot = BigInt(0);
             // let ind = -1;
             // let full = false;
@@ -102,42 +102,41 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
             // }
             // sum += BigInt(amt);
 
-            const totalPayments = _.sum(amounts);
-            const paidPayments = _.difference(
-              amounts,
-              _.map(deposits, 'amount')
-            );
-            const totalDeposits = _.sumBy(deposits, 'amount');
-            console.log(totalPayments, paidPayments, totalDeposits);
+            // const totalPayments = _.sum(amounts);
+            // const paidPayments = _.difference(
+            //   amounts,
+            //   _.map(deposits, 'amount')
+            // );
+            // const totalDeposits = _.sumBy(deposits, 'amount');
+            // console.log(totalPayments, paidPayments, totalDeposits);
 
-            return (
-              <Flex
-                // eslint-disable-next-line react/no-array-index-key
-                key={index.toString()}
-                justify='space-between'
-                align='stretch'
-                direction='row'
-              >
-                <Stack spacing='2px'>
-                  <Text variant='textOne'>Payment Milestone #{index + 1}</Text>
-                  {index < currentMilestone && releases.length > index && (
-                    <Link
-                      fontSize='xs'
-                      isExternal
-                      color='grey'
-                      fontStyle='italic'
-                      href={getTxLink(chainId, releases[index].txHash)}
-                    >
-                      Released{' '}
-                      {new Date(
-                        releases[index].timestamp * 1000
-                      ).toLocaleDateString()}
-                    </Link>
-                  )}
-                </Stack>
+            <Flex
+              // eslint-disable-next-line react/no-array-index-key
+              key={index.toString()}
+              justify='space-between'
+              align='stretch'
+              direction='row'
+            >
+              <Stack spacing='2px'>
+                <Text variant='textOne'>Payment Milestone #{index + 1}</Text>
+                {index < currentMilestone && releases.length > index && (
+                  <Link
+                    fontSize='xs'
+                    isExternal
+                    color='grey'
+                    fontStyle='italic'
+                    href={getTxLink(chainId, releases[index].txHash)}
+                  >
+                    Released{' '}
+                    {new Date(
+                      releases[index].timestamp * 1000
+                    ).toLocaleDateString()}
+                  </Link>
+                )}
+              </Stack>
 
-                <HStack align='center' justify='flex-end'>
-                  {/* {!(index < currentMilestone && releases.length > index) &&
+              <HStack align='center' justify='flex-end'>
+                {/* {!(index < currentMilestone && releases.length > index) &&
                     ind !== -1 && (
                       <Link
                         fontSize='xs'
@@ -152,17 +151,17 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                         ).toLocaleDateString()}
                       </Link>
                     )} */}
-                  <Text
-                    variant='textOne'
-                    textAlign='right'
-                    fontWeight='500'
-                  >{`${commify(
-                    formatUnits(BigInt(amt), 18)
-                  )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
-                </HStack>
-              </Flex>
-            );
-          })}
+                <Text
+                  variant='textOne'
+                  textAlign='right'
+                  fontWeight='500'
+                >{`${commify(formatUnits(BigInt(amt), 18))} ${parseTokenAddress(
+                  chainId,
+                  invoice.token
+                )}`}</Text>
+              </HStack>
+            </Flex>
+          ))}
         </VStack>
         <Divider mt='1rem' />
         {/* TODO use array */}

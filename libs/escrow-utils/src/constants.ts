@@ -15,6 +15,11 @@ export const RG_MULTISIG = _.toLower(
   '0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'
 );
 
+export const PAYMENT_TYPES = {
+  NATIVE: 'NATIVE',
+  TOKEN: 'TOKEN',
+};
+
 export const NETWORK_CONFIG: any = {
   100: {
     SUBGRAPH: 'geovgy/v1-gnosis-chain-smart-invoice',

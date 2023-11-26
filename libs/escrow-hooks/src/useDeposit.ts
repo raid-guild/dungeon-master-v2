@@ -1,3 +1,5 @@
+import { PAYMENT_TYPES } from '@raidguild/escrow-utils';
+import { parseUnits } from 'viem';
 import {
   useChainId,
   useContractWrite,
@@ -10,19 +12,19 @@ import TOKEN_ABI from './contracts/Token.json';
 const useDeposit = ({
   invoice,
   amount,
-  balance,
   hasAmount,
   paymentType,
 }: {
   invoice: any;
-  amount: bigint;
-  balance: bigint;
+  amount: string;
   hasAmount: boolean;
-  paymentType: number;
+  paymentType: keyof typeof PAYMENT_TYPES;
 }) => {
-  console.log('useDeposit', invoice?.address);
+  console.log('useDeposit', invoice?.address, amount);
   const chainId = useChainId();
+
   const token = invoice?.token;
+  const depositAmount = amount && parseUnits(amount, 18);
 
   const {
     config,
@@ -34,6 +36,7 @@ const useDeposit = ({
     abi: TOKEN_ABI,
     functionName: 'transfer',
     args: [invoice?.address, amount],
+    enabled: hasAmount && paymentType === PAYMENT_TYPES.TOKEN,
   });
 
   const {
@@ -50,28 +53,26 @@ const useDeposit = ({
     },
   });
 
-  const {
-    data,
-    isLoading: sendLoading,
-    sendTransactionAsync,
-  } = useSendTransaction({
+  const { isLoading: sendLoading, sendTransactionAsync } = useSendTransaction({
     to: invoice?.address,
-    value: BigInt(amount),
+    value: depositAmount,
+    enabled: !!amount && paymentType === PAYMENT_TYPES.NATIVE,
   });
 
   const handleDeposit = async () => {
     console.log('depositing', amount);
-    // if (paymentType === 0) {
-    //   await sendTransactionAsync();
-    //   return;
-    // }
+    if (paymentType === PAYMENT_TYPES.NATIVE) {
+      const result = await sendTransactionAsync();
+      return result;
+    }
 
-    await writeAsync?.();
+    const result = await writeAsync?.();
+    return result;
   };
 
   return {
     writeAsync: handleDeposit,
-    isLoading: prepareLoading || writeLoading,
+    isLoading: prepareLoading || writeLoading || sendLoading,
     writeError,
     prepareError,
   };

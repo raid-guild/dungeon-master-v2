@@ -1,4 +1,5 @@
 import { getExplorerUrl } from '@raidguild/dm-utils';
+import _ from 'lodash';
 
 import { nativeSymbols, NETWORK_CONFIG, wrappedNativeToken } from './constants';
 
@@ -27,7 +28,7 @@ export const getNativeTokenSymbol = (chainId: number) =>
 export const getWrappedNativeToken = (chainId: number) =>
   wrappedNativeToken[chainId] || wrappedNativeToken[4];
 
-export const getCheckedStatus = (deposited: bigint, amounts: number[]) => {
+export const depositedMilestones = (deposited: bigint, amounts: number[]) => {
   let sum = BigInt(0);
   return amounts.map((a) => {
     sum += BigInt(a);
@@ -38,6 +39,7 @@ export const getCheckedStatus = (deposited: bigint, amounts: number[]) => {
 export const parseTokenAddress = (chainId: number, address: string) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((value as any).address === address.toLowerCase()) {
       return key;
     }
@@ -46,4 +48,4 @@ export const parseTokenAddress = (chainId: number, address: string) => {
 };
 
 export const checkedAtIndex = (index: number, checked: boolean[]) =>
-  checked.map((_c, i) => i <= index);
+  _.map(checked, (_c, i) => i <= index);
