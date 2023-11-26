@@ -60,6 +60,9 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
 
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
+  
+
+
   const localForm = useForm({
     mode: "all",
   });
@@ -268,7 +271,15 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     </Stack>
                   </TabPanel>
                   <TabPanel>
-                    <Text>Key Links</Text>
+                  <Input
+                        name="projectSpecs"
+                        defaultValue={_.get(raid["consultation"], "link")}
+                        aria-label="Project Specs"
+                        placeholder="Link to Project Specs Dcoument"
+                        rounded="base"
+                        label="Project Specs"
+                        localForm={localForm}
+                      />
                   </TabPanel>
 
                   <TabPanel>
