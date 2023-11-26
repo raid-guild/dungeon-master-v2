@@ -67,6 +67,9 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
 
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
+  
+
+
   const localForm = useForm({
     mode: "all",
     mode: "all",
@@ -285,7 +288,15 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
                     </Stack>
                   </TabPanel>
                   <TabPanel>
-                    <Text>Key Links</Text>
+                  <Input
+                        name="projectSpecs"
+                        defaultValue={_.get(raid["consultation"], "link")}
+                        aria-label="Project Specs"
+                        placeholder="Link to Project Specs Dcoument"
+                        rounded="base"
+                        label="Project Specs"
+                        localForm={localForm}
+                      />
                   </TabPanel>
 
                   <TabPanel>
