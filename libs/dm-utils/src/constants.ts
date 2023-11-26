@@ -136,7 +136,15 @@ type priorityString =
   | 'FAST_AND_POLISHED'
   | 'FAST_AND_INEXPENSIVE'
   | 'POLISHED_AND_INEXPENSIVE';
-export const DELIVERY_PRIORITIES_DISPLAY = (priority: priorityString) => {
+
+  export const DELIVERY_PRIORITIES_DISPLAY_OPTIONS = [
+    { label: 'Fast & Polished', value: 'FAST_AND_POLISHED' },
+    { label: 'Fast & Inexpensive', value: 'FAST_AND_INEXPENSIVE' },
+    { label: 'Polished & Inexpensive', value: 'POLISHED_AND_INEXPENSIVE' }
+  ];
+  
+
+  export const DELIVERY_PRIORITIES_DISPLAY = (priority: priorityString) => {
   const deliveryPrioritiesMap = {
     FAST_AND_POLISHED: 'Fast & Polished',
     FAST_AND_INEXPENSIVE: 'Fast & Inexpensive',
