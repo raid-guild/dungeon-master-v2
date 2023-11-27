@@ -37,6 +37,7 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   const { address, currentMilestone, amounts, token } = invoice;
 
   const waitForRelease = usePollSubgraph({
+    label: 'waiting for funds to be released',
     fetchHelper: () => getInvoice(chainId, address),
     checkResult: (updatedInvoice) => updatedInvoice.released > invoice.released,
   });

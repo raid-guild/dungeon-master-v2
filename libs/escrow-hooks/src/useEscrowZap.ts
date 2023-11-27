@@ -58,7 +58,7 @@ const ZAP_DATA = {
   details: encodeDetailsString('ipfs://'),
 };
 
-// TODO sort
+// TODO handle sort
 const separateOwnersAndAllocations = (ownersAndAllocations: any) => ({
   owners: _.map(ownersAndAllocations, 'address'),
   percentAllocations: _.map(
@@ -84,11 +84,7 @@ const useEscrowZap = ({
   escrowDeadline,
   details,
 }: // eslint-disable-next-line no-use-before-define
-UseEscrowZapProps): {
-  writeAsync: any;
-  prepareError: any;
-  writeError: any;
-} => {
+UseEscrowZapProps) => {
   const chainId = useChainId();
 
   const { owners, percentAllocations } =
@@ -178,7 +174,7 @@ UseEscrowZapProps): {
       !!encodedSplitData &&
       !!encodedEscrowData,
   });
-  console.log('prepare error', prepareError);
+  // console.log('prepare error', prepareError);
 
   const { writeAsync, error: writeError } = useContractWrite({
     ...config,

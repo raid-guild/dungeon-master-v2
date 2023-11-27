@@ -10,7 +10,12 @@ import {
   rainbowWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { createConfig, WagmiConfig } from 'wagmi';
+import {
+  Config,
+  createConfig,
+  PublicClient,
+  WebSocketPublicClient,
+} from 'wagmi';
 
 import { chains, publicClient } from './chains';
 
@@ -38,9 +43,8 @@ const connectors = connectorsForWallets([
   },
 ]);
 
-export const wagmiConfig: any = createConfig({
-  publicClient,
-  connectors,
-  // turn off autoConnect in development
-  autoConnect: true,
-});
+export const wagmiConfig: Config<PublicClient, WebSocketPublicClient> =
+  createConfig({
+    publicClient,
+    connectors,
+  });

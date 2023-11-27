@@ -4,6 +4,7 @@ import {
   Flex,
   Heading,
   Link,
+  Spinner,
   useClipboard,
   VStack,
 } from '@raidguild/design-system';
@@ -13,7 +14,6 @@ import { useChainId } from 'wagmi';
 
 // import { getTxLink } from '@raidguild/dm-utils';
 import { CopyIcon } from './icons/CopyIcon';
-import Loader from './Loader';
 
 // import { getInvoice } from '@raidguild/escrow-gql';
 
@@ -149,7 +149,7 @@ const EscrowSuccess = ({ raidId }: { raidId: string }) => {
         </VStack>
       ) : (
         <Flex direction='column' alignItems='center'>
-          <Loader />
+          <Spinner size='xl' />
           <br />
           <Text fontFamily='texturina'>{progressText}</Text>
         </Flex>

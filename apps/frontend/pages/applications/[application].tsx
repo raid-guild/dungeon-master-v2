@@ -9,7 +9,7 @@ import Link from '../../components/ChakraNextLink';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
 import SiteLayout from '../../components/SiteLayout';
 
-const Application = ({ applicationId }: { applicationId: any }) => {
+const Application = ({ applicationId }: { applicationId: string | null }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: application } = useApplicationDetail({ token, applicationId });
@@ -20,7 +20,7 @@ const Application = ({ applicationId }: { applicationId: any }) => {
       application_id: _.get(application, 'id'),
       name: _.get(application, 'name'),
       contact_info_id: _.get(application, 'contactInfo.id'),
-      eth_address: _.get(application, 'ethAddress'),
+      eth_address: _.toLower(_.get(application, 'ethAddress')),
       member_type_key: 'COHORT',
     });
   };

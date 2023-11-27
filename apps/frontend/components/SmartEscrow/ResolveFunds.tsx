@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
-// TODO make work
+// TODO handle onChange for award amounts
 
 const ResolveFunds = ({
   invoice,
@@ -34,27 +34,20 @@ const ResolveFunds = ({
 
   const isLocked = true;
 
-  const localForm = useForm();
+  const localForm = useForm({});
   const { watch, handleSubmit, setValue } = localForm;
 
-  let initialResolverAward = 0;
-  try {
-    if (resolutionRate !== 0 && balance > BigInt(0)) {
-      initialResolverAward = _.toNumber(
-        formatUnits(balance / BigInt(resolutionRate), 18)
-      );
+  const resolverAward = useMemo(() => {
+    if (resolutionRate === 0 || balance === BigInt(0)) {
+      return 0;
     }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('error in ResolveFunds component ', e);
-  }
+    return _.toNumber(formatUnits(balance / BigInt(resolutionRate), 18));
+  }, [balance, resolutionRate]);
 
-  const availableFunds =
-    _.toNumber(formatUnits(balance, 18)) - initialResolverAward;
+  const availableFunds = _.toNumber(formatUnits(balance, 18)) - resolverAward;
 
   const clientAward = watch('clientAward');
   const providerAward = watch('providerAward');
-  const resolverAward = watch('resolverAward');
   const comments = useDebounce(watch('comments'), 250);
 
   const awards = useMemo(
@@ -84,7 +77,7 @@ const ResolveFunds = ({
     if (availableFunds > 0) {
       setValue('clientAward', availableFunds);
       setValue('providerAward', 0);
-      setValue('resolverAward', initialResolverAward);
+      setValue('resolverAward', resolverAward);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -169,23 +162,17 @@ const ResolveFunds = ({
         <NumberInput
           name='clientAward'
           label='Client Award'
-          defaultValue={availableFunds}
           localForm={localForm}
-          // onChange={(e) => {
-          //   setClientAwardInput(e.target.value);
-          //   if (e.target.value) {
-          //     let award = parseUnits(e.target.value, 18);
-          //     if (award > availableFunds) {
-          //       award = availableFunds;
-          //       setClientAwardInput(formatUnits(award, 18));
-          //     }
-          //     setClientAward(award);
-          //     award = availableFunds - BigInt(award);
-          //     setProviderAward(award);
-          //     setProviderAwardInput(formatUnits(award, 18));
-          //   }
-          // }}
           placeholder='Client Award'
+          customValidations={{
+            onChange: (value) => {
+              if (value > availableFunds) {
+                setValue('clientAward', availableFunds);
+                setValue('providerAward', 0);
+              }
+              setValue('providerAward', availableFunds - value);
+            },
+          }}
         />
         <InputRightElement w='3.5rem' color='yellow'>
           {parseTokenAddress(chainId, token)}
@@ -197,6 +184,15 @@ const ResolveFunds = ({
           label='Provider Award'
           localForm={localForm}
           placeholder='Provider Award'
+          customValidations={{
+            onChange: (value) => {
+              if (value > availableFunds) {
+                setValue('providerAward', availableFunds);
+                setValue('clientAward', 0);
+              }
+              setValue('clientAward', availableFunds - value);
+            },
+          }}
         />
         <InputRightElement w='3.5rem' color='yellow'>
           {parseTokenAddress(chainId, token)}

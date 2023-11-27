@@ -20,7 +20,7 @@ const useDeposit = ({
   amount: string;
   hasAmount: boolean;
   paymentType: string;
-  onSuccess: (tx: ContractFunctionResult) => void;
+  onSuccess?: (tx: ContractFunctionResult) => void;
 }) => {
   const chainId = useChainId();
 
