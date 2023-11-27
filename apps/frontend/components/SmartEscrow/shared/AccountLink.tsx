@@ -6,18 +6,21 @@ import { Hex } from 'viem';
 import { useChainId, useEnsName } from 'wagmi';
 
 type AccountLinkProps = {
+  name?: string;
   address: Hex;
   chainId?: number;
 };
 
-const AccountLink = ({ address: inputAddress, chainId }: AccountLinkProps) => {
+const AccountLink = ({
+  name,
+  address: inputAddress,
+  chainId,
+}: AccountLinkProps) => {
   const currentChainId = useChainId();
-  const { data: ensName } = useEnsName({ address: inputAddress, chainId: 1 });
-  console.log(ensName);
 
+  const { data: ensName } = useEnsName({ address: inputAddress, chainId: 1 });
   const address =
     typeof inputAddress === 'string' ? _.toLower(inputAddress) : '';
-
   const displayString = address;
 
   const imageUrl = blockies.create({ seed: inputAddress }).toDataURL();
@@ -59,7 +62,7 @@ const AccountLink = ({ address: inputAddress, chainId }: AccountLinkProps) => {
         color='white'
         isTruncated
       >
-        {ensName || displayString}
+        {name || ensName || displayString}
       </Text>
     </Link>
   );

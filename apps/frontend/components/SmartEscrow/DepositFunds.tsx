@@ -31,11 +31,10 @@ import {
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { formatUnits, Hex, parseUnits } from 'viem';
+import { formatUnits, Hex, parseEther, parseUnits } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { QuestionIcon } from './icons/QuestionIcon';
-// import Loader from './Loader';
 
 const DepositFunds = ({
   invoice,
@@ -58,9 +57,8 @@ const DepositFunds = ({
     }),
     [chainId, token]
   );
-  // const NATIVE_TOKEN_SYMBOL = getNativeTokenSymbol(chainId);
-  // const WRAPPED_NATIVE_TOKEN = getWrappedNativeToken(chainId);
-  // const isWRAPPED = _.eq(_.toLower(token), WRAPPED_NATIVE_TOKEN);
+
+  console.log(invoice);
 
   const [transaction, setTransaction] = useState<Hex | undefined>();
 
@@ -68,19 +66,20 @@ const DepositFunds = ({
   const { watch, setValue } = localForm;
 
   const paymentType = watch('paymentType');
-  const amount = watch('amount', 0);
+  const amount = watch('amount', '0');
   const checked = watch('checked');
 
+  const amountsSum = _.sumBy(amounts); // bigint, not parsed
   const paidMilestones = depositedMilestones(BigInt(deposited), amounts);
 
   const { data: nativeBalance } = useBalance({ address });
   const { data: tokenBalance } = useBalance({ address, token });
   const balance =
-    paymentType === PAYMENT_TYPES.NATIVE
+    paymentType?.value === PAYMENT_TYPES.NATIVE
       ? nativeBalance.value
       : tokenBalance.value;
   const displayBalance =
-    paymentType === PAYMENT_TYPES.NATIVE
+    paymentType?.value === PAYMENT_TYPES.NATIVE
       ? nativeBalance.formatted
       : tokenBalance.formatted;
 
@@ -88,7 +87,7 @@ const DepositFunds = ({
     invoice,
     amount,
     hasAmount: balance > amount, // (+ gas)
-    paymentType,
+    paymentType: paymentType?.value,
   });
 
   const handleDeposit = async () => {
@@ -102,27 +101,18 @@ const DepositFunds = ({
   ];
 
   useEffect(() => {
-    setValue('paymentType', PAYMENT_TYPES.TOKEN);
-    setValue('amount', 0);
+    setValue('paymentType', paymentTypeOptions[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!amount) return;
-    // console.log(
-    //   'in effect',
-    //   BigInt(deposited) + BigInt(amount),
-    //   amounts,
-    //   depositedMilestones(BigInt(deposited) + parseUnits(amount, 18), amounts)
-    // );
+
     setValue(
       'checked',
       depositedMilestones(BigInt(deposited) + parseUnits(amount, 18), amounts)
     );
   }, [amount, deposited, amounts, setValue]);
-
-  console.log(checked);
-  // console.log(amounts);
-  // console.log(paymentType);
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -147,7 +137,6 @@ const DepositFunds = ({
           <HStack>
             <Checkbox
               mx='auto'
-              // options={_.map(amounts, _.toString)}
               key={i.toString()}
               isChecked={checked?.[i]}
               isDisabled={paidMilestones[i]}
@@ -165,10 +154,7 @@ const DepositFunds = ({
                     ? totAmount - BigInt(deposited)
                     : BigInt(0);
 
-                // setChecked(newChecked);
                 setValue('amount', formatUnits(newAmount, 18));
-                // setAmount(newAmount);
-                // setAmountInput();
               }}
               color='yellow.500'
               border='none'
@@ -193,7 +179,7 @@ const DepositFunds = ({
           <Text fontWeight='500' color='whiteAlpha.700'>
             Enter a Manual Deposit Amount
           </Text>
-          {paymentType === 1 && (
+          {paymentType === PAYMENT_TYPES.NATIVE && (
             <Tooltip
               label={`Your ${
                 TOKEN_DATA.nativeSymbol
@@ -214,8 +200,10 @@ const DepositFunds = ({
             type='number'
             variant='outline'
             color='yellow.500'
-            placeholder='Value..'
-            mr={TOKEN_DATA.isWrapped ? '6rem' : '3.5rem'}
+            defaultValue='0'
+            min={0}
+            max={amountsSum}
+            mr={TOKEN_DATA.isWrapped ? '8.5rem' : '3.5rem'}
           />
           <InputRightElement w={TOKEN_DATA.isWrapped ? '8.5rem' : '3.5rem'}>
             {TOKEN_DATA.isWrapped ? (
@@ -223,7 +211,7 @@ const DepositFunds = ({
                 options={paymentTypeOptions}
                 value={paymentType}
                 onChange={(e) => {
-                  setValue('paymentType', e.value);
+                  setValue('paymentType', e);
                 }}
               />
             ) : (
@@ -243,7 +231,7 @@ const DepositFunds = ({
       <Flex
         color='white'
         justify='space-between'
-        w='50%'
+        w={due ? '70%' : '50%'}
         fontSize='sm'
         fontFamily='texturina'
       >

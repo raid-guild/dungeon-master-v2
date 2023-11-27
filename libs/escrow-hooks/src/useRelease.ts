@@ -1,48 +1,30 @@
 import { Invoice } from '@raidguild/escrow-utils';
+import _ from 'lodash';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
+
+import INVOICE_ABI from './contracts/Invoice.json';
 
 const useRelease = ({
   invoice,
+  milestone,
 }: {
   invoice: Invoice;
-}): {
-  writeAsync: (() => Promise<any>) | undefined;
-  prepareError: Error | null;
-  writeError: Error | null;
-} => {
+  milestone?: number;
+}) => {
   const chainId = useChainId();
-  // const releaseFunds = async () => {
-  //   if (
-  //     !loading &&
-  //     provider &&
-  //     balance &&
-  //     balance.gte(getReleaseAmount(currentMilestone, amounts, balance))
-  //   ) {
-  //     try {
-  //       setLoading(true);
-  //       const tx = await release(provider, address);
-  //       setTransaction(tx);
-  //       await tx.wait();
-  //       await pollSubgraph();
-  //     } catch (releaseError) {
-  //       console.error(releaseError);
-  //       setLoading(false);
-  //       toast.error({
-  //         title: 'Oops there was an error',
-  //         iconName: 'alert',
-  //         duration: 3000,
-  //         isClosable: true,
-  //       });
-  //     }
-  //   }
-  // };
 
-  const { config, error: prepareError } = usePrepareContractWrite({
+  const specifyMilestones = _.isNumber(milestone);
+
+  const {
+    config,
+    isLoading: prepareLoading,
+    error: prepareError,
+  } = usePrepareContractWrite({
     chainId,
     address: invoice?.address,
-    abi: ['release()'],
-    functionName: 'release',
-    args: [], // optional args
+    abi: INVOICE_ABI,
+    functionName: specifyMilestones ? 'release(uint256)' : 'release',
+    args: specifyMilestones ? [milestone] : [], // optional args
     enabled: !!invoice?.address,
   });
 
@@ -54,13 +36,22 @@ const useRelease = ({
     ...config,
     onSuccess: async (tx) => {
       console.log('deposit tx', tx);
+
+      // handle success
+      // close modal
+      // update invoice with new balances
     },
     onError: async (error) => {
       console.log('deposit error', error);
     },
   });
 
-  return { writeAsync, prepareError, writeError };
+  return {
+    writeAsync,
+    isLoading: prepareLoading || writeLoading,
+    prepareError,
+    writeError,
+  };
 };
 
 export default useRelease;

@@ -1,19 +1,24 @@
 import { Flex, HStack, Stack, Text, Tooltip } from '@raidguild/design-system';
-import { Invoice } from '@raidguild/escrow-utils';
+import { getResolverInfo, Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
+import { useChainId } from 'wagmi';
 
 import { QuestionIcon } from './icons/QuestionIcon';
 import AccountLink from './shared/AccountLink';
 
 const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
+  const chainId = useChainId();
+
+  const resolverInfo = getResolverInfo(chainId, invoice.resolver);
+
   const dataValues = useMemo(
     () => [
       { label: 'Client', value: invoice.client },
       { label: 'Raid Party', value: invoice.provider },
-      { label: 'Resolver', value: invoice.resolver },
+      { label: 'Resolver', name: resolverInfo.name, value: invoice.resolver },
     ],
-    [invoice.client, invoice.provider, invoice.resolver]
+    [invoice.client, invoice.provider, invoice.resolver, resolverInfo.name]
   );
 
   return (
@@ -42,7 +47,7 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
           <Text fontWeight='bold' fontFamily='texturina'>
             {dataValue.label}
           </Text>
-          <AccountLink address={dataValue.value} />
+          <AccountLink name={dataValue.name} address={dataValue.value} />
         </Flex>
       ))}
     </Stack>

@@ -38,8 +38,8 @@ export const NETWORK_CONFIG: any = {
       },
     },
     RESOLVERS: {
-      LexDAO: {
-        address: _.toLower('0x153Fbf5da827903e030Dc317C4031755D74D508a'),
+      [_.toLower('0x153Fbf5da827903e030Dc317C4031755D74D508a')]: {
+        name: 'LexDAO',
         logoUrl: LexDAOLogo,
         termsUrl:
           'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
@@ -63,8 +63,8 @@ export const NETWORK_CONFIG: any = {
       },
     },
     RESOLVERS: {
-      LexDAO: {
-        address: _.toLower('0x01b92e2c0d06325089c6fd53c98a214f5c75b2ac'),
+      [_.toLower('0x01b92e2c0d06325089c6fd53c98a214f5c75b2ac')]: {
+        address: 'LexDAO',
         logoUrl: LexDAOLogo,
         termsUrl:
           'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
@@ -92,8 +92,8 @@ export const NETWORK_CONFIG: any = {
       },
     },
     RESOLVERS: {
-      LexDAO: {
-        address: _.toLower('0x1206b51217271FC3ffCa57d0678121983ce0390E'),
+      [_.toLower('0x1206b51217271FC3ffCa57d0678121983ce0390E')]: {
+        name: 'LexDAO',
         logoUrl: LexDAOLogo,
         termsUrl:
           'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',

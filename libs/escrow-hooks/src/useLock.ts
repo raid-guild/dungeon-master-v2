@@ -2,47 +2,27 @@ import { Invoice, uploadDisputeDetails } from '@raidguild/escrow-utils';
 import { Hex } from 'viem';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
+import INVOICE_ABI from './contracts/Invoice.json';
+
 const useLock = ({
   invoice,
+  disputeReason,
+  amount,
 }: {
   invoice: Invoice;
-}): {
-  writeAsync: (() => Promise<any>) | undefined;
-  isLoading: boolean | undefined;
-  prepareError: Error | null;
-  writeError: Error | null;
-} => {
+  disputeReason: string;
+  amount: string;
+}) => {
   console.log('useLock', invoice);
 
-  const detailsHash = '';
+  const detailsHash =
+    '0x0000000000000000000000000000000000000000000000000000000000000000';
 
   // const detailsHash = await uploadDisputeDetails({
   //   reason: disputeReason,
   //   invoice: address,
   //   amount: balance.toString(),
   // });
-
-  // const lockFunds = useCallback(async () => {
-  //   if (provider && !locking && balance.gt(0) && disputeReason) {
-  //     try {
-  //       setLocking(true);
-  //       const detailsHash = await uploadDisputeDetails({
-  //         reason: disputeReason,
-  //         invoice: address,
-  //         amount: balance.toString(),
-  //       });
-  //       const tx = await lock(provider, address, detailsHash);
-  //       setTransaction(tx);
-  //       await tx.wait();
-  //       setTimeout(() => {
-  //         window.location.reload();
-  //       }, 20000);
-  //     } catch (lockError) {
-  //       setLocking(false);
-  //       console.error(lockError);
-  //     }
-  //   }
-  // }, [provider, locking, balance, disputeReason, address]);
 
   const {
     config,
@@ -51,8 +31,9 @@ const useLock = ({
   } = usePrepareContractWrite({
     address: invoice.address as Hex,
     functionName: 'lock',
-    abi: ['lock(address,bytes32)'],
-    args: [invoice.address, detailsHash],
+    abi: INVOICE_ABI,
+    args: [detailsHash],
+    enabled: !!invoice?.address && !!disputeReason,
   });
 
   const {
@@ -63,6 +44,10 @@ const useLock = ({
     ...config,
     onSuccess: () => {
       console.log('success');
+
+      // handle success
+      // close modal
+      // update invoice with status
     },
     onError: (error) => {
       console.log('error', error);

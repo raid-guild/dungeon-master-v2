@@ -1,14 +1,13 @@
-import { RAID_BY_ID_QUERY, RAID_BY_V1_ID_QUERY } from '@raidguild/dm-graphql';
-import axios from 'axios';
+import {
+  client,
+  RAID_BY_ID_QUERY,
+  RAID_BY_V1_ID_QUERY,
+} from '@raidguild/dm-graphql';
+import _ from 'lodash';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 
 import { authOptions } from './auth/[...nextauth]';
-
-// TODO use gql request & native client
-
-const DM_ENDPOINT = process.env.NEXT_PUBLIC_API_URL || '';
-const HASURA_SECRET = process.env.HASURA_GRAPHQL_ADMIN_SECRET;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
@@ -17,8 +16,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (method !== 'POST') {
     return res.status(405).json('Method not allowed');
   }
-  // TODO could check for specific roles
+
   if (!session) {
+    // TODO could check for specific roles
     return res.status(401).json('Unauthorized');
   }
 
@@ -31,21 +31,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const graphqlQuery = {
-      operationName: 'validateRaidId',
-      query: v2Id ? RAID_BY_ID_QUERY : RAID_BY_V1_ID_QUERY,
-      variables,
-    };
+    const result = await client({}).request(
+      v2Id ? RAID_BY_ID_QUERY : RAID_BY_V1_ID_QUERY,
+      variables
+    );
+    console.log(result);
+    const raid = _.first(_.get(result, 'data.raids'));
 
-    const { data } = await axios.post(`${DM_ENDPOINT}`, graphqlQuery, {
-      headers: {
-        'x-hasura-admin-secret': HASURA_SECRET,
-      },
-    });
-
-    return res
-      .status(201)
-      .json(data.data.raids?.[0] ? data.data.raids[0] : null);
+    return res.status(201).json(raid || null);
   } catch (err) {
     console.error(err);
     return res.status(500).json('Internal server error');

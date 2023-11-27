@@ -72,18 +72,25 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
       >
         Release Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem'>
+      <Text
+        textAlign='center'
+        fontSize='sm'
+        mb='1rem'
+        w='60%'
+        color='whiteAlpha.800'
+      >
         Follow the instructions in your wallet to release funds from escrow to
         the raid party.
       </Text>
       <VStack my='2rem' px='5rem' py='1rem' bg='black' borderRadius='0.5rem'>
-        <Text color='primary.300' fontSize='0.875rem' textAlign='center'>
+        <Text color='primary.200' fontSize='0.875rem' textAlign='center'>
           Amount To Be Released
         </Text>
         <Text
-          color='yellow'
-          fontSize='1rem'
+          color='yellow.500'
+          fontSize='xl'
           fontWeight='bold'
+          fontFamily='texturina'
           textAlign='center'
         >{`${formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
@@ -108,6 +115,7 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
       ) : (
         <Button
           onClick={releaseFunds}
+          isDisabled={!releaseFunds}
           textTransform='uppercase'
           variant='solid'
         >

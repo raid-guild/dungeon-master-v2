@@ -1,6 +1,8 @@
 import { Invoice, uploadDisputeDetails } from '@raidguild/escrow-utils';
 import { useContractWrite, usePrepareContractWrite } from 'wagmi';
 
+import INVOICE_ABI from './contracts/Invoice.json';
+
 const useResolve = ({
   invoice,
   clientAward,
@@ -24,7 +26,7 @@ const useResolve = ({
   } = usePrepareContractWrite({
     address: invoice.address,
     functionName: 'resolve',
-    abi: ['resolve(uint256,uint256,bytes32)'],
+    abi: INVOICE_ABI,
     args: [clientAward, providerAward, detailsHash],
     enabled: !!invoice.address, // isLocked, balance > 0, balance.eq(clientAward.add(providerAward).add(resolverAward)), comments
   });

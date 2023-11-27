@@ -5,60 +5,36 @@ import {
   Image,
   Link,
   Text,
+  Textarea,
   VStack,
 } from '@raidguild/design-system';
-import { getTxLink } from '@raidguild/dm-utils';
-import { useLock } from '@raidguild/escrow-hooks';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { useDebounce, useLock } from '@raidguild/escrow-hooks';
 import {
+  getResolverInfo,
+  getResolverString,
   Invoice,
+  isKnownResolver,
   NETWORK_CONFIG,
   // uploadDisputeDetails,
 } from '@raidguild/escrow-utils';
-import { useState } from 'react';
+import _ from 'lodash';
+import { useForm } from 'react-hook-form';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
 import LockImage from '../../assets/lock.svg';
 import Loader from './Loader';
 import AccountLink from './shared/AccountLink';
-import { OrderedTextarea } from './shared/OrderedTextArea';
 
 const parseTokenAddress = (chainId: number, address: any) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
-    if ((value as any).address === address.toLowerCase()) {
+    if ((value as any).address === _.toLower(address)) {
       return key;
     }
   }
   return address;
-};
-
-const resolverInfo = {
-  100: NETWORK_CONFIG[100].RESOLVERS,
-  1: NETWORK_CONFIG[1].RESOLVERS,
-};
-
-const getResolverInfo = (chainId, resolver) =>
-  (resolverInfo[chainId] || resolverInfo[4])[resolver];
-
-const resolvers = {
-  100: Object.keys(NETWORK_CONFIG[100].RESOLVERS),
-  1: Object.keys(NETWORK_CONFIG[1].RESOLVERS),
-};
-
-const getResolvers = (chainId) => resolvers[chainId] || resolvers[4];
-const isKnownResolver = (chainId, resolver) =>
-  getResolvers(chainId).indexOf(resolver.toLowerCase()) !== -1;
-
-const getAccountString = (account) => {
-  const len = account.length;
-  return `0x${account.substr(2, 3).toUpperCase()}...${account
-    .substr(len - 3, len - 1)
-    .toUpperCase()}`;
-};
-const getResolverString = (chainId, resolver) => {
-  const info = getResolverInfo(chainId, resolver);
-  return info ? info.name : getAccountString(resolver);
 };
 
 const LockFunds = ({
@@ -69,23 +45,40 @@ const LockFunds = ({
   balance: bigint;
 }) => {
   const chainId = useChainId();
-  const { address, resolver, token, resolutionRate } = invoice;
+  const { resolver, token, resolutionRate } = invoice;
 
-  const [disputeReason, setDisputeReason] = useState('');
+  const localForm = useForm();
+  const { watch, handleSubmit } = localForm;
 
-  const fee = `${formatUnits(
+  const fee = formatUnits(
     resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
     18
-  )} ${parseTokenAddress(chainId, token)}`;
+  );
+  const feeDisplay = `${fee} ${parseTokenAddress(chainId, token)}`;
 
-  const [locking, setLocking] = useState<boolean>(false);
-  const [transaction, setTransaction] = useState<any>();
+  const disputeReason = useDebounce(watch('disputeReason'), 250);
+  const amount = formatUnits(BigInt(balance), 18);
 
-  const { writeAsync: lockFunds } = useLock({
+  const onSuccess = () => {
+    // handle tx success
+    // mark locked
+  };
+
+  const { writeAsync: lockFunds, isLoading } = useLock({
     invoice,
+    disputeReason,
+    amount,
   });
 
-  if (locking) {
+  const resolverInfo = getResolverInfo(chainId, resolver);
+  const resolverDisplayName = isKnownResolver(chainId, resolver)
+    ? resolverInfo.name
+    : resolver;
+
+  console.log(isLoading);
+  console.log(disputeReason);
+
+  if (isLoading) {
     return (
       <VStack w='100%' spacing='1rem'>
         <Heading
@@ -97,11 +90,11 @@ const LockFunds = ({
         >
           Locking Funds
         </Heading>
-        {transaction && (
+        {true && ( // transaction
           <Text color='white' textAlign='center' fontSize='sm'>
             Follow your transaction{' '}
             <Link
-              href={getTxLink(chainId, transaction.hash)}
+              href='https://raidguild.org' // getTxLink(chainId, transaction.hash)}
               isExternal
               color='primary.300'
               textDecoration='underline'
@@ -134,7 +127,12 @@ const LockFunds = ({
   }
 
   return (
-    <VStack w='100%' spacing='1rem'>
+    <VStack
+      w='100%'
+      spacing='1rem'
+      as='form'
+      onSubmit={handleSubmit(lockFunds)}
+    >
       <Heading
         color='white'
         as='h3'
@@ -150,27 +148,35 @@ const LockFunds = ({
       </Text>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {'Once a dispute has been initiated, '}
-        <AccountLink address={resolver} chainId={chainId} />
+        <AccountLink
+          name={resolverDisplayName}
+          address={resolver}
+          chainId={chainId}
+        />
         {
           ' will review your case, the project agreement and dispute reasoning before making a decision on how to fairly distribute remaining funds.'
         }
       </Text>
 
-      <OrderedTextarea
+      <Textarea
+        name='disputeReason'
         tooltip='Why do you want to lock these funds?'
         label='Dispute Reason'
         placeholder='Dispute Reason'
-        value={disputeReason}
-        setValue={setDisputeReason}
+        localForm={localForm}
       />
       <Text color='white' textAlign='center' fontFamily='texturina'>
-        {`Upon resolution, a fee of ${fee} will be deducted from the locked fund amount and sent to `}
-        <AccountLink address={resolver} chainId={chainId} />
+        {`Upon resolution, a fee of ${feeDisplay} will be deducted from the locked fund amount and sent to `}
+        <AccountLink
+          name={resolverDisplayName}
+          address={resolver}
+          chainId={chainId}
+        />
         {` for helping resolve this dispute.`}
       </Text>
       <Button
-        onClick={lockFunds}
-        isDisabled={!disputeReason}
+        type='submit'
+        isDisabled={!disputeReason || !lockFunds}
         textTransform='uppercase'
         variant='solid'
       >

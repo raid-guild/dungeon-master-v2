@@ -1,4 +1,4 @@
-import { PAYMENT_TYPES } from '@raidguild/escrow-utils';
+import { Invoice, PAYMENT_TYPES } from '@raidguild/escrow-utils';
 import { parseUnits } from 'viem';
 import {
   useChainId,
@@ -15,12 +15,11 @@ const useDeposit = ({
   hasAmount,
   paymentType,
 }: {
-  invoice: any;
+  invoice: Invoice;
   amount: string;
   hasAmount: boolean;
-  paymentType: keyof typeof PAYMENT_TYPES;
+  paymentType: string;
 }) => {
-  console.log('useDeposit', invoice?.address, amount);
   const chainId = useChainId();
 
   const token = invoice?.token;
@@ -35,7 +34,7 @@ const useDeposit = ({
     address: token,
     abi: TOKEN_ABI,
     functionName: 'transfer',
-    args: [invoice?.address, amount],
+    args: [invoice?.address, depositAmount],
     enabled: hasAmount && paymentType === PAYMENT_TYPES.TOKEN,
   });
 
@@ -47,6 +46,11 @@ const useDeposit = ({
     ...config,
     onSuccess: async (tx: any) => {
       console.log('deposit tx', tx);
+
+      // TODO catch success
+      // wait for tx
+      // update invoice
+      // close modal
     },
     onError: async (error: any) => {
       console.log('deposit error', error);
@@ -60,7 +64,6 @@ const useDeposit = ({
   });
 
   const handleDeposit = async () => {
-    console.log('depositing', amount);
     if (paymentType === PAYMENT_TYPES.NATIVE) {
       const result = await sendTransactionAsync();
       return result;

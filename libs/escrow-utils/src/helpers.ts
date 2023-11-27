@@ -1,5 +1,6 @@
 import { getExplorerUrl } from '@raidguild/dm-utils';
 import _ from 'lodash';
+import { Hex } from 'viem';
 
 import { nativeSymbols, NETWORK_CONFIG, wrappedNativeToken } from './constants';
 
@@ -20,6 +21,22 @@ export const getAccountString = (account: string) => {
   return `0x${account.slice(2, 3).toUpperCase()}...${account
     .slice(len - 3, len - 1)
     .toUpperCase()}`;
+};
+
+const resolverInfo = {
+  100: NETWORK_CONFIG[100].RESOLVERS,
+  1: NETWORK_CONFIG[1].RESOLVERS,
+};
+
+export const getResolverInfo = (chainId: number, resolver?: string) =>
+  resolver ? resolverInfo[chainId][resolver] : resolverInfo[chainId];
+
+export const isKnownResolver = (chainId: number, resolver: Hex) =>
+  !!_.get(getResolverInfo(chainId), _.toLower(resolver));
+
+export const getResolverString = (chainId: number, resolver: string) => {
+  const info = getResolverInfo(chainId, resolver);
+  return info ? info.name : getAccountString(resolver);
 };
 
 export const getNativeTokenSymbol = (chainId: number) =>

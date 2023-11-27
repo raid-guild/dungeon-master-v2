@@ -1,3 +1,4 @@
+export { default as useDebounce } from './useDebounce';
 export { default as useDeposit } from './useDeposit';
 export { default as useEscrowZap } from './useEscrowZap';
 export { default as useInvoiceDetails } from './useInvoiceDetails';
