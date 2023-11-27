@@ -13,9 +13,7 @@ interface RaidDetailsSidebarProps {
   raid: Partial<IRaid>;
 }
 
-const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
-  raid,
-}: RaidDetailsSidebarProps) => {
+const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
   // const relatedRaids = _.get(raid, 'raidByRelatedRaids');

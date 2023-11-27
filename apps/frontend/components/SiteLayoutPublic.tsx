@@ -66,7 +66,7 @@ const GeneralLayout = ({
   </Flex>
 );
 
-const SiteLayoutPublic: React.FC<SiteLayoutPublicProps> = ({
+const SiteLayoutPublic = ({
   isLoading,
   data,
   error,

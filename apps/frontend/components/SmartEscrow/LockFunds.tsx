@@ -4,6 +4,7 @@ import {
   Heading,
   Image,
   Link,
+  Spinner,
   Text,
   Textarea,
   VStack,
@@ -20,16 +21,16 @@ import {
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useForm } from 'react-hook-form';
-import { formatUnits } from 'viem';
+import { formatUnits, Hex } from 'viem';
 import { useChainId } from 'wagmi';
 
 import LockImage from '../../assets/lock.svg';
-import Loader from './Loader';
 import AccountLink from './shared/AccountLink';
 
-const parseTokenAddress = (chainId: number, address: any) => {
+const parseTokenAddress = (chainId: number, address: Hex) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((value as any).address === _.toLower(address)) {
       return key;
     }
@@ -59,10 +60,10 @@ const LockFunds = ({
   const disputeReason = useDebounce(watch('disputeReason'), 250);
   const amount = formatUnits(BigInt(balance), 18);
 
-  const onSuccess = () => {
-    // handle tx success
-    // mark locked
-  };
+  // const onSuccess = () => {
+  //   // handle tx success
+  //   // mark locked
+  // };
 
   const { writeAsync: lockFunds, isLoading } = useLock({
     invoice,
@@ -74,9 +75,6 @@ const LockFunds = ({
   const resolverDisplayName = isKnownResolver(chainId, resolver)
     ? resolverInfo.name
     : resolver;
-
-  console.log(isLoading);
-  console.log(disputeReason);
 
   if (isLoading) {
     return (
@@ -112,7 +110,7 @@ const LockFunds = ({
           position='relative'
           color='primary.300'
         >
-          <Loader size='6rem' />
+          <Spinner size='6rem' />
           <Flex
             position='absolute'
             left='50%'

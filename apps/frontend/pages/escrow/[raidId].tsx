@@ -48,7 +48,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
 
         <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
           <Flex direction='column' alignItems='center' w='100%' pt='150px'>
-            <Heading>Connect your wallet & Sign in</Heading>
+            <Heading size='md'>Connect your wallet & Sign in</Heading>
           </Flex>
         </SiteLayoutPublic>
       </>

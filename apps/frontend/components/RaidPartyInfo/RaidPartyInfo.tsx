@@ -14,7 +14,7 @@ interface RaidInfoProps {
   // consultation?: IConsultation;
 }
 
-const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
+const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
   const [buttonSelection, setButtonSelection] = useState<string>(
     SIDEBAR_ACTION_STATES.none
   );

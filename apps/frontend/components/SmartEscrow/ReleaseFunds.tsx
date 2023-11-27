@@ -2,18 +2,17 @@ import {
   Button,
   ChakraText as Text,
   Heading,
-  Link,
+  Spinner,
+  // Link,
   useToast,
   VStack,
 } from '@raidguild/design-system';
-import { getTxLink } from '@raidguild/dm-utils';
-import { useRelease } from '@raidguild/escrow-hooks';
+import { getInvoice } from '@raidguild/escrow-gql';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { usePollSubgraph, useRelease } from '@raidguild/escrow-hooks';
 import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
-import React, { useState } from 'react';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
-
-import Loader from './Loader';
 
 type ReleaseFundsProp = {
   invoice: Invoice;
@@ -32,13 +31,25 @@ const getReleaseAmount = (currentMilestone, amounts, balance) => {
 };
 
 const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const chainId = useChainId();
 
-  const { currentMilestone, amounts, token } = invoice;
+  const { address, currentMilestone, amounts, token } = invoice;
 
-  const { writeAsync: releaseFunds } = useRelease({ invoice });
+  const waitForRelease = usePollSubgraph({
+    fetchHelper: () => getInvoice(chainId, address),
+    checkResult: (updatedInvoice) => updatedInvoice.released > invoice.released,
+  });
+
+  const onSuccess = async () => {
+    await waitForRelease();
+    toast.success({ title: 'Funds released successfully' });
+  };
+
+  const { writeAsync: releaseFunds, isLoading } = useRelease({
+    invoice,
+    onSuccess,
+  });
 
   // const pollSubgraph = async () => {
   //   let isSubscribed = true;
@@ -110,12 +121,13 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
           </Link>
         </Text>
       )} */}
-      {loading ? (
-        <Loader />
+      {isLoading ? (
+        <Spinner size='xl' />
       ) : (
         <Button
           onClick={releaseFunds}
-          isDisabled={!releaseFunds}
+          isDisabled={!releaseFunds || isLoading}
+          isLoading={isLoading}
           textTransform='uppercase'
           variant='solid'
         >

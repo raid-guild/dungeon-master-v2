@@ -24,11 +24,7 @@ interface RaidUpdateFormProps {
   closeModal?: () => void;
   raid: Partial<IRaid>;
 }
-const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
-  raidId,
-  closeModal,
-  raid,
-}: RaidUpdateFormProps) => {
+const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
   const [sending, setSending] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(
     raid?.startDate ? new Date(raid?.startDate) : new Date()

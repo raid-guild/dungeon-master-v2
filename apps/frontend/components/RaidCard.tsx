@@ -24,7 +24,6 @@ import {
   RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
-import React from 'react';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 
 import Link from './ChakraNextLink';
@@ -38,7 +37,7 @@ interface RaidProps {
   consultation: IConsultation;
 }
 
-const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
+const RaidCard = ({ raid, consultation }: RaidProps) => {
   // const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
   // const uniqueServicesRequired = _.uniq(
   //   _.map(servicesRequired, (service: { guildService: string }) =>

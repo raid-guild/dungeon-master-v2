@@ -1,18 +1,16 @@
 import {
   Button,
   Heading,
-  Link,
+  // Link,
+  Spinner,
   Text,
-  useToast,
   VStack,
 } from '@raidguild/design-system';
-import { getTxLink } from '@raidguild/dm-utils';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { useWithdraw } from '@raidguild/escrow-hooks';
 import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
-import { useState } from 'react';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
-
-import Loader from './Loader';
 
 const WithdrawFunds = ({
   invoice,
@@ -21,35 +19,14 @@ const WithdrawFunds = ({
   invoice: Invoice;
   balance: bigint;
 }) => {
-  const toast = useToast();
   const chainId = useChainId();
 
-  const [loading, setLoading] = useState(false);
-  const [transaction, setTransaction] = useState<any>();
+  // const onSuccess = () => {
+  //   // toast
+  //   // close modal
+  // };
 
-  const withdrawFunds = async () => {
-    // if (!loading && provider && balance.gte(0)) {
-    //   try {
-    //     setLoading(true);
-    //     const tx = await withdraw(provider, contractAddress);
-    //     setTransaction(tx);
-    //     await tx.wait();
-    //     setLoading(false);
-    //     setTimeout(() => {
-    //       window.location.reload();
-    //     }, 20000);
-    //   } catch (withdrawError) {
-    //     console.error(withdrawError);
-    //     toast.error({
-    //       title: 'Oops there was an error',
-    //       iconName: 'alert',
-    //       duration: 3000,
-    //       isClosable: true,
-    //     });
-    //     setLoading(false);
-    //   }
-    // }
-  };
+  const { writeAsync: withdrawFunds, isLoading } = useWithdraw({ invoice });
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -63,7 +40,7 @@ const WithdrawFunds = ({
       >
         Withdraw Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' w='70%'>
         Follow the instructions in your wallet to withdraw remaining funds from
         the escrow.
       </Text>
@@ -81,7 +58,7 @@ const WithdrawFunds = ({
           invoice?.token
         )}`}</Text>
       </VStack>
-      {transaction && (
+      {/* {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
@@ -93,9 +70,14 @@ const WithdrawFunds = ({
             here
           </Link>
         </Text>
-      )}
-      {loading && <Loader />}
-      <Button onClick={withdrawFunds} variant='solid' textTransform='uppercase'>
+      )} */}
+      {isLoading && <Spinner size='xl' />}
+      <Button
+        onClick={withdrawFunds}
+        isDisabled={!withdrawFunds}
+        variant='solid'
+        textTransform='uppercase'
+      >
         Withdraw
       </Button>
     </VStack>

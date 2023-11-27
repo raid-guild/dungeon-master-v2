@@ -35,6 +35,7 @@ const useInvoiceDetails = ({
     queryKey: ['invoiceDetails', address, chainId],
     queryFn: () => getInvoice(chainId, address as Hex),
     enabled: !!address && !!chainId && !invoiceAddressLoading,
+    staleTime: 1000 * 60 * 15,
   });
 
   return { data, isLoading, error };

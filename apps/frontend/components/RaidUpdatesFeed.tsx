@@ -32,7 +32,7 @@ interface UpdatesProps {
   raid: IRaid;
 }
 
-const RaidUpdatesFeed: React.FC<UpdatesProps> = ({ raid }) => {
+const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
   const updates = _.get(raid, 'updates', null);
   const { data: session } = useSession();
   const localForm = useForm();

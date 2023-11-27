@@ -12,12 +12,12 @@ interface RaidUpdateProps {
   // modifiedAt?: string;
 }
 
-const RaidUpdate: React.FC<RaidUpdateProps> = ({
+const RaidUpdate = ({
   // id,
   update,
   member,
   createdAt,
-}) => (
+}: RaidUpdateProps) => (
   <>
     <Flex
       direction='row'

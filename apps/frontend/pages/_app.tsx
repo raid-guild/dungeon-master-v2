@@ -19,7 +19,7 @@ import { WagmiConfig } from 'wagmi';
 
 import { OverlayContextProvider } from '../contexts/OverlayContext';
 
-const App: React.FC<AppProps> = ({ Component, pageProps }: AppProps) => {
+const App = ({ Component, pageProps }: AppProps) => {
   const toast = useToast();
   const queryClient = new QueryClient({
     defaultOptions: {

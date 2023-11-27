@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Heading,
   Stack,
@@ -22,7 +21,7 @@ import { useAccount } from 'wagmi';
 import MiniRaidCard from '../components/MiniRaidCard';
 import SiteLayout from '../components/SiteLayout';
 
-const Home: React.FC = () => {
+const Home = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const role = _.get(session, 'user.role');

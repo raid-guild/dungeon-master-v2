@@ -31,7 +31,7 @@ import {
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { formatUnits, Hex, parseEther, parseUnits } from 'viem';
+import { formatUnits, Hex, parseUnits } from 'viem';
 import { useAccount, useBalance, useChainId } from 'wagmi';
 
 import { QuestionIcon } from './icons/QuestionIcon';
@@ -57,8 +57,6 @@ const DepositFunds = ({
     }),
     [chainId, token]
   );
-
-  console.log(invoice);
 
   const [transaction, setTransaction] = useState<Hex | undefined>();
 

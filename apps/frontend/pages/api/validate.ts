@@ -40,6 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     return res.status(201).json(raid || null);
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error(err);
     return res.status(500).json('Internal server error');
   }

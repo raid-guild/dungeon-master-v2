@@ -100,10 +100,7 @@ const Bio = ({ bio }: { bio: string }) => {
   );
 };
 
-const RaidDetailsCard: React.FC<RaidProps> = ({
-  raid,
-  consultation,
-}: RaidProps) => {
+const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
   const keyLinkItems = [
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.

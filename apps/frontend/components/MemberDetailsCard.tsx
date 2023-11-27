@@ -24,10 +24,7 @@ interface MemberProps {
   application?: IApplication;
 }
 
-const MemberDetailsCard: React.FC<MemberProps> = ({
-  member,
-  application,
-}: MemberProps) => {
+const MemberDetailsCard = ({ member, application }: MemberProps) => {
   const copyDiscord = useClipboard(
     _.get(
       member,

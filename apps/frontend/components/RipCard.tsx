@@ -12,7 +12,7 @@ import {
 import { IRip } from '@raidguild/dm-types';
 import { displayDate } from '@raidguild/dm-utils';
 import _ from 'lodash';
-import React from 'react';
+import { useState } from 'react';
 import { FaChevronDown, FaExternalLinkAlt } from 'react-icons/fa';
 
 import Link from './ChakraNextLink';
@@ -22,8 +22,8 @@ interface RipProps {
   rip: IRip;
 }
 
-const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+const RipCard = ({ rip }: RipProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const description = _.get(rip, 'bodyText', '');
   const link = _.get(rip, 'url');
   const ripStatus = _.get(rip, 'ripCategory');

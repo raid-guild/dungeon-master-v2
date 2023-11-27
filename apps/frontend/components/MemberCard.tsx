@@ -23,7 +23,7 @@ import {
   truncateAddress,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import {
   FaDiscord,
   FaEthereum,
@@ -72,10 +72,7 @@ const SocialButton = ({
   </Tooltip>
 );
 
-const MemberCard: React.FC<MemberProps> = ({
-  application,
-  member,
-}: MemberProps) => {
+const MemberCard = ({ application, member }: MemberProps) => {
   const id = _.get(member, 'id', _.get(application, 'id'));
   const address = _.get(member, 'ethAddress', _.get(application, 'ethAddress'));
   const link = member ? `/members/${address}/` : `/applications/${id}/`;
@@ -234,6 +231,7 @@ const MemberCard: React.FC<MemberProps> = ({
           <Flex wrap='wrap' width='100%' maxWidth='100%'>
             {_.map(
               clearNonObjects(socials),
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               ({ href, icon, label, tooltip, onClick }: any, i: number) => (
                 <SocialButton
                   key={`${label}-${href}-${i}`}

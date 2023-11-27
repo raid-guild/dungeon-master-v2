@@ -27,7 +27,7 @@ interface CustomModalWrapperProps {
 
 export type ModalWrapperProps = CustomModalWrapperProps & ChakraBoxProps;
 
-const ModalWrapper: React.FC<ModalWrapperProps> = ({
+const ModalWrapper = ({
   name,
   title,
   children,

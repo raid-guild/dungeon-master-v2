@@ -1,5 +1,5 @@
 import { Invoice, PAYMENT_TYPES } from '@raidguild/escrow-utils';
-import { parseUnits } from 'viem';
+import { ContractFunctionResult, parseUnits } from 'viem';
 import {
   useChainId,
   useContractWrite,
@@ -14,11 +14,13 @@ const useDeposit = ({
   amount,
   hasAmount,
   paymentType,
+  onSuccess,
 }: {
   invoice: Invoice;
   amount: string;
   hasAmount: boolean;
   paymentType: string;
+  onSuccess: (tx: ContractFunctionResult) => void;
 }) => {
   const chainId = useChainId();
 
@@ -44,15 +46,18 @@ const useDeposit = ({
     error: writeError,
   } = useContractWrite({
     ...config,
-    onSuccess: async (tx: any) => {
+    onSuccess: async (tx) => {
       console.log('deposit tx', tx);
 
       // TODO catch success
+      onSuccess(tx);
+
       // wait for tx
       // update invoice
       // close modal
     },
-    onError: async (error: any) => {
+    onError: async (error) => {
+      // eslint-disable-next-line no-console
       console.log('deposit error', error);
     },
   });

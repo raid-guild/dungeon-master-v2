@@ -25,7 +25,7 @@ interface UpdateMemberFormProps {
   member: IMember;
   application?: IApplication;
 }
-const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
+const UpdateMemberForm = ({
   memberId,
   memberAddress,
   member,

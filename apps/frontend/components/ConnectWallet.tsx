@@ -15,14 +15,13 @@ import {
 import { truncateAddress } from '@raidguild/dm-utils';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import _ from 'lodash';
-import React, { useContext, useEffect } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
-import { useAccount, useDisconnect, useNetwork } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 
 import Link from './ChakraNextLink';
 
-const ConnectWallet: React.FC = () => {
+const ConnectWallet = () => {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
 

@@ -26,8 +26,8 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
   const {
     client,
     isLocked,
-    disputes,
-    resolutions,
+    // disputes,
+    // resolutions,
     terminationTime,
     currentMilestone,
     amounts,
@@ -46,12 +46,11 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
   const isResolver = _.toLower(address) === _.toLower(resolver);
 
   const balance = invoiceTokenBalance.value;
-  const dispute =
-    isLocked && !_.isEmpty(disputes) ? _.last(disputes) : undefined;
+  // const dispute =
+  //   isLocked && !_.isEmpty(disputes) ? _.last(disputes) : undefined;
   const deposited = BigInt(released) + balance;
   const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
-  const resolution =
-    !isLocked && !_.isEmpty(resolutions) ? _.last(resolutions) : undefined;
+  // const resolution = !isLocked && !_.isEmpty(resolutions) ? _.last(resolutions) : undefined;
   const amount = BigInt(
     currentMilestone < amounts.length ? amounts[currentMilestone] : 0
   );
@@ -136,7 +135,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
         )}
       </SimpleGrid>
 
-      <Modal isOpen={modal} onClose={() => setModal(false)} isCentered>
+      <Modal isOpen onClose={() => setModal(false)} isCentered>
         <ModalOverlay>
           <ModalContent
             p='2rem'
@@ -159,15 +158,14 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
             {modal && selected === 2 && (
               <ReleaseFunds invoice={invoice} balance={balance} />
             )}
-            {true && // modal &&
-              true && ( // selected === 3 && (
-                <ResolveFunds
-                  invoice={invoice}
-                  balance={balance}
-                  close={() => setModal(false)}
-                />
-              )}
-            {modal && selected === 4 && (
+            {modal && selected === 3 && (
+              <ResolveFunds
+                invoice={invoice}
+                balance={balance}
+                close={() => setModal(false)}
+              />
+            )}
+            {true && ( // modal && selected === 4 && (
               <WithdrawFunds invoice={invoice} balance={balance} />
             )}
           </ModalContent>

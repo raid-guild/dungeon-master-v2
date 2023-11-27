@@ -125,7 +125,6 @@ const useRegister = ({
     factoryAddress,
     daoAddress,
   ]);
-  console.log(escrowData);
 
   const {
     config,
@@ -143,7 +142,6 @@ const useRegister = ({
     ],
     enabled: !!terminationTime && !_.isEmpty(paymentsInWei) && !!escrowData,
   });
-  console.log(prepareError);
 
   const {
     writeAsync,

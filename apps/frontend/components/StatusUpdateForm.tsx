@@ -14,7 +14,7 @@ interface StatusUpdateProps {
   raid: Partial<IRaid>;
 }
 
-const StatusUpdateForm: React.FC<StatusUpdateProps> = ({
+const StatusUpdateForm = ({
   raidId,
   currentStatus = 'SHIPPED',
   closeModal,
