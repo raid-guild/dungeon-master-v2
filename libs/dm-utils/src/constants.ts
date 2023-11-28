@@ -143,7 +143,7 @@ export const DELIVERY_PRIORITIES_DISPLAY_OPTIONS = [
   { label: "Polished & Inexpensive", value: "POLISHED_AND_INEXPENSIVE" },
 ];
 
-export const DELIVERY_PRIORITIES_DISPLAY = (priority: priorityString) => {
+export function DELIVERY_PRIORITIES_DISPLAY(priority: PriorityKey) {
   const deliveryPrioritiesMap = {
     FAST_AND_POLISHED: "Fast & Polished",
     FAST_AND_INEXPENSIVE: "Fast & Inexpensive",
@@ -153,7 +153,7 @@ export const DELIVERY_PRIORITIES_DISPLAY = (priority: priorityString) => {
   if (!_.includes(_.keys(deliveryPrioritiesMap), priority)) return null;
 
   return deliveryPrioritiesMap[priority];
-};
+}
 
 export const SUBMISSION_TYPE = ["Paid", "Unpaid"];
 

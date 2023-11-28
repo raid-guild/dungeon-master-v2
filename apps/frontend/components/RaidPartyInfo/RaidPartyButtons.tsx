@@ -177,8 +177,9 @@ const RaidPartyButtons = ({
               localForm={localForm}
               // Note: Below warning suggests this is a workaround to react hook form's intended use
               // "Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?"
+              
               onChange={(values) => {
-                setSelectedRoleOptions(values);
+                setSelectedRoleOptions(values as any); // temp fix
               }}
               value={selectedRoleOptions}
             />

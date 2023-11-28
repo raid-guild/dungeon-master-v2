@@ -65,7 +65,7 @@ StatusUpdateProps) => {
     await updateRaidStatus({
       raid_updates: {
         status_key: selectedStatus,
-      },
+      }
     });
     closeModal();
   };

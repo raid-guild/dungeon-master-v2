@@ -18,14 +18,17 @@ const useRaidUpdate = ({
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: IRaidUpdate & IConsultationUpdate) => {
+    async ({ ...args }: IRaidUpdate & Partial<IConsultationUpdate>) => {
       if (!raidId || !token) return null;
-      const result = await client({ token }).request(RAID_UPDATE_MUTATION, {
+      
+      const input = {
         id: raidId,
         raid_updates: args.raid_updates,
-        consultation_update: args.consultation_update,
-      });
-
+        ...(args.consultation_update && { consultation_update: args.consultation_update }),
+      };
+      
+      const result = await client({ token }).request(RAID_UPDATE_MUTATION, input);
+      
       return result;
     },
     {
