@@ -63,7 +63,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   
 
 
-  const localForm = useForm({
+  const form_projectDetails = useForm({
     mode: "all",
   });
   const {
@@ -71,7 +71,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
     setValue,
     control,
     formState: { isSubmitting }, // will add errors in once we add validation
-  } = localForm;
+  } = form_projectDetails;
 
   async function onSubmit(values) {
     setSending(true);
@@ -131,9 +131,10 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
         >
           <Box maxW="md" marginX="auto">
             <Box marginY="6">
-              <form onSubmit={handleSubmit(onSubmit)}>
+              
                 <TabPanels>
                   <TabPanel>
+                  <form onSubmit={handleSubmit(onSubmit)}>
                     <Stack spacing={4}>
                       <Input
                         name="raidName"
@@ -142,7 +143,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                         placeholder="Enter the Raid name"
                         rounded="base"
                         label="Raid Name"
-                        localForm={localForm}
+                        localForm={form_projectDetails}
                       />
                       <Flex
                         direction={{ base: "column", lg: "row" }}
@@ -161,7 +162,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                             setValue("startDate", date);
                           }}
                           customInput={<CustomCalInput />}
-                          localForm={localForm}
+                          localForm={form_projectDetails}
                         />
                         <DatePicker
                           name="endDate"
@@ -175,7 +176,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                             setValue("endDate", date);
                           }}
                           customInput={<CustomCalInput />}
-                          localForm={localForm}
+                          localForm={form_projectDetails}
                         />
                       </Flex>
                       <FormControl>
@@ -192,7 +193,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                               }
                               name="raidBudget"
                               options={BUDGET_DISPLAY_OPTIONS}
-                              localForm={localForm}
+                              localForm={form_projectDetails}
                             />
                           )}
                         />
@@ -212,7 +213,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                               }
                               name="raidCategory"
                               options={RAID_CATEGORY_OPTIONS}
-                              localForm={localForm}
+                              localForm={form_projectDetails}
                             />
                           )}
                         />
@@ -232,7 +233,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                           setValue("desiredDeliveryDate", date);
                         }}
                         customInput={<CustomCalInput />}
-                        localForm={localForm}
+                        localForm={form_projectDetails}
                       />
 
                       <FormControl>
@@ -249,7 +250,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                               }
                               name="deliveryPriority"
                               options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
-                              localForm={localForm}
+                              localForm={form_projectDetails}
                             />
                           )}
                         />
@@ -265,10 +266,28 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                           placeholder="Enter the Invoice address"
                           rounded="base"
                           label="Invoice Address"
-                          localForm={localForm}
+                          localForm={form_projectDetails}
                         />
                       )}
+
+                      
                     </Stack>
+
+                    <Button
+                  isLoading={isSubmitting || sending}
+                  type="submit"
+                  width="full"
+                  color="raid"
+                  borderColor="raid"
+                  border="1px solid"
+                  size="md"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="bold"
+                >
+                  Update Project Details
+                </Button>
+              </form>
                   </TabPanel>
                   <TabPanel>
                   <Input
@@ -278,7 +297,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                         placeholder="Link to Project Specs Dcoument"
                         rounded="base"
                         label="Project Specs"
-                        localForm={localForm}
+                        localForm={form_projectDetails}
                       />
                   </TabPanel>
 
@@ -294,21 +313,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                     <Text>Portfolio</Text>
                   </TabPanel>
                 </TabPanels>
-                <Button
-                  isLoading={isSubmitting || sending}
-                  type="submit"
-                  width="full"
-                  color="raid"
-                  borderColor="raid"
-                  border="1px solid"
-                  size="md"
-                  textTransform="uppercase"
-                  fontSize="sm"
-                  fontWeight="bold"
-                >
-                  Update Raid
-                </Button>
-              </form>
+              
             </Box>
           </Box>
         </Box>
