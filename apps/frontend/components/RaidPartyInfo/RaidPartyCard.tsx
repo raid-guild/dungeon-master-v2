@@ -2,13 +2,16 @@
 // TODO don't nest this component
 import {
   Avatar,
-  // AvatarGroup,
   Box,
-  Box,
-  Button,
   Button,
   ChakraSelect,
-  Tooltip,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  RoleBadge,
+  Text,
+  Tooltip
 } from "@raidguild/design-system";
 import {
   useRaidPartyRemove,
@@ -93,6 +96,11 @@ const RaidPartyCard = ({
     await updateRaid({
       id: _.get(raid, "id"),
       raid_updates: raidUpdates,
+      consultation_update: {
+        id: "",
+        consultation_status_key: "",
+        budget_key: ""
+      }
     });
     setTimeout(() => {
       setUpdateCleric(false);

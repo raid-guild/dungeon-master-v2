@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import {
   Button,
   DatePicker,
@@ -10,25 +11,13 @@ import {
   Stack,
 } from "@raidguild/design-system";
 import { useRaidUpdate } from "@raidguild/dm-hooks";
-import {
-  BUDGET_DISPLAY_OPTIONS,
-  DELIVERY_PRIORITIES_DISPLAY_OPTIONS,
-  IRaid,
-  RAID_CATEGORY_OPTIONS,
-} from "@raidguild/dm-utils";
+import { IRaid } from "@raidguild/dm-types";
+import { BUDGET_DISPLAY_OPTIONS, DELIVERY_PRIORITIES_DISPLAY_OPTIONS, RAID_CATEGORY_OPTIONS } from "@raidguild/dm-utils";
 import { add } from "date-fns";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-
-const raid_tabs = [
-  "Project Details",
-  "Key Links",
-  "Client PoC",
-  "Additional Info",
-  "Portfolio",
-];
 
 interface ProjectDetailsUpdateFormProps {
   raidId?: string;
@@ -158,8 +147,8 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             control={control}
             render={({ field }) => (
               <Select
+                // eslint-disable-next-line react/jsx-props-no-spreading
                 {
-                  // eslint-disable-next-line react/jsx-props-no-spreading
                   ...field
                 }
                 name="raidBudget"
@@ -178,8 +167,8 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             control={control}
             render={({ field }) => (
               <Select
+                // eslint-disable-next-line react/jsx-props-no-spreading
                 {
-                  // eslint-disable-next-line react/jsx-props-no-spreading
                   ...field
                 }
                 name="raidCategory"
@@ -215,8 +204,8 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             control={control}
             render={({ field }) => (
               <Select
+                // eslint-disable-next-line react/jsx-props-no-spreading
                 {
-                  // eslint-disable-next-line react/jsx-props-no-spreading
                   ...field
                 }
                 name="deliveryPriority"

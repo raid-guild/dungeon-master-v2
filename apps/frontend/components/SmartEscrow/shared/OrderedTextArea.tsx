@@ -1,10 +1,11 @@
 import {
-  VStack,
+  ChakraTextarea as Textarea,
   Flex,
   Text,
   Tooltip,
-  ChakraTextarea as Textarea,
+  VStack,
 } from '@raidguild/design-system';
+
 import { QuestionIcon } from '../icons/QuestionIcon';
 
 type OrderedTextAreaType = {
@@ -17,7 +18,7 @@ type OrderedTextAreaType = {
   maxLength?: number;
   isDisabled?: boolean;
 };
-export const OrderedTextarea = ({
+const OrderedTextarea = ({
   label,
   value,
   setValue,
@@ -26,8 +27,7 @@ export const OrderedTextarea = ({
   placeholder = '',
   maxLength,
   isDisabled = false,
-}: OrderedTextAreaType) => {
-  return (
+}: OrderedTextAreaType) => (
     <VStack
       w='100%'
       spacing='0.5rem'
@@ -61,4 +61,5 @@ export const OrderedTextarea = ({
       />
     </VStack>
   );
-};
+
+  export default OrderedTextarea;

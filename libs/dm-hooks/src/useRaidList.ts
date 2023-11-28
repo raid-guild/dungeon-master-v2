@@ -4,10 +4,12 @@ import {
   RAIDING_RAIDS_BY_LAST_UPDATE,
   RAIDS_COUNT_QUERY,
   RAIDS_LIST_AND_LAST_UPDATE_QUERY,
+  RAIDS_LIST_QUERY,
 } from "@raidguild/dm-graphql";
-import { raidSortKeys } from "@raidguild/dm-types";
-import { camelize, IRaid } from "@raidguild/dm-utils";
-import { checkProperties } from "ethers/lib/utils.js";
+import { IRaid,raidSortKeys  } from "@raidguild/dm-types";
+import { camelize } from "@raidguild/dm-utils";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import _ from "lodash";
 
 const where = (
   raidStatusFilterKey: string,

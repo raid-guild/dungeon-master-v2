@@ -1,8 +1,7 @@
-import { HStack, Stack } from "@raidguild/design-system";
+import { Box } from "@raidguild/design-system";
 import { IMember } from "@raidguild/dm-types";
 import _ from "lodash";
-import { Box } from "@raidguild/design-system";
-import { IMember } from "@raidguild/dm-utils";
+
 import MemberAvatar from "./MemberAvatar";
 
 type MemberAvatarStackProps = {
@@ -17,8 +16,7 @@ const MemberAvatarStack = ({
   size = "md",
   max = 5,
   horizontal = false,
-}: MemberAvatarStackProps) => {
-  return (
+}: MemberAvatarStackProps) => (
     <Box
       display={horizontal ? "flex" : "flex"}
       flexDirection={horizontal ? "row" : "column"}
@@ -35,6 +33,5 @@ const MemberAvatarStack = ({
       ))}
     </Box>
   );
-};
 
 export default MemberAvatarStack;

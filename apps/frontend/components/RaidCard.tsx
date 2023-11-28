@@ -2,6 +2,7 @@ import {
   Avatar,
   AvatarGroup,
   Box,
+  Card,
   Flex,
   Heading,
   HStack,
@@ -15,21 +16,21 @@ import {
   Tooltip,
   useMediaQuery,
 } from "@raidguild/design-system";
+import { IConsultation,IRaid } from "@raidguild/dm-types";
 import {
   BUDGET_DISPLAY,
   displayDate,
   GUILD_CLASS_DISPLAY,
   GUILD_CLASS_ICON,
-  IConsultation,
-  IRaid,
   PROJECT_TYPE_DISPLAY,
   RAID_CATEGORY_DISPLAY,
 } from "@raidguild/dm-utils";
+import _ from "lodash";
 import { AiOutlineDollarCircle } from "react-icons/ai";
 
-import MemberAvatar from "./MemberAvatar";
 import Link from "./ChakraNextLink";
 import InfoStack from "./InfoStack";
+import MemberAvatar from "./MemberAvatar";
 import MemberAvatarStack from "./MemberAvatarStack";
 import RaidStatusBadge from "./RaidStatusBadge";
 
@@ -51,6 +52,11 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const budget =
     BUDGET_DISPLAY[_.get(consultation, "budgetOption.budgetOption")];
   const projectType = PROJECT_TYPE_DISPLAY(
+
+    // disable eslint for this line because it's a temporary fix
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+
     _.get(consultation, "projectType.projectType"),
   );
   const rolesRequired = _.map(_.get(raid, "raidsRolesRequired", []), "role");
@@ -132,7 +138,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                       >
                         <Avatar
                           key={role}
-                          bgColor={"transparent"}
+                          bgColor="transparent"
                           icon={
                             <RoleBadge
                               roleName={GUILD_CLASS_ICON[role]}

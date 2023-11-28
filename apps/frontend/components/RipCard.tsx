@@ -1,22 +1,19 @@
 import {
-  Button,
   Card,
-  Collapse,
   Collapse,
   Flex,
   Heading,
   HStack,
   Icon,
-  Icon,
   LinkBox,
   LinkOverlay,
   Stack,
-} from "@raidguild/design-system";
+  Text} from "@raidguild/design-system";
 import { IRip } from "@raidguild/dm-types";
 import { displayDate } from "@raidguild/dm-utils";
 import _ from "lodash";
 import { useState } from "react";
-import { FaChevronDown, FaExternalLinkAlt } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 
 import Link from "./ChakraNextLink";
 import RipStatusBadge from "./RipStatusBadge";
@@ -113,7 +110,7 @@ const RipCard = ({ rip }: RipProps) => {
               <Text>{displayDate(latestUpdate.createdAt)}</Text>
             </HStack>
 
-            <Flex alignItems={"baseline"} justify={"space-between"}>
+            <Flex alignItems="baseline" justify="space-between">
               <Collapse startingHeight={24} in={isOpen}>
                 <Text color="white">{latestUpdate.update}</Text>
               </Collapse>
@@ -127,7 +124,7 @@ const RipCard = ({ rip }: RipProps) => {
                 ml={1}
                 zIndex={2}
                 transform={isOpen ? "rotate(180deg)" : ""}
-                transition={"all .25s ease-in-out"}
+                transition="all .25s ease-in-out"
               />
             </Flex>
           </Flex>

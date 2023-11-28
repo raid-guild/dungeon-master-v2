@@ -1,35 +1,21 @@
+/* eslint-disable camelcase */
 import {
     Button,
-    DatePicker,
-    Flex,
-    FormControl,
-    FormLabel,
     forwardRef,
     Input,
-    Select,
     Stack,
   } from "@raidguild/design-system";
   import { useRaidUpdate } from "@raidguild/dm-hooks";
   import {
-    BUDGET_DISPLAY_OPTIONS,
-    DELIVERY_PRIORITIES_DISPLAY_OPTIONS,
     IRaid,
-    RAID_CATEGORY_OPTIONS,
-  } from "@raidguild/dm-utils";
+  } from "@raidguild/dm-types";
   import { add } from "date-fns";
   import _ from "lodash";
   import { useSession } from "next-auth/react";
   import React, { useState } from "react";
-  import { Controller, useForm } from "react-hook-form";
+  import { useForm } from "react-hook-form";
   
-  const raid_tabs = [
-    "Project Details",
-    "Key Links",
-    "Client PoC",
-    "Additional Info",
-    "Portfolio",
-  ];
-  
+
   interface KeyLinksUpdateFormProps {
     raidId?: string;
     closeModal?: () => void;
@@ -97,6 +83,7 @@ import {
         <Stack spacing={4}>
         <Input
                         name="projectSpecs"
+                        // eslint-disable-next-line dot-notation
                         defaultValue={_.get(raid["consultation"], "link")}
                         aria-label="Project Specs"
                         placeholder="Link to Project Specs Dcoument"
