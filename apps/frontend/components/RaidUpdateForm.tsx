@@ -4,14 +4,16 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Tabs,
-  Text
+  Tabs
 } from "@raidguild/design-system";
 import { IRaid } from "@raidguild/dm-types";
 import React from "react";
 
 import ProjectDetailsUpdateForm from "./RaidUpdateForm/01-Project-Details";
 import KeyLinksUpdateForm from "./RaidUpdateForm/02-Key-Links";
+import ClientPoCUpdateForm from "./RaidUpdateForm/03-Client-PoC";
+import AdditionalInfoUpdateForm from "./RaidUpdateForm/04-Additional-Info";
+import PortfolioUpdateForm from "./RaidUpdateForm/05-Portfolio";
 
 const raidTabs = [
   "Project Details",
@@ -56,13 +58,13 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                   <KeyLinksUpdateForm raid={raid} />
                 </TabPanel>
                 <TabPanel>
-                  <Text>Client PoC</Text>
+                  <ClientPoCUpdateForm raid={raid} />
                 </TabPanel>
                 <TabPanel>
-                  <Text>Additional Info</Text>
+                  <AdditionalInfoUpdateForm raid={raid} />
                 </TabPanel>
                 <TabPanel>
-                  <Text>Portfolio</Text>
+                  <PortfolioUpdateForm raid={raid} />
                 </TabPanel>
               </TabPanels>
             </Box>
