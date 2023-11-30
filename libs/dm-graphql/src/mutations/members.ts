@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from "graphql-request";
+
 import { CONTACT_INFOS_FRAGMENT, MEMBER_DETAIL_FRAGMENT } from "../fragments";
 
 export const MEMBER_UPDATE_MUTATION = gql`

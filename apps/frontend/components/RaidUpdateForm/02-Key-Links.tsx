@@ -1,19 +1,18 @@
 /* eslint-disable camelcase */
 import {
-    Button,
-    forwardRef,
-    Input,
-    Stack,
-  } from "@raidguild/design-system";
-  import { useRaidUpdate } from "@raidguild/dm-hooks";
-  import {
-    IRaid,
-  } from "@raidguild/dm-types";
-  import { add } from "date-fns";
-  import _ from "lodash";
-  import { useSession } from "next-auth/react";
-  import React, { useState } from "react";
-  import { useForm } from "react-hook-form";
+  Button,
+  forwardRef,
+  Input,
+  Stack,
+} from "@raidguild/design-system";
+import { useAddLinks } from "@raidguild/dm-hooks";
+import {
+  IRaid,
+} from "@raidguild/dm-types";
+import _ from "lodash";
+import { useSession } from "next-auth/react";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
   
 
   interface KeyLinksUpdateFormProps {
@@ -27,17 +26,12 @@ import {
     closeModal,
     raid,
   }: KeyLinksUpdateFormProps) => {
-    const [sending, setSending] = useState(false);
-    const [startDate, setStartDate] = useState<Date | null>(
-      raid?.startDate ? new Date(raid?.startDate) : new Date(),
-    );
-    const [endDate, setEndDate] = useState<Date | null>(
-      raid?.endDate ? new Date(raid?.endDate) : add(new Date(), { weeks: 1 }),
-    );
+    
     const { data: session } = useSession();
     const token = _.get(session, "token");
-  
-    const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
+    const [sending, setSending] = useState(false);
+
+    const { mutateAsync: updateLinks } = useAddLinks({ token});
   
     const form_projectDetails = useForm({
       mode: "all",
@@ -51,21 +45,15 @@ import {
   
     async function onSubmit(values) {
       setSending(true);
-    //   await updateRaidStatus({
-    //     raid_updates: {
-    //       name: values.raidName ?? raid.raidName,
-    //       category_key: values.raidCategory.value ??
-    //         raid.raidCategory.raidCategory,
-    //       status_key: raid.status ?? raid.status,
-    //       start_date: values.startDate ?? raid.startDate,
-    //       end_date: values.endDate ?? raid.endDate,
-    //     },
-    //     consultation_update: {
-    //       id: raid.consultationByConsultation.id,
-    //       budget_key: values.raidBudget.value ??
-    //         _.get(raid["consultation"], "budgetOption.budgetOption"),
-    //     },
-    //   });
+    
+      // TODO handle links input
+
+      // await updateLinks({
+      //   raid_updates: {
+      //     link: values.projectSpecs,
+      //   },
+      // });
+
       closeModal();
       setSending(false);
     }

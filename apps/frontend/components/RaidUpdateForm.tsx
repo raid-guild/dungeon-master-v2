@@ -19,11 +19,6 @@ const raidTabs = [
   "Client PoC",
   "Additional Info",
   "Portfolio",
-  "Project Details",
-  "Key Links",
-  "Client PoC",
-  "Additional Info",
-  "Portfolio",
 ];
 
 interface RaidUpdateFormProps {
