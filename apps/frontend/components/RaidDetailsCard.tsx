@@ -28,7 +28,7 @@ import {
 } from '@raidguild/dm-utils';
 import { format } from 'date-fns';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import InfoStack from './InfoStack';
 
@@ -41,6 +41,8 @@ const Description = ({ description }: { description: string }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const handleToggleDesc = () => setShowFullDescription(!showFullDescription);
 
+  
+  
   return (
     <VStack align='flex-start'>
       <Collapse startingHeight={25} in={showFullDescription}>

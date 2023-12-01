@@ -10,7 +10,7 @@ import {
   Select,
   Stack,
 } from "@raidguild/design-system";
-import { useRaidUpdate } from "@raidguild/dm-hooks";
+import { useContacts, useRaidUpdate } from "@raidguild/dm-hooks";
 import { IRaid } from "@raidguild/dm-types";
 import { BUDGET_DISPLAY_OPTIONS, DELIVERY_PRIORITIES_DISPLAY_OPTIONS, RAID_CATEGORY_OPTIONS } from "@raidguild/dm-utils";
 import { add } from "date-fns";
@@ -41,10 +41,12 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   const token = _.get(session, "token");
 
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
+  
 
   const localform = useForm({
     mode: "all",
   });
+
   const {
     handleSubmit,
     setValue,

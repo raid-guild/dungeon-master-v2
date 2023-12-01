@@ -26,6 +26,10 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
     setModals({ raidForm: true });
   };
 
+  
+
+  
+
   return (
     <Stack spacing={5}>
       <HStack w='100%'>
