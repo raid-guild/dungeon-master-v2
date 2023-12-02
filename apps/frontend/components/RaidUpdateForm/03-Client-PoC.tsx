@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-import { Box, Button, Card, defaultTheme,FormControl, FormLabel, Heading, HStack, Select, Text, VStack } from "@raidguild/design-system";
+import { Box, Button, Card, defaultTheme,FormControl, FormLabel, Heading, HStack, Select, Spacer, Text, VStack } from "@raidguild/design-system";
 import { useContacts } from "@raidguild/dm-hooks";
 import { IRaid } from "@raidguild/dm-types";
 import _ from "lodash";
@@ -123,15 +123,19 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
                 {/* // display selected client PoCs */}
                 
-                <VStack overflow='scroll' maxH="500px" mt={6}>
+                <VStack overflowX='auto' maxH="500px" mt={6} w='fit-content'>
                   {
                     _.compact(selectedPoCs?.map((contact, index) => {
                       const foundContact = _.find(contacts, { id: contact.value });
                       return foundContact && (
                         <VStack key={contact.value} w='full' p={8} gap={4} justifyContent="flex-start" alignItems='flex-start' backgroundColor={defaultTheme.colors.gray[900]} textAlign="left" border="1px solid #FFFFFF15" borderRadius={12}>
-                          <Heading as="h3" fontSize="2xl" color="primary.500" fontFamily="texturina">
+                          <HStack justify="space-between" align="center" w="full"> 
+                          <Heading as="h4" fontSize="2xl" textColor="white" fontFamily="uncial" variant="shadow" >
                             Contact #{index + 1}
                           </Heading>
+                          
+                          <Button>Edit</Button>
+                          </HStack>
                           <HStack gap={6}>
                           <VStack gap={1} justifyContent="flex-start" alignItems='flex-start'>
                             <Text color="primary.500" fontFamily="texturina">Name:</Text>
