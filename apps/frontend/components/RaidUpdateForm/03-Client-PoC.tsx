@@ -1,11 +1,12 @@
 /* eslint-disable dot-notation */
-import { Box, FormControl, FormLabel, Select, Text } from "@raidguild/design-system";
+import { Box, Button, Card, defaultTheme,FormControl, FormLabel, Heading, HStack, Select, Text, VStack } from "@raidguild/design-system";
 import { useContacts } from "@raidguild/dm-hooks";
 import { IRaid } from "@raidguild/dm-types";
-import { BUDGET_DISPLAY_OPTIONS } from "@raidguild/dm-utils";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+
 
 interface ClientPocUpdateProps {
     raidId?: string;
@@ -32,12 +33,21 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
     const { data: session } = useSession();
     const token = _.get(session, "token");
-    const {data} = useContacts({token});
+    const {data, status} = useContacts({token});
+    const [sending, setSending] = useState(false);
+    const contacts = data?.contacts as IContact[];
 
-    const {contacts} = data as {contacts: IContact[]};
 
-    const clientPoCs = raid['consultation']['consultationsContacts'];
+    const clientPoCs = raid['consultation']['consultationsContacts'] as IContact[];
 
+
+    const defaultValues =  _.map(clientPoCs as IContact[], ({contact}: {contact: IContact}) => ({
+      label: `${contact?.name} - ${contact?.contactInfo?.email}`,
+      value: contact?.id,
+    }));
+
+
+    console.log(defaultValues, clientPoCs[0]);
 
   const POC_DISPLAY_OPTIONS = _.map(contacts as IContact[], (contact) => ({
     label: `${contact?.name} - ${contact?.contactInfo?.email}`,
@@ -46,6 +56,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
 
     const onSubmit = (data) => {
+        setSending(true);
         console.log(data);
       };
     
@@ -58,19 +69,24 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
       
       const {
         handleSubmit,
+        getValues,
         setValue,
         control,
+        watch,
         formState: { isSubmitting }, // will add errors in once we add validation
       } = localform;
 
+      const selectedPoCs = watch('consultationContacts');
+
+
     return (
     <Box>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        {status === 'success' && <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl>
           <FormLabel color="raid">Client PoCs</FormLabel>
           <Controller
             name="consultationContacts"
-            defaultValue={clientPoCs[0]}
+            defaultValue={defaultValues}
             control={control}
             render={({ field }) => (
               <Select
@@ -79,6 +95,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                   ...field
                 }
                 isSearchable
+                isMulti
                 name="consultationContacts"
                 options={POC_DISPLAY_OPTIONS}
                 localForm={localform}
@@ -87,7 +104,55 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
           />
 
         </FormControl>
-        </form>
+        <Button
+          isLoading={isSubmitting || sending}
+          type="submit"
+          width="full"
+          color="raid"
+          borderColor="raid"
+          border="1px solid"
+          size="md"
+          textTransform="uppercase"
+          fontSize="sm"
+          fontWeight="bold"
+        >
+          Update Client PoCs
+        </Button>
+
+        </form>}
+
+                {/* // display selected client PoCs */}
+                
+                <VStack overflow='scroll' maxH="500px" mt={6}>
+                  {
+                    _.compact(selectedPoCs?.map((contact, index) => {
+                      const foundContact = _.find(contacts, { id: contact.value });
+                      return foundContact && (
+                        <VStack key={contact.value} w='full' p={8} gap={4} justifyContent="flex-start" alignItems='flex-start' backgroundColor={defaultTheme.colors.gray[900]} textAlign="left" border="1px solid #FFFFFF15" borderRadius={12}>
+                          <Heading as="h3" fontSize="2xl" color="primary.500" fontFamily="texturina">
+                            Contact #{index + 1}
+                          </Heading>
+                          <HStack gap={6}>
+                          <VStack gap={1} justifyContent="flex-start" alignItems='flex-start'>
+                            <Text color="primary.500" fontFamily="texturina">Name:</Text>
+                            <Text>{foundContact.name}</Text>
+                          </VStack>
+                          <VStack gap={1} justifyContent="flex-start" alignItems='flex-start'>
+                            <Text color="primary.500" fontFamily="texturina">Email:</Text>
+                            <Text>{foundContact.contactInfo.email ?? 'N/A'}</Text>
+                          </VStack>
+                          </HStack>
+                          <VStack gap={1} justifyContent="flex-start" alignItems='flex-start'>
+                            <Text color="primary.500" fontFamily="texturina">Bio:</Text>
+                            <Text>{foundContact.bio ?? 'N/A'}</Text>
+                          </VStack>
+                        </VStack>
+                      );
+                    }))
+                    
+                  }
+
+          </VStack>
 
     </Box>)}
   

@@ -99,6 +99,7 @@ export const RAID_DETAIL_QUERY = gql`
         }
         consultations_contacts {
           contact {
+            id
             name
             bio
             contact_info {

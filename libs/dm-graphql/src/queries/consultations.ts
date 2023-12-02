@@ -84,7 +84,9 @@ export const CONSULTATION_LIST_QUERY = gql`
         consultation_status
       }
       consultations_contacts {
+        
         contact {
+          id
           name
           bio
           contact_info {
@@ -131,16 +133,3 @@ export const CONSULTATION_DETAIL_QUERY = gql`
   ${CONSULTATION_DETAIL_WITH_RAID_FRAGMENT}
 `;
 
-
-export const ALL_CONTACTS_QUERY = gql`
-  query AllContacts {
-    contacts {
-      id
-      name
-      bio
-      contact_info {
-        email
-      }
-    }
-  }
-`;
