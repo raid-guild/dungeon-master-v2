@@ -1,14 +1,13 @@
-import { client } from '@raidguild/dm-graphql';
+import { client, CREATE_CONTACT_MUTATION } from '@raidguild/dm-graphql';
 import { IContact } from "@raidguild/dm-types";
 import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CONTACT_INFOS_FRAGMENT } from 'libs/dm-graphql/src/fragments';
 
 const useContactCreate = ({ token }: { token: string }) => {
     const queryClient = useQueryClient();
 
     const createContact = async (contact: IContact) => {
-        const result = await client({ token }).request(CONTACT_INFOS_FRAGMENT, {
+        const result = await client({ token }).request(CREATE_CONTACT_MUTATION, {
             ...contact,
         });
         return camelize(result);

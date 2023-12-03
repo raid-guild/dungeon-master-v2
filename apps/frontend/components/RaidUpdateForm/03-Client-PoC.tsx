@@ -2,11 +2,13 @@
 import { Box, Button, Card, defaultTheme,FormControl, FormLabel, Heading, HStack, Select, Spacer, Text, VStack } from "@raidguild/design-system";
 import { useContacts } from "@raidguild/dm-hooks";
 import { IRaid } from "@raidguild/dm-types";
+import { useOverlay } from "apps/frontend/contexts/OverlayContext";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
+import ModalWrapper from "../ModalWrapper";
 
 interface ClientPocUpdateProps {
     raidId?: string;
@@ -30,6 +32,8 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     closeModal,
     raid,
   }: ClientPocUpdateProps) =>{
+
+    const contactUpdateOverlay = useOverlay();
 
     const { data: session } = useSession();
     const token = _.get(session, "token");
@@ -81,6 +85,11 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
     return (
     <Box>
+
+<ModalWrapper name="updateContact" size="md" title="Update Member" localOverlay={contactUpdateOverlay} >
+  <ContactUpdateForm closeModal={contactUpdateOverlay.closeModals} />
+</ModalWrapper>
+
         {status === 'success' && <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl>
           <FormLabel color="raid">Client PoCs</FormLabel>
@@ -133,8 +142,8 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                           <Heading as="h4" fontSize="2xl" textColor="white" fontFamily="uncial" variant="shadow" >
                             Contact #{index + 1}
                           </Heading>
-                          
                           <Button>Edit</Button>
+                          
                           </HStack>
                           <HStack gap={6}>
                           <VStack gap={1} justifyContent="flex-start" alignItems='flex-start'>
