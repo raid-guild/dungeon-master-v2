@@ -16,9 +16,9 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
     () => [
       { label: 'Client', value: invoice.client },
       { label: 'Raid Party', value: invoice.provider },
-      { label: 'Resolver', name: resolverInfo.name, value: invoice.resolver },
+      { label: 'Resolver', name: resolverInfo?.name, value: invoice.resolver },
     ],
-    [invoice.client, invoice.provider, invoice.resolver, resolverInfo.name]
+    [invoice.client, invoice.provider, invoice.resolver, resolverInfo?.name]
   );
 
   return (

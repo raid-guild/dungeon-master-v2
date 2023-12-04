@@ -32,7 +32,11 @@ const NewEscrow = () => {
     setStep((prev) => prev - 1);
   };
 
-  const { data: raid } = useRaidDetail({ raidId, token });
+  const { data: raid } = useRaidDetail({
+    raidId,
+    token,
+    roles: _.get(session, 'user.roles'),
+  });
 
   useEffect(() => {
     if (!raidId) {

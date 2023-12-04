@@ -48,7 +48,11 @@ export const Escrow = () => {
   const { watch } = localForm;
   const raidId = watch('raidId');
 
-  const { data: raid, isLoading } = useRaidDetail({ raidId, token });
+  const { data: raid, isLoading } = useRaidDetail({
+    raidId,
+    token,
+    roles: _.get(session, 'user.roles'),
+  });
 
   return (
     <>
