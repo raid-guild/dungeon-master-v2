@@ -6,6 +6,7 @@ import {
   TabPanels,
   Tabs
 } from "@raidguild/design-system";
+
 import { IRaid } from "@raidguild/dm-types";
 import React from "react";
 
@@ -52,19 +53,19 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
             <Box marginY="6">
               <TabPanels>
                 <TabPanel>
-                  <ProjectDetailsUpdateForm raid={raid} />
+                  <ProjectDetailsUpdateForm raid={raid} closeModal={closeModal}/>
                 </TabPanel>
                 <TabPanel>
-                  <KeyLinksUpdateForm raid={raid} />
+                  <KeyLinksUpdateForm raid={raid} closeModal={closeModal}/>
                 </TabPanel>
                 <TabPanel>
-                  <ClientPoCUpdateForm raid={raid} />
+                  <ClientPoCUpdateForm raid={raid} closeModal={closeModal}/>
                 </TabPanel>
                 <TabPanel>
-                  <AdditionalInfoUpdateForm raid={raid} />
+                  <AdditionalInfoUpdateForm raid={raid} closeModal={closeModal}/>
                 </TabPanel>
                 <TabPanel>
-                  <PortfolioUpdateForm raid={raid} />
+                  <PortfolioUpdateForm raid={raid} closeModal={closeModal}/>
                 </TabPanel>
               </TabPanels>
             </Box>

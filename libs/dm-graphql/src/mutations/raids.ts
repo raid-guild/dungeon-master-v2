@@ -7,10 +7,10 @@ export const RAID_UPDATE_MUTATION = gql`
     update_raids_by_pk(pk_columns: { id: $id }, _set: $raid_updates) {
       ...RaidDetail
     }
-    update_consultations_by_pk(pk_columns: { id: $consultation_update.id }, _set: { budget_key: $consultation_update.budget_key }) {
-      id
-      budget_key
-    }
+    # update_consultations_by_pk(pk_columns: { id: $consultation_update.id }, _set: { budget_key: $consultation_update.budget_key }) {
+    #   id
+    #   budget_key
+    # }
   }
   ${RAID_DETAIL_FRAGMENT}
 `;

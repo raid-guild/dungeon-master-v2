@@ -24,7 +24,6 @@ const useRaidUpdate = ({
       const input = {
         id: raidId,
         raid_updates: args.raid_updates,
-        ...(args.consultation_update && { consultation_update: args.consultation_update }),
       };
       
       const result = await client({ token }).request(RAID_UPDATE_MUTATION, input);

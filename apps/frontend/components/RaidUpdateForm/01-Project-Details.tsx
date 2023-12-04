@@ -10,10 +10,10 @@ import {
   Select,
   Stack,
 } from "@raidguild/design-system";
-import { useContacts, useRaidUpdate } from "@raidguild/dm-hooks";
+import { useRaidUpdate } from "@raidguild/dm-hooks";
 import { IRaid } from "@raidguild/dm-types";
 import { BUDGET_DISPLAY_OPTIONS, DELIVERY_PRIORITIES_DISPLAY_OPTIONS, RAID_CATEGORY_OPTIONS } from "@raidguild/dm-utils";
-import { add } from "date-fns";
+import { add, set } from "date-fns";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
@@ -31,11 +31,17 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   raid,
 }: ProjectDetailsUpdateFormProps) => {
   const [sending, setSending] = useState(false);
+
+
   const [startDate, setStartDate] = useState<Date | null>(
     raid?.startDate ? new Date(raid?.startDate) : new Date(),
   );
   const [endDate, setEndDate] = useState<Date | null>(
     raid?.endDate ? new Date(raid?.endDate) : add(new Date(), { weeks: 1 }),
+  );
+
+  const [desiredDeliveryDate, setDesiredDeliveryDate] = useState<Date | null>(
+    new Date(raid["consultation"]["desiredDeliveryDate"] ?? add(new Date(), { weeks: 1 })),
   );
   const { data: session } = useSession();
   const token = _.get(session, "token");
@@ -56,17 +62,17 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
+    console.log(raid['consultation'].id, values)
     await updateRaidStatus({
       raid_updates: {
-        name: values.raidName ?? raid.raidName,
-        category_key: values.raidCategory.value ??
-          raid.raidCategory.raidCategory,
-        status_key: raid.status ?? raid.status,
+        name: values.raidName,
+        category_key: values.raidCategory.value,
+        // status_key: values.raidStatus.value,
         start_date: values.startDate ?? raid.startDate,
         end_date: values.endDate ?? raid.endDate,
       },
       consultation_update: {
-        id: raid.consultationByConsultation.id,
+        id: raid['consultation'].id,
         budget_key: values.raidBudget.value ??
           _.get(raid["consultation"], "budgetOption.budgetOption"),
       },
@@ -121,7 +127,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
                 return;
               }
               setStartDate(date);
-              setValue("startDate", date);
+              setValue("startDate", startDate);
             }}
             customInput={<CustomCalInput />}
             localForm={localForm}
@@ -135,7 +141,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
                 return;
               }
               setEndDate(date);
-              setValue("endDate", date);
+              setValue("endDate", endDate);
             }}
             customInput={<CustomCalInput />}
             localForm={localForm}
@@ -181,22 +187,20 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
           />
         </FormControl>
         <DatePicker
-          name="desiredDeliveryDate"
-          label="Desired Delivery Date"
-          selected={_.get(
-            raid["consultation"],
-            "desired_delivery_date",
-          ) ?? new Date()}
-          onChange={(date) => {
-            if (Array.isArray(date)) {
-              return;
-            }
-            setStartDate(date);
-            setValue("desiredDeliveryDate", date);
-          }}
-          customInput={<CustomCalInput />}
-          localForm={localForm}
-        />
+            name="desiredDeliveryDate"
+            label="Desired Delivery Date"
+            selected={desiredDeliveryDate}
+            onChange={(date) => {
+              if (Array.isArray(date)) {
+                return;
+              }
+              setDesiredDeliveryDate(date);
+              setValue("desiredDeliveryDate", date);
+            }}
+            customInput={<CustomCalInput />}
+            localForm={localForm}
+          />
+
 
         <FormControl>
           <FormLabel color="raid">Delivery Priority</FormLabel>
