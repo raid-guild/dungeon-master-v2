@@ -40,7 +40,11 @@ const RaidDate = ({
 const Raid = ({ raidId }: { raidId: string }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: raid } = useRaidDetail({ raidId, token });
+  const { data: raid } = useRaidDetail({
+    raidId,
+    token,
+    roles: _.get(session, 'user.roles'),
+  });
 
   const startOrEnd = _.get(raid, 'startDate') || _.get(raid, 'endDate');
 
