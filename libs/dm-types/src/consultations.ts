@@ -47,9 +47,10 @@ export interface IConsultation {
 }
 
 export interface IConsultationUpdate {
-  consultation_update: {
-    id: string;
+  consultation_updates: {
+    id?: string;
     consultation_status_key?: string;
     budget_key?: string;
+    desired_delivery_date?: string;
   };
 }

@@ -11,7 +11,7 @@ import {
   Stack,
 } from "@raidguild/design-system";
 import { useRaidUpdate } from "@raidguild/dm-hooks";
-import { IRaid } from "@raidguild/dm-types";
+import { IConsultationUpdate, IRaid } from "@raidguild/dm-types";
 import { BUDGET_DISPLAY_OPTIONS, DELIVERY_PRIORITIES_DISPLAY_OPTIONS, RAID_CATEGORY_OPTIONS } from "@raidguild/dm-utils";
 import { add, set } from "date-fns";
 import _ from "lodash";
@@ -46,7 +46,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   const { data: session } = useSession();
   const token = _.get(session, "token");
 
-  const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
+  const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId, consultationId: raid["consultation"]["id"] });
   
 
   const localForm = useForm({
@@ -62,20 +62,19 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
 
   async function onSubmit(values) {
     setSending(true);
-    console.log(raid['consultation'].id, values)
     await updateRaidStatus({
       raid_updates: {
-        name: values.raidName,
-        category_key: values.raidCategory.value,
-        // status_key: values.raidStatus.value,
+        name: values.raidName ?? raid.raidName,
+        category_key: values.raidCategory.value ?? raid.raidCategory.raidCategory,
+        status_key: raid.status ?? raid.status,
         start_date: values.startDate ?? raid.startDate,
         end_date: values.endDate ?? raid.endDate,
       },
       consultation_update: {
-        id: raid['consultation'].id,
-        budget_key: values.raidBudget.value ??
-          _.get(raid["consultation"], "budgetOption.budgetOption"),
-      },
+        desired_delivery_date: values.desiredDeliveryDate ?? raid["consultation"]["desiredDeliveryDate"],
+        budget_key: values.raidBudget.value ?? raid["consultation"].budgetOption.budgetOption,
+        consultation_status_key: values.deliveryPriority.value ?? raid['consultation'].deliveryPriority,
+      }
     });
     closeModal();
     setSending(false);
