@@ -59,7 +59,7 @@ const checkSignature = ({
   credentials,
 }: SiweCredentialParams): Promise<SiweCredentialParams> =>
   siwe
-    .validate(_.get(credentials, 'signature', ''))
+    .verify({ signature: _.get(credentials, 'signature', '') })
     .then(() => Promise.resolve({ siwe, credentials }))
     .catch((error: Error) => {
       // eslint-disable-next-line no-console

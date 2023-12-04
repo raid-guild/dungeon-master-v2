@@ -45,7 +45,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
   const isClient = _.toLower(address) === _.toLower(client);
   const isResolver = _.toLower(address) === _.toLower(resolver);
 
-  const balance = invoiceTokenBalance.value;
+  const balance = _.get(invoiceTokenBalance, 'value', BigInt(0));
   // const dispute =
   //   isLocked && !_.isEmpty(disputes) ? _.last(disputes) : undefined;
   const deposited = BigInt(released) + balance;
@@ -135,7 +135,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
         )}
       </SimpleGrid>
 
-      <Modal isOpen onClose={() => setModal(false)} isCentered>
+      <Modal isOpen={modal} onClose={() => setModal(false)} isCentered>
         <ModalOverlay>
           <ModalContent
             p='2rem'
@@ -165,7 +165,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
                 close={() => setModal(false)}
               />
             )}
-            {true && ( // modal && selected === 4 && (
+            {modal && selected === 4 && (
               <WithdrawFunds invoice={invoice} balance={balance} />
             )}
           </ModalContent>

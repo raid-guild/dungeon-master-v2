@@ -51,20 +51,28 @@ export const encodeAuth = async ({
   maxAge?: number;
 }) => {
   if (_.get(token, 'exp')) return encodeToken(token);
+  console.log(process.env.NEXT_PUBLIC_API_URL);
+  return getOrCreateUser(_.get(token, 'sub'))
+    .then((user) => {
+      if (user === 'AUTHED_USER') {
+        return encodeToken(
+          createToken({
+            user: { id: _.get(token, 'sub') },
+            token,
+            maxAge,
+            roles: ['user'],
+          })
+        );
+      }
 
-  const user = await getOrCreateUser(_.get(token, 'sub'));
-  if (user === 'AUTHED_USER') {
-    return encodeToken(
-      createToken({
-        user: { id: _.get(token, 'sub') },
-        token,
-        maxAge,
-        roles: ['user'],
-      })
-    );
-  }
-
-  return encodeToken(createToken({ user, token, maxAge, roles: ['member'] }));
+      return encodeToken(
+        createToken({ user, token, maxAge, roles: ['member'] })
+      );
+    })
+    .catch((err) => {
+      console.error(err);
+      return ''; // better fallback?
+    });
 };
 
 export const decodeToken = (token: string) =>
