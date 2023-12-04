@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-import { Box, Button, Card, defaultTheme,FormControl, FormLabel, Heading, HStack, Select, Spacer, Text, VStack } from "@raidguild/design-system";
+import { Box, Button, defaultTheme, FormControl, FormLabel, Heading, HStack, Select, Text, VStack } from "@raidguild/design-system";
 import { useContacts } from "@raidguild/dm-hooks";
 import { IRaid } from "@raidguild/dm-types";
 import { useOverlay } from "apps/frontend/contexts/OverlayContext";
@@ -7,7 +7,7 @@ import _ from "lodash";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-
+import ContactUpdateForm from "../ContactUpdateForm";
 import ModalWrapper from "../ModalWrapper";
 
 interface ClientPocUpdateProps {
@@ -34,6 +34,14 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   }: ClientPocUpdateProps) =>{
 
     const contactUpdateOverlay = useOverlay();
+
+    const { setModals, closeModals } = contactUpdateOverlay;
+
+    const handleContactUpdateModal = () => {
+      setModals({ contactUpdate: true, raidForm: true });
+    };
+
+
 
     const { data: session } = useSession();
     const token = _.get(session, "token");
@@ -64,7 +72,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
         console.log(data);
       };
     
-
+  const [editContact, setEditContact] = useState<IContact>(null);
       
 
     const localform = useForm({
@@ -86,9 +94,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     return (
     <Box>
 
-<ModalWrapper name="updateContact" size="md" title="Update Member" localOverlay={contactUpdateOverlay} >
-  <ContactUpdateForm closeModal={contactUpdateOverlay.closeModals} />
-</ModalWrapper>
+
 
         {status === 'success' && <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl>
@@ -130,20 +136,36 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
         </form>}
 
+        <ModalWrapper name="contactUpdate" size="md" title="Update Contact" localOverlay={contactUpdateOverlay} zIndex={200}>
+                            <ContactUpdateForm contact={editContact}/>
+                          </ModalWrapper>
                 {/* // display selected client PoCs */}
                 
                 <VStack overflowX='auto' maxH="500px" mt={6} w='fit-content'>
                   {
                     _.compact(selectedPoCs?.map((contact, index) => {
-                      const foundContact = _.find(contacts, { id: contact.value });
+                      const foundContact:IContact = _.find(contacts, { id: contact.value });
                       return foundContact && (
                         <VStack key={contact.value} w='full' p={8} gap={4} justifyContent="flex-start" alignItems='flex-start' backgroundColor={defaultTheme.colors.gray[900]} textAlign="left" border="1px solid #FFFFFF15" borderRadius={12}>
                           <HStack justify="space-between" align="center" w="full"> 
                           <Heading as="h4" fontSize="2xl" textColor="white" fontFamily="uncial" variant="shadow" >
                             Contact #{index + 1}
                           </Heading>
-                          <Button>Edit</Button>
+                          <Button onClick={() => {
+                            
+                            setEditContact(foundContact)
                           
+                            // set delay
+                            setTimeout(() => {
+                              handleContactUpdateModal();
+                            }, 100);
+                  
+                          
+                          }}>Edit</Button>
+                          
+
+
+
                           </HStack>
                           <HStack gap={6}>
                           <VStack gap={1} justifyContent="flex-start" alignItems='flex-start'>

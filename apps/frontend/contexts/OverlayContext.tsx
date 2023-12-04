@@ -10,11 +10,13 @@ export type IModals = {
   raidStatus: boolean;
   raidForm: boolean;
   memberForm: boolean;
+  contactUpdate: boolean;
 };
 const defaults: IModals = {
   raidStatus: false,
   raidForm: false,
   memberForm: false,
+  contactUpdate: false,
 };
 
 export type OverlayContextType = {
