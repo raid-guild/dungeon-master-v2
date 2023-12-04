@@ -5,14 +5,18 @@ import { Controller, useForm } from "react-hook-form";
 import _ from "lodash";
 import { object } from "yup";
 
+const contactOptions = ["email", "discord", "github", "twitter", "telegram"]
+
 const ContactUpdateForm = ({contact}: {contact: IContact}) => {
 
 
   
 
-  const contactInfos = _.map(contact["contactInfo"], (value:string, label:string) => ({ label, value }));
+  const contactInfos = _.map(contactOptions, (option) => (
+    contact.contactInfo[option] ? {label: option, value: contact.contactInfo[option]} :
+    { label: option, value: "" }));
 
-
+console.log(contactInfos)
 
     const localForm = useForm({
         mode: "all",
