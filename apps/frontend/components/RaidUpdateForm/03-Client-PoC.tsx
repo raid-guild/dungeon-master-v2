@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ContactUpdateForm from "../ContactUpdateForm";
 import ModalWrapper from "../ModalWrapper";
-
+import { IContact } from "@raidguild/dm-types";
 interface ClientPocUpdateProps {
     raidId?: string;
     closeModal?: () => void;
@@ -17,13 +17,6 @@ interface ClientPocUpdateProps {
     // consultation:  Partial<IConsultation>;
   }
 
-
-interface IContact {
-    id: string;
-    name: string;
-    bio: string | null;
-    contactInfo: { email: string };
-  }
   
 
 
@@ -160,6 +153,8 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                               handleContactUpdateModal();
                             }, 100);
                   
+
+
                           
                           }}>Edit</Button>
                           

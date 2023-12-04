@@ -1,15 +1,14 @@
 import { Box, Button, Input, Stack } from "@raidguild/design-system";
 import { IContact } from "@raidguild/dm-types";
-import React from "react";
-import { Controller, useForm } from "react-hook-form";
 import _ from "lodash";
-import { object } from "yup";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const contactOptions = ["email", "discord", "github", "twitter", "telegram"]
 
 const ContactUpdateForm = ({contact}: {contact: IContact}) => {
 
-
+const [sending, setSending] = useState(false);
   
 
   const contactInfos = _.map(contactOptions, (option) => (
@@ -73,7 +72,18 @@ console.log(contactInfos)
           );
         })}
 
-                <Button type="submit" w={'full'}>Submit</Button>
+<Button
+                  isLoading={isSubmitting || sending}
+                  type="submit"
+                  width="full"
+                  color="raid"
+                  borderColor="raid"
+                  border="1px solid"
+                  size="md"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="bold"
+                >Submit</Button>
                 </Stack>
         
       </form>

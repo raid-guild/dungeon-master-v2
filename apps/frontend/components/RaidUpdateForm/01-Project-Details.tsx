@@ -43,7 +43,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
   
 
-  const localform = useForm({
+  const localForm = useForm({
     mode: "all",
   });
 
@@ -52,7 +52,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
     setValue,
     control,
     formState: { isSubmitting }, // will add errors in once we add validation
-  } = localform;
+  } = localForm;
 
   async function onSubmit(values) {
     setSending(true);
@@ -105,7 +105,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
           placeholder="Enter the Raid name"
           rounded="base"
           label="Raid Name"
-          localForm={localform}
+          localForm={localForm}
         />
         <Flex
           direction={{ base: "column", lg: "row" }}
@@ -124,7 +124,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
               setValue("startDate", date);
             }}
             customInput={<CustomCalInput />}
-            localForm={localform}
+            localForm={localForm}
           />
           <DatePicker
             name="endDate"
@@ -138,7 +138,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
               setValue("endDate", date);
             }}
             customInput={<CustomCalInput />}
-            localForm={localform}
+            localForm={localForm}
           />
         </Flex>
         <FormControl>
@@ -155,7 +155,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
                 }
                 name="raidBudget"
                 options={BUDGET_DISPLAY_OPTIONS}
-                localForm={localform}
+                localForm={localForm}
               />
             )}
           />
@@ -175,7 +175,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
                 }
                 name="raidCategory"
                 options={RAID_CATEGORY_OPTIONS}
-                localForm={localform}
+                localForm={localForm}
               />
             )}
           />
@@ -195,7 +195,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             setValue("desiredDeliveryDate", date);
           }}
           customInput={<CustomCalInput />}
-          localForm={localform}
+          localForm={localForm}
         />
 
         <FormControl>
@@ -212,7 +212,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
                 }
                 name="deliveryPriority"
                 options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
-                localForm={localform}
+                localForm={localForm}
               />
             )}
           />
@@ -226,7 +226,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             placeholder="Enter the Invoice address"
             rounded="base"
             label="Invoice Address"
-            localForm={localform}
+            localForm={localForm}
           />
         )}
       </Stack>

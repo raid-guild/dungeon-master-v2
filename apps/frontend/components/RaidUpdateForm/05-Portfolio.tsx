@@ -60,10 +60,23 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
     raid,
   }: PortfolioUpdateProps) => {
     
-    const localForm = useForm();
-  const { handleSubmit } = localForm;
+    const localForm = useForm({
+      mode: "all",
+    });
+    
+    const {
+      handleSubmit,
+      control,
+      watch,
+      formState: { isSubmitting },
+    } = localForm;
   
+  const [sending, setSending] = useState(false);
+  
+
   const [isPublished, setIsPublished] = useState(true);
+
+
 
 
   let portfolio:any
@@ -82,44 +95,28 @@ return    (
       name='projectName'
       localForm={localForm}
       defaultValue={ portfolio?.name ?? ''}
-      border={`1px solid ${defaultTheme.colors.primary[400]}`}
-      _focus={{ border: `1.5px solid ${defaultTheme.colors.purple[400]}` }}
-      p={1}
-      borderRadius={0}
-      variant='unstyled'
+     
     />
     <Input
       label='Project Slug:'
       name='slug'
       localForm={localForm}
       defaultValue={ portfolio?.slug ?? ''}
-      border={`1px solid ${defaultTheme.colors.primary[400]}`}
-      _focus={{ border: `1.5px solid ${defaultTheme.colors.purple[400]}` }}
-      p={1}
-      borderRadius={0}
-      variant='unstyled'
+     
     />
     <Input
       label='Github:'
       name='githubUrl'
       localForm={localForm}
       defaultValue={ portfolio?.repoLink ?? ''}
-      border={`1px solid ${defaultTheme.colors.primary[400]}`}
-      _focus={{ border: `1.5px solid ${defaultTheme.colors.purple[400]}` }}
-      p={1}
-      borderRadius={0}
-      variant='unstyled'
+     
     />
     <Input
       label='Description:'
       name='description'
       localForm={localForm}
       defaultValue={ portfolio?.description ?? ''}
-      border={`1px solid ${defaultTheme.colors.primary[400]}`}
-      _focus={{ border: `1.5px solid ${defaultTheme.colors.purple[400]}` }}
-      p={1}
-      borderRadius={0}
-      variant='unstyled'
+     
     />
 
     <VStack alignItems='flex-start' width='100%'>
@@ -146,11 +143,7 @@ return    (
               ? portfolio?.approach.content[0]
               : portfolio?.result.content[0]) ?? ''
           }
-          border={`1px solid ${defaultTheme.colors.primary[400]}`}
-          _focus={{ border: `1.5px solid ${defaultTheme.colors.purple[400]}` }}
-          p={1}
-          borderRadius={0}
-          variant='unstyled'
+  
         />
         <Text fontSize='0.8rem'>
           This textarea accepts{' '}
@@ -162,9 +155,20 @@ return    (
     ))}
     <Select name='categoryOptions' localForm={localForm} options={categoryOptions} variant='outline' />
 
-    <Box pt={8} onClick={handleSubmit(onSubmit)} fontFamily='mono'>
+    <Button
+                  isLoading={isSubmitting || sending}
+                  type="submit"
+                  width="full"
+                  color="raid"
+                  borderColor="raid"
+                  border="1px solid"
+                  size="md"
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  fontWeight="bold"
+                >
       <Button width='200px'>{isPublished ? 'Unpublish' : 'Publish Update'}</Button>
-    </Box>
+    </Button>
   </VStack>
   )
 }

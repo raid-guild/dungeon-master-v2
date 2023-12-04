@@ -33,7 +33,7 @@ import { useForm } from "react-hook-form";
 
     const { mutateAsync: updateLinks } = useAddLinks({ token});
   
-    const form_projectDetails = useForm({
+    const localForm = useForm({
       mode: "all",
     });
     const {
@@ -41,7 +41,7 @@ import { useForm } from "react-hook-form";
       setValue,
       control,
       formState: { isSubmitting }, // will add errors in once we add validation
-    } = form_projectDetails;
+    } = localForm;
   
     async function onSubmit(values) {
       setSending(true);
@@ -68,7 +68,7 @@ import { useForm } from "react-hook-form";
   
     return (
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={4}>
+        <Stack spacing={4} gap={4}> 
         <Input
                         name="projectSpecs"
                         // eslint-disable-next-line dot-notation
@@ -77,9 +77,9 @@ import { useForm } from "react-hook-form";
                         placeholder="Link to Project Specs Dcoument"
                         rounded="base"
                         label="Project Specs"
-                        localForm={form_projectDetails}
+                        localForm={localForm}
                       /> 
-        </Stack>
+        
   
         <Button
           isLoading={isSubmitting || sending}
@@ -95,6 +95,7 @@ import { useForm } from "react-hook-form";
         >
           Update Key Links
         </Button>
+        </Stack>
       </form>
     );
   };
