@@ -15,6 +15,8 @@ export const INSERT_LINKS_MUTATION = gql`
   }
 `;
 
+
+
 export const UPDATE_LINKS_MUTATION = gql`
   mutation UpdateLinks(updates: [links_updates!]!) {
     update_links_many(updates: $updates) {

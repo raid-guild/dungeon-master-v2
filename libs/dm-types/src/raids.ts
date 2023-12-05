@@ -2,6 +2,7 @@ import { Hex } from 'viem';
 
 import { IConsultation } from './consultations';
 import { IMember } from './members';
+import { ILink } from './misc';
 import { IStatusUpdate } from './statusUpdates';
 
 export type raidSortKeys =
@@ -49,6 +50,7 @@ export interface IRaid {
 
 
   // LINKS
+  links: ILink[];
   
 }
 

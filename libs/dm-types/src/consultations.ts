@@ -1,4 +1,5 @@
 import { IContact } from './contacts';
+import { ILink } from './misc';
 
 export interface IConsultation {
   id: string;
@@ -11,6 +12,9 @@ export interface IConsultation {
   };
   description: string;
   link: string;
+  links: {
+    link: ILink;
+  }
   servicesRequired: {
     guildService: {
       guildService: string; // ENUM

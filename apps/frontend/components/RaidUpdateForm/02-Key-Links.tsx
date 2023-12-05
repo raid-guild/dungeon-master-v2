@@ -5,7 +5,7 @@ import {
   Input,
   Stack,
 } from "@raidguild/design-system";
-import { useAddLinks } from "@raidguild/dm-hooks";
+import { useAddLinks , useLinksByConsultation,useLinksByRaid } from "@raidguild/dm-hooks";
 import {
   IRaid,
   LINK_TYPES_ENUM,
@@ -14,7 +14,7 @@ import _ from "lodash";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-  
+
 const linkTypes: LINK_TYPES_ENUM = [
   'SPECIFICATION',
   'RETROSPECTIVE',
@@ -36,8 +36,13 @@ const linkTypes: LINK_TYPES_ENUM = [
     const token = _.get(session, "token");
     const [sending, setSending] = useState(false);
 
-    const { mutateAsync: updateLinks } = useAddLinks({ token});
-  
+    // const { mutateAsync: updateLinks } = useAddLinks({ token});
+    
+    
+    const {data: links} = useLinksByRaid({token, raidId: raid.id});
+
+    // console.log(links);
+
     const localForm = useForm({
       mode: "all",
     });
@@ -51,6 +56,7 @@ const linkTypes: LINK_TYPES_ENUM = [
     async function onSubmit(values) {
       setSending(true);
     
+      console.log(values);
       // TODO handle links input
 
       // await updateLinks({
@@ -63,7 +69,9 @@ const linkTypes: LINK_TYPES_ENUM = [
       setSending(false);
     }
   
-    
+    console.log(raid)
+    console.log(raid.consultation)
+
   
     const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
       <Button onClick={onClick} ref={ref} variant="outline">
@@ -81,7 +89,7 @@ const linkTypes: LINK_TYPES_ENUM = [
             key={linkType}
             name={linkType}
             // eslint-disable-next-line dot-notation
-            defaultValue={_.get(raid["LINKS"], linkType)}
+            defaultValue={linkType === 'SPECIFICATION' ? _.get(raid["consultation"], linkType) ?? raid.consultation.link : ""}
             aria-label={linkType}
             placeholder={linkType}
             rounded="base"
