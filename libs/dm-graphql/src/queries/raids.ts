@@ -67,6 +67,13 @@ export const RAID_DETAIL_QUERY = gql`
     raids_by_pk(id: $id) {
       id
       name
+      links {
+      id
+      link
+      link_type {
+        type
+      }
+    }
       raid_status {
         raid_status
       }

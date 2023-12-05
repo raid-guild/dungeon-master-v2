@@ -23,6 +23,13 @@ export const MEMBER_LIST_QUERY = gql`
       name
       eth_address
       is_raiding
+      links {
+      id
+      link
+      link_type {
+        type
+      }
+    }
       contact_info {
         ...ContactInfos
       }

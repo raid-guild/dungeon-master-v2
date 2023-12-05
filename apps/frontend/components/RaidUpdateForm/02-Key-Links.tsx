@@ -8,13 +8,18 @@ import {
 import { useAddLinks } from "@raidguild/dm-hooks";
 import {
   IRaid,
+  LINK_TYPES_ENUM,
 } from "@raidguild/dm-types";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
   
-
+const linkTypes: LINK_TYPES_ENUM = [
+  'SPECIFICATION',
+  'RETROSPECTIVE',
+  'OTHER',
+];
   interface KeyLinksUpdateFormProps {
     raidId?: string;
     closeModal?: () => void;
@@ -69,7 +74,24 @@ import { useForm } from "react-hook-form";
     return (
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={4} gap={4}> 
-        <Input
+
+      {
+        linkTypes.map((linkType) => (
+          <Input
+            key={linkType}
+            name={linkType}
+            // eslint-disable-next-line dot-notation
+            defaultValue={_.get(raid["LINKS"], linkType)}
+            aria-label={linkType}
+            placeholder={linkType}
+            rounded="base"
+            label={linkType}
+            localForm={localForm}
+          />
+        ))
+      }
+
+        {/* <Input
                         name="projectSpecs"
                         // eslint-disable-next-line dot-notation
                         defaultValue={_.get(raid["consultation"], "link")}
@@ -79,7 +101,7 @@ import { useForm } from "react-hook-form";
                         label="Project Specs"
                         localForm={localForm}
                       /> 
-        
+         */}
   
         <Button
           isLoading={isSubmitting || sending}

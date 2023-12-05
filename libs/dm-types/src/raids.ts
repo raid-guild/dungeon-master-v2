@@ -46,6 +46,10 @@ export interface IRaid {
   endDate: string;
   createdAt: string;
   updatedAt: string;
+
+
+  // LINKS
+  
 }
 
 export interface IRaidCreate {

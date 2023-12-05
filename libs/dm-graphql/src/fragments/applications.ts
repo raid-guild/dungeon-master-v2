@@ -32,6 +32,13 @@ export const APPLICATION_DETAIL_FRAGMENT = gql`
     comments
     created_at
     updated_at
+    links {
+      id
+      link
+      link_type {
+        type
+      }
+    }
     contact_info {
       ...ContactInfos
     }

@@ -2,8 +2,6 @@
 
 import { gql } from "graphql-request";
 
-import { LINKS_FRAGMENT } from "../fragments/links";
-
 export const INSERT_LINKS_MUTATION = gql`
   mutation InsertLinks($insertLinks: [links_insert_input!]!) {
     insert_links(objects: $insertLinks) {

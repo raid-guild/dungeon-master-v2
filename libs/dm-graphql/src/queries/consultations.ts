@@ -6,6 +6,13 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     budget_option {
       budget_option
     }
+    links {
+      id
+      link
+      link_type {
+        type
+      }
+    }
     consultation_status {
       consultation_status
     }

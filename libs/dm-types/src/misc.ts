@@ -9,9 +9,9 @@ export type ISkill = { skill_key: string; skill_type_key: string; member_id: str
 
 
 export type LINK_TYPES_ENUM = [
-  'OTHER',
-  'RETROSPECTIVE',
   'SPECIFICATION',
+  'RETROSPECTIVE',
+  'OTHER', 
 ]
 
 
