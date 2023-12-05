@@ -32,7 +32,7 @@ export interface IRaid {
     memberbyMember: IMember;
   }[];
   memberByCleric: IMember;
-  consultationByConsultation: IConsultation;
+  consultation: IConsultation;
   updates: IStatusUpdate[];
 
   // LEGACY

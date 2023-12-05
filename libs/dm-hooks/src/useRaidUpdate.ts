@@ -1,20 +1,19 @@
+import { useToast } from '@raidguild/design-system';
+import { client, RAID_UPDATE_MUTATION } from '@raidguild/dm-graphql';
+import { IConsultationUpdate,IRaidUpdate } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useToast } from '@raidguild/design-system';
 
-import { client, RAID_UPDATE_MUTATION } from '@raidguild/dm-graphql';
-import { camelize } from '@raidguild/dm-utils';
-import { IRaidUpdate, IConsultationUpdate } from '@raidguild/dm-types';
-
-const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidId: string, consultationId: string }) => {
+const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidId: string, consultationId?: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
+  
+  
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidUpdate & Partial<IConsultationUpdate>) => {
-      if (!raidId || !token) return null;
-
-  
+      // if (!raidId || !token) return null;
       const result = await client({ token }).request(RAID_UPDATE_MUTATION, {
         id: raidId,
         raid_updates: args.raid_updates,

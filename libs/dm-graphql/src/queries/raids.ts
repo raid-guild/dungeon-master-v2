@@ -88,6 +88,7 @@ export const RAID_DETAIL_QUERY = gql`
         }
       }
       consultation {
+        id
         budget_option {
           budget_option
         }

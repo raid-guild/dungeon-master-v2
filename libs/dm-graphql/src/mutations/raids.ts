@@ -3,13 +3,18 @@ import { gql } from 'graphql-request';
 import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAID_UPDATE_MUTATION = gql`
-  mutation RaidUpdateMutation($id: uuid!, $raid_updates: raids_set_input!, $consultation_update: consultations_set_input, consultation_id: uuid) {
+  mutation RaidUpdateMutation(
+  $id: uuid!, 
+  $raid_updates: raids_set_input!, 
+  $consultation_updates: consultations_set_input!, 
+  $consultation_id: uuid!)
+  
+   {
     update_raids_by_pk(pk_columns: { id: $id }, _set: $raid_updates) {
       ...RaidDetail
     }
     update_consultations_by_pk(pk_columns: { id: $consultation_id }, _set: $consultation_updates) {
-      id
-      budget_key
+      ...ConsultationDetail
     }
   }
   ${RAID_DETAIL_FRAGMENT}

@@ -96,7 +96,7 @@ const RaidPartyCard = ({
     await updateRaid({
       id: _.get(raid, "id"),
       raid_updates: raidUpdates,
-      consultation_update: {
+      consultation_updates: {
         id: "",
         consultation_status_key: "",
         budget_key: ""

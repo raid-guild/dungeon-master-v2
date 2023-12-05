@@ -8,6 +8,7 @@ import {
   Select,
   Stack
 } from "@raidguild/design-system";
+import { Option } from "@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect";
 import { useMemberUpdate } from "@raidguild/dm-hooks";
 import { IApplication,IMember } from "@raidguild/dm-types";
 import {
@@ -272,7 +273,7 @@ const secondarySkills = _.chain(member["membersSkills"])
                       <Select
                          // eslint-disable-next-line react/jsx-props-no-spreading
                          {...field}
-                        options={IS_RAIDING_OPTIONS}
+                        options={IS_RAIDING_OPTIONS as Option[]}
                         localForm={localForm}
                       />
                     )}

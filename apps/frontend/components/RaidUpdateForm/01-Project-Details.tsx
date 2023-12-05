@@ -11,9 +11,9 @@ import {
   Stack,
 } from "@raidguild/design-system";
 import { useRaidUpdate } from "@raidguild/dm-hooks";
-import { IConsultationUpdate, IRaid } from "@raidguild/dm-types";
+import { IRaid } from '@raidguild/dm-types';
 import { BUDGET_DISPLAY_OPTIONS, DELIVERY_PRIORITIES_DISPLAY_OPTIONS, RAID_CATEGORY_OPTIONS } from "@raidguild/dm-utils";
-import { add, set } from "date-fns";
+import { add } from 'date-fns';
 import _ from "lodash";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
@@ -26,7 +26,6 @@ interface ProjectDetailsUpdateFormProps {
   // consultation:  Partial<IConsultation>;
 }
 const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
-  raidId,
   closeModal,
   raid,
 }: ProjectDetailsUpdateFormProps) => {
@@ -46,7 +45,14 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   const { data: session } = useSession();
   const token = _.get(session, "token");
 
-  const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId, consultationId: raid["consultation"]["id"] });
+console.log(raid.consultation)
+
+const { mutateAsync: updateRaidStatus } = useRaidUpdate({
+  token,
+  raidId: raid.id,
+  consultationId: raid.consultation.id
+});
+
   
 
   const localForm = useForm({
@@ -60,6 +66,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
+
   async function onSubmit(values) {
     setSending(true);
     await updateRaidStatus({
@@ -70,10 +77,11 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
         start_date: values.startDate ?? raid.startDate,
         end_date: values.endDate ?? raid.endDate,
       },
-      consultation_update: {
+      consultation_updates: {
         desired_delivery_date: values.desiredDeliveryDate ?? raid["consultation"]["desiredDeliveryDate"],
         budget_key: values.raidBudget.value ?? raid["consultation"].budgetOption.budgetOption,
-        consultation_status_key: values.deliveryPriority.value ?? raid['consultation'].deliveryPriority,
+// consultation_status_key: values.deliveryPriority.value ?? raid['consultation'].deliveryPriority,
+
       }
     });
     closeModal();

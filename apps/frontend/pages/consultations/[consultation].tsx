@@ -84,7 +84,7 @@ const Consultation = ({ consultationId }: Props) => {
 
   const handleCancelConsultation = async () => {
     await updateConsultation({
-      consultation_update: {
+      consultation_updates: {
         id: _.get(consultation, 'id'),
         consultation_status_key: 'CANCELLED',
       },

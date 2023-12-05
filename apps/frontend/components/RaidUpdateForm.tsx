@@ -6,7 +6,6 @@ import {
   TabPanels,
   Tabs
 } from "@raidguild/design-system";
-
 import { IRaid } from "@raidguild/dm-types";
 import React from "react";
 
