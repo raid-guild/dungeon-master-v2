@@ -45,7 +45,6 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   const { data: session } = useSession();
   const token = _.get(session, "token");
 
-console.log(raid.consultation)
 
 const { mutateAsync: updateRaidStatus } = useRaidUpdate({
   token,
@@ -73,14 +72,14 @@ const { mutateAsync: updateRaidStatus } = useRaidUpdate({
       raid_updates: {
         name: values.raidName ?? raid.raidName,
         category_key: values.raidCategory.value ?? raid.raidCategory.raidCategory,
-        status_key: raid.status ?? raid.status,
-        start_date: values.startDate ?? raid.startDate,
-        end_date: values.endDate ?? raid.endDate,
+        status_key: values.status ?? raid.status,
+        start_date: values.startDate ?? startDate,
+        end_date: values.endDate ?? endDate,
       },
       consultation_updates: {
         desired_delivery_date: values.desiredDeliveryDate ?? raid["consultation"]["desiredDeliveryDate"],
         budget_key: values.raidBudget.value ?? raid["consultation"].budgetOption.budgetOption,
-// consultation_status_key: values.deliveryPriority.value ?? raid['consultation'].deliveryPriority,
+        delivery_priorities_key: values.deliveryPriority.value ?? raid['consultation'].deliveryPriority,
 
       }
     });
@@ -134,7 +133,7 @@ const { mutateAsync: updateRaidStatus } = useRaidUpdate({
                 return;
               }
               setStartDate(date);
-              setValue("startDate", startDate);
+              setValue("startDate", date);
             }}
             customInput={<CustomCalInput />}
             localForm={localForm}
@@ -148,7 +147,7 @@ const { mutateAsync: updateRaidStatus } = useRaidUpdate({
                 return;
               }
               setEndDate(date);
-              setValue("endDate", endDate);
+              setValue("endDate", date);
             }}
             customInput={<CustomCalInput />}
             localForm={localForm}

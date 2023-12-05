@@ -13,7 +13,7 @@ const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidI
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
     async ({ ...args }: IRaidUpdate & Partial<IConsultationUpdate>) => {
-      // if (!raidId || !token) return null;
+      if (!raidId || !token) return null;
       const result = await client({ token }).request(RAID_UPDATE_MUTATION, {
         id: raidId,
         raid_updates: args.raid_updates,
@@ -29,6 +29,15 @@ const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidI
           _.get(data, 'raids_by_pk', _.get(data, 'update_raids_by_pk'))
         );
 
+        queryClient.invalidateQueries([
+          'consultationDetail',
+          _.get(data, 'id'),
+        ]);
+        queryClient.invalidateQueries(['consultationList']);
+        queryClient.setQueryData(
+          ['consultationDetail', _.get(data, 'id')],
+          camelize(data)
+        );
         queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
         queryClient.invalidateQueries(['raidList']); // invalidate the raidList
         queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
