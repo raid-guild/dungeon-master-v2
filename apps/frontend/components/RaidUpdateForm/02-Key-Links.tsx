@@ -35,13 +35,13 @@ const linkTypes: LINK_TYPES_ENUM = [
     const { data: session } = useSession();
     const token = _.get(session, "token");
     const [sending, setSending] = useState(false);
-
-    // const { mutateAsync: updateLinks } = useAddLinks({ token});
     
     
     const {data: links} = useLinksByRaid({token, raidId: raid.id});
+    const {data: consult_links} = useLinksByConsultation({token, consultationId: raid.consultation.id});
 
-    // console.log(links);
+    console.log(links, consult_links);
+
 
     const localForm = useForm({
       mode: "all",
