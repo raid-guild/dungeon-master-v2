@@ -1,4 +1,4 @@
-import { Box, Input, Text, Button, Stack } from "@raidguild/design-system";
+import { Button, Input, Stack } from "@raidguild/design-system";
 import { IRaid } from "@raidguild/dm-types";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

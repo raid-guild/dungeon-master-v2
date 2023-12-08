@@ -49,19 +49,20 @@ export const useUpdateLinks = ({ token }: { token: string }) => {
     return { mutateAsync, isLoading, isError, isSuccess };
 };
 
-export const useDeleteLinks = ({ token }: { token: string }) => {
-    const queryClient = useQueryClient();
 
-    const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-        async ({ id }: { id: string }) => {
-            const result = await client({ token }).request(DELETE_LINKS_MUTATION, {
-                id,
-            });
+// export const useDeleteLinks = ({ token }: { token: string }) => {
+//     const queryClient = useQueryClient();
 
-            return result;
-        },
-        { onSuccess: () => onSuccess(queryClient) }
-    );
+//     const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
+//         async ({ id }: { id: string }) => {
+//             const result = await client({ token }).request(DELETE_LINKS_MUTATION, {
+//                 id,
+//             });
 
-    return { mutateAsync, isLoading, isError, isSuccess };
-};
+//             return result;
+//         },
+//         { onSuccess: () => onSuccess(queryClient) }
+//     );
+
+//     return { mutateAsync, isLoading, isError, isSuccess };
+// };

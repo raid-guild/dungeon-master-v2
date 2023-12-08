@@ -1,8 +1,7 @@
-import { Box, Button, defaultTheme,Input, Link, Select, Stack, Text, Textarea, VStack } from '@raidguild/design-system';
+import { Button, Input, Link, Select, Stack, Text, Textarea, VStack } from '@raidguild/design-system';
 import { IRaid } from "@raidguild/dm-types";
-import _ from 'lodash';
 import { useState } from 'react';
-import { FieldValues,useForm } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
 
 interface PortfolioUpdateProps {
     raidId?: string;
