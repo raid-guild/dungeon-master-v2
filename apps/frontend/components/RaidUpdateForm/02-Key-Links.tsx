@@ -5,7 +5,7 @@ import {
   Input,
   Stack,
 } from "@raidguild/design-system";
-import { useAddLinks , useLinksByConsultation,useLinksByRaid } from "@raidguild/dm-hooks";
+import { useLinksUpdate } from "@raidguild/dm-hooks";
 import {
   ILink,
   IRaid,
@@ -32,16 +32,17 @@ const linkTypes: LINK_TYPES_ENUM = [
     closeModal,
     raid,
   }: KeyLinksUpdateFormProps) => {
-    
+     
     const { data: session } = useSession();
     const token = _.get(session, "token");
     const [sending, setSending] = useState(false);
     
     const {links} = raid.consultation
     
-    
-    console.log(links)
-    
+    const { mutateAsync: updateLinks } =  useLinksUpdate({ token, consultationId: raid.consultation.id });
+  
+
+    console.log(session.user.role)
 
     const localForm = useForm({
       mode: "all",
@@ -56,14 +57,16 @@ const linkTypes: LINK_TYPES_ENUM = [
     async function onSubmit(values) {
       setSending(true);
     
-      console.log(values);
-      // TODO handle links input
+      const linkUpdates = _.map(linkTypes, (type) => ({
+        consultation_id: raid.consultation.id,
+        type: type as string,
+        link: values[type as string] as string,
+      } as unknown as ILink));
+  
 
-      // await updateLinks({
-      //   raid_updates: {
-      //     link: values.projectSpecs,
-      //   },
-      // });
+      
+       await updateLinks(linkUpdates);
+      
 
       closeModal();
       setSending(false);
@@ -98,18 +101,6 @@ const linkTypes: LINK_TYPES_ENUM = [
           />
         ))
       }
-
-        {/* <Input
-                        name="projectSpecs"
-                        // eslint-disable-next-line dot-notation
-                        defaultValue={_.get(raid["consultation"], "link")}
-                        aria-label="Project Specs"
-                        placeholder="Link to Project Specs Dcoument"
-                        rounded="base"
-                        label="Project Specs"
-                        localForm={localForm}
-                      /> 
-         */}
   
         <Button
           isLoading={isSubmitting || sending}
