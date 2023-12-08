@@ -6,13 +6,6 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     budget_option {
       budget_option
     }
-    links {
-      id
-      link
-      link_type {
-        type
-      }
-    }
     consultation_status {
       consultation_status
     }
@@ -38,6 +31,11 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     name
     description
     link
+    links {
+      id
+      link
+      type
+    }
     available_project_spec {
       available_project_spec
     }
@@ -108,6 +106,11 @@ export const CONSULTATION_LIST_QUERY = gql`
       name
       description
       link
+      links {
+        id
+        link
+        type
+    }
       available_project_spec {
         available_project_spec
       }

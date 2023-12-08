@@ -31,6 +31,12 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     name
     description
     link
+    links {
+      link
+      link_type {
+        type
+      }
+    }
     desired_delivery_date
     consultation_hash
     ...ConsultationEnumFragment

@@ -12,14 +12,13 @@ export interface IConsultation {
   };
   description: string;
   link: string;
-  links: {
-    link: ILink;
-  }
+  links: ILink[];
   servicesRequired: {
     guildService: {
       guildService: string; // ENUM
     };
   }[];
+
   desiredDeliveryDate: string;
   budgetOption: {
     budgetOption: string;

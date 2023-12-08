@@ -7,6 +7,7 @@ import {
 } from "@raidguild/design-system";
 import { useAddLinks , useLinksByConsultation,useLinksByRaid } from "@raidguild/dm-hooks";
 import {
+  ILink,
   IRaid,
   LINK_TYPES_ENUM,
 } from "@raidguild/dm-types";
@@ -36,12 +37,11 @@ const linkTypes: LINK_TYPES_ENUM = [
     const token = _.get(session, "token");
     const [sending, setSending] = useState(false);
     
+    const {links} = raid.consultation
     
-    const {data: links} = useLinksByRaid({token, raidId: raid.id});
-    const {data: consult_links} = useLinksByConsultation({token, consultationId: raid.consultation.id});
-
-    console.log(links, consult_links);
-
+    
+    console.log(links)
+    
 
     const localForm = useForm({
       mode: "all",
@@ -69,8 +69,7 @@ const linkTypes: LINK_TYPES_ENUM = [
       setSending(false);
     }
   
-    console.log(raid)
-    console.log(raid.consultation)
+    // console.log(links) 
 
   
     const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
@@ -84,12 +83,13 @@ const linkTypes: LINK_TYPES_ENUM = [
         <Stack spacing={4} gap={4}> 
 
       {
-        linkTypes.map((linkType) => (
+        linkTypes.map((linkType, index) => (
+          
           <Input
             key={linkType}
             name={linkType}
             // eslint-disable-next-line dot-notation
-            defaultValue={linkType === 'SPECIFICATION' ? _.get(raid["consultation"], linkType) ?? raid.consultation.link : ""}
+            defaultValue={(_.find(links, {type: linkType}) as ILink )?.link || ''}
             aria-label={linkType}
             placeholder={linkType}
             rounded="base"
