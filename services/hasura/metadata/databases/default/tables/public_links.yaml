@@ -17,3 +17,57 @@ object_relationships:
   - name: raid
     using:
       foreign_key_constraint_on: raid_id
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - link
+        - type
+        - application_id
+        - consultation_id
+        - id
+        - member_id
+        - raid_id
+    comment: ""
+select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - link
+        - type
+        - application_id
+        - consultation_id
+        - id
+        - member_id
+        - raid_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
+  - role: member
+    permission:
+      columns:
+        - link
+        - type
+        - application_id
+        - consultation_id
+        - id
+        - member_id
+        - raid_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - link
+        - type
+        - application_id
+        - consultation_id
+        - id
+        - member_id
+        - raid_id
+      filter: {}
+      check: {}
+    comment: ""
