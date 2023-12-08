@@ -11,6 +11,7 @@ export {
 } from './useConsultationList';
 export { default as useConsultationUpdate } from './useConsultationUpdate';
 export {  useContacts } from './useContacts';
+export {default as useContactUpdate} from './useContactUpdate';
 export { default as useDashboardList } from './useDashboardList';
 export { default as useDefaultTitle } from './useDefaultTitle';
 export * from './useLinks'; 

@@ -76,4 +76,4 @@ update_permissions:
         - contact_info_id
         - id
       filter: {}
-      check: null
+      check: {}

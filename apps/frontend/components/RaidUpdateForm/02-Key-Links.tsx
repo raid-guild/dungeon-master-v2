@@ -42,8 +42,6 @@ const linkTypes: LINK_TYPES_ENUM = [
     const { mutateAsync: updateLinks } =  useLinksUpdate({ token, consultationId: raid.consultation.id });
   
 
-    console.log(session.user.role)
-
     const localForm = useForm({
       mode: "all",
     });
@@ -72,7 +70,6 @@ const linkTypes: LINK_TYPES_ENUM = [
       setSending(false);
     }
   
-    // console.log(links) 
 
   
     const CustomCalInput = forwardRef(({ value, onClick }, ref) => (

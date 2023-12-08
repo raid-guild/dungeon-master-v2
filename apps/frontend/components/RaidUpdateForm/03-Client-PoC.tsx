@@ -60,7 +60,6 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     })
   );
 
-  console.log(defaultValues, clientPoCs[0]);
 
   const POC_DISPLAY_OPTIONS = _.map(contacts as IContact[], (contact) => ({
     label: `${contact?.name} - ${contact?.contactInfo?.email}`,

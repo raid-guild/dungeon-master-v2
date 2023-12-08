@@ -71,3 +71,8 @@ update_permissions:
       filter: {}
       check: {}
     comment: ""
+delete_permissions:
+  - role: member
+    permission:
+      filter: {}
+    comment: ""

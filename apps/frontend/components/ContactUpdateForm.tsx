@@ -1,4 +1,5 @@
 import { Box, Button, Input, Stack } from "@raidguild/design-system";
+import { useContactUpdate } from "@raidguild/dm-hooks";
 import { IContact } from "@raidguild/dm-types";
 import _ from "lodash";
 import { useState } from "react";
@@ -15,7 +16,8 @@ const [sending, setSending] = useState(false);
     contact.contactInfo[option] ? {label: option, value: contact.contactInfo[option]} :
     { label: option, value: "" }));
 
-console.log(contactInfos)
+    const token = ""; // Declare or provide an initializer for the 'token' variable
+    const {mutateAsync: updateContact} = useContactUpdate({token})
 
     const localForm = useForm({
         mode: "all",
@@ -28,8 +30,12 @@ console.log(contactInfos)
         formState: { isSubmitting },
       } = localForm;
 
-  const onSubmit = (data) => {
+  const onSubmit = (values) => {
     // Handle form submission
+
+    updateContact(values)
+
+
   };
 
   return (
@@ -57,9 +63,7 @@ console.log(contactInfos)
                   localForm={localForm}
                 />
 
-        {_.map(contactInfos, ({label, value}: {label: string, value: string}) => {
-
-          return (
+        {_.map(contactInfos, ({label, value}) => (
             <Input
               name={label}
               defaultValue={value}
@@ -69,8 +73,7 @@ console.log(contactInfos)
               label={label.charAt(0).toUpperCase() + label.slice(1)}
               localForm={localForm}
             />
-          );
-        })}
+          ))}
 
 <Button
                   isLoading={isSubmitting || sending}
@@ -90,5 +93,6 @@ console.log(contactInfos)
     </Box>
   );
 };
+
 
 export default ContactUpdateForm;

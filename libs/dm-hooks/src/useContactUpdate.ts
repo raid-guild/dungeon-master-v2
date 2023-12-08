@@ -1,29 +1,39 @@
-import { client, UPDATE_CONTACT_MUTATION } from '@raidguild/dm-graphql';
+import { client, CREATE_CONTACT_MUTATION, UPDATE_CONTACT_MUTATION } from '@raidguild/dm-graphql';
 import { IContact } from "@raidguild/dm-types";
-import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useContactUpdate = ({ token }: { token: string }) => {
     const queryClient = useQueryClient();
 
-    const createContact = async (contact: IContact) => {
-        const result = await client({ token }).request(UPDATE_CONTACT_MUTATION, {
-            ...contact,
-        });
-        return camelize(result);
-    };
+    async function handleContactOperation(contact: IContact) {
+        if (!contact) return null;
 
-    const { mutate, status, isLoading, isError, error } = useMutation(createContact, {
-        onSuccess: (data) => {
+        const operation = contact.id ? UPDATE_CONTACT_MUTATION : CREATE_CONTACT_MUTATION;
+        let variables: { id?: string, contact: IContact };
+
+        if (contact.id) {
+            const { id, ...contactData } = contact;
+            variables = { id, contact: contactData };
+        } else {
+            variables = { contact };
+        }
+
+        try {
+            const result = await client({ token }).request(operation, variables);
+            return result;
+        } catch (error) {
+            console.error("Error in handleContactOperation:", error);
+            throw error;
+        }
+    }
+
+    const { mutateAsync, isLoading, isError, isSuccess } = useMutation(handleContactOperation, {
+        onSuccess: () => {
             queryClient.invalidateQueries(['contacts']);
         },
     });
 
-    return {
-        mutate,
-        status,
-        isLoading,
-        isError,
-        error,
-    };
+    return { mutateAsync, isLoading, isError, isSuccess };
 }
+
+export default useContactUpdate;
