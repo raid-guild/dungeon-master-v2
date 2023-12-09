@@ -6,7 +6,7 @@ import { nativeSymbols, NETWORK_CONFIG, wrappedNativeToken } from './constants';
 
 export const getResolverUrl = (chainId: number) => {
   const resolverAddress = NETWORK_CONFIG[chainId]
-    ? NETWORK_CONFIG[chainId].RESOLVERS.LexDAO.address
+    ? NETWORK_CONFIG[chainId].RESOLVERS.address
     : undefined;
   return `${getExplorerUrl(chainId)}/address/${resolverAddress}`;
 };

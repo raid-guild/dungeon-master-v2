@@ -8,32 +8,8 @@ import {
   stringToHex,
 } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
-// import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
-const zapAbi = [
-  {
-    inputs: [
-      { internalType: 'address[]', name: '_owners', type: 'address[]' },
-      {
-        internalType: 'uint32[]',
-        name: '_percentAllocations',
-        type: 'uint32[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: '_milestoneAmounts',
-        type: 'uint256[]',
-      },
-      { internalType: 'bytes', name: '_safeData', type: 'bytes' },
-      { internalType: 'bytes', name: '_splitsData', type: 'bytes' },
-      { internalType: 'bytes', name: '_escrowData', type: 'bytes' },
-    ],
-    name: 'createSafeSplitEscrow',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-];
+import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 
 const ZAP_ADDRESS = '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628';
 const DAO_ADDRESS = {
@@ -155,7 +131,7 @@ UseEscrowZapProps) => {
   const { config, error: prepareError } = usePrepareContractWrite({
     chainId,
     address: ZAP_ADDRESS,
-    abi: zapAbi,
+    abi: ESCROW_ZAP_ABI,
     functionName: 'createSafeSplitEscrow',
     args: [
       owners,

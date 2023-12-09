@@ -22,7 +22,7 @@ import { IoCloseCircle } from 'react-icons/io5';
 
 // TODO migrate to design system
 
-const PaymentsChunkForm = ({
+const PaymentsForm = ({
   escrowForm,
   updateStep,
   backStep,
@@ -142,4 +142,4 @@ const PaymentsChunkForm = ({
   );
 };
 
-export default PaymentsChunkForm;
+export default PaymentsForm;

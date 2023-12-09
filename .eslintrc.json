@@ -1,6 +1,12 @@
 {
   "root": true,
-  "ignorePatterns": [],
+  "ignorePatterns": [
+    "node_modules/*",
+    "tmp/*",
+    "dist/*",
+    "coverage/*",
+    ".nx/*"
+  ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@nx", "eslint-plugin-import", "simple-import-sort"],
   "extends": ["airbnb", "plugin:@typescript-eslint/recommended", "prettier"],

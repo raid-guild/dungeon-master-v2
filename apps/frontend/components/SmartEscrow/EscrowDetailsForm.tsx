@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   ChakraInput,
   DatePicker,
   Flex,
@@ -7,9 +8,10 @@ import {
   FormLabel,
   Input,
   Link,
-  NumberInput,
-  RadioBox,
+  // NumberInput,
+  // RadioBox,
   Stack,
+  Switch,
 } from '@raidguild/design-system';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
 import { getResolverUrl, getSpoilsUrl, Invoice } from '@raidguild/escrow-utils';
@@ -48,7 +50,7 @@ const unsupportedNetwork = (chainId: number) =>
 // if (new Date(selectedDay).getTime() < new Date().getTime())
 //   return sendToast('Safety valve date needs to be in future.');
 
-const PaymentDetailsForm = ({
+const EscrowDetailsForm = ({
   escrowForm,
   updateStep,
 }: {
@@ -91,17 +93,11 @@ const PaymentDetailsForm = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
+  console.log(localWatch());
 
   return (
-    <Flex
-      as='form'
-      onSubmit={handleSubmit(onSubmit)}
-      direction='column'
-      background='#262626'
-      padding='1.5rem'
-      minWidth='70%'
-    >
-      <Stack spacing={4}>
+    <Card as='form' onSubmit={handleSubmit(onSubmit)} variant='filled' p={6}>
+      <Stack spacing={4} w='100%'>
         <Stack spacing={4}>
           <FormControl isRequired>
             <Input
@@ -124,7 +120,7 @@ const PaymentDetailsForm = ({
           </FormControl>
         </Stack>
 
-        <Flex direction='row'>
+        {/* <Flex direction='row'>
           <FormControl isRequired>
             <RadioBox
               options={tokens(chainId)}
@@ -155,9 +151,32 @@ const PaymentDetailsForm = ({
               localForm={localForm}
             />
           </FormControl>
+        </Flex> */}
+        <Flex>
+          <FormControl isRequired w='50%'>
+            <DatePicker
+              label='Safety Valve Date'
+              name='safetyValveDate'
+              // tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
+              onChange={(date) => {
+                localSetValue('safetyValveDate', date);
+              }}
+              selected={localSafetyValveDate}
+              localForm={localForm}
+            />
+          </FormControl>
+
+          <Stack w='50%'>
+            <Switch
+              label='Raid Party Split'
+              name='raidPartySplit'
+              localForm={localForm}
+            />
+            <Switch label='DAO Split' name='daoSplit' localForm={localForm} />
+          </Stack>
         </Flex>
 
-        <Flex direction='row'>
+        <Flex>
           <FormControl isReadOnly mr='.5em'>
             <Link href={getResolverUrl(chainId)} isExternal>
               <FormLabel cursor='pointer' fontWeight='bold'>
@@ -175,19 +194,6 @@ const PaymentDetailsForm = ({
             </Link>
             <ChakraInput value='10%' readOnly isDisabled />
           </FormControl>
-
-          <FormControl isRequired>
-            <DatePicker
-              label='Safety Valve Date'
-              name='safetyValveDate'
-              // tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
-              onChange={(date) => {
-                localSetValue('safetyValveDate', date);
-              }}
-              selected={localSafetyValveDate}
-              localForm={localForm}
-            />
-          </FormControl>
         </Flex>
 
         <Flex justify='center'>
@@ -200,8 +206,8 @@ const PaymentDetailsForm = ({
           </Button>
         </Flex>
       </Stack>
-    </Flex>
+    </Card>
   );
 };
 
-export default PaymentDetailsForm;
+export default EscrowDetailsForm;

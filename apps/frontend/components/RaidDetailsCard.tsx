@@ -278,11 +278,17 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           label: 'Locker Hash',
           details: _.get(raid, 'lockerHash'),
         },
-        _.get(raid, 'invoiceAddress') && {
-          label: 'Smart Escrow',
-          details: truncateAddress(_.get(raid, 'invoiceAddress')),
-          link: `/escrow/${raid.id}`,
-        },
+        _.get(raid, 'invoiceAddress')
+          ? {
+              label: 'Smart Escrow',
+              details: truncateAddress(_.get(raid, 'invoiceAddress')),
+              link: `/escrow/${raid.id}`,
+            }
+          : {
+              label: 'Smart Escrow',
+              details: 'Create escrow',
+              link: `/escrow/new?raidId=${raid.id}`,
+            },
       ].filter((x) => x),
     },
   ];

@@ -101,7 +101,12 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
     <>
       <SimpleGrid columns={columns} spacing='1rem' w='100%' mt='1rem'>
         {isResolver && invoice.isLocked && (
-          <Button variant='solid' textTransform='uppercase' onClick={onResolve}>
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            onClick={onResolve}
+            isDisabled={!isResolver}
+          >
             Resolve
           </Button>
         )}
@@ -110,9 +115,10 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
           <Button
             variant='solid'
             textTransform='uppercase'
-            onClick={isReleasable ? onRelease : onDeposit}
+            onClick={onRelease}
+            isDisabled={!isClient}
           >
-            {isReleasable ? 'Release' : 'Deposit Due'}
+            Release
           </Button>
         ) : (
           <Button variant='solid' textTransform='uppercase' onClick={onDeposit}>
@@ -120,7 +126,12 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
           </Button>
         )}
         {isLockable && (isClient || isRaidParty) && (
-          <Button variant='solid' textTransform='uppercase' onClick={onLock}>
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            onClick={onLock}
+            isDisabled={!isClient && !isRaidParty}
+          >
             Lock
           </Button>
         )}
@@ -128,6 +139,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
           <Button
             variant='solid'
             textTransform='uppercase'
+            isDisabled={!isExpired}
             onClick={onWithdraw}
           >
             Withdraw

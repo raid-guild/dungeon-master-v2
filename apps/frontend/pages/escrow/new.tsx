@@ -9,9 +9,9 @@ import { useForm } from 'react-hook-form';
 
 import SiteLayout from '../../components/SiteLayout';
 import EscrowConfirmation from '../../components/SmartEscrow/EscrowConfirmation';
+import EscrowDetailsForm from '../../components/SmartEscrow/EscrowDetailsForm';
 import EscrowSuccess from '../../components/SmartEscrow/EscrowSuccess';
-import PaymentDetailsForm from '../../components/SmartEscrow/PaymentDetailsForm';
-import PaymentsChunkForm from '../../components/SmartEscrow/PaymentsChunkForm';
+import PaymentsForm from '../../components/SmartEscrow/PaymentsForm';
 import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
 
 const NewEscrow = () => {
@@ -50,16 +50,16 @@ const NewEscrow = () => {
       <NextSeo title='Smart Escrow' />
 
       <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
-        <Stack mt='6' w='80%' spacing={6}>
+        <Stack mt='6' w='70%' spacing={6}>
           <ProjectInfo raid={raid} />
           {step === 1 && (
-            <PaymentDetailsForm
+            <EscrowDetailsForm
               escrowForm={escrowForm}
               updateStep={updateStep}
             />
           )}
           {step === 2 && (
-            <PaymentsChunkForm
+            <PaymentsForm
               escrowForm={escrowForm}
               updateStep={updateStep}
               backStep={backStep}

@@ -79,7 +79,9 @@ const useDeposit = ({
   };
 
   return {
-    writeAsync: handleDeposit,
+    writeAsync,
+    handleDeposit,
+    isReady: paymentType === PAYMENT_TYPES.NATIVE ? true : !!writeAsync,
     isLoading: prepareLoading || writeLoading || sendLoading,
     writeError,
     prepareError,

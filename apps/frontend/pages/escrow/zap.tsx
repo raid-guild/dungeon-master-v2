@@ -122,14 +122,14 @@ const EscrowZap = () => {
     formState: { errors },
   } = localForm;
 
-  const { data } = useWaitForTransaction({
+  const { data: txData } = useWaitForTransaction({
     hash,
   });
   let addresses: Hex[];
-  if (data?.logs?.[6]?.data) {
+  if (txData?.logs?.[6]?.data) {
     addresses = decodeAbiParameters(
       ['address', 'address', 'address', 'address'],
-      data?.logs?.[6]?.data
+      txData?.logs?.[6]?.data
     ) as Hex[];
   }
   const [safe, projectTeamSplit, daoSplit, escrow] = addresses || [];
