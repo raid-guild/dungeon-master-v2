@@ -1,7 +1,7 @@
 import { Button, Card, Flex, Stack, Text } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { commify } from '@raidguild/dm-utils';
-import { useRegister } from '@raidguild/escrow-hooks';
+import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -19,28 +19,71 @@ const EscrowConfirmation = ({
   backStep: () => void;
 }) => {
   const { watch } = escrowForm;
-  const { client, provider, token, total, milestones } = watch();
+  const {
+    client,
+    provider,
+    token,
+    milestones,
+    ownersAndAllocations,
+    threshold,
+    daoSplit,
+    projectTeamSplit,
+    safetyValveDate,
+  } = watch();
 
-  const { writeAsync, isLoading } = useRegister({
+  const canRegisterDirectly = !projectTeamSplit && !daoSplit;
+  const details = 'ipfs://Qmtest';
+
+  const { writeAsync, isLoading: registerLoading } = useRegister({
     raidId: _.get(raid, 'id'),
     escrowForm,
+    details,
+    enabled: canRegisterDirectly,
+  });
+
+  const { writeAsync: writeEscrowZap, isLoading: zapLoading } = useEscrowZap({
+    ownersAndAllocations,
+    threshold,
+    milestones,
+    token,
+    provider,
+    client,
+    safetyValveDate,
+    details,
+    enabled: !canRegisterDirectly,
   });
 
   const createInvoice = async () => {
-    await writeAsync?.();
+    if (canRegisterDirectly) {
+      await writeAsync?.();
+    } else {
+      await writeEscrowZap?.();
+    }
 
     // move to next step
     updateStep();
   };
 
+  const total = _.sumBy(
+    milestones,
+    (milestone: { value: string }) => _.toNumber(milestone.value) || 0
+  );
+
   const invoiceDetails = [
     { label: 'Project Name', value: raid?.name },
     { label: 'Client Address', value: <AccountLink address={client} /> },
-    { label: 'Raid Party Address', value: <AccountLink address={provider} /> },
+    {
+      label: 'Raid Party Address',
+      value: provider ? (
+        <AccountLink address={provider} />
+      ) : (
+        <Text>Split to be created</Text>
+      ),
+    },
     { label: 'Arbitration Provider', value: 'LexDAO' },
     { label: 'Payment Token', value: token },
-    { label: 'Payment Due', value: commify(total) },
-    { label: 'No of Payments', value: milestones },
+    { label: 'Full Escrow Amount', value: commify(total) },
+    { label: 'No of Payments', value: _.size(milestones) },
   ];
 
   return (
@@ -68,7 +111,7 @@ const EscrowConfirmation = ({
             variant='outline'
             minW='25%'
             mr='.5rem'
-            isDisabled={isLoading}
+            isDisabled={zapLoading || registerLoading}
             onClick={backStep}
           >
             Back
@@ -76,10 +119,13 @@ const EscrowConfirmation = ({
           <Button
             variant='solid'
             w='100%'
-            isDisabled={isLoading || !writeAsync}
+            isDisabled={
+              registerLoading || zapLoading || !(writeAsync || writeEscrowZap)
+            }
+            isLoading={registerLoading || zapLoading}
             onClick={createInvoice}
           >
-            {isLoading ? 'Creating Escrow..' : 'Create Escrow'}
+            Create Escrow
           </Button>
         </Flex>
       </Stack>

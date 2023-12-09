@@ -13,6 +13,7 @@ import EscrowDetailsForm from '../../components/SmartEscrow/EscrowDetailsForm';
 import EscrowSuccess from '../../components/SmartEscrow/EscrowSuccess';
 import PaymentsForm from '../../components/SmartEscrow/PaymentsForm';
 import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
+import RaidPartySplitForm from '../../components/SmartEscrow/RaidPartySplitForm';
 
 const NewEscrow = () => {
   const escrowForm = useForm();
@@ -24,12 +25,14 @@ const NewEscrow = () => {
 
   const [step, setStep] = useState<number>(1);
 
-  const updateStep = () => {
-    setStep((prev) => prev + 1);
+  const updateStep = (increment?: number) => {
+    if (_.isNumber(increment)) setStep((prev) => prev + increment);
+    else setStep((prev) => prev + 1);
   };
 
-  const backStep = () => {
-    setStep((prev) => prev - 1);
+  const backStep = (increment?: number) => {
+    if (_.isNumber(increment)) setStep((prev) => prev - increment);
+    else setStep((prev) => prev - 1);
   };
 
   const { data: raid } = useRaidDetail({
@@ -38,19 +41,19 @@ const NewEscrow = () => {
     roles: _.get(session, 'user.roles'),
   });
 
-  useEffect(() => {
-    if (!raidId) {
-      router.push(`/escrow`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   if (!raidId) {
+  //     router.push(`/escrow`);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <>
       <NextSeo title='Smart Escrow' />
 
       <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
-        <Stack mt='6' w='70%' spacing={6}>
+        <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
           <ProjectInfo raid={raid} />
           {step === 1 && (
             <EscrowDetailsForm
@@ -59,13 +62,20 @@ const NewEscrow = () => {
             />
           )}
           {step === 2 && (
-            <PaymentsForm
+            <RaidPartySplitForm
               escrowForm={escrowForm}
               updateStep={updateStep}
               backStep={backStep}
             />
           )}
           {step === 3 && (
+            <PaymentsForm
+              escrowForm={escrowForm}
+              updateStep={updateStep}
+              backStep={backStep}
+            />
+          )}
+          {step === 4 && (
             <EscrowConfirmation
               escrowForm={escrowForm}
               raid={raid}
@@ -73,7 +83,7 @@ const NewEscrow = () => {
               backStep={backStep}
             />
           )}
-          {step === 4 && <EscrowSuccess raidId={raidId} />}
+          {step === 5 && <EscrowSuccess raidId={raidId} />}
         </Stack>
       </SiteLayout>
     </>

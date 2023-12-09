@@ -53,7 +53,7 @@ const GeneralLayout = ({
       justify='flex-start'
       flex='1'
       align='center'
-      minHeight={['100vh', '100vh', '0', '0']}
+      minHeight={['100vh', '100vh', '0', '600px']}
     >
       <Stack
         spacing={8}

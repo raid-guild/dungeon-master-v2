@@ -1,30 +1,29 @@
-import {
-  NETWORK_CONFIG,
-  RG_MULTISIG,
-  RG_XDAI,
-  SPOILS_BASIS_POINTS,
-  updateRaidInvoice,
-} from '@raidguild/escrow-utils';
+import { NETWORK_CONFIG, updateRaidInvoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { encodeAbiParameters, Hex, parseEther, stringToHex } from 'viem';
+import { encodeAbiParameters, Hex, parseUnits, stringToHex } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import INVOICE_FACTORY_ABI from './contracts/InvoiceFactory.json';
+import { encodeDetailsString } from './useEscrowZap';
 
 const REQUIRES_VERIFICATION = true;
 
 const useRegister = ({
   raidId,
   escrowForm,
+  details,
+  enabled = true,
 }: {
   raidId: string;
   escrowForm: UseFormReturn;
+  details: string;
+  enabled?: boolean;
 }) => {
   const { watch } = escrowForm;
   const {
-    payments,
+    milestones,
     safetyValveDate,
     provider,
     client: clientAddress,
@@ -33,15 +32,11 @@ const useRegister = ({
 
   const chainId = useChainId();
 
-  let daoAddress: Hex = provider;
+  const providerReceiver: Hex = provider;
 
-  if (chainId === 100) {
-    daoAddress = RG_XDAI as Hex;
-  } else if (chainId === 1) {
-    daoAddress = RG_MULTISIG as Hex;
-  }
-
-  const resolver = _.get(NETWORK_CONFIG[chainId], 'RESOLVERS.LexDAO.address');
+  const resolver = _.first(
+    _.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))
+  ) as Hex;
   const tokenAddress = _.get(
     NETWORK_CONFIG[chainId],
     `TOKENS.${token}.address`
@@ -51,27 +46,15 @@ const useRegister = ({
     'WRAPPED_NATIVE_TOKEN'
   );
   const factoryAddress = _.get(NETWORK_CONFIG[chainId], 'INVOICE_FACTORY');
-  const terminationTime =
-    safetyValveDate && BigInt(new Date(safetyValveDate).getTime() / 1000);
+  const terminationTime = BigInt(Math.floor(safetyValveDate.getTime() / 1000));
 
-  // TODO handle decimals
-  const paymentsInWei = _.map(payments, (amount: string) => parseEther(amount));
+  // TODO handle token decimals
+  const paymentsInWei = _.map(milestones, ({ value }: { value: string }) =>
+    parseUnits(value, 18)
+  );
 
   const resolverType = 0; // 0 for individual, 1 for erc-792 arbitrator
-  const type = stringToHex('split-escrow', { size: 32 });
-
-  // THESE ARE THE REQUIRED FIELDS FOR SPLIT-ESCROW TYPE in correct order
-  // address _client,
-  // uint8 _resolverType,
-  // address _resolver,
-  // address _token,
-  // uint256 _terminationTime, // exact termination date in seconds since epoch
-  // bytes32 _details,
-  // address _wrappedNativeToken,
-  // bool _requireVerification,
-  // address _factory,
-  // address _dao,
-  // uint256 _daoFee
+  const type = stringToHex('updatable', { size: 32 });
 
   const escrowData = useMemo(() => {
     if (
@@ -81,25 +64,25 @@ const useRegister = ({
       !tokenAddress ||
       !terminationTime ||
       !wrappedNativeToken ||
+      !details ||
       !factoryAddress ||
-      !daoAddress
+      !provider
     ) {
       return undefined;
     }
 
     return encodeAbiParameters(
       [
-        { type: 'address' },
-        { type: 'uint8' },
-        { type: 'address' },
-        { type: 'address' },
-        { type: 'uint256' },
-        { type: 'bytes32' },
-        { type: 'address' },
-        { type: 'bool' },
-        { type: 'address' },
-        { type: 'address' },
-        { type: 'uint256' },
+        { type: 'address' }, //     _client,
+        { type: 'uint8' }, //       _resolverType,
+        { type: 'address' }, //     _resolver,
+        { type: 'address' }, //     _token,
+        { type: 'uint256' }, //     _terminationTime, // exact termination date in seconds since epoch
+        { type: 'bytes32' }, //     _details,
+        { type: 'address' }, //     _wrappedNativeToken,
+        { type: 'bool' }, //        _requireVerification, // warns the client not to deposit funds until verifying they can release or lock funds
+        { type: 'address' }, //     _factory,
+        { type: 'address' }, //     _providerReceiver,
       ],
       [
         clientAddress,
@@ -107,12 +90,11 @@ const useRegister = ({
         resolver, // address _resolver (LEX DAO resolver address)
         tokenAddress, // address _token (payment token address)
         terminationTime, // safety valve date
-        '0x0000000000000000000000000000000000000000000000000000000000000000', // bytes32 _details detailHash
+        encodeDetailsString(details), // bytes32 _details detailHash
         wrappedNativeToken,
-        REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
+        REQUIRES_VERIFICATION,
         factoryAddress,
-        daoAddress,
-        BigInt(SPOILS_BASIS_POINTS), // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
+        providerReceiver,
       ]
     );
   }, [
@@ -123,7 +105,7 @@ const useRegister = ({
     terminationTime,
     wrappedNativeToken,
     factoryAddress,
-    daoAddress,
+    providerReceiver,
   ]);
 
   const {
@@ -140,7 +122,8 @@ const useRegister = ({
       escrowData, // bytes memory escrowData,
       type, // bytes32 escrowType,
     ],
-    enabled: !!terminationTime && !_.isEmpty(paymentsInWei) && !!escrowData,
+    enabled:
+      !!terminationTime && !_.isEmpty(paymentsInWei) && !!escrowData && enabled,
   });
 
   const {
@@ -150,6 +133,7 @@ const useRegister = ({
   } = useContractWrite({
     ...config,
     onSuccess: async (tx) => {
+      // eslint-disable-next-line no-console
       console.log('success', tx);
       // TODO parse invoice address
       const smartInvoiceId = _.get(tx, 'events[0].args.invoice');

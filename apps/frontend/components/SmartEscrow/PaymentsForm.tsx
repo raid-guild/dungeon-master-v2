@@ -1,14 +1,15 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  Box,
   Button,
-  ChakraInput,
+  Card,
   Flex,
   FormControl,
-  FormLabel,
+  Heading,
   HStack,
   Icon,
-  InputGroup,
-  InputRightElement,
+  IconButton,
+  NumberInput,
+  RadioBox,
   Stack,
   Text,
 } from '@raidguild/design-system';
@@ -16,11 +17,35 @@ import { commify } from '@raidguild/dm-utils';
 import { Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
-import { FaCheckCircle } from 'react-icons/fa';
-import { IoCloseCircle } from 'react-icons/io5';
+import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
+import { FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
+import { useChainId } from 'wagmi';
+import * as Yup from 'yup';
 
 // TODO migrate to design system
+
+const tokens = (chainId: number) => {
+  if (chainId === 100) {
+    return ['WETH', 'WXDAI'];
+  }
+  if (chainId === 1) {
+    return ['WETH', 'DAI'];
+  }
+  return ['WETH', 'DAI', 'TEST'];
+};
+
+const validationSchema = Yup.object().shape({
+  milestones: Yup.array().of(
+    Yup.object().shape({
+      value: Yup.string().required('Milestone Amount is required'),
+    })
+  ),
+  token: Yup.string().required('Token is required'),
+  // token: Yup.object().shape({
+  //   label: Yup.string(),
+  //   value: Yup.string().required(),
+  // }),
+});
 
 const PaymentsForm = ({
   escrowForm,
@@ -29,91 +54,121 @@ const PaymentsForm = ({
 }: {
   escrowForm: UseFormReturn;
   updateStep: () => void;
-  backStep: () => void;
+  backStep: (i?: number) => void;
 }) => {
+  const chainId = useChainId();
   const { watch, setValue } = escrowForm;
-  const { total, milestones, token, payments: escrowPayments } = watch();
-  const localForm = useForm();
+  const { milestones, token, raidPartySplit } = watch();
+  const localForm = useForm({
+    defaultValues: {
+      milestones: [{ value: '1000' }],
+    },
+    resolver: yupResolver(validationSchema),
+  });
   const {
     setValue: localSetValue,
     handleSubmit,
     watch: localWatch,
+    control,
   } = localForm;
-  const payments = localWatch('payments');
-
-  const sum = _.sumBy(payments, _.toNumber);
+  const { milestones: localMilestones, token: localToken } = localWatch();
 
   const onSubmit = (values: Partial<Invoice>) => {
     // set values in escrow form
-    setValue('payments', values.payments);
+    setValue('milestones', values.milestones);
+    setValue('token', values.token);
 
     // navigate form
     updateStep();
   };
 
-  const paymentsEqual = sum === _.toNumber(total);
+  const {
+    fields: milestonesFields,
+    append: appendMilestone,
+    remove: removeMilestone,
+  } = useFieldArray({
+    name: 'milestones',
+    control,
+  });
 
   useEffect(() => {
-    if (escrowPayments) {
-      localSetValue('payments', escrowPayments);
-      return;
-    }
-    localSetValue('payments', new Array(_.toNumber(milestones)).fill(0));
+    if (milestones) localSetValue('milestones', milestones);
+    localSetValue('token', token || tokens(chainId)[0]);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const total = _.sumBy(
+    localMilestones,
+    (milestone) => _.toNumber(milestone.value) || 0
+  );
+
   return (
-    <Flex
-      as='form'
-      onSubmit={handleSubmit(onSubmit)}
-      direction='column'
-      background='#262626'
-      padding='1.5rem'
-      minWidth='40%'
-    >
-      <Stack>
-        {_.map(payments, (payment, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <FormControl key={index} isRequired>
-            <FormLabel>{`Payment #${index + 1}`}</FormLabel>
-            <InputGroup>
-              <ChakraInput
-                focusBorderColor='none'
-                name={`payment${index + 1}`}
-                type='number'
-                onChange={(e) => {
-                  const temp = [...payments];
-                  temp[index] = e.target.value;
-                  localSetValue('payments', temp);
-                }}
-                value={payment}
-              />
-              <InputRightElement
-                fontFamily='texturina'
-                color='yellow.500'
-                w='3.5rem'
-                mr='.5rem'
-              >
-                {token}
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-        ))}
+    <Card variant='filled' as='form' onSubmit={handleSubmit(onSubmit)} p={6}>
+      <Flex w='100%'>
+        <FormControl isRequired>
+          <RadioBox
+            options={tokens(chainId)}
+            label='Payment Token'
+            name='token'
+            localForm={localForm}
+          />
+        </FormControl>
+      </Flex>
+      <Stack w='100%'>
+        <Heading size='sm'>Milestone Amounts</Heading>
+        {_.map(milestonesFields, (field, index) => {
+          const handleRemoveMilestone = () => {
+            removeMilestone(index);
+          };
 
-        <Flex justify='space-between'>
-          <Text color='white' textTransform='uppercase' fontFamily='texturina'>
-            The sum should add up to {commify(total)} {token}
-          </Text>
-
-          <HStack align='center'>
-            <Box height='16px'>
-              <Icon
-                as={paymentsEqual ? FaCheckCircle : IoCloseCircle}
-                color={paymentsEqual ? 'green.500' : 'red.500'}
+          return (
+            <HStack key={field.id} spacing={4}>
+              <HStack spacing={1} flexGrow={1}>
+                <NumberInput
+                  name={`milestones.${index}.value`}
+                  step={50}
+                  min={0}
+                  max={1_000_000}
+                  placeholder='500'
+                  variant='outline'
+                  localForm={localForm}
+                />
+                {/* <Flex
+                  border='1px solid'
+                  borderColor='#7f5af0'
+                  justify='center'
+                  align='center'
+                  height='40px'
+                  px={2}
+                >
+                  <Text>{token}</Text>
+                </Flex> */}
+              </HStack>
+              <IconButton
+                icon={<Icon as={FaRegTrashAlt} />}
+                aria-label='remove milestone'
+                variant='outline'
+                onClick={handleRemoveMilestone}
               />
-            </Box>
-            <Text>Total: {commify(sum)}</Text>
-          </HStack>
+            </HStack>
+          );
+        })}
+        <Flex justify='space-between' align='flex-end'>
+          <Button
+            variant='outline'
+            onClick={() => {
+              appendMilestone({ value: '1000' });
+            }}
+            rightIcon={<Icon as={FaPlusCircle} />}
+          >
+            Add
+          </Button>
+          {total && (
+            <Text>
+              Total: {commify(total)} {localToken}
+            </Text>
+          )}
         </Flex>
       </Stack>
 
@@ -123,22 +178,15 @@ const PaymentsForm = ({
           minW='25%'
           p='5px'
           mr='.5rem'
-          onClick={backStep}
+          onClick={() => (raidPartySplit ? backStep() : backStep(2))}
         >
           Back
         </Button>
-        <Button
-          type='submit'
-          variant='solid'
-          width='100%'
-          isDisabled={
-            _.size(payments) !== _.toNumber(milestones) || !paymentsEqual
-          }
-        >
+        <Button type='submit' variant='solid' width='100%' isDisabled={false}>
           Next: Confirmation
         </Button>
       </Flex>
-    </Flex>
+    </Card>
   );
 };
 

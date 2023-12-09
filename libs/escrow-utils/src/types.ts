@@ -23,7 +23,9 @@ export interface Invoice {
   resolver: Hex;
   resolutionRate: number;
   // form
-  safetyValveDate?: Date;
-  milestones?: number;
-  payments?: number[];
+  safetyValveDate?: Date; // converts to terminationTime
+  milestones?: number[]; // convert to amounts & total
+  // split zap
+  raidPartySplit?: boolean;
+  daoSplit?: boolean;
 }
