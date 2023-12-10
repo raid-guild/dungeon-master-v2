@@ -17,7 +17,11 @@ const useContactUpdate = ({ token }: { token: string }) => {
 
             return result;
         },
-        // { onSuccess: () => onSuccess(queryClient) }
+        { 
+            onSuccess: () => 
+            queryClient.invalidateQueries(['contacts'])
+            
+         }
     );
 
     return { mutateAsync, isLoading, isError, isSuccess };

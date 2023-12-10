@@ -9,6 +9,7 @@ export const ALL_CONTACTS_QUERY = gql`
       id
       name
       bio
+      eth_address
       contact_info {
         ...ContactInfos
       }
