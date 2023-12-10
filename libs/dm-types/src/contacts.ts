@@ -1,10 +1,3 @@
-export type IContact = {
-  id?: string;
-  name: string;
-  bio: string;
-  contactInfo: IContactInfo;
-};
-
 export type IContactInfo = {
   id?: string;
   email?: string;
@@ -12,5 +5,14 @@ export type IContactInfo = {
   github?: string;
   twitter?: string;
   telegram?: string;
+};
+
+
+export type IContact = {
+  id?: string;
+  name?: string;
+  bio: string;
+  ethAddress?: string;
+  contactInfo?: IContactInfo;
 };
 

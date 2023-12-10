@@ -31,6 +31,7 @@
     "blockies-ts": "^1.0.0",
     "core-js": "^3.6.5",
     "date-fns": "^2.29.3",
+    "ethers": "^6.9.0",
     "graphql": "^16.6.0",
     "graphql-request": "^5.1.0",
     "ipfs-http-client": "^60.0.1",

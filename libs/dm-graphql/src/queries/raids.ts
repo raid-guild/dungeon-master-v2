@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-import { RAID_DETAIL_FRAGMENT, RAID_SLIM_DETAIL_FRAGMENT } from '../fragments';
+import { CONTACT_INFOS_FRAGMENT, RAID_DETAIL_FRAGMENT, RAID_SLIM_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAIDING_RAIDS_BY_LAST_UPDATE = gql`
   query RaidsByLastUpdate($latest_update_order_by: order_by) {
@@ -108,11 +108,9 @@ export const RAID_DETAIL_QUERY = gql`
             id
             name
             bio
+            contact_info_id
             contact_info {
-              email
-              twitter
-              telegram
-              discord
+              ...ContactInfos
             }
           }
         }
@@ -159,6 +157,7 @@ export const RAID_DETAIL_QUERY = gql`
       updated_at
     }
   }
+  ${CONTACT_INFOS_FRAGMENT}
 `;
 
 export const RAID_BY_ID_QUERY = gql`

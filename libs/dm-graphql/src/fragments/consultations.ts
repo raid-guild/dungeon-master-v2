@@ -49,8 +49,10 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
 
     consultations_contacts {
       contact {
+        id
         name
         bio
+        contact_info_id
         contact_info {
           email
         }
