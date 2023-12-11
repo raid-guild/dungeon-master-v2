@@ -10,6 +10,7 @@ export {
   useConsultationsCount,
 } from './useConsultationList';
 export { default as useConsultationUpdate } from './useConsultationUpdate';
+export {default as useContactCreate} from './useContactCreate';
 export {  useContacts } from './useContacts';
 export {default as useContactUpdate} from './useContactUpdate';
 export { default as useDashboardList } from './useDashboardList';

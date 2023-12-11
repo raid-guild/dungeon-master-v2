@@ -66,9 +66,9 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     value: contact.id
   }));
 
-  const onSubmit = (data) => {
+  const onSubmit = (values) => {
     setSending(true);
-    console.log(data);
+    console.log(values);
   };
 
   const [editContact, setEditContact] = useState<IContact>(null);
@@ -111,6 +111,21 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
               )}
             />
           </FormControl>
+
+          <Button
+                      onClick={() => {
+                        setEditContact(null);
+
+                        // set delay
+                        setTimeout(() => {
+                          handleContactUpdateModal();
+                        }, 100);
+                      }}
+                    >
+                      Create New Contact
+                    </Button>
+
+
           <Button
             isLoading={isSubmitting || sending}
             type='submit'
@@ -131,7 +146,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
       <ModalWrapper
         name='contactUpdate'
         size='md'
-        title='Update Contact'
+        title={editContact ? 'Edit Contact' : 'Create New Contact'}
         localOverlay={contactUpdateOverlay}
         zIndex={200}
       >

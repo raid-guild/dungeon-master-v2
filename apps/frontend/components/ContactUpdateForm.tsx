@@ -1,25 +1,25 @@
 import { Box, Button, Input, Stack } from "@raidguild/design-system";
-import { useContactUpdate } from "@raidguild/dm-hooks";
+import { useContactCreate,useContactUpdate } from "@raidguild/dm-hooks"; // Import useContactCreate
 import { IContact } from "@raidguild/dm-types";
-import _, { set } from "lodash";
+import _ from "lodash";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const contactOptions = ["email", "discord", "github", "twitter", "telegram"];
 
-const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
+const ContactUpdateForm = ({ contact }: { contact?: IContact }) => {
   const [sending, setSending] = useState(false);
 
   const contactInfos = _.map(contactOptions, (option) => (
-    { label: option, value: _.get(contact.contactInfo, `${option}`) }
+    { label: option, value: contact ? _.get(contact?.contactInfo, `${option}`) : "" }
   ));
-  
 
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  
+
   const { mutateAsync: updateContact } = useContactUpdate({ token });
+  const { mutateAsync: createContact } = useContactCreate({ token }); // Create contact hook
 
   const localForm = useForm({
     mode: "all",
@@ -36,7 +36,7 @@ const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
     setSending(true);
 
     const contactData = {
-      id: contact.id,
+      id: contact?.id,
       name: values["Contact name"],
       bio: values.Bio,
       eth_address: values.ethAddress,
@@ -44,15 +44,20 @@ const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
 
     const contactInfoData = _.pick(values, contactOptions);
 
-    console.log(contact.contactInfo.id);
-
-    
+    if (contact) {
+      // Update existing contact
       await updateContact({
         contactData,
         contactInfoData,
-        contactInfoId: contact.contactInfo.id
+        contactInfoId: contact?.contactInfo.id
       });
-  
+    } else {
+      // Create new contact
+      await createContact({
+        contactData,
+        contactInfoData
+      });
+    }
 
     setSending(false);
   };
@@ -63,7 +68,7 @@ const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
         <Stack spacing={4} gap={4}>
           <Input
             name="Contact name"
-            defaultValue={contact.name}
+            defaultValue={contact?.name ?? ""}
             aria-label="Contact Name"
             placeholder="Contact Name"
             rounded="base"
@@ -72,7 +77,7 @@ const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
           />
           <Input
             name="Bio"
-            defaultValue={contact.bio}
+            defaultValue={contact?.bio ?? ""}
             aria-label="Bio"
             placeholder="Bio"
             rounded="base"
@@ -81,7 +86,7 @@ const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
           />
           <Input
             name="ethAddress"
-            defaultValue={contact.ethAddress}
+            defaultValue={contact?.ethAddress ?? ""}
             aria-label="Ethereum Address"
             placeholder="Ethereum Address"
             rounded="base"
@@ -93,7 +98,7 @@ const ContactUpdateForm = ({ contact }: { contact: IContact }) => {
             <Input
               key={label}
               name={label}
-              defaultValue={value}
+              defaultValue={value ?? ""}
               aria-label={label}
               placeholder={label}
               rounded="base"

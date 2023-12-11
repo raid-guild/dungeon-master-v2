@@ -43,7 +43,7 @@ export interface IMemberCreate {
 }
 
 export interface IMemberUpdate {
-  id?: string; // Assuming the member ID is optional for the mutation
+  id?: string;
 
   member_updates?: {
     name?: string;
