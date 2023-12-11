@@ -11,7 +11,7 @@ import {
   Text,
   VStack
 } from '@raidguild/design-system';
-import { useContacts } from '@raidguild/dm-hooks';
+import { useContacts, useUpsertConsultationContacts } from '@raidguild/dm-hooks';
 import { IContact, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
@@ -38,12 +38,17 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
   const { setModals, closeModals } = contactUpdateOverlay;
 
+
+  
+
   const handleContactUpdateModal = () => {
     setModals({ contactUpdate: true, raidForm: true });
   };
 
   const { data: session } = useSession();
   const token = _.get(session, 'token');
+
+  const { mutateAsync: upsertContacts } = useUpsertConsultationContacts({token})
   const { data, status } = useContacts({ token });
   const [sending, setSending] = useState(false);
   const contacts = data?.contacts as IContact[];
@@ -53,7 +58,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   ] as IContact[];
 
   const defaultValues = _.map(
-    clientPoCs as IContact[],
+    clientPoCs,
     ({ contact }: { contact: IContact }) => ({
       label: `${contact?.name} - ${contact?.contactInfo?.email}`,
       value: contact?.id
@@ -61,14 +66,19 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   );
 
 
-  const POC_DISPLAY_OPTIONS = _.map(contacts as IContact[], (contact) => ({
-    label: `${contact?.name} - ${contact?.contactInfo?.email}`,
+  const POC_DISPLAY_OPTIONS = _.map(contacts, (contact) => ({
+    label: `${contact?.name} - ${contact?.contactInfo?.email ?? 'N/A'}`,
     value: contact.id
   }));
 
   const onSubmit = (values) => {
     setSending(true);
-    console.log(values);
+    const updates = _.map(values.consultationContacts, contact => ({ contact_id: contact.value, consultation_id: raid.consultation.id }));
+    
+    upsertContacts({ updates });
+
+    closeModal();
+    setSending(false);
   };
 
   const [editContact, setEditContact] = useState<IContact>(null);
@@ -206,7 +216,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                       <Text color='primary.500' fontFamily='texturina'>
                         Name:
                       </Text>
-                      <Text>{foundContact.name}</Text>
+                      <Text>{foundContact?.name}</Text>
                     </VStack>
                     <VStack
                       gap={1}
@@ -216,7 +226,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                       <Text color='primary.500' fontFamily='texturina'>
                         Email:
                       </Text>
-                      <Text>{foundContact.contactInfo.email ?? 'N/A'}</Text>
+                      <Text>{foundContact?.contactInfo?.email ?? 'N/A'}</Text>
                     </VStack>
                   </HStack>
                   <VStack
@@ -227,7 +237,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                     <Text color='primary.500' fontFamily='texturina'>
                       Bio:
                     </Text>
-                    <Text>{foundContact.bio ?? 'N/A'}</Text>
+                    <Text>{foundContact?.bio ?? 'N/A'}</Text>
                   </VStack>
                 </VStack>
               )

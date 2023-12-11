@@ -51,3 +51,18 @@ export const UPDATE_CONTACT_MUTATION = gql`
     }
   }
 `;
+
+
+export const UPSERT_CONSULTATION_CONTACTS_MUTATION = gql`
+  mutation insert_consultations_contacts(
+    $objects: [consultations_contacts_insert_input!]!,
+    $consultation_id: uuid!,
+  ) {
+    delete_consultations_contacts(where: {consultation_id: {_eq: $consultation_id}}) {
+      affected_rows
+    }
+    insert_consultations_contacts(objects: $objects) {
+      affected_rows
+    }
+  }
+`;
