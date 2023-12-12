@@ -33,15 +33,14 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
 
 
   const [startDate, setStartDate] = useState<Date | null>(
-    raid?.startDate ? new Date(raid?.startDate) : new Date(),
+    raid?.startDate ? new Date(raid?.startDate) : null,
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    raid?.endDate ? new Date(raid?.endDate) : add(new Date(), { weeks: 1 }),
+    raid?.endDate ? new Date(raid?.endDate) : null,
   );
 
   const [desiredDeliveryDate, setDesiredDeliveryDate] = useState<Date | null>(
-    new Date(raid["consultation"]["desiredDeliveryDate"] ?? add(new Date(), { weeks: 1 })),
-  );
+    new Date(raid["consultation"]["desiredDeliveryDate"] ?? null));
   const { data: session } = useSession();
   const token = _.get(session, "token");
 
