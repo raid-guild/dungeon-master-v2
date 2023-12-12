@@ -10,13 +10,13 @@ export {
   useConsultationsCount,
 } from './useConsultationList';
 export { default as useConsultationUpdate } from './useConsultationUpdate';
-export {default as useContactCreate} from './useContactCreate';
-export {  useContacts } from './useContacts';
-export {default as useContactUpdate} from './useContactUpdate';
+export { default as useContactCreate } from './useContactCreate';
+export { useContacts } from './useContacts';
+export { default as useContactUpdate } from './useContactUpdate';
 export { default as useDashboardList } from './useDashboardList';
 export { default as useDefaultTitle } from './useDefaultTitle';
-export * from './useLinks'; 
-export {default as useLinksUpdate} from './useLinksUpdate';
+export * from './useLinks';
+export { default as useLinksUpdate } from './useLinksUpdate';
 export { default as useMemberCreate } from './useMemberCreate';
 export { default as useMemberDetail } from './useMemberDetail';
 export {
@@ -25,6 +25,8 @@ export {
   useSlimMemberList,
 } from './useMemberList';
 export { default as useMemberUpdate } from './useMemberUpdate';
+export { default as usePortfolioDetails } from './usePortfolioDetails';
+export { default as usePortfolioUpdate } from './usePortfolioUpdate';
 export { default as useRaidCreate } from './useRaidCreate';
 export { default as useRaidDetail } from './useRaidDetail';
 export { default as useRaidList, useRaidsCount } from './useRaidList';
@@ -39,4 +41,4 @@ export {
 } from './useRolesRequiredUpdate';
 export { default as useSearchResults } from './useSearchResults';
 export { default as useUpdateCreate } from './useUpdateCreate';
-export {default as useUpsertConsultationContacts } from './useUpsertConsultationContacts';
+export { default as useUpsertConsultationContacts } from './useUpsertConsultationContacts';
