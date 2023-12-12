@@ -20,6 +20,16 @@ export const RAID_UPDATE_MUTATION = gql`
   ${RAID_DETAIL_FRAGMENT}
 `;
 
+export const RAID_MINI_UPDATE_MUTATION = gql`
+  mutation RaidMiniUpdateMutation($id: uuid!, $raid_updates: raids_set_input!) {
+    update_raids_by_pk(pk_columns: { id: $id }, _set: $raid_updates) {
+      ...RaidDetail
+    }
+  }
+  ${RAID_DETAIL_FRAGMENT}
+`;
+
+
 export const RAID_CREATE_MUTATION = gql`
   mutation RaidCreateMutation($raid: raids_insert_input!) {
     insert_raids_one(object: $raid) {
