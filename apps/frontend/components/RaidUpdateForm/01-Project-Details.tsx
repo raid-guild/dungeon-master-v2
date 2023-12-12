@@ -226,18 +226,7 @@ const { mutateAsync: updateRaidStatus } = useRaidUpdate({
             )}
           />
         </FormControl>
-        {raid?.invoiceAddress !== null && (
-          <Input
-            name="invoiceAddress"
-            isReadOnly
-            defaultValue={raid?.invoiceAddress ? raid?.invoiceAddress : ""}
-            aria-label="Enter the Invoice address"
-            placeholder="Enter the Invoice address"
-            rounded="base"
-            label="Invoice Address"
-            localForm={localForm}
-          />
-        )}
+        
       </Stack>
 
       <Button

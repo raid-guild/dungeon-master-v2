@@ -70,6 +70,9 @@ export interface IRaidUpdate {
     start_date?: string;
     end_date?: string;
     cleric_id?: string;
+    escrow_index?: string;
+    locker_hash?: string;
+    invoice_address?: string;
     raids_roles_required?: {
       role: string; // ENUM
     }[];

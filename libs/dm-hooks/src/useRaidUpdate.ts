@@ -1,11 +1,23 @@
 import { useToast } from '@raidguild/design-system';
-import { client, RAID_MINI_UPDATE_MUTATION,RAID_UPDATE_MUTATION } from '@raidguild/dm-graphql';
-import { IConsultationUpdate,IRaidUpdate } from '@raidguild/dm-types';
+import {
+  client,
+  RAID_MINI_UPDATE_MUTATION,
+  RAID_UPDATE_MUTATION,
+} from '@raidguild/dm-graphql';
+import { IConsultationUpdate, IRaidUpdate } from '@raidguild/dm-types';
 import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 
-const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidId: string, consultationId?: string }) => {
+const useRaidUpdate = ({
+  token,
+  raidId,
+  consultationId,
+}: {
+  token: string;
+  raidId: string;
+  consultationId?: string;
+}) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -14,7 +26,8 @@ const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidI
       if (!raidId || !token) return null;
 
       let result;
-      if (!consultationId) {
+
+      if (!consultationId && raidId) {
         result = await client({ token }).request(RAID_MINI_UPDATE_MUTATION, {
           id: raidId,
           raid_updates: args.raid_updates,
@@ -27,6 +40,7 @@ const useRaidUpdate = ({ token, raidId, consultationId }: { token: string, raidI
           consultation_updates: args.consultation_updates,
         });
       }
+
       return result;
     },
     {
