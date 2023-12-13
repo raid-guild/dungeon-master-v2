@@ -1,4 +1,4 @@
-import { Invoice, uploadDisputeDetails } from '@raidguild/escrow-utils';
+import { Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useState } from 'react';
 import { Hex } from 'viem';

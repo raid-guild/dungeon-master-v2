@@ -71,16 +71,28 @@ const PaymentsForm = ({
     handleSubmit,
     watch: localWatch,
     control,
+    getValues,
   } = localForm;
   const { milestones: localMilestones, token: localToken } = localWatch();
 
-  const onSubmit = (values: Partial<Invoice>) => {
+  const setEscrowValues = (values: Partial<Invoice>) => {
     // set values in escrow form
     setValue('milestones', values.milestones);
     setValue('token', values.token);
+  };
 
+  const onSubmit = (values: Partial<Invoice>) => {
+    setEscrowValues(values);
     // navigate form
     updateStep();
+  };
+
+  const onBack = () => {
+    const values = getValues();
+    setEscrowValues(values as Partial<Invoice>);
+
+    if (raidPartySplit) backStep();
+    else backStep(2);
   };
 
   const {
@@ -186,7 +198,7 @@ const PaymentsForm = ({
           minW='25%'
           p='5px'
           mr='.5rem'
-          onClick={() => (raidPartySplit ? backStep() : backStep(2))}
+          onClick={onBack}
         >
           Back
         </Button>

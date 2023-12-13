@@ -1,28 +1,36 @@
-import { Button, Card, Flex, Stack, Text } from '@raidguild/design-system';
+import {
+  Button,
+  Card,
+  Flex,
+  Stack,
+  Text,
+  Tooltip,
+} from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { commify } from '@raidguild/dm-utils';
 import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
+import { GANGGANG_MULTISIG } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { decodeAbiParameters, Hex } from 'viem';
-import { useWaitForTransaction } from 'wagmi';
+import { Hex } from 'viem';
+import { WriteContractResult } from 'wagmi/dist/actions';
 
 import AccountLink from './shared/AccountLink';
-import ZapAddresses from './ZapAddresses';
 
 const EscrowConfirmation = ({
   escrowForm,
   raid,
+  setTxHash,
   updateStep,
   backStep,
 }: {
   escrowForm: UseFormReturn;
   raid: IRaid;
+  setTxHash: Dispatch<SetStateAction<Hex | undefined>>;
   updateStep: () => void;
   backStep: () => void;
 }) => {
-  const [hash, setHash] = useState<Hex>();
   const { watch } = escrowForm;
   const {
     client,
@@ -31,18 +39,48 @@ const EscrowConfirmation = ({
     milestones,
     ownersAndAllocations,
     threshold,
+    projectName,
+    projectDescription,
+    projectAgreement,
+    startDate,
+    endDate,
     daoSplit,
     raidPartySplit,
     safetyValveDate,
   } = watch();
 
+  const detailsData = useMemo(() => {
+    if (raid) {
+      return {
+        projectName: raid?.id,
+        projectDescription: '',
+        projectAgreement: [],
+        startDate: new Date(),
+        endDate: new Date(),
+      };
+    }
+    return {
+      projectName,
+      projectDescription,
+      projectAgreement,
+      startDate,
+      endDate,
+    };
+  }, [
+    raid,
+    projectName,
+    projectDescription,
+    projectAgreement,
+    startDate,
+    endDate,
+  ]);
+
   const canRegisterDirectly = !raidPartySplit && !daoSplit;
-  const details = 'ipfs://Qmtest';
 
   const { writeAsync, isLoading: registerLoading } = useRegister({
     raidId: _.get(raid, 'id'),
     escrowForm,
-    details,
+    detailsData,
     enabled: canRegisterDirectly,
   });
 
@@ -54,30 +92,18 @@ const EscrowConfirmation = ({
     provider,
     client,
     safetyValveDate,
-    details,
+    detailsData,
     projectTeamSplit: raidPartySplit,
     daoSplit,
     enabled: !canRegisterDirectly,
+    onSuccess: (tx: WriteContractResult) => setTxHash(tx?.hash),
   });
-  console.log('writeAsync', writeAsync);
-
-  const { data: txData } = useWaitForTransaction({
-    hash,
-  });
-  let addresses: Hex[];
-  if (txData?.logs?.[6]?.data) {
-    addresses = decodeAbiParameters(
-      ['address', 'address', 'address', 'address'],
-      txData?.logs?.[6]?.data
-    ) as Hex[];
-  }
 
   const createInvoice = async () => {
     if (canRegisterDirectly) {
       await writeAsync?.();
     } else {
-      const result = await writeEscrowZap?.();
-      setHash(result?.hash);
+      await writeEscrowZap?.();
     }
 
     // move to next step
@@ -90,22 +116,55 @@ const EscrowConfirmation = ({
   );
 
   const invoiceDetails = [
-    raid && { label: 'Project Name', value: raid?.name },
-    { label: 'Client Address', value: <AccountLink address={client} /> },
+    { label: 'Project Name', value: raid?.name || projectName },
     {
-      label: 'Raid Party Address',
+      label: 'Client Address',
+      value: (
+        <AccountLink
+          name={
+            _.includes(_.values(GANGGANG_MULTISIG), client) &&
+            'Ganggang Multisig'
+          }
+          address={client}
+        />
+      ),
+    },
+    {
+      label: `Raid Party ${provider ? 'Multisig' : 'Address'}`,
       value: provider ? (
         <AccountLink address={provider} />
       ) : (
-        <Text>Split to be created</Text>
+        <Tooltip
+          label={`${_.size(ownersAndAllocations)} owners on the Safe and Split`}
+          shouldWrapChildren
+          placement='left'
+          hasArrow
+        >
+          <Text>Split to be created</Text>
+        </Tooltip>
       ),
     },
-    daoSplit && { label: 'DAO Split', value: '10%' },
+    daoSplit && { label: 'DAO Split for Spoils', value: '10%' },
     { label: 'Full Escrow Amount', value: `${commify(total)} ${token}` },
     { label: 'No of Payments', value: _.size(milestones) },
     {
       label: 'Arbitration Provider',
-      value: daoSplit ? 'LexDAO' : 'Raid Guild',
+      value: daoSplit ? (
+        'LexDAO'
+      ) : (
+        <Tooltip
+          label='No DAO split'
+          shouldWrapChildren
+          placement='left'
+          hasArrow
+        >
+          <Text>Raid Guild DAO</Text>
+        </Tooltip>
+      ),
+    },
+    {
+      label: 'Project Dates',
+      value: `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
     },
     {
       label: 'Safety Valve Date',
@@ -156,7 +215,6 @@ const EscrowConfirmation = ({
           </Button>
         </Flex>
       </Stack>
-      <ZapAddresses addresses={addresses} />
     </Card>
   );
 };

@@ -16,15 +16,17 @@ import {
   Tooltip,
 } from '@raidguild/design-system';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
+import { Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { FaInfoCircle, FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
-import { isAddress } from 'viem';
+import { Hex, isAddress } from 'viem';
 import { useChainId } from 'wagmi';
 import * as Yup from 'yup';
 
 interface RaidPartySplitFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   escrowForm: UseFormReturn<any>;
   updateStep: () => void;
   backStep: () => void;
@@ -54,6 +56,11 @@ const schema = Yup.object().shape({
     return localSchema.required('Safe Address is required');
   }),
 });
+
+interface InvoiceForm extends Invoice {
+  ownersAndAllocations?: { address?: Hex; percent?: string }[];
+  threshold?: number;
+}
 
 const RaidPartySplitForm = ({
   escrowForm,
@@ -85,7 +92,6 @@ const RaidPartySplitForm = ({
   } = localForm;
   const { ownersAndAllocations: localOwnersAndAllocations, haveSafe } =
     localWatch();
-  console.log(watch('raidPartySplit'));
 
   const {
     fields: ownersAndAllocationsFields,
@@ -100,14 +106,14 @@ const RaidPartySplitForm = ({
     (owner: { percent: string }) => _.toNumber(owner.percent) || 0
   );
 
-  const updateEscrowForm = (values: any) => {
+  const updateEscrowForm = (values: Partial<InvoiceForm>) => {
     // update values in escrow form
     setValue('ownersAndAllocations', values.ownersAndAllocations);
     setValue('threshold', values.threshold);
     setValue('provider', values.provider);
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: Partial<InvoiceForm>) => {
     updateEscrowForm(values);
 
     // move form
@@ -116,7 +122,7 @@ const RaidPartySplitForm = ({
 
   const backHandler = () => {
     const values = getValues();
-    updateEscrowForm(values);
+    updateEscrowForm(values as Partial<InvoiceForm>);
     backStep();
   };
 

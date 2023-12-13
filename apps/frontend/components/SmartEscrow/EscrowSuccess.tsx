@@ -1,34 +1,69 @@
 import {
   Button,
+  Card,
   ChakraText as Text,
   Flex,
   Heading,
   Link,
   Spinner,
   useClipboard,
-  VStack,
 } from '@raidguild/design-system';
+import { getTxLink } from '@raidguild/dm-utils';
+import { updateRaidInvoice } from '@raidguild/escrow-utils';
+import _ from 'lodash';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { useChainId } from 'wagmi';
+import { useEffect, useState } from 'react';
+import { UseFormReturn } from 'react-hook-form';
+import { decodeAbiParameters, Hex } from 'viem';
+import { useChainId, useWaitForTransaction } from 'wagmi';
 
-// import { getTxLink } from '@raidguild/dm-utils';
-import { CopyIcon } from './icons/CopyIcon';
-
-// import { getInvoice } from '@raidguild/escrow-gql';
+import ZapAddresses from './ZapAddresses';
 
 const POLL_INTERVAL = 5000;
 
-const EscrowSuccess = ({ raidId }: { raidId: string }) => {
-  const [invoice, setInvoice] = useState();
+const EscrowSuccess = ({
+  raidId,
+  txHash,
+  escrowForm,
+}: {
+  raidId: string;
+  txHash: Hex;
+  escrowForm: UseFormReturn<any>;
+}) => {
+  // const [invoice, setInvoice] = useState();
+  const [addresses, setAddresses] = useState<Hex[]>(); // [safe, projectTeamSplit, daoSplit, escrow]
   const router = useRouter();
   const chainId = useChainId();
+  const { watch } = escrowForm;
+  const { daoSplit, raidPartySplit } = watch();
+  const canRegisterDirectly = !raidPartySplit && !daoSplit;
 
-  const [progressText, updateProgressText] = useState('');
+  const { data: txData } = useWaitForTransaction({
+    hash: txHash,
+  });
 
-  // const postInvoiceId = async () => {
-  //   await updateRaidInvoice(raidId, smartInvoiceId);
-  // };
+  useEffect(() => {
+    if (!txData) return;
+    // TODO handle `canRegisterDirectly` & raidId
+    const localAddresses: any = _.get(_.last(_.get(txData, 'logs')), 'data');
+    if (!localAddresses) return;
+    console.log(localAddresses);
+    setAddresses(
+      decodeAbiParameters(
+        [
+          { name: 'safe', type: 'address' },
+          { name: 'projectTeamSplit', type: 'address' },
+          { name: 'daoSplit', type: 'address' },
+          { name: 'escrow', type: 'address' },
+        ] as { name: string; type: string }[],
+        localAddresses
+      ) as Hex[]
+    );
+    // update raid record with new invoice address
+    if (!raidId) return;
+    updateRaidInvoice(raidId, _.nth(localAddresses, 3));
+  }, [txData, raidId]);
+  console.log(txData, addresses);
 
   // const pollSubgraph = () => {
   //   let isSubscribed = true;
@@ -71,47 +106,51 @@ const EscrowSuccess = ({ raidId }: { raidId: string }) => {
   // TODO redirect to new invoice page
 
   return (
-    <Flex
-      direction='column'
-      alignItems='center'
-      background='#262626'
-      padding='1.5rem'
-      minWidth='50%'
-    >
+    <Card variant='filled' p={6}>
       <Heading
         fontFamily='texturina'
         textTransform='uppercase'
         size='md'
         mb='2rem'
       >
-        {invoice ? 'Escrow Registered!' : 'Escrow Registration Received'}
+        {addresses ? 'Escrow Registered!' : 'Escrow Registration Received'}
       </Heading>
 
-      <Text
-        color='white'
-        textAlign='center'
-        fontSize='sm'
-        fontFamily='texturina'
-        mb='1rem'
-      >
-        {/* {smartInvoiceId
-          ? 'You can view your transaction '
-          : 'You can check the progress of your transaction '} */}
-        Test
-        <Link
-          href='https://raidguild.org' // {getTxLink(chainId, tx.hash)}
-          isExternal
-          color='yellow.500'
-          textDecoration='underline'
-          target='_blank'
-          rel='noopener noreferrer'
-          fontFamily='texturina'
-        >
-          here
-        </Link>
-      </Text>
+      {!addresses ? (
+        <>
+          <Text
+            color='white'
+            textAlign='center'
+            fontSize='sm'
+            fontFamily='texturina'
+            mb='1rem'
+          >
+            {addresses
+              ? 'You can view your transaction '
+              : 'You can check the progress of your transaction '}
+            <Link
+              href={getTxLink(chainId, txHash)}
+              isExternal
+              color='yellow.500'
+              textDecoration='underline'
+              target='_blank'
+              rel='noopener noreferrer'
+              fontFamily='texturina'
+            >
+              here
+            </Link>
+          </Text>
+          <Flex direction='column' alignItems='center'>
+            <Spinner size='xl' />
+            <br />
+            <Text fontFamily='texturina'>Waiting for transaction</Text>
+          </Flex>
+        </>
+      ) : (
+        <ZapAddresses addresses={addresses} raidId={raidId} />
+      )}
 
-      {invoice ? (
+      {/* {addresses ? (
         <VStack w='100%' align='stretch' mb='1rem'>
           <Text fontWeight='bold' variant='mono' color='primary.300'>
             Invoice URL
@@ -147,13 +186,9 @@ const EscrowSuccess = ({ raidId }: { raidId: string }) => {
             </Button>
           </Flex>
         </VStack>
-      ) : (
-        <Flex direction='column' alignItems='center'>
-          <Spinner size='xl' />
-          <br />
-          <Text fontFamily='texturina'>{progressText}</Text>
-        </Flex>
-      )}
+      ) : ( */}
+
+      {/* )} */}
 
       <Button
         variant='outline'
@@ -164,7 +199,7 @@ const EscrowSuccess = ({ raidId }: { raidId: string }) => {
       >
         return home
       </Button>
-    </Flex>
+    </Card>
   );
 };
 

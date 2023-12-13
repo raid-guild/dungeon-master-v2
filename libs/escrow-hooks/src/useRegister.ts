@@ -1,4 +1,8 @@
-import { NETWORK_CONFIG, updateRaidInvoice } from '@raidguild/escrow-utils';
+import {
+  NETWORK_CONFIG,
+  ProjectDetails,
+  updateRaidInvoice,
+} from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -6,19 +10,19 @@ import { encodeAbiParameters, Hex, parseUnits, stringToHex } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 
 import INVOICE_FACTORY_ABI from './contracts/InvoiceFactory.json';
-import { encodeDetailsString } from './useEscrowZap';
+import useDetailsPin from './useDetailsPin';
 
 const REQUIRES_VERIFICATION = true;
 
 const useRegister = ({
   raidId,
   escrowForm,
-  details,
+  detailsData,
   enabled = true,
 }: {
   raidId: string;
   escrowForm: UseFormReturn;
-  details: string;
+  detailsData: ProjectDetails;
   enabled?: boolean;
 }) => {
   const { watch } = escrowForm;
@@ -33,6 +37,8 @@ const useRegister = ({
   const chainId = useChainId();
 
   const providerReceiver: Hex = provider;
+
+  const { data: details } = useDetailsPin({ ...detailsData });
 
   const resolver = _.first(
     _.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))
@@ -90,7 +96,7 @@ const useRegister = ({
         resolver, // address _resolver (LEX DAO resolver address)
         tokenAddress, // address _token (payment token address)
         terminationTime, // safety valve date
-        encodeDetailsString(details), // bytes32 _details detailHash
+        details, // bytes32 _details detailHash
         wrappedNativeToken,
         REQUIRES_VERIFICATION,
         factoryAddress,

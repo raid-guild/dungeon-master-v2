@@ -37,8 +37,11 @@ import * as Yup from 'yup';
 const unsupportedNetwork = (chainId: number) =>
   !_.includes(SUPPORTED_NETWORKS, chainId);
 
-const sevenDaysFromNow = new Date();
-sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+export const sevenDaysFromNow = () => {
+  const localDate = new Date();
+  localDate.setDate(localDate.getDate() + 7);
+  return localDate;
+};
 
 const schema = Yup.object().shape({
   client: Yup.string().required('Client address is required'),
@@ -53,7 +56,7 @@ const schema = Yup.object().shape({
   safetyValveDate: Yup.date()
     .required('Safety valve date is required')
     .min(
-      sevenDaysFromNow,
+      sevenDaysFromNow(),
       'Safety valve date must be at least a week in the future'
     ),
   daoSplit: Yup.boolean().required('DAO split is required'),
@@ -90,24 +93,35 @@ const EscrowDetailsForm = ({
     raidPartySplit: localRaidPartySplit,
   } = localWatch();
 
-  const onSubmit = (values: Partial<Invoice>) => {
+  const saveEscrowValues = (values: Partial<Invoice>) => {
     // update values in escrow form
     setValue('client', values.client);
     setValue('provider', values.provider);
     setValue('safetyValveDate', values.safetyValveDate);
     setValue('raidPartySplit', values.raidPartySplit);
     setValue('daoSplit', values.daoSplit);
+  };
+
+  const onSubmit = (values: Partial<Invoice>) => {
+    saveEscrowValues(values);
 
     // move form
     if (localRaidPartySplit) updateStep(1);
     else updateStep(2);
   };
 
+  const onBack = () => {
+    const values = watch();
+    saveEscrowValues(values);
+
+    backStep();
+  };
+
   useEffect(() => {
     // set initial local values
     localSetValue('client', client || !raid ? GANGGANG_MULTISIG[chainId] : '');
     if (provider) localSetValue('provider', provider);
-    localSetValue('safetyValveDate', safetyValveDate || sevenDaysFromNow);
+    localSetValue('safetyValveDate', safetyValveDate || sevenDaysFromNow());
     if (_.isUndefined(raidPartySplit)) localSetValue('raidPartySplit', true);
     else localSetValue('raidPartySplit', raidPartySplit);
     // set daoSplit for zap, not used in form explicitly
@@ -221,7 +235,7 @@ const EscrowDetailsForm = ({
                   </FormLabel>
                 </Link>
                 <Tooltip
-                  label='Will resolve disputes between the client and the raid party members.'
+                  label='Percentage sent to the DAO for raids. Handled via the DAO split.'
                   placement='right'
                   hasArrow
                   shouldWrapChildren
@@ -247,7 +261,7 @@ const EscrowDetailsForm = ({
         <Flex justify='center'>
           <HStack>
             {!raid && (
-              <Button variant='outline' onClick={backStep}>
+              <Button variant='outline' onClick={onBack}>
                 Back
               </Button>
             )}

@@ -10,21 +10,24 @@ import {
   Stack,
   Textarea,
 } from '@raidguild/design-system';
+import { ProjectDetails } from '@raidguild/escrow-utils';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import * as Yup from 'yup';
 
-const DEFAULT_AGREEMENT_URL = 'https://urlToAgreement.com';
-
-const sevenDaysFromNow = new Date();
-sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+import { sevenDaysFromNow } from './EscrowDetailsForm';
 
 const validationSchema = Yup.object().shape({
   projectName: Yup.string().required('Project Name is required'),
   projectDescription: Yup.string().required('Project Description is required'),
+  agreement: Yup.string().url('Agreement must be a valid URL'),
   startDate: Yup.date().required('Start Date is required'),
   endDate: Yup.date().required('End Date is required'),
 });
+
+interface ProjectDetailsForm extends ProjectDetails {
+  agreement?: string;
+}
 
 const ProjectDetailsForm = ({
   escrowForm,
@@ -45,17 +48,20 @@ const ProjectDetailsForm = ({
   } = localForm;
   const { startDate: localStartDate, endDate: localEndDate } = localWatch();
 
-  const onSubmit = (values: any) => {
-    console.log('submitting');
+  const onSubmit = async (values: ProjectDetailsForm) => {
+    const projectAgreement = [];
+    if (values.agreement) {
+      // TODO handle ipfs agreement link
+      projectAgreement.push({
+        type: 'https',
+        src: values.agreement,
+        createdAt: Math.floor(Date.now() / 1000),
+      });
+    }
+
     setValue('projectName', values.projectName);
     setValue('projectDescription', values.projectDescription);
-    setValue('projectAgreement', [
-      {
-        type: 'https',
-        src: DEFAULT_AGREEMENT_URL, // lexdao default agreement
-        createdAt: Math.floor(Date.now() / 1000),
-      },
-    ]);
+    setValue('projectAgreement', projectAgreement);
     setValue('startDate', values.startDate);
     setValue('endDate', values.endDate);
 
@@ -64,12 +70,12 @@ const ProjectDetailsForm = ({
   };
 
   useEffect(() => {
-    console.log(projectName, projectDescription, startDate, endDate);
     localSetValue('projectName', projectName || '');
     localSetValue('projectDescription', projectDescription || '');
     localSetValue('startDate', startDate || new Date());
-    localSetValue('endDate', endDate || sevenDaysFromNow);
-  }, [localSetValue]);
+    localSetValue('endDate', endDate || sevenDaysFromNow());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Card as='form' variant='filled' onSubmit={handleSubmit(onSubmit)} p={6}>
@@ -77,14 +83,23 @@ const ProjectDetailsForm = ({
         <Input
           label='Project Name'
           name='projectName'
+          tooltip='The name of the project'
           placeholder='An adventure slaying Moloch'
           localForm={localForm}
         />
         <Textarea
           label='Description'
           name='projectDescription'
+          tooltip='A detailed description of the project'
           placeholder='Describe the project in detail. What is the scope? What are the deliverables? What are the milestones? What are the expectations?'
           variant='outline'
+          localForm={localForm}
+        />
+        <Input
+          label='Project Proposal, Agreement or Specification'
+          name='agreement'
+          tooltip='A URL to a project proposal, agreement or specification. This could be a RIP or other proposal. This is optional.'
+          placeholder='https://github.com/AcmeAcademy/buidler'
           localForm={localForm}
         />
         <HStack>
@@ -92,6 +107,7 @@ const ProjectDetailsForm = ({
             <DatePicker
               label='Start Date'
               name='startDate'
+              // tooltip='The date the project is expected to start'
               localForm={localForm}
               selected={localStartDate}
               onChange={(date) => {
@@ -103,6 +119,7 @@ const ProjectDetailsForm = ({
             <DatePicker
               label='Estimated End Date'
               name='endDate'
+              // tooltip='The date the project is expected to end. This value is not formally used in the escrow.'
               localForm={localForm}
               selected={localEndDate}
               onChange={(date) => {

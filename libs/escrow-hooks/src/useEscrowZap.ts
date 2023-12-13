@@ -1,4 +1,4 @@
-import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import { NETWORK_CONFIG, ProjectDetails } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
 import {
@@ -6,16 +6,15 @@ import {
   Hex,
   isAddress,
   parseEther,
-  stringToHex,
+  TransactionReceipt,
 } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { WriteContractResult } from 'wagmi/dist/actions';
 
 import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
+import useDetailsPin from './useDetailsPin';
 
 type OwnerAndAllocation = { address: string; percent: number };
-
-export const encodeDetailsString = (details: string) =>
-  stringToHex(details, { size: 32 });
 
 const separateOwnersAndAllocations = (
   ownersAndAllocations: OwnerAndAllocation[]
@@ -33,7 +32,7 @@ const separateOwnersAndAllocations = (
 
 const useEscrowZap = ({
   ownersAndAllocations,
-  provider,
+  // provider,
   milestones,
   client,
   threshold,
@@ -42,8 +41,9 @@ const useEscrowZap = ({
   daoSplit = false,
   token,
   safetyValveDate,
-  details,
+  detailsData,
   enabled = true,
+  onSuccess,
 }: UseEscrowZapProps) => {
   const chainId = useChainId();
 
@@ -53,17 +53,25 @@ const useEscrowZap = ({
 
   const milestoneAmounts = _.map(
     milestones,
-    (a: { value: string }) => a.value && parseEther(a.value)
+    (a: { value: string }) => a.value && parseEther(a.value) // TODO handle token decimals
   );
+
+  const { data: details, isLoading: detailsLoading } = useDetailsPin({
+    ...detailsData,
+  });
+  // eslint-disable-next-line no-console
+  console.log('details', details);
 
   const tokenAddress = _.get(
     NETWORK_CONFIG[chainId],
     `TOKENS.${token}.address`
   );
+  // TODO other chains
   const resolver = daoSplit
     ? (_.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))) as Hex)
     : NETWORK_CONFIG[chainId].DAO_ADDRESS;
 
+  console.log('encodeSafeData', threshold, saltNonce);
   const encodedSafeData = useMemo(() => {
     if (!threshold || !saltNonce) return undefined;
     return encodeAbiParameters(
@@ -72,6 +80,7 @@ const useEscrowZap = ({
     );
   }, [threshold, saltNonce]);
 
+  console.log('encodeSplitData', projectTeamSplit, daoSplit);
   const encodedSplitData = useMemo(
     () =>
       encodeAbiParameters(
@@ -81,6 +90,16 @@ const useEscrowZap = ({
     [projectTeamSplit, daoSplit]
   );
 
+  console.log(
+    'encodeEscrowData',
+    client,
+    arbitration,
+    resolver,
+    tokenAddress,
+    safetyValveDate,
+    saltNonce,
+    details
+  );
   const encodedEscrowData = useMemo(() => {
     if (
       !isAddress(client) ||
@@ -109,7 +128,7 @@ const useEscrowZap = ({
         tokenAddress,
         BigInt(Math.floor(_.toNumber(safetyValveDate) / 1000)),
         BigInt(saltNonce),
-        encodeDetailsString(details),
+        details,
       ]
     );
   }, [tokenAddress, safetyValveDate, details, client, arbitration, resolver]);
@@ -130,6 +149,7 @@ const useEscrowZap = ({
       percentAllocations,
       milestoneAmounts,
       encodedSafeData,
+      // provider, // _safeAddress
       encodedSplitData,
       encodedEscrowData,
     ],
@@ -139,11 +159,11 @@ const useEscrowZap = ({
       !_.isEmpty(percentAllocations) &&
       !_.isEmpty(milestoneAmounts) &&
       !!encodedSafeData &&
+      // !!provider && // _safeAddress
       !!encodedSplitData &&
       !!encodedEscrowData &&
       enabled,
   });
-  console.log('prepare error', prepareError);
 
   const {
     writeAsync,
@@ -151,12 +171,15 @@ const useEscrowZap = ({
     error: writeError,
   } = useContractWrite({
     ...config,
+    onSuccess: async (tx) => {
+      onSuccess?.(tx);
+    },
   });
   // console.log(writeAsync);
 
   return {
     writeAsync,
-    isLoading: prepareLoading || writeLoading,
+    isLoading: prepareLoading || writeLoading || detailsLoading,
     prepareError,
     writeError,
   };
@@ -173,8 +196,9 @@ interface UseEscrowZapProps {
   daoSplit?: boolean;
   token: { value?: string; label?: string };
   safetyValveDate: Date;
-  details: string;
+  detailsData: ProjectDetails;
   enabled?: boolean;
+  onSuccess?: (tx: WriteContractResult) => void;
 }
 
 export default useEscrowZap;

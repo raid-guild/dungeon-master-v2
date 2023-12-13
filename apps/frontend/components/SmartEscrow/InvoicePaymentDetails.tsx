@@ -9,11 +9,7 @@ import {
   VStack,
 } from '@raidguild/design-system';
 import { commify, getTxLink } from '@raidguild/dm-utils';
-import {
-  getIpfsLink,
-  Invoice,
-  parseTokenAddress,
-} from '@raidguild/escrow-utils';
+import { Invoice, ipfsUrl, parseTokenAddress } from '@raidguild/escrow-utils';
 // import _ from 'lodash';
 import { formatUnits } from 'viem';
 import { useBalance, useChainId } from 'wagmi';
@@ -239,7 +235,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
               {`A dispute is in progress with `}
               <AccountLink address={resolver} chainId={chainId} />
               <br />
-              <Link href={getIpfsLink(dispute.ipfsHash)} isExternal>
+              <Link href={ipfsUrl(dispute.ipfsHash)} isExternal>
                 <u>View details on IPFS</u>
               </Link>
               <br />
@@ -279,7 +275,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                   {' has resolved the dispute and dispersed remaining funds'}
                   <br />
                   <br />
-                  <Link href={getIpfsLink(resolution.ipfsHash)} isExternal>
+                  <Link href={ipfsUrl(resolution.ipfsHash)} isExternal>
                     <u>View details on IPFS</u>
                   </Link>
                   <br />

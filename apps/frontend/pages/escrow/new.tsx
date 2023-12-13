@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Hex } from 'viem';
 
 import Link from '../../components/ChakraNextLink';
 import SiteLayout from '../../components/SiteLayout';
@@ -23,6 +24,8 @@ const NewEscrow = () => {
   const escrowForm = useForm();
   const router = useRouter();
   const { data: session } = useSession();
+
+  const [txHash, setTxHash] = useState<Hex>();
 
   const raidId = _.get(router, 'query.raidId') as string;
   const token = _.get(session, 'token');
@@ -72,27 +75,12 @@ const NewEscrow = () => {
           )}
 
           {step === 1 && (
-            <>
-              <EscrowDetailsForm
-                escrowForm={escrowForm}
-                updateStep={updateStep}
-                backStep={backStep}
-                raid={raid}
-              />
-              <Text fontSize='sm' color='whiteAlpha.700'>
-                The Raid Guild escrow uses{' '}
-                <Link
-                  href={SMART_INVOICE_URL}
-                  isExternal
-                  textDecoration='underline'
-                >
-                  Smart Invoice
-                </Link>{' '}
-                to manage it&apos;s client and RIP escrows. If you are setting
-                up for a client, you&apos;ll be able to send them the Invoice
-                link to handle deposit and escrow operations.
-              </Text>
-            </>
+            <EscrowDetailsForm
+              escrowForm={escrowForm}
+              updateStep={updateStep}
+              backStep={backStep}
+              raid={raid}
+            />
           )}
           {step === 2 && (
             <RaidPartySplitForm
@@ -112,11 +100,33 @@ const NewEscrow = () => {
             <EscrowConfirmation
               escrowForm={escrowForm}
               raid={raid}
+              setTxHash={setTxHash}
               updateStep={updateStep}
               backStep={backStep}
             />
           )}
-          {step === 5 && <EscrowSuccess raidId={raidId} />}
+          {step === 5 && (
+            <EscrowSuccess
+              raidId={raidId}
+              txHash={txHash}
+              escrowForm={escrowForm}
+            />
+          )}
+          {(step === 0 || step === 1) && (
+            <Text fontSize='sm' color='whiteAlpha.700'>
+              The Raid Guild escrow uses{' '}
+              <Link
+                href={SMART_INVOICE_URL}
+                isExternal
+                textDecoration='underline'
+              >
+                Smart Invoice
+              </Link>{' '}
+              to manage client and RIP escrows. If you are setting up for a
+              client, you&apos;ll be able to send them the Invoice link to
+              handle deposit and escrow operations.
+            </Text>
+          )}
         </Stack>
       </SiteLayout>
     </>

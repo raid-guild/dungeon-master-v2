@@ -1,9 +1,5 @@
 import { Hex } from 'viem';
 
-// clientName: string;
-// projectName: string;
-// raidId: string;
-
 export interface Invoice {
   address: Hex;
   // onchain
@@ -29,3 +25,11 @@ export interface Invoice {
   raidPartySplit?: boolean;
   daoSplit?: boolean;
 }
+
+export type ProjectDetails = {
+  projectName: string;
+  projectDescription: string;
+  projectAgreement: string;
+  startDate: string;
+  endDate: string;
+};

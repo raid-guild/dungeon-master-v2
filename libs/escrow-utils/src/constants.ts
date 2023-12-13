@@ -58,15 +58,15 @@ interface NetworkConfig {
 
 export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
   100: {
-    SUBGRAPH: 'geovgy/v1-gnosis-chain-smart-invoice',
+    SUBGRAPH: 'geovgy/v1-gnosis-chain-smart-invoice', // scottrepreneur/smart-invoice-gnosis
     INVOICE_FACTORY: _.toLower(
       '0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'
     ) as Hex,
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d'
     ) as Hex,
-    ZAP_ADDRESS: '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628' as Hex,
-    DAO_ADDRESS: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986' as Hex,
+    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
+    DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
     TOKENS: {
       WXDAI: {
         decimals: 18,
@@ -94,8 +94,8 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
     ) as Hex,
-    ZAP_ADDRESS: '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628' as Hex,
-    DAO_ADDRESS: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986' as Hex,
+    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
+    DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
     TOKENS: {
       WETH: {
         decimals: 18,
@@ -123,7 +123,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     INVOICE_FACTORY: _.toLower(
       '0x546adED0B0179d550e87cf909939a1207Fd26fB7'
     ) as Hex,
-    ZAP_ADDRESS: _.toLower('0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628') as Hex,
+    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
     DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
     TOKENS: {
       WETH: {
