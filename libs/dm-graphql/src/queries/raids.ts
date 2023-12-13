@@ -1,6 +1,11 @@
 import { gql } from 'graphql-request';
 
-import { CONTACT_INFOS_FRAGMENT, RAID_DETAIL_FRAGMENT, RAID_SLIM_DETAIL_FRAGMENT } from '../fragments';
+import {
+  CONTACT_INFOS_FRAGMENT,
+  PORTFOLIO_DETAIL_FRAGMENT,
+  RAID_DETAIL_FRAGMENT,
+  RAID_SLIM_DETAIL_FRAGMENT,
+} from '../fragments';
 
 export const RAIDING_RAIDS_BY_LAST_UPDATE = gql`
   query RaidsByLastUpdate($latest_update_order_by: order_by) {
@@ -90,10 +95,10 @@ export const RAID_DETAIL_QUERY = gql`
       consultation {
         id
         links {
-        id
-        link
-        type
-      }
+          id
+          link
+          type
+        }
         budget_option {
           budget_option
         }
@@ -152,6 +157,21 @@ export const RAID_DETAIL_QUERY = gql`
           id
         }
         created_at
+      }
+      portfolios {
+        id
+        raid_id
+        name
+        slug
+        description
+        case_study
+        approach
+        challenge
+        category
+        result
+        repo_link
+        result_link
+        image_url
       }
       created_at
       updated_at

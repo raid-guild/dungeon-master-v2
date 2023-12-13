@@ -6,14 +6,13 @@ import {
   Stack,
   Text,
   Textarea,
-  VStack
-} from '@raidguild/design-system';
-import { usePortfolioDetails,usePortfolioUpdate } from '@raidguild/dm-hooks';
-import { IPortfolioUpdate, IRaid } from '@raidguild/dm-types';
+  VStack} from '@raidguild/design-system';
+import { usePortfolioUpdate } from '@raidguild/dm-hooks';
+import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 interface PortfolioUpdateProps {
   raidId?: string;
@@ -87,9 +86,8 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
 
   const [isPublished, setIsPublished] = useState(true);
 
-  const {data} = usePortfolioDetails({raidId, token});
+  const portfolio = raid.portfolios[0];
 
-  const portfolio = data?.portfolio ?? {};
   console.log(portfolio);
 
   const { mutateAsync: updatePortfolio } = usePortfolioUpdate(token);
@@ -105,7 +103,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
         raid_id: raidId,
         name: values.projectName ?? portfolio?.name,
         slug: values.slug ?? portfolio?.slug,
-        repo_link: values.githubUrl ?? portfolio?.repoLink,
+        repo_link: values.githubUrl ?? portfolio?.repo_link,
         description: values.description ?? portfolio?.description,
         challenge: {
           content: [values.challenge ?? portfolio?.challenge.content[0]]
@@ -116,7 +114,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
         result: {
           content: [values.result ?? portfolio?.result.content[0]]
         },
-        category: values.categoryOptions.value ?? portfolio?.category.category,
+        category: values.categoryOptions.value ?? portfolio?.category,
         result_link: values.resultLink ?? portfolio?.result_link,
         image_url: ''
       },
@@ -154,7 +152,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
         label='Github:'
         name='githubUrl'
         localForm={localForm}
-        defaultValue={portfolio?.repoLink ?? ''}
+        defaultValue={portfolio?.repo_link ?? ''}
         placeholder='Github URL'
       />
       <Input

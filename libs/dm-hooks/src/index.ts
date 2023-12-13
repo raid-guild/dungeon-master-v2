@@ -25,7 +25,6 @@ export {
   useSlimMemberList,
 } from './useMemberList';
 export { default as useMemberUpdate } from './useMemberUpdate';
-export { default as usePortfolioDetails } from './usePortfolioDetails';
 export { default as usePortfolioUpdate } from './usePortfolioUpdate';
 export { default as useRaidCreate } from './useRaidCreate';
 export { default as useRaidDetail } from './useRaidDetail';

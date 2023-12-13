@@ -1,6 +1,7 @@
+/* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
-const PORTFOLIO_DETAIL_FRAGMENT = gql`
+export const PORTFOLIO_DETAIL_FRAGMENT = gql`
   fragment PortfolioDetailFragment on portfolios {
     id
     raid_id
@@ -17,5 +18,3 @@ const PORTFOLIO_DETAIL_FRAGMENT = gql`
     image_url
   }
 `;
-
-export default PORTFOLIO_DETAIL_FRAGMENT;

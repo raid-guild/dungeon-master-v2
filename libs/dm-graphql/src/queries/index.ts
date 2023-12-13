@@ -5,7 +5,6 @@ export * from './contacts'
 export * from './dashboard';
 export * from './links'
 export * from './members';
-export * from './portfolios';
 export * from './raids';
 export * from './rips';
 export * from './search';

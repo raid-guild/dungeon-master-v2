@@ -3,6 +3,7 @@ import { gql } from 'graphql-request';
 
 import { CONSULTATION_DETAIL_FRAGMENT } from './consultations';
 import { SLIM_MEMBER_DETAIL_FRAGMENT } from './members';
+import PORTFOLIO_DETAIL_FRAGMENT from './portfolios';
 
 const RAID_ENUMS_FRAGMENT = gql`
   fragment RaidEnums on raids {
@@ -56,7 +57,6 @@ export const RAID_DETAIL_FRAGMENT = gql`
     }
   }
   ${RAID_ENUMS_FRAGMENT}
-  ${CONSULTATION_DETAIL_FRAGMENT}
   ${SLIM_MEMBER_DETAIL_FRAGMENT}
 `;
 
