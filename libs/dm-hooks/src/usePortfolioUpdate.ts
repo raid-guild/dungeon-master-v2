@@ -3,8 +3,10 @@ import { client, PORTFOLIO_INSERT_MUTATION, PORTFOLIO_UPDATE_MUTATION } from '@r
 import { IPortfolioUpdate } from '@raidguild/dm-types';
 import { useMutation } from '@tanstack/react-query';
 
-const usePortfolioUpdate = (token: string, portfolioId?: string) => {
+const usePortfolioUpdate = (initArgs: {token: string, portfolioId?: string}) => {
   const toast = useToast();
+
+  const { token, portfolioId } = initArgs;
 
   // Separate function for mutation logic
   const portfolioMutation = async (args: IPortfolioUpdate) => {

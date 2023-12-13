@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
-import PORTFOLIO_DETAIL_FRAGMENT from '../fragments/portfolios';
+import {PORTFOLIO_DETAIL_FRAGMENT} from '../fragments';
 
 export const PORTFOLIO_INSERT_MUTATION = gql`
   mutation PortfolioInsertMutation($portfolio: portfolios_insert_input!) {

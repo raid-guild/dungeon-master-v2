@@ -1,5 +1,7 @@
 import {
   Button,
+  FormControl,
+  FormLabel,
   Input,
   Link,
   Select,
@@ -12,13 +14,12 @@ import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 interface PortfolioUpdateProps {
   raidId?: string;
   closeModal?: () => void;
   raid: Partial<IRaid>;
-  // consultation:  Partial<IConsultation>;
 }
 
 const questions = [
@@ -84,21 +85,18 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
 
   const [sending, setSending] = useState(false);
 
-  const [isPublished, setIsPublished] = useState(true);
+  const isPublished = raid.portfolios.length > 0;
 
   const portfolio = raid.portfolios[0];
 
-  console.log(portfolio);
 
-  const { mutateAsync: updatePortfolio } = usePortfolioUpdate(token);
 
-  const onSubmit = (values) => {
-    
-    console.log(values);
+  const { mutateAsync: updatePortfolio } = usePortfolioUpdate({token, portfolioId: portfolio?.id ?? ''});
 
+  const onSubmit = async (values) => {
 
     setSending(true);
-    updatePortfolio({
+    await updatePortfolio({
       portfolio: {
         raid_id: raidId,
         name: values.projectName ?? portfolio?.name,
@@ -120,7 +118,10 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
       },
       
     });
+
+    closeModal();
   };
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -199,12 +200,28 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
           </Text>
         </Stack>
       ))}
-      <Select
-        name='categoryOptions'
-        localForm={localForm}
-        options={categoryOptions}
-        variant='outline'
-      />
+
+
+
+      <FormControl>
+          <FormLabel color="raid">Project Category</FormLabel>
+          <Controller
+            name="categoryOptions"
+            defaultValue={_.find(categoryOptions, { value: portfolio?.category })}
+            control={control}
+            render={({ field }) => (
+              <Select
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {
+                  ...field
+                }
+                name="categoryOptions"
+                options={categoryOptions}
+                localForm={localForm}
+              />
+            )}
+          />
+        </FormControl>
 
       <Button
         isLoading={isSubmitting || sending}
@@ -219,7 +236,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
         fontWeight='bold'
       >
   
-          {portfolio ? 'Unpublish' : 'Publish Portfolio Updates'}
+          Publish Portfolio Updates
   
       </Button>
     </VStack>
