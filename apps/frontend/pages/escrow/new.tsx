@@ -1,4 +1,4 @@
-import { Heading, Stack } from '@raidguild/design-system';
+import { Heading, Stack, Text } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
@@ -7,13 +7,17 @@ import { NextSeo } from 'next-seo';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import Link from '../../components/ChakraNextLink';
 import SiteLayout from '../../components/SiteLayout';
 import EscrowConfirmation from '../../components/SmartEscrow/EscrowConfirmation';
 import EscrowDetailsForm from '../../components/SmartEscrow/EscrowDetailsForm';
 import EscrowSuccess from '../../components/SmartEscrow/EscrowSuccess';
 import PaymentsForm from '../../components/SmartEscrow/PaymentsForm';
+import ProjectDetailsForm from '../../components/SmartEscrow/ProjectDetailsForm';
 import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
 import RaidPartySplitForm from '../../components/SmartEscrow/RaidPartySplitForm';
+
+const SMART_INVOICE_URL = 'https://smartinvoice.xyz';
 
 const NewEscrow = () => {
   const escrowForm = useForm();
@@ -23,7 +27,7 @@ const NewEscrow = () => {
   const raidId = _.get(router, 'query.raidId') as string;
   const token = _.get(session, 'token');
 
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(0);
 
   const updateStep = (increment?: number) => {
     if (_.isNumber(increment)) setStep((prev) => prev + increment);
@@ -48,18 +52,47 @@ const NewEscrow = () => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
 
+  useEffect(() => {
+    if (raid) setStep(1);
+  }, [raid]);
+
   return (
     <>
       <NextSeo title='Smart Escrow' />
 
       <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
         <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
-          <ProjectInfo raid={raid} />
-          {step === 1 && (
-            <EscrowDetailsForm
+          {raid && <ProjectInfo raid={raid} />}
+
+          {step === 0 && !raid && (
+            <ProjectDetailsForm
               escrowForm={escrowForm}
               updateStep={updateStep}
             />
+          )}
+
+          {step === 1 && (
+            <>
+              <EscrowDetailsForm
+                escrowForm={escrowForm}
+                updateStep={updateStep}
+                backStep={backStep}
+                raid={raid}
+              />
+              <Text fontSize='sm' color='whiteAlpha.700'>
+                The Raid Guild escrow uses{' '}
+                <Link
+                  href={SMART_INVOICE_URL}
+                  isExternal
+                  textDecoration='underline'
+                >
+                  Smart Invoice
+                </Link>{' '}
+                to manage it&apos;s client and RIP escrows. If you are setting
+                up for a client, you&apos;ll be able to send them the Invoice
+                link to handle deposit and escrow operations.
+              </Text>
+            </>
           )}
           {step === 2 && (
             <RaidPartySplitForm

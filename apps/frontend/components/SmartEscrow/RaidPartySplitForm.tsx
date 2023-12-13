@@ -85,6 +85,7 @@ const RaidPartySplitForm = ({
   } = localForm;
   const { ownersAndAllocations: localOwnersAndAllocations, haveSafe } =
     localWatch();
+  console.log(watch('raidPartySplit'));
 
   const {
     fields: ownersAndAllocationsFields,
@@ -145,7 +146,7 @@ const RaidPartySplitForm = ({
             <Icon
               as={FaInfoCircle}
               boxSize={3}
-              color='red.500'
+              color='purple.500'
               bg='white'
               borderRadius='full'
             />
@@ -221,12 +222,11 @@ const RaidPartySplitForm = ({
             Add
           </Button>
 
-          <Text color={percentAllocated !== 100 && 'red.500'}>
-            Total Percent Allocation:{' '}
-            {_.sumBy(
-              localOwnersAndAllocations,
-              (owner: any) => _.toNumber(owner.percent) || 0
-            )}
+          <Text
+            color={percentAllocated !== 100 && 'red.500'}
+            fontWeight={percentAllocated !== 100 && 700}
+          >
+            Total Percent Allocation: {percentAllocated}%
           </Text>
         </Flex>
 
@@ -273,7 +273,9 @@ const RaidPartySplitForm = ({
               type='submit'
               variant='solid'
               isDisabled={
-                unsupportedNetwork(chainId) || !!errors.ownersAndAllocations
+                unsupportedNetwork(chainId) ||
+                !!errors.ownersAndAllocations ||
+                percentAllocated !== 100
               }
             >
               Next: Set Payment Amounts

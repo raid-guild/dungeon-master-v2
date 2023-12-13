@@ -275,6 +275,7 @@ export const GUILD_CLASS_DISPLAY = {
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
 };
 
+// accounting
 export const GUILD_GNOSIS_DAO_ADDRESS =
   '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 

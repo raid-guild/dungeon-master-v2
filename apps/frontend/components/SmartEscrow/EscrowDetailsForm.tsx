@@ -9,17 +9,25 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  HStack,
+  Icon,
   Input,
   Link,
-  // NumberInput,
-  // RadioBox,
   Stack,
+  Tooltip,
 } from '@raidguild/design-system';
+import { IRaid } from '@raidguild/dm-types';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
-import { getResolverUrl, getSpoilsUrl, Invoice } from '@raidguild/escrow-utils';
+import {
+  GANGGANG_MULTISIG,
+  getResolverUrl,
+  getSpoilsUrl,
+  Invoice,
+} from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
+import { FaInfoCircle } from 'react-icons/fa';
 import { useChainId } from 'wagmi';
 import * as Yup from 'yup';
 
@@ -28,6 +36,9 @@ import * as Yup from 'yup';
 
 const unsupportedNetwork = (chainId: number) =>
   !_.includes(SUPPORTED_NETWORKS, chainId);
+
+const sevenDaysFromNow = new Date();
+sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
 const schema = Yup.object().shape({
   client: Yup.string().required('Client address is required'),
@@ -41,7 +52,10 @@ const schema = Yup.object().shape({
   ),
   safetyValveDate: Yup.date()
     .required('Safety valve date is required')
-    .min(new Date(), 'Safety valve date must be in the future'),
+    .min(
+      sevenDaysFromNow,
+      'Safety valve date must be at least a week in the future'
+    ),
   daoSplit: Yup.boolean().required('DAO split is required'),
   spoilsPercent: Yup.string(),
   raidPartySplit: Yup.boolean().required('Raid party split is required'),
@@ -49,15 +63,18 @@ const schema = Yup.object().shape({
 
 const EscrowDetailsForm = ({
   escrowForm,
+  raid,
   updateStep,
+  backStep,
 }: {
   escrowForm: UseFormReturn;
+  raid: IRaid;
   updateStep: (i?: number) => void;
+  backStep: () => void;
 }) => {
   const chainId = useChainId();
   const { watch, setValue } = escrowForm;
-  const { provider, client, safetyValveDate, raidPartySplit, daoSplit } =
-    watch();
+  const { provider, client, safetyValveDate, raidPartySplit } = watch();
   const localForm = useForm({
     resolver: yupResolver(schema),
   });
@@ -88,16 +105,16 @@ const EscrowDetailsForm = ({
 
   useEffect(() => {
     // set initial local values
-    if (client) localSetValue('client', client);
+    localSetValue('client', client || !raid ? GANGGANG_MULTISIG[chainId] : '');
     if (provider) localSetValue('provider', provider);
-    localSetValue('safetyValveDate', safetyValveDate || new Date());
+    localSetValue('safetyValveDate', safetyValveDate || sevenDaysFromNow);
     if (_.isUndefined(raidPartySplit)) localSetValue('raidPartySplit', true);
     else localSetValue('raidPartySplit', raidPartySplit);
-    if (_.isUndefined(daoSplit)) localSetValue('daoSplit', true);
-    else localSetValue('daoSplit', daoSplit);
+    // set daoSplit for zap, not used in form explicitly
+    localSetValue('daoSplit', !_.isUndefined(raid));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId]);
+  }, [chainId, raid]);
 
   useEffect(() => {
     localSetValue('spoilsPercent', localDaoSplit ? '10' : '0');
@@ -110,15 +127,16 @@ const EscrowDetailsForm = ({
         <Stack spacing={4}>
           <Input
             label='Client Address'
-            tooltip='This will be the address used to access the invoice'
+            tooltip='This will be the address used to release funds from the invoice. This does not need to be the same address that funds the escrow.'
             placeholder='0x...'
             name='client'
+            isDisabled={!raid}
             localForm={localForm}
           />
         </Stack>
 
         <Flex>
-          <Box w='33%'>
+          <Box w='50%'>
             <DatePicker
               label='Safety Valve Date'
               name='safetyValveDate'
@@ -131,22 +149,23 @@ const EscrowDetailsForm = ({
             />
           </Box>
 
-          <Stack w='33%'>
+          <Stack w='50%'>
             <Checkbox
               label='Raid Party Split'
               name='raidPartySplit'
+              tooltip='Automatically split the funds between the raid party members on release from escrow'
               localForm={localForm}
               options={['Add Raid Party split']}
             />
           </Stack>
-          <Stack w='33%'>
+          {/* <Stack w='33%'>
             <Checkbox
               label='DAO Split'
               name='daoSplit'
               localForm={localForm}
               options={['Add DAO spoils split']}
             />
-          </Stack>
+          </Stack> */}
         </Flex>
 
         {!localRaidPartySplit && (
@@ -164,38 +183,85 @@ const EscrowDetailsForm = ({
 
         <Flex>
           <FormControl isReadOnly mr='.5em'>
-            <Link href={getResolverUrl(chainId)} isExternal>
-              <FormLabel cursor='pointer' fontWeight='bold'>
-                Arbitration Provider
-              </FormLabel>
-            </Link>
-            <ChakraInput
-              value={localDaoSplit ? 'LexDAO' : 'RaidGuild DAO'}
-              isDisabled
-            />
+            <Stack>
+              <HStack>
+                <Link href={getResolverUrl(chainId)} isExternal>
+                  <FormLabel cursor='pointer' fontWeight='bold' m={0}>
+                    Arbitration Provider
+                  </FormLabel>
+                </Link>
+                <Tooltip
+                  label='Will resolve disputes between the client and the raid party members.'
+                  placement='right'
+                  hasArrow
+                  shouldWrapChildren
+                >
+                  <Icon
+                    as={FaInfoCircle}
+                    boxSize={3}
+                    color='purple.500'
+                    bg='white'
+                    borderRadius='full'
+                  />
+                </Tooltip>
+              </HStack>
+              <ChakraInput
+                value={localDaoSplit ? 'LexDAO' : 'RaidGuild DAO'}
+                isDisabled
+              />
+            </Stack>
           </FormControl>
 
           <FormControl isReadOnly mr='.5em'>
-            <Link href={getSpoilsUrl(chainId, provider)} isExternal>
-              <FormLabel cursor='pointer' fontWeight='bold'>
-                Spoils Percent
-              </FormLabel>
-            </Link>
-            <ChakraInput value={`${localSpoilsPercent}%`} readOnly isDisabled />
+            <Stack>
+              <HStack align='center'>
+                <Link href={getSpoilsUrl(chainId, provider)} isExternal>
+                  <FormLabel cursor='pointer' fontWeight='bold' m={0}>
+                    Spoils Percent
+                  </FormLabel>
+                </Link>
+                <Tooltip
+                  label='Will resolve disputes between the client and the raid party members.'
+                  placement='right'
+                  hasArrow
+                  shouldWrapChildren
+                >
+                  <Icon
+                    as={FaInfoCircle}
+                    boxSize={3}
+                    color='purple.500'
+                    bg='white'
+                    borderRadius='full'
+                  />
+                </Tooltip>
+              </HStack>
+              <ChakraInput
+                value={`${localSpoilsPercent}%`}
+                readOnly
+                isDisabled
+              />
+            </Stack>
           </FormControl>
         </Flex>
 
         <Flex justify='center'>
-          <Button
-            type='submit'
-            variant='solid'
-            isDisabled={unsupportedNetwork(chainId)}
-          >
-            Next:{' '}
-            {localRaidPartySplit
-              ? 'Set Raid Party Split'
-              : 'Set Payment Amounts'}
-          </Button>
+          <HStack>
+            {!raid && (
+              <Button variant='outline' onClick={backStep}>
+                Back
+              </Button>
+            )}
+            <Button
+              type='submit'
+              variant='solid'
+              isDisabled={unsupportedNetwork(chainId)}
+            >
+              Next:{' '}
+              {localRaidPartySplit
+                ? 'Set Raid Party Split'
+                : 'Set Payment Amounts'}
+            </Button>
+          </HStack>
         </Flex>
       </Stack>
     </Card>

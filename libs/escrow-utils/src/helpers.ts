@@ -5,7 +5,7 @@ import { Hex } from 'viem';
 import {
   nativeSymbols,
   NETWORK_CONFIG,
-  RG_XDAI,
+  RAIDGUILD_DAO,
   wrappedNativeToken,
 } from './constants';
 
@@ -17,7 +17,7 @@ export const getResolverUrl = (chainId: number) => {
 };
 
 export const getSpoilsUrl = (chainId: number, address: string) => {
-  const spoilsAddress = chainId === 100 ? RG_XDAI : address;
+  const spoilsAddress = chainId === 100 ? RAIDGUILD_DAO[chainId] : address;
   return `${getExplorerUrl(chainId)}/address/${spoilsAddress}`;
 };
 

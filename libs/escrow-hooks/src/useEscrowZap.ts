@@ -143,7 +143,7 @@ const useEscrowZap = ({
       !!encodedEscrowData &&
       enabled,
   });
-  // console.log('prepare error', prepareError);
+  console.log('prepare error', prepareError);
 
   const {
     writeAsync,

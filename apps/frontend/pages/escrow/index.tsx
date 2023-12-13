@@ -28,16 +28,27 @@ export const validateRaidId = async (raidId: string) => {
 
 const ActionButtons = ({ raid }: { raid: IRaid }) => (
   <HStack>
-    <Link href={`/escrow/new?raidId=${raid?.id}`} passHref key='register'>
-      <Button variant='outline' isDisabled={!raid || !!raid?.invoiceAddress}>
-        Register Escrow
-      </Button>
-    </Link>
-    <Link href={`/escrow/${raid?.id}`} passHref key='view'>
-      <Button variant='outline' isDisabled={!raid?.invoiceAddress}>
-        View Escrow
-      </Button>
-    </Link>
+    {raid ? (
+      <>
+        <Link href={`/escrow/new?raidId=${raid?.id}`} passHref key='register'>
+          <Button
+            variant='outline'
+            isDisabled={!raid || !!raid?.invoiceAddress}
+          >
+            Register Escrow
+          </Button>
+        </Link>
+        <Link href={`/escrow/${raid?.id}`} passHref key='view'>
+          <Button variant='outline' isDisabled={!raid?.invoiceAddress}>
+            View Escrow
+          </Button>
+        </Link>
+      </>
+    ) : (
+      <Link href='/escrow/new'>
+        <Button variant='outline'>I don&apos;t have one</Button>
+      </Link>
+    )}
   </HStack>
 );
 

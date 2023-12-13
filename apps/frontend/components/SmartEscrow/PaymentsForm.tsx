@@ -12,13 +12,14 @@ import {
   RadioBox,
   Stack,
   Text,
+  Tooltip,
 } from '@raidguild/design-system';
 import { commify } from '@raidguild/dm-utils';
 import { Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
-import { FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
+import { FaInfoCircle, FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
 import { useChainId } from 'wagmi';
 import * as Yup from 'yup';
 
@@ -110,13 +111,30 @@ const PaymentsForm = ({
           <RadioBox
             options={tokens(chainId)}
             label='Payment Token'
+            tooltip='Token to be used for escrow payments'
             name='token'
             localForm={localForm}
           />
         </FormControl>
       </Flex>
       <Stack w='100%'>
-        <Heading size='sm'>Milestone Amounts</Heading>
+        <HStack>
+          <Heading size='sm'>Milestone Amounts</Heading>
+          <Tooltip
+            label='Amounts of each milestone for the escrow. Additional milestones can be added later.'
+            placement='right'
+            hasArrow
+            shouldWrapChildren
+          >
+            <Icon
+              as={FaInfoCircle}
+              boxSize={3}
+              color='purple.500'
+              bg='white'
+              borderRadius='full'
+            />
+          </Tooltip>
+        </HStack>
         {_.map(milestonesFields, (field, index) => {
           const handleRemoveMilestone = () => {
             removeMilestone(index);
@@ -134,16 +152,6 @@ const PaymentsForm = ({
                   variant='outline'
                   localForm={localForm}
                 />
-                {/* <Flex
-                  border='1px solid'
-                  borderColor='#7f5af0'
-                  justify='center'
-                  align='center'
-                  height='40px'
-                  px={2}
-                >
-                  <Text>{token}</Text>
-                </Flex> */}
               </HStack>
               <IconButton
                 icon={<Icon as={FaRegTrashAlt} />}

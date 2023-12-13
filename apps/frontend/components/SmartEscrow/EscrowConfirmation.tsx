@@ -3,9 +3,13 @@ import { IRaid } from '@raidguild/dm-types';
 import { commify } from '@raidguild/dm-utils';
 import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
+import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { decodeAbiParameters, Hex } from 'viem';
+import { useWaitForTransaction } from 'wagmi';
 
 import AccountLink from './shared/AccountLink';
+import ZapAddresses from './ZapAddresses';
 
 const EscrowConfirmation = ({
   escrowForm,
@@ -18,6 +22,7 @@ const EscrowConfirmation = ({
   updateStep: () => void;
   backStep: () => void;
 }) => {
+  const [hash, setHash] = useState<Hex>();
   const { watch } = escrowForm;
   const {
     client,
@@ -27,11 +32,11 @@ const EscrowConfirmation = ({
     ownersAndAllocations,
     threshold,
     daoSplit,
-    projectTeamSplit,
+    raidPartySplit,
     safetyValveDate,
   } = watch();
 
-  const canRegisterDirectly = !projectTeamSplit && !daoSplit;
+  const canRegisterDirectly = !raidPartySplit && !daoSplit;
   const details = 'ipfs://Qmtest';
 
   const { writeAsync, isLoading: registerLoading } = useRegister({
@@ -50,14 +55,29 @@ const EscrowConfirmation = ({
     client,
     safetyValveDate,
     details,
+    projectTeamSplit: raidPartySplit,
+    daoSplit,
     enabled: !canRegisterDirectly,
   });
+  console.log('writeAsync', writeAsync);
+
+  const { data: txData } = useWaitForTransaction({
+    hash,
+  });
+  let addresses: Hex[];
+  if (txData?.logs?.[6]?.data) {
+    addresses = decodeAbiParameters(
+      ['address', 'address', 'address', 'address'],
+      txData?.logs?.[6]?.data
+    ) as Hex[];
+  }
 
   const createInvoice = async () => {
     if (canRegisterDirectly) {
       await writeAsync?.();
     } else {
-      await writeEscrowZap?.();
+      const result = await writeEscrowZap?.();
+      setHash(result?.hash);
     }
 
     // move to next step
@@ -70,7 +90,7 @@ const EscrowConfirmation = ({
   );
 
   const invoiceDetails = [
-    { label: 'Project Name', value: raid?.name },
+    raid && { label: 'Project Name', value: raid?.name },
     { label: 'Client Address', value: <AccountLink address={client} /> },
     {
       label: 'Raid Party Address',
@@ -80,17 +100,24 @@ const EscrowConfirmation = ({
         <Text>Split to be created</Text>
       ),
     },
-    { label: 'Arbitration Provider', value: 'LexDAO' },
-    { label: 'Payment Token', value: token },
-    { label: 'Full Escrow Amount', value: commify(total) },
+    daoSplit && { label: 'DAO Split', value: '10%' },
+    { label: 'Full Escrow Amount', value: `${commify(total)} ${token}` },
     { label: 'No of Payments', value: _.size(milestones) },
+    {
+      label: 'Arbitration Provider',
+      value: daoSplit ? 'LexDAO' : 'Raid Guild',
+    },
+    {
+      label: 'Safety Valve Date',
+      value: safetyValveDate?.toLocaleDateString(),
+    },
   ];
 
   return (
     <Card as={Flex} variant='filled' direction='column' minWidth='50%'>
       <Stack spacing={6} w='100%'>
         <Stack>
-          {_.map(invoiceDetails, ({ label, value }) => (
+          {_.map(_.compact(invoiceDetails), ({ label, value }) => (
             <Flex justify='space-between' key={label}>
               <Text fontWeight='bold' variant='textOne'>
                 {label}:
@@ -129,6 +156,7 @@ const EscrowConfirmation = ({
           </Button>
         </Flex>
       </Stack>
+      <ZapAddresses addresses={addresses} />
     </Card>
   );
 };

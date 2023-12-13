@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { StaticImageData } from 'next/image';
 import { Hex } from 'viem';
 
 import LexDAOLogo from './assets/lex-dao.png';
@@ -10,11 +11,20 @@ export const SPOILS_BASIS_POINTS = 1000;
 export const INVOICE_VERSION = 'smart-escrow-v1';
 
 // RaidGuild DAO treasury address V3
-export const RG_XDAI = _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986');
-// RaidGuild Ethereum Mainnet multisig
-export const RG_MULTISIG = _.toLower(
-  '0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'
-);
+export const RAIDGUILD_DAO = {
+  100: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986'),
+};
+
+// RaidGuild multisig(s)
+export const RAIDGUILD_MULTISIG = {
+  1: _.toLower('0x3C3692681cD1c0F42FA68A2521719Cc24CEc3AF3'),
+};
+
+export const GANGGANG_MULTISIG = {
+  5: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  10: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  100: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+};
 
 export const PAYMENT_TYPES = {
   NATIVE: 'NATIVE',
@@ -31,7 +41,7 @@ interface Tokens {
 interface Resolvers {
   [key: string]: {
     name: string;
-    logoUrl: string;
+    logoUrl: StaticImageData;
     termsUrl: string;
   };
 }

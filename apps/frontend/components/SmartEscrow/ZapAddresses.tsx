@@ -7,7 +7,7 @@ import Link from '../ChakraNextLink';
 
 const SAFE_URL = 'https://app.safe.global/home';
 const SPLITS_URL = 'https://app.0xsplits.org';
-const ESCROW_URL = 'https://dm.raidguild.org/escrow/';
+// const ESCROW_URL = 'https://dm.raidguild.org/escrow/';
 
 const ZapAddresses = ({ addresses }: { addresses: Hex[] }) => {
   const { chain } = useNetwork();

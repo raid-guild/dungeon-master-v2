@@ -69,24 +69,31 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
   };
 
   const onRelease = async () => {
-    if (isReleasable && isClient) {
-      setSelected(2);
-      setModal(true);
+    if (!isReleasable || !isClient) {
+      console.log('not releasable or client');
+      return;
     }
+
+    setSelected(2);
+    setModal(true);
   };
 
   const onResolve = async () => {
-    if (isResolver) {
-      setSelected(3);
-      setModal(true);
+    if (!isResolver) {
+      console.log('not resolver');
+      return;
     }
+    setSelected(3);
+    setModal(true);
   };
 
   const onWithdraw = async () => {
-    if (isExpired && isClient) {
-      setSelected(4);
-      setModal(true);
+    if (!isExpired || !isClient) {
+      console.log('not expired or client');
+      return;
     }
+    setSelected(4);
+    setModal(true);
   };
 
   const columnsCheck = [
