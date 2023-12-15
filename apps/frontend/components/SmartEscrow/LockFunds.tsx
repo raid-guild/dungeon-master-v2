@@ -9,6 +9,7 @@ import {
   Textarea,
   VStack,
 } from '@raidguild/design-system';
+import { getTxLink } from '@raidguild/dm-utils';
 // import { getTxLink } from '@raidguild/dm-utils';
 import { useDebounce, useLock } from '@raidguild/escrow-hooks';
 import {
@@ -65,7 +66,11 @@ const LockFunds = ({
   //   // mark locked
   // };
 
-  const { writeAsync: lockFunds, isLoading } = useLock({
+  const {
+    writeAsync: lockFunds,
+    writeLoading,
+    txHash,
+  } = useLock({
     invoice,
     disputeReason,
     amount,
@@ -76,7 +81,7 @@ const LockFunds = ({
     ? resolverInfo.name
     : resolver;
 
-  if (isLoading) {
+  if (writeLoading) {
     return (
       <VStack w='100%' spacing='1rem'>
         <Heading
@@ -88,11 +93,11 @@ const LockFunds = ({
         >
           Locking Funds
         </Heading>
-        {true && ( // transaction
+        {txHash && (
           <Text color='white' textAlign='center' fontSize='sm'>
             Follow your transaction{' '}
             <Link
-              href='https://raidguild.org' // getTxLink(chainId, transaction.hash)}
+              href={getTxLink(chainId, txHash)}
               isExternal
               color='primary.300'
               textDecoration='underline'
@@ -110,15 +115,7 @@ const LockFunds = ({
           position='relative'
           color='primary.300'
         >
-          <Spinner size='6rem' />
-          <Flex
-            position='absolute'
-            left='50%'
-            top='50%'
-            transform='translate(-50%,-50%)'
-          >
-            <Image src={LockImage.src} width='2rem' alt='lock image' />
-          </Flex>
+          <Spinner size='xl' />
         </Flex>
       </VStack>
     );

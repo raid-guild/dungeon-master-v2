@@ -1,9 +1,5 @@
 import { Hex } from 'viem';
 
-// clientName: string;
-// projectName: string;
-// raidId: string;
-
 export interface Invoice {
   address: Hex;
   // onchain
@@ -23,7 +19,17 @@ export interface Invoice {
   resolver: Hex;
   resolutionRate: number;
   // form
-  safetyValveDate?: Date;
-  milestones?: number;
-  payments?: number[];
+  safetyValveDate?: Date; // converts to terminationTime
+  milestones?: number[]; // convert to amounts & total
+  // split zap
+  raidPartySplit?: boolean;
+  daoSplit?: boolean;
 }
+
+export type ProjectDetails = {
+  projectName: string;
+  projectDescription: string;
+  projectAgreement: string;
+  startDate: number;
+  endDate: number;
+};

@@ -45,7 +45,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
   const isClient = _.toLower(address) === _.toLower(client);
   const isResolver = _.toLower(address) === _.toLower(resolver);
 
-  const balance = invoiceTokenBalance.value;
+  const balance = _.get(invoiceTokenBalance, 'value', BigInt(0));
   // const dispute =
   //   isLocked && !_.isEmpty(disputes) ? _.last(disputes) : undefined;
   const deposited = BigInt(released) + balance;
@@ -69,24 +69,31 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
   };
 
   const onRelease = async () => {
-    if (isReleasable && isClient) {
-      setSelected(2);
-      setModal(true);
+    if (!isReleasable || !isClient) {
+      console.log('not releasable or client');
+      return;
     }
+
+    setSelected(2);
+    setModal(true);
   };
 
   const onResolve = async () => {
-    if (isResolver) {
-      setSelected(3);
-      setModal(true);
+    if (!isResolver) {
+      console.log('not resolver');
+      return;
     }
+    setSelected(3);
+    setModal(true);
   };
 
   const onWithdraw = async () => {
-    if (isExpired && isClient) {
-      setSelected(4);
-      setModal(true);
+    if (!isExpired || !isClient) {
+      console.log('not expired or client');
+      return;
     }
+    setSelected(4);
+    setModal(true);
   };
 
   const columnsCheck = [
@@ -101,7 +108,12 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
     <>
       <SimpleGrid columns={columns} spacing='1rem' w='100%' mt='1rem'>
         {isResolver && invoice.isLocked && (
-          <Button variant='solid' textTransform='uppercase' onClick={onResolve}>
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            onClick={onResolve}
+            isDisabled={!isResolver}
+          >
             Resolve
           </Button>
         )}
@@ -110,9 +122,10 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
           <Button
             variant='solid'
             textTransform='uppercase'
-            onClick={isReleasable ? onRelease : onDeposit}
+            onClick={onRelease}
+            isDisabled={!isClient}
           >
-            {isReleasable ? 'Release' : 'Deposit Due'}
+            Release
           </Button>
         ) : (
           <Button variant='solid' textTransform='uppercase' onClick={onDeposit}>
@@ -120,7 +133,12 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
           </Button>
         )}
         {isLockable && (isClient || isRaidParty) && (
-          <Button variant='solid' textTransform='uppercase' onClick={onLock}>
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            onClick={onLock}
+            isDisabled={!isClient && !isRaidParty}
+          >
             Lock
           </Button>
         )}
@@ -128,6 +146,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
           <Button
             variant='solid'
             textTransform='uppercase'
+            isDisabled={!isExpired}
             onClick={onWithdraw}
           >
             Withdraw
@@ -135,7 +154,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
         )}
       </SimpleGrid>
 
-      <Modal isOpen onClose={() => setModal(false)} isCentered>
+      <Modal isOpen={modal} onClose={() => setModal(false)} isCentered>
         <ModalOverlay>
           <ModalContent
             p='2rem'
@@ -165,7 +184,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
                 close={() => setModal(false)}
               />
             )}
-            {true && ( // modal && selected === 4 && (
+            {modal && selected === 4 && (
               <WithdrawFunds invoice={invoice} balance={balance} />
             )}
           </ModalContent>

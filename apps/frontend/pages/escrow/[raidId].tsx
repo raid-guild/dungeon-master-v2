@@ -29,6 +29,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
   const { data: raid, isLoading: raidLoading } = useRaidDetail({
     raidId,
     token,
+    roles: _.get(session, 'user.roles'),
   });
   const {
     data: invoice,
@@ -36,7 +37,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     error: invoiceError,
   } = useInvoiceDetails({
     invoiceAddress: raid?.invoiceAddress,
-    chainId: chain?.id,
+    chainId: 100, // chain?.id, // ! support multiple chains
   });
 
   const wrongChain = !_.includes(SUPPORTED_NETWORKS, chain?.id);

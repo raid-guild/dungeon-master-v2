@@ -35,9 +35,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       v2Id ? RAID_BY_ID_QUERY : RAID_BY_V1_ID_QUERY,
       variables
     );
-    console.log(result);
-    const raid = _.first(_.get(result, 'data.raids'));
 
+    const raid = _.first(_.get(result, 'raids'));
     return res.status(201).json(raid || null);
   } catch (err) {
     // eslint-disable-next-line no-console

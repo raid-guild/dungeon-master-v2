@@ -221,6 +221,7 @@
         "type": "uint256[]"
       },
       { "internalType": "bytes", "name": "_safeData", "type": "bytes" },
+      { "internalType": "address", "name": "_safeAddress", "type": "address" },
       { "internalType": "bytes", "name": "_splitsData", "type": "bytes" },
       { "internalType": "bytes", "name": "_escrowData", "type": "bytes" }
     ],
@@ -230,44 +231,36 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "address[]", "name": "_owners", "type": "address[]" },
-      {
-        "internalType": "uint32[]",
-        "name": "_percentAllocations",
-        "type": "uint32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_milestoneAmounts",
-        "type": "uint256[]"
-      },
-      { "internalType": "bytes", "name": "_safeData", "type": "bytes" },
-      { "internalType": "bytes", "name": "_escrowData", "type": "bytes" }
-    ],
-    "name": "createSafeSplitEscrow",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "inputs": [],
+    "name": "dao",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getAddresses",
+    "name": "distributorFee",
+    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "escrowFactory",
     "outputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" }
+      {
+        "internalType": "contract ISmartInvoiceFactory",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "getDistributorFee",
-    "outputs": [{ "internalType": "uint32", "name": "", "type": "uint32" }],
+    "name": "fallbackHandler",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -335,6 +328,48 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "safeFactory",
+    "outputs": [
+      {
+        "internalType": "contract ISafeProxyFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safeSingleton",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "splitMain",
+    "outputs": [
+      { "internalType": "contract ISplitMain", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "spoilsManager",
+    "outputs": [
+      {
+        "internalType": "contract ISpoilsManager",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }
     ],
@@ -357,6 +392,15 @@
     "name": "updateDistributorFee",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrappedNativeToken",
+    "outputs": [
+      { "internalType": "contract IWRAPPED", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

@@ -1,37 +1,39 @@
-import { Box } from "@raidguild/design-system";
-import { IMember } from "@raidguild/dm-types";
-import _ from "lodash";
+import { HStack, Stack } from '@raidguild/design-system';
+import { IMember } from '@raidguild/dm-types';
+import _ from 'lodash';
 
-import MemberAvatar from "./MemberAvatar";
+import MemberAvatar from './MemberAvatar';
 
 type MemberAvatarStackProps = {
   members: IMember[];
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   max?: number;
   horizontal?: boolean;
 };
 
 const MemberAvatarStack = ({
   members,
-  size = "md",
+  size = 'md',
   max = 5,
   horizontal = false,
-}: MemberAvatarStackProps) => (
-    <Box
-      display={horizontal ? "flex" : "flex"}
-      flexDirection={horizontal ? "row" : "column"}
-    >
-      {_.map(members, (member: IMember, index: number) => (
-        <Box
-          key={_.get(member, "id")}
-          mt={!horizontal && index !== 0 ? "-12px" : "0"}
-          ml={horizontal && index !== 0 ? "-12px" : "0"}
-          zIndex={members.length - index}
-        >
-          <MemberAvatar member={member} />
-        </Box>
+}: MemberAvatarStackProps) => {
+  if (horizontal) {
+    return (
+      <HStack spacing={4}>
+        {_.map(members, (member: IMember) => (
+          <MemberAvatar member={member} key={_.get(member, 'id')} />
+        ))}
+      </HStack>
+    );
+  }
+
+  return (
+    <Stack align='center' spacing={4}>
+      {_.map(members, (member: IMember) => (
+        <MemberAvatar member={member} key={_.get(member, 'id')} />
       ))}
-    </Box>
+    </Stack>
   );
+};
 
 export default MemberAvatarStack;

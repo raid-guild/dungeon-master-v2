@@ -1,100 +1,71 @@
+import { NETWORK_CONFIG, ProjectDetails } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import {
-  encodeAbiParameters,
-  Hex,
-  isAddress,
-  parseEther,
-  stringToHex,
-} from 'viem';
+import { encodeAbiParameters, Hex, isAddress, parseEther } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
-// import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
+import { WriteContractResult } from 'wagmi/dist/actions';
 
-const zapAbi = [
-  {
-    inputs: [
-      { internalType: 'address[]', name: '_owners', type: 'address[]' },
-      {
-        internalType: 'uint32[]',
-        name: '_percentAllocations',
-        type: 'uint32[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: '_milestoneAmounts',
-        type: 'uint256[]',
-      },
-      { internalType: 'bytes', name: '_safeData', type: 'bytes' },
-      { internalType: 'bytes', name: '_splitsData', type: 'bytes' },
-      { internalType: 'bytes', name: '_escrowData', type: 'bytes' },
-    ],
-    name: 'createSafeSplitEscrow',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-];
+import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
+import useDetailsPin from './useDetailsPin';
 
-const ZAP_ADDRESS = '0xD3b98C8D77D6d621aD2b27985A1aC56eC2758628';
-const DAO_ADDRESS = {
-  100: '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986',
+type OwnerAndAllocation = { address: string; percent: number };
+
+const separateOwnersAndAllocations = (
+  ownersAndAllocations: OwnerAndAllocation[]
+) => {
+  const sortedOwnersAndAllocations = _.sortBy(ownersAndAllocations, 'address');
+
+  return {
+    owners: _.map(sortedOwnersAndAllocations, 'address'),
+    percentAllocations: _.map(
+      sortedOwnersAndAllocations,
+      (o: OwnerAndAllocation) => _.toNumber(o.percent) * 1e4
+    ),
+  };
 };
-
-const encodeDetailsString = (details: string) =>
-  stringToHex(details, { size: 32 });
-
-const ZAP_DATA = {
-  percentAllocations: [50 * 1e4, 50 * 1e4], // raid party split percent allocations // current split main is 100% = 1e6
-  milestoneAmounts: [
-    BigInt(10) * BigInt(10) ** BigInt(18),
-    BigInt(10) * BigInt(10) ** BigInt(18),
-  ],
-  threshold: 2,
-  saltNonce: Math.floor(new Date().getTime() / 1000),
-  arbitration: 0,
-  isDaoSplit: false,
-  token: '0x',
-  escrowDeadline: Math.floor(new Date().getTime() / 1000) + 30 * 24 * 60 * 60,
-  details: encodeDetailsString('ipfs://'),
-};
-
-// TODO handle sort
-const separateOwnersAndAllocations = (ownersAndAllocations: any) => ({
-  owners: _.map(ownersAndAllocations, 'address'),
-  percentAllocations: _.map(
-    ownersAndAllocations,
-    (o: any) => _.toNumber(o.percent) * 1e4
-  ),
-});
-
-// ! resolver should be lexdao for DAO split
-// ! resolver should be dao for non DAO split
-// ! arbitration should be constant
 
 const useEscrowZap = ({
   ownersAndAllocations,
+  provider,
   milestones,
   client,
-  resolver,
   threshold,
-  saltNonce = ZAP_DATA.saltNonce,
-  arbitration,
-  isDaoSplit = false,
+  arbitration = 0,
+  projectTeamSplit = false,
+  daoSplit = false,
   token,
-  escrowDeadline,
-  details,
-}: // eslint-disable-next-line no-use-before-define
-UseEscrowZapProps) => {
+  safetyValveDate,
+  detailsData,
+  enabled = true,
+  onSuccess,
+}: UseEscrowZapProps) => {
   const chainId = useChainId();
 
   const { owners, percentAllocations } =
     separateOwnersAndAllocations(ownersAndAllocations);
+  const saltNonce = Math.floor(new Date().getTime() / 1000);
 
   const milestoneAmounts = _.map(
     milestones,
-    (a: { value: string }) => a.value && parseEther(a.value)
+    (a: { value: string }) => a.value && parseEther(a.value) // TODO handle token decimals
   );
 
+  const { data: details, isLoading: detailsLoading } = useDetailsPin({
+    ...detailsData,
+  });
+  // eslint-disable-next-line no-console
+  console.log('details', details);
+
+  const tokenAddress = _.get(
+    NETWORK_CONFIG[chainId],
+    `TOKENS.${token}.address`
+  );
+  // TODO other chains
+  const resolver = daoSplit
+    ? (_.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))) as Hex)
+    : NETWORK_CONFIG[chainId].DAO_ADDRESS;
+
+  console.log('encodeSafeData', threshold, saltNonce);
   const encodedSafeData = useMemo(() => {
     if (!threshold || !saltNonce) return undefined;
     return encodeAbiParameters(
@@ -103,19 +74,34 @@ UseEscrowZapProps) => {
     );
   }, [threshold, saltNonce]);
 
+  console.log('encodeSplitData', projectTeamSplit, daoSplit);
   const encodedSplitData = useMemo(
-    () => encodeAbiParameters([{ type: 'bool' }], [ZAP_DATA.isDaoSplit]),
-    [ZAP_DATA.isDaoSplit]
+    () =>
+      encodeAbiParameters(
+        [{ type: 'bool' }, { type: 'bool' }],
+        [projectTeamSplit, daoSplit]
+      ),
+    [projectTeamSplit, daoSplit]
   );
 
+  console.log(
+    'encodeEscrowData',
+    client,
+    arbitration,
+    resolver,
+    tokenAddress,
+    safetyValveDate,
+    saltNonce,
+    details
+  );
   const encodedEscrowData = useMemo(() => {
     if (
       !isAddress(client) ||
-      !arbitration?.value ||
+      !(arbitration === 0 || arbitration === 1) ||
       !details ||
       !isAddress(resolver) ||
-      !isAddress(token?.value || '') ||
-      !escrowDeadline
+      !isAddress(tokenAddress) ||
+      !safetyValveDate
     )
       return undefined;
 
@@ -131,37 +117,33 @@ UseEscrowZapProps) => {
       ],
       [
         client as Hex,
-        0, // arbitration?.value,
+        arbitration,
         resolver,
-        token?.value as Hex,
-        BigInt(Math.floor(_.toNumber(escrowDeadline) / 1000)),
-        BigInt(ZAP_DATA.saltNonce),
-        encodeDetailsString(details),
+        tokenAddress,
+        BigInt(Math.floor(_.toNumber(safetyValveDate) / 1000)),
+        BigInt(saltNonce),
+        details,
       ]
     );
-  }, [
-    token?.value,
-    escrowDeadline,
-    details,
-    client,
-    arbitration?.value,
-    resolver,
-  ]);
-  // console.log('escrow data', encodedEscrowData);
-  // console.log('split data', encodedSplitData);
-  // console.log('safe data', encodedSafeData);
-  // console.log(owners, percentAllocations, milestoneAmounts);
+  }, [tokenAddress, safetyValveDate, details, client, arbitration, resolver]);
+  // eslint-disable-next-line no-console
+  console.log('escrow data', !!encodedEscrowData);
 
-  const { config, error: prepareError } = usePrepareContractWrite({
+  const {
+    config,
+    isLoading: prepareLoading,
+    error: prepareError,
+  } = usePrepareContractWrite({
     chainId,
-    address: ZAP_ADDRESS,
-    abi: zapAbi,
+    address: NETWORK_CONFIG[chainId].ZAP_ADDRESS,
+    abi: ESCROW_ZAP_ABI,
     functionName: 'createSafeSplitEscrow',
     args: [
       owners,
       percentAllocations,
       milestoneAmounts,
       encodedSafeData,
+      provider, // _safeAddress
       encodedSplitData,
       encodedEscrowData,
     ],
@@ -171,35 +153,46 @@ UseEscrowZapProps) => {
       !_.isEmpty(percentAllocations) &&
       !_.isEmpty(milestoneAmounts) &&
       !!encodedSafeData &&
+      !!provider && // _safeAddress
       !!encodedSplitData &&
-      !!encodedEscrowData,
+      !!encodedEscrowData &&
+      enabled,
   });
-  // console.log('prepare error', prepareError);
 
-  const { writeAsync, error: writeError } = useContractWrite({
+  const {
+    writeAsync,
+    isLoading: writeLoading,
+    error: writeError,
+  } = useContractWrite({
     ...config,
+    onSuccess: async (tx) => {
+      onSuccess?.(tx);
+    },
   });
   // console.log(writeAsync);
 
   return {
     writeAsync,
+    isLoading: prepareLoading || writeLoading || detailsLoading,
     prepareError,
     writeError,
   };
 };
 
 interface UseEscrowZapProps {
-  ownersAndAllocations: any; //  { address: string; percent: number }[];
+  ownersAndAllocations: OwnerAndAllocation[];
+  provider: Hex | undefined;
   milestones: { value?: string }[];
   client: string;
-  resolver: string;
   threshold?: number;
-  saltNonce?: number;
-  arbitration?: { value?: number; label?: string };
-  isDaoSplit?: boolean;
+  arbitration?: number;
+  projectTeamSplit?: boolean;
+  daoSplit?: boolean;
   token: { value?: string; label?: string };
-  escrowDeadline: number;
-  details: string;
+  safetyValveDate: Date;
+  detailsData: ProjectDetails;
+  enabled?: boolean;
+  onSuccess?: (tx: WriteContractResult) => void;
 }
 
 export default useEscrowZap;

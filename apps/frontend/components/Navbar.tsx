@@ -39,8 +39,7 @@ const links = [
   { href: '/members', label: 'Members', role: 'member' },
   { href: '/applications', label: 'Applications', role: 'member' },
   { href: '/accounting', label: 'Accounting', role: 'member' },
-  { href: '/escrow', label: 'Smart Escrow', role: 'client', primary: true },
-  { href: '/escrow/zap', label: 'Escrow Zap', role: 'member' },
+  { href: '/escrow', label: 'Escrow', role: 'client', primary: true },
 ];
 
 interface NavItem {

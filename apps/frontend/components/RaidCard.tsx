@@ -2,37 +2,37 @@ import {
   Avatar,
   AvatarGroup,
   Box,
+  Button,
   Card,
   Flex,
   Heading,
   HStack,
   Icon,
-  LinkBox,
-  LinkOverlay,
   RoleBadge,
   SimpleGrid,
   Stack,
   Text,
+  LinkOverlay,
   Tooltip,
   useMediaQuery,
-} from "@raidguild/design-system";
-import { IConsultation,IRaid } from "@raidguild/dm-types";
+} from '@raidguild/design-system';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
   BUDGET_DISPLAY,
   displayDate,
-  GUILD_CLASS_DISPLAY,
   GUILD_CLASS_ICON,
   PROJECT_TYPE_DISPLAY,
+  ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
-} from "@raidguild/dm-utils";
-import _ from "lodash";
-import { AiOutlineDollarCircle } from "react-icons/ai";
+} from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { AiOutlineDollarCircle } from 'react-icons/ai';
 
-import Link from "./ChakraNextLink";
-import InfoStack from "./InfoStack";
-import MemberAvatar from "./MemberAvatar";
-import MemberAvatarStack from "./MemberAvatarStack";
-import RaidStatusBadge from "./RaidStatusBadge";
+import Link from './ChakraNextLink';
+import InfoStack from './InfoStack';
+import MemberAvatar from './MemberAvatar';
+import MemberAvatarStack from './MemberAvatarStack';
+import RaidStatusBadge from './RaidStatusBadge';
 
 interface RaidProps {
   raid?: IRaid;
@@ -52,12 +52,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const budget =
     BUDGET_DISPLAY[_.get(consultation, "budgetOption.budgetOption")];
   const projectType = PROJECT_TYPE_DISPLAY(
-
-    // disable eslint for this line because it's a temporary fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-
-    _.get(consultation, "projectType.projectType"),
+    _.get(consultation, 'projectType.projectType') as ProjectTypeKey
   );
   const rolesRequired = _.map(_.get(raid, "raidsRolesRequired", []), "role");
 

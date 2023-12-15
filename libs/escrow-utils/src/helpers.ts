@@ -2,17 +2,22 @@ import { getExplorerUrl } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { Hex } from 'viem';
 
-import { nativeSymbols, NETWORK_CONFIG, wrappedNativeToken } from './constants';
+import {
+  nativeSymbols,
+  NETWORK_CONFIG,
+  RAIDGUILD_DAO,
+  wrappedNativeToken,
+} from './constants';
 
 export const getResolverUrl = (chainId: number) => {
   const resolverAddress = NETWORK_CONFIG[chainId]
-    ? NETWORK_CONFIG[chainId].RESOLVERS.LexDAO.address
+    ? _.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS')))
     : undefined;
   return `${getExplorerUrl(chainId)}/address/${resolverAddress}`;
 };
 
 export const getSpoilsUrl = (chainId: number, address: string) => {
-  const spoilsAddress = chainId === 100 ? NETWORK_CONFIG.RG_XDAI : address;
+  const spoilsAddress = chainId === 100 ? RAIDGUILD_DAO[chainId] : address;
   return `${getExplorerUrl(chainId)}/address/${spoilsAddress}`;
 };
 

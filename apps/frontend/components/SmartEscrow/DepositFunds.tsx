@@ -72,27 +72,31 @@ const DepositFunds = ({
 
   const { data: nativeBalance } = useBalance({ address });
   const { data: tokenBalance } = useBalance({ address, token });
+  // console.log(nativeBalance, tokenBalance);
   const balance =
     paymentType?.value === PAYMENT_TYPES.NATIVE
-      ? nativeBalance.value
-      : tokenBalance.value;
+      ? nativeBalance?.value
+      : tokenBalance?.value;
   const displayBalance =
     paymentType?.value === PAYMENT_TYPES.NATIVE
-      ? nativeBalance.formatted
-      : tokenBalance.formatted;
+      ? nativeBalance?.formatted
+      : tokenBalance?.formatted;
+  const decimals =
+    paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
+  const hasAmount = balance > BigInt(amount) * BigInt(10) ** BigInt(decimals);
 
-  const { writeAsync, isLoading } = useDeposit({
+  const { handleDeposit, isLoading, isReady } = useDeposit({
     invoice,
     amount,
-    hasAmount: balance > amount, // (+ gas)
+    hasAmount, // (+ gas)
     paymentType: paymentType?.value,
   });
 
-  const handleDeposit = async () => {
-    const result = await writeAsync();
+  const depositHandler = async () => {
+    const result = await handleDeposit();
+    if (!result) return;
     setTransaction(result.hash);
   };
-
   const paymentTypeOptions = [
     { value: PAYMENT_TYPES.TOKEN, label: parseTokenAddress(chainId, token) },
     { value: PAYMENT_TYPES.NATIVE, label: TOKEN_DATA.nativeSymbol },
@@ -269,8 +273,8 @@ const DepositFunds = ({
       </Flex>
 
       <Button
-        onClick={handleDeposit}
-        isDisabled={amount <= 0 || !writeAsync}
+        onClick={depositHandler}
+        isDisabled={amount <= 0 || !isReady || !hasAmount}
         isLoading={isLoading}
         textTransform='uppercase'
         variant='solid'
