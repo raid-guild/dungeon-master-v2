@@ -1,15 +1,16 @@
 import { useToast } from '@raidguild/design-system';
 import { client, PORTFOLIO_INSERT_MUTATION, PORTFOLIO_UPDATE_MUTATION } from '@raidguild/dm-graphql';
 import { IPortfolioUpdate } from '@raidguild/dm-types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
 const usePortfolioUpdate = (initArgs: {token: string, portfolioId?: string}) => {
   const toast = useToast();
-
+  const queryClient = useQueryClient();
   const { token, portfolioId } = initArgs;
-
   // Separate function for mutation logic
   const portfolioMutation = async (args: IPortfolioUpdate) => {
+
     if (portfolioId) {
       return client({ token }).request(PORTFOLIO_UPDATE_MUTATION, {
         portfolio_id: portfolioId,
@@ -26,14 +27,20 @@ const usePortfolioUpdate = (initArgs: {token: string, portfolioId?: string}) => 
     portfolioMutation,
     {
       onSuccess: (data) => {
-        console.log('success', data);
-        setTimeout(() => {
-          toast.success({
-            title: 'Portfolio Edited Successfully',
-            duration: 3000,
-            isClosable: true,
-          });
-        }, 1000);
+
+          queryClient.invalidateQueries(['consultationList']);
+          queryClient.invalidateQueries(['raidList']);
+          queryClient.invalidateQueries(['memberList']);
+          queryClient.invalidateQueries(['consultationDetail']);
+          queryClient.invalidateQueries(['raidDetail']);
+          queryClient.invalidateQueries(['memberDetail']);
+
+        toast.success({
+          title: 'Raid Updated',
+          iconName: 'crown',
+          duration: 3000,
+          isClosable: true,
+        });
       },
       onError: () => {
         toast.error({

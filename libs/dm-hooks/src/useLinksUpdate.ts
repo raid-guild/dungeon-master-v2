@@ -24,7 +24,9 @@ const useLinksUpdate = ({ token, consultationId }: { token: string, consultation
 
             return result;
         },
-        { onSuccess: () => onSuccess(queryClient) }
+        { onSuccess: () => {
+            queryClient.invalidateQueries('raid')
+        } }
     );
 
     return { mutateAsync, isLoading, isError, isSuccess };

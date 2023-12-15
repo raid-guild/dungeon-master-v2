@@ -85,9 +85,8 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
 
   const [sending, setSending] = useState(false);
 
-  const isPublished = raid.portfolios.length > 0;
 
-  const portfolio = raid.portfolios[0];
+  const portfolio = _.first(raid.portfolios);
 
 
 
