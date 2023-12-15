@@ -1,27 +1,62 @@
-import { useState, useEffect } from 'react';
 import {
-  SimpleGrid,
   Button,
   ChakraModal as Modal,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
+  SimpleGrid,
 } from '@raidguild/design-system';
-import { BigNumber } from 'ethers';
+import { Invoice } from '@raidguild/escrow-utils';
+import _ from 'lodash';
+import { useState } from 'react';
+import { useAccount, useBalance } from 'wagmi';
 
-import { balanceOf } from '@raidguild/escrow-utils';
+import DepositFunds from './DepositFunds';
+import LockFunds from './LockFunds';
+import ReleaseFunds from './ReleaseFunds';
+import ResolveFunds from './ResolveFunds';
+import WithdrawFunds from './WithdrawFunds';
 
-import { DepositFunds } from './DepositFunds';
-import { ReleaseFunds } from './ReleaseFunds';
-import { ResolveFunds } from './ResolveFunds';
-import { LockFunds } from './LockFunds';
-import { WithdrawFunds } from './WithdrawFunds';
-
-export const InvoiceButtonManager = ({ invoice, account, provider }) => {
-  const [balance, setBalance] = useState(BigNumber.from(0));
+const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
+  const { address } = useAccount();
 
   const [selected, setSelected] = useState(0);
   const [modal, setModal] = useState(false);
+
+  const {
+    client,
+    isLocked,
+    // disputes,
+    // resolutions,
+    terminationTime,
+    currentMilestone,
+    amounts,
+    released,
+    total,
+    resolver,
+  } = invoice;
+
+  const { data: invoiceTokenBalance } = useBalance({
+    address: invoice?.address,
+    token: invoice?.token,
+  });
+
+  const isRaidParty = _.toLower(address) === _.toLower(invoice?.provider);
+  const isClient = _.toLower(address) === _.toLower(client);
+  const isResolver = _.toLower(address) === _.toLower(resolver);
+
+  const balance = _.get(invoiceTokenBalance, 'value', BigInt(0));
+  // const dispute =
+  //   isLocked && !_.isEmpty(disputes) ? _.last(disputes) : undefined;
+  const deposited = BigInt(released) + balance;
+  const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
+  // const resolution = !isLocked && !_.isEmpty(resolutions) ? _.last(resolutions) : undefined;
+  const amount = BigInt(
+    currentMilestone < amounts.length ? amounts[currentMilestone] : 0
+  );
+  const isExpired = terminationTime <= new Date().getTime() / 1000;
+  const isLockable = !isExpired && !isLocked && balance > 0;
+  const isReleasable = !isLocked && balance >= amount && balance > 0;
 
   const onLock = () => {
     setSelected(0);
@@ -34,179 +69,90 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
   };
 
   const onRelease = async () => {
-    if (isReleasable && isClient) {
-      setSelected(2);
-      setModal(true);
+    if (!isReleasable || !isClient) {
+      console.log('not releasable or client');
+      return;
     }
+
+    setSelected(2);
+    setModal(true);
   };
 
   const onResolve = async () => {
-    if (isResolver) {
-      setSelected(3);
-      setModal(true);
+    if (!isResolver) {
+      console.log('not resolver');
+      return;
     }
+    setSelected(3);
+    setModal(true);
   };
 
   const onWithdraw = async () => {
-    if (isExpired && isClient) {
-      setSelected(4);
-      setModal(true);
+    if (!isExpired || !isClient) {
+      console.log('not expired or client');
+      return;
     }
+    setSelected(4);
+    setModal(true);
   };
 
-  const checkBalance = (set, contractAddress) => {
-    balanceOf(provider, invoice.token, contractAddress)
-      .then((b) => {
-        set(b);
-      })
-      .catch((balanceError) => console.log(balanceError));
-  };
-
-  useEffect(() => {
-    checkBalance(setBalance, invoice.address);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const {
-    client,
-    isLocked,
-    disputes,
-    resolutions,
-    terminationTime,
-    currentMilestone,
-    amounts,
-    released,
-    total,
-    resolver,
-  } = invoice;
-
-  const isRaidParty =
-    account.toLowerCase() === invoice?.provider?.toLowerCase();
-
-  const isClient = account.toLowerCase() === client;
-  const isResolver = account.toLowerCase() === resolver.toLowerCase();
-
-  const dispute =
-    isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;
-  const deposited = BigNumber.from(released).add(balance);
-  const due = deposited.gte(total)
-    ? BigNumber.from(0)
-    : BigNumber.from(total).sub(deposited);
-  const resolution =
-    !isLocked && resolutions.length > 0
-      ? resolutions[resolutions.length - 1]
-      : undefined;
-  const isExpired = terminationTime <= new Date().getTime() / 1000;
-  const amount = BigNumber.from(
-    currentMilestone < amounts.length ? amounts[currentMilestone] : 0
-  );
-  const isLockable = !isExpired && !isLocked && balance.gt(0);
-
-  const isReleasable = !isLocked && balance.gte(amount) && balance.gt(0);
-
-  let gridColumns;
-  if (isReleasable && (isLockable || (isExpired && balance.gt(0)))) {
-    gridColumns = { base: 2, sm: 3 };
-  } else if (isLockable || isReleasable || (isExpired && balance.gt(0))) {
-    gridColumns = 2;
-  } else {
-    gridColumns = 1;
-  }
+  const columnsCheck = [
+    isResolver && invoice.isLocked,
+    true, // hide in some cases?
+    isLockable && (isClient || isRaidParty),
+    isExpired && balance > 0 && isClient,
+  ];
+  const columns = _.size(_.filter(columnsCheck, (v) => v === true));
 
   return (
     <>
-      {isResolver && (
-        <SimpleGrid columns={1} spacing='1rem' w='100%' mt='1rem'>
-          {invoice.isLocked ? (
-            <Button
-              variant='solid'
-              textTransform='uppercase'
-              onClick={() => onResolve()}
-            >
-              Resolve
-            </Button>
-          ) : (
-            <Button
-              variant='solid'
-              textTransform='uppercase'
-              onClick={() => onDeposit()}
-            >
-              {Number(due) ? 'Deposit Due' : 'Deposit More'}
-            </Button>
-          )}
-        </SimpleGrid>
-      )}
-
-      {!dispute && !resolution && !isResolver && isClient && (
-        <SimpleGrid columns={gridColumns} spacing='1rem' w='100%' mt='1rem'>
-          {isLockable && (isClient || isRaidParty) && (
-            <Button
-              variant='solid'
-              textTransform='uppercase'
-              onClick={() => onLock()}
-            >
-              Lock
-            </Button>
-          )}
-          {isExpired && balance.gt(0) && (
-            <Button
-              variant='solid'
-              textTransform='uppercase'
-              onClick={() => onWithdraw()}
-            >
-              Withdraw
-            </Button>
-          )}
-          {isReleasable && (
-            <Button
-              variant='solid'
-              textTransform='uppercase'
-              onClick={() => onDeposit()}
-            >
-              {Number(due) ? 'Deposit Due' : 'Deposit More'}
-            </Button>
-          )}
-          <Button
-            gridArea={{
-              base: Number.isInteger(gridColumns)
-                ? 'auto/auto/auto/auto'
-                : '2/1/2/span 2',
-              sm: 'auto/auto/auto/auto',
-            }}
-            variant='solid'
-            textTransform='uppercase'
-            onClick={() => (isReleasable ? onRelease() : onDeposit())}
-          >
-            {isReleasable ? 'Release' : 'Deposit Due'}
-          </Button>
-        </SimpleGrid>
-      )}
-
-      {!dispute && !resolution && !isResolver && !isClient && (
-        <SimpleGrid
-          columns={isLockable && (isClient || isRaidParty) ? 2 : 1}
-          spacing='1rem'
-          w='100%'
-          mt='1rem'
-        >
-          {isLockable && (isClient || isRaidParty) && (
-            <Button
-              variant='solid'
-              textTransform='uppercase'
-              onClick={() => onLock()}
-            >
-              Lock
-            </Button>
-          )}
+      <SimpleGrid columns={columns} spacing='1rem' w='100%' mt='1rem'>
+        {isResolver && invoice.isLocked && (
           <Button
             variant='solid'
             textTransform='uppercase'
-            onClick={() => onDeposit()}
+            onClick={onResolve}
+            isDisabled={!isResolver}
           >
-            {Number(due) ? 'Deposit Due' : 'Deposit More'}
+            Resolve
           </Button>
-        </SimpleGrid>
-      )}
+        )}
+
+        {isReleasable ? (
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            onClick={onRelease}
+            isDisabled={!isClient}
+          >
+            Release
+          </Button>
+        ) : (
+          <Button variant='solid' textTransform='uppercase' onClick={onDeposit}>
+            Deposit Due
+          </Button>
+        )}
+        {isLockable && (isClient || isRaidParty) && (
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            onClick={onLock}
+            isDisabled={!isClient && !isRaidParty}
+          >
+            Lock
+          </Button>
+        )}
+        {isExpired && balance > 0 && isClient && (
+          <Button
+            variant='solid'
+            textTransform='uppercase'
+            isDisabled={!isExpired}
+            onClick={onWithdraw}
+          >
+            Withdraw
+          </Button>
+        )}
+      </SimpleGrid>
 
       <Modal isOpen={modal} onClose={() => setModal(false)} isCentered>
         <ModalOverlay>
@@ -239,12 +185,7 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
               />
             )}
             {modal && selected === 4 && (
-              <WithdrawFunds
-                contractAddress={invoice.address}
-                token={invoice.token}
-                invoice={invoice}
-                balance={balance}
-              />
+              <WithdrawFunds invoice={invoice} balance={balance} />
             )}
           </ModalContent>
         </ModalOverlay>
@@ -252,3 +193,5 @@ export const InvoiceButtonManager = ({ invoice, account, provider }) => {
     </>
   );
 };
+
+export default InvoiceButtonManager;

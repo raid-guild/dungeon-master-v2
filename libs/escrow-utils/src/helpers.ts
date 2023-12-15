@@ -1,52 +1,47 @@
-import { BigNumber } from 'ethers';
+import { getExplorerUrl } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { Hex } from 'viem';
 
 import {
-  explorerUrls,
-  networkLabels,
-  NETWORK_CONFIG,
   nativeSymbols,
+  NETWORK_CONFIG,
+  RAIDGUILD_DAO,
   wrappedNativeToken,
 } from './constants';
 
-// TODO migrate to useClipboard
-export const copyToClipboard = (value: string) => {
-  const tempInput = document.createElement('input');
-  tempInput.value = value;
-  document.body.appendChild(tempInput);
-  tempInput.select();
-  document.execCommand('copy');
-  document.body.removeChild(tempInput);
-};
-
-export const getExplorerUrl = (chainId: number | string) =>
-  explorerUrls[Number(chainId)] || explorerUrls[4];
-
-export const getTxLink = (chainId: number, hash: string) =>
-  `${getExplorerUrl(chainId)}/tx/${hash}`;
-
-export const getAddressLink = (chainId: number | string, hash: string) =>
-  `${getExplorerUrl(chainId)}/address/${hash}`;
-
 export const getResolverUrl = (chainId: number) => {
   const resolverAddress = NETWORK_CONFIG[chainId]
-    ? NETWORK_CONFIG[chainId]['RESOLVERS']['LexDAO']['address']
+    ? _.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS')))
     : undefined;
   return `${getExplorerUrl(chainId)}/address/${resolverAddress}`;
 };
 
 export const getSpoilsUrl = (chainId: number, address: string) => {
-  const spoilsAddress = chainId === 100 ? NETWORK_CONFIG['RG_XDAI'] : address;
+  const spoilsAddress = chainId === 100 ? RAIDGUILD_DAO[chainId] : address;
   return `${getExplorerUrl(chainId)}/address/${spoilsAddress}`;
 };
 
-export const getNetworkLabel = (chainId: number) =>
-  networkLabels[chainId] || 'unknown';
-
 export const getAccountString = (account: string) => {
   const len = account.length;
-  return `0x${account.substr(2, 3).toUpperCase()}...${account
-    .substr(len - 3, len - 1)
+  return `0x${account.slice(2, 3).toUpperCase()}...${account
+    .slice(len - 3, len - 1)
     .toUpperCase()}`;
+};
+
+const resolverInfo = {
+  100: NETWORK_CONFIG[100].RESOLVERS,
+  1: NETWORK_CONFIG[1].RESOLVERS,
+};
+
+export const getResolverInfo = (chainId: number, resolver?: string) =>
+  resolver ? resolverInfo[chainId][resolver] : resolverInfo[chainId];
+
+export const isKnownResolver = (chainId: number, resolver: Hex) =>
+  !!_.get(getResolverInfo(chainId), _.toLower(resolver));
+
+export const getResolverString = (chainId: number, resolver: string) => {
+  const info = getResolverInfo(chainId, resolver);
+  return info ? info.name : getAccountString(resolver);
 };
 
 export const getNativeTokenSymbol = (chainId: number) =>
@@ -55,25 +50,24 @@ export const getNativeTokenSymbol = (chainId: number) =>
 export const getWrappedNativeToken = (chainId: number) =>
   wrappedNativeToken[chainId] || wrappedNativeToken[4];
 
-export const getCheckedStatus = (deposited: BigNumber, amounts: number[]) => {
-  let sum = BigNumber.from(0);
+export const depositedMilestones = (deposited: bigint, amounts: number[]) => {
+  let sum = BigInt(0);
   return amounts.map((a) => {
-    sum = sum.add(a);
-    return deposited.gte(sum);
+    sum += BigInt(a);
+    return deposited >= sum;
   });
 };
 
 export const parseTokenAddress = (chainId: number, address: string) => {
-  for (const [key, value] of Object.entries(
-    NETWORK_CONFIG[chainId]['TOKENS']
-  )) {
-    if ((value as any)['address'] === address.toLowerCase()) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((value as any).address === address.toLowerCase()) {
       return key;
     }
   }
   return undefined;
 };
 
-export const checkedAtIndex = (index: number, checked: boolean[]) => {
-  return checked.map((_c, i) => i <= index);
-};
+export const checkedAtIndex = (index: number, checked: boolean[]) =>
+  _.map(checked, (_c, i) => i <= index);

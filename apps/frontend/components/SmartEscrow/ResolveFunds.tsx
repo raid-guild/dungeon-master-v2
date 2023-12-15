@@ -1,101 +1,132 @@
 import {
   Button,
   Heading,
-  ChakraInput as Input,
   InputGroup,
   InputRightElement,
-  Link,
+  NumberInput,
+  Spinner,
   Text,
+  Textarea,
   VStack,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
-import { useCallback, useContext, useState } from 'react';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { useDebounce, useResolve } from '@raidguild/escrow-hooks';
+import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import _ from 'lodash';
+import { useEffect, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { formatUnits, parseUnits } from 'viem';
+import { useChainId } from 'wagmi';
 
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-import { OrderedTextarea } from './shared/OrderedTextArea';
-import { Loader } from './Loader';
+// TODO handle onChange for award amounts
 
-import {
-  getTxLink,
-  parseTokenAddress,
-  resolve,
-  uploadDisputeDetails,
-} from '@raidguild/escrow-utils';
+const ResolveFunds = ({
+  invoice,
+  balance,
+  close,
+}: {
+  invoice: Invoice;
+  balance: bigint;
+  close: () => void;
+}) => {
+  const { resolutionRate, token } = invoice;
+  const chainId = useChainId();
 
-export const ResolveFunds = ({ invoice, balance, close }) => {
-  const { address, resolutionRate, token, isLocked } = invoice;
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
+  const isLocked = true;
 
-  const [loading, setLoading] = useState(false);
-  const [transaction, setTransaction] = useState<any>();
-  let resolverAward;
-  try {
-    resolverAward =
-      resolutionRate === '0'
-        ? BigNumber.from('0')
-        : balance.gt(0)
-        ? balance.div(resolutionRate)
-        : BigNumber.from(0);
-  } catch (e) {
-    console.error('error in ResoleFunds component ', e);
+  const localForm = useForm({});
+  const { watch, handleSubmit, setValue } = localForm;
+
+  const resolverAward = useMemo(() => {
+    if (resolutionRate === 0 || balance === BigInt(0)) {
+      return 0;
+    }
+    return _.toNumber(formatUnits(balance / BigInt(resolutionRate), 18));
+  }, [balance, resolutionRate]);
+
+  const availableFunds = _.toNumber(formatUnits(balance, 18)) - resolverAward;
+
+  const clientAward = watch('clientAward');
+  const providerAward = watch('providerAward');
+  const comments = useDebounce(watch('comments'), 250);
+
+  const awards = useMemo(
+    () => ({
+      client: clientAward ? parseUnits(_.toString(clientAward), 18) : BigInt(0),
+      provider: providerAward
+        ? parseUnits(_.toString(providerAward), 18)
+        : BigInt(0),
+      resolver: resolverAward
+        ? parseUnits(_.toString(resolverAward), 18)
+        : BigInt(0),
+    }),
+    [clientAward, providerAward, resolverAward]
+  );
+
+  const { writeAsync: resolve, isLoading } = useResolve({
+    invoice,
+    awards,
+    comments,
+  });
+
+  const onSubmit = async () => {
+    await resolve();
+  };
+
+  useEffect(() => {
+    if (availableFunds > 0) {
+      setValue('clientAward', availableFunds);
+      setValue('providerAward', 0);
+      setValue('resolverAward', resolverAward);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!isLocked) {
+    return (
+      <VStack
+        w='100%'
+        spacing='1rem'
+        as='form'
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Heading
+          mb='1rem'
+          color='white'
+          as='h3'
+          fontSize='2xl'
+          transition='all ease-in-out .25s'
+          _hover={{ cursor: 'pointer', color: 'raid' }}
+        >
+          Resolve Dispute
+        </Heading>
+        <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
+          {isLocked
+            ? `You’ll need to distribute the total balance of ${formatUnits(
+                balance,
+                18
+              )} ${parseTokenAddress(
+                chainId,
+                token
+              )} between the client and provider, excluding the ${
+                resolutionRate === 0 ? '0' : 100 / resolutionRate
+              }% arbitration fee which you shall receive.`
+            : `Invoice is not locked`}
+        </Text>
+        <Button
+          onClick={close}
+          variant='solid'
+          textTransform='uppercase'
+          w='100%'
+        >
+          Close
+        </Button>
+      </VStack>
+    );
   }
 
-  const availableFunds = balance.sub(resolverAward);
-  const [clientAward, setClientAward] = useState(availableFunds);
-  const [providerAward, setProviderAward] = useState(BigNumber.from(0));
-  const [clientAwardInput, setClientAwardInput] = useState(
-    utils.formatUnits(availableFunds, 18)
-  );
-  const [providerAwardInput, setProviderAwardInput] = useState('0');
-  const [comments, setComments] = useState('');
-
-  const resolveFunds = useCallback(async () => {
-    if (
-      provider &&
-      isLocked &&
-      comments &&
-      balance.eq(clientAward.add(providerAward).add(resolverAward)) &&
-      balance.gt(0)
-    ) {
-      try {
-        setLoading(true);
-        const detailsHash = await uploadDisputeDetails({
-          reason: comments,
-          invoice: address,
-          amount: balance.toString(),
-        });
-        const tx = await resolve(
-          provider,
-          address,
-          clientAward,
-          providerAward,
-          detailsHash
-        );
-        setTransaction(tx);
-        await tx.wait();
-        setTimeout(() => {
-          window.location.reload();
-        }, 20000);
-      } catch (depositError) {
-        setLoading(false);
-        console.error(depositError);
-      }
-    }
-  }, [
-    provider,
-    isLocked,
-    balance,
-    comments,
-    clientAward,
-    providerAward,
-    resolverAward,
-    address,
-  ]);
-
   return (
-    <VStack w='100%' spacing='1rem'>
+    <VStack as='form' w='100%' spacing='1rem' onSubmit={handleSubmit(onSubmit)}>
       <Heading
         mb='1rem'
         color='white'
@@ -107,140 +138,92 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
         Resolve Dispute
       </Heading>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
-        {isLocked
-          ? `You’ll need to distribute the total balance of ${utils.formatUnits(
-              balance,
-              18
-            )} ${parseTokenAddress(
-              chainId,
-              token
-            )} between the client and provider, excluding the ${
-              resolutionRate === '0' ? '0' : 100 / resolutionRate
-            }% arbitration fee which you shall receive.`
-          : `Invoice is not locked`}
+        {`You’ll need to distribute the total balance of ${formatUnits(
+          balance,
+          18
+        )} ${parseTokenAddress(
+          chainId,
+          token
+        )} between the client and provider, excluding the ${
+          resolutionRate === 0 ? '0' : 100 / resolutionRate
+        }% arbitration fee which you shall receive.`}
       </Text>
-      {isLocked ? (
-        <>
-          <OrderedTextarea
-            tooltip='Here you may explain your reasoning behind the resolution'
-            label='Resolution Comments'
-            placeholder='Resolution Comments'
-            value={comments}
-            setValue={setComments}
-            infoText={''}
-            maxLength={10000}
-          />
 
-          <VStack
-            spacing='0.5rem'
-            align='stretch'
-            color='primary.300'
-            fontFamily='texturina'
-          >
-            <Text fontWeight='700'>Client Award</Text>
-            <InputGroup>
-              <Input
-                bg='black'
-                color='yellow'
-                border='none'
-                type='number'
-                value={clientAwardInput}
-                pr='3.5rem'
-                onChange={(e) => {
-                  setClientAwardInput(e.target.value);
-                  if (e.target.value) {
-                    let award = utils.parseUnits(e.target.value, 18);
-                    if (award.gt(availableFunds)) {
-                      award = availableFunds;
-                      setClientAwardInput(utils.formatUnits(award, 18));
-                    }
-                    setClientAward(award);
-                    award = availableFunds.sub(award);
-                    setProviderAward(award);
-                    setProviderAwardInput(utils.formatUnits(award, 18));
-                  }
-                }}
-                placeholder='Client Award'
-              />
-              <InputRightElement w='3.5rem' color='yellow'>
-                {parseTokenAddress(chainId, token)}
-              </InputRightElement>
-            </InputGroup>
-          </VStack>
-          <VStack
-            spacing='0.5rem'
-            align='stretch'
-            color='primary.300'
-            fontFamily='texturina'
-          >
-            <Text fontWeight='700'>Provider Award</Text>
-            <InputGroup>
-              <Input
-                bg='black'
-                color='yellow'
-                border='none'
-                type='number'
-                value={providerAwardInput}
-                pr='3.5rem'
-                onChange={(e) => {
-                  setProviderAwardInput(e.target.value);
-                  if (e.target.value) {
-                    let award = utils.parseUnits(e.target.value, 18);
-                    if (award.gt(availableFunds)) {
-                      award = availableFunds;
-                      setProviderAwardInput(utils.formatUnits(award, 18));
-                    }
-                    setProviderAward(award);
-                    award = availableFunds.sub(award);
-                    setClientAward(award);
-                    setClientAwardInput(utils.formatUnits(award, 18));
-                  }
-                }}
-                placeholder='Provider Award'
-              />
-              <InputRightElement w='3.5rem' color='yellow'>
-                {parseTokenAddress(chainId, token)}
-              </InputRightElement>
-            </InputGroup>
-          </VStack>
-          <VStack
-            spacing='0.5rem'
-            align='stretch'
-            color='primary.300'
-            mb='1rem'
-            fontFamily='texturina'
-          >
-            <Text fontWeight='700'>Resolver Award</Text>
-            <InputGroup>
-              <Input
-                bg='black'
-                color='yellow'
-                border='none'
-                type='number'
-                value={utils.formatUnits(resolverAward, 18)}
-                pr='3.5rem'
-                isDisabled
-              />
-              <InputRightElement w='3.5rem' color='yellow'>
-                {parseTokenAddress(chainId, token)}
-              </InputRightElement>
-            </InputGroup>
-          </VStack>
+      <Textarea
+        name='comments'
+        tooltip='Here you may explain your reasoning behind the resolution'
+        label='Resolution Comments'
+        placeholder='Resolution Comments'
+        localForm={localForm}
+        maxLength={10000}
+      />
 
-          {loading && <Loader />}
+      <InputGroup>
+        <NumberInput
+          name='clientAward'
+          label='Client Award'
+          localForm={localForm}
+          placeholder='Client Award'
+          customValidations={{
+            onChange: (value) => {
+              if (value > availableFunds) {
+                setValue('clientAward', availableFunds);
+                setValue('providerAward', 0);
+              }
+              setValue('providerAward', availableFunds - value);
+            },
+          }}
+        />
+        <InputRightElement w='3.5rem' color='yellow'>
+          {parseTokenAddress(chainId, token)}
+        </InputRightElement>
+      </InputGroup>
+      <InputGroup>
+        <NumberInput
+          name='providerAward'
+          label='Provider Award'
+          localForm={localForm}
+          placeholder='Provider Award'
+          customValidations={{
+            onChange: (value) => {
+              if (value > availableFunds) {
+                setValue('providerAward', availableFunds);
+                setValue('clientAward', 0);
+              }
+              setValue('clientAward', availableFunds - value);
+            },
+          }}
+        />
+        <InputRightElement w='3.5rem' color='yellow'>
+          {parseTokenAddress(chainId, token)}
+        </InputRightElement>
+      </InputGroup>
+      <InputGroup>
+        <NumberInput
+          name='resolverAward'
+          label='Arbitration Fee'
+          localForm={localForm}
+          isDisabled
+        />
+        <InputRightElement w='3.5rem' color='yellow'>
+          {parseTokenAddress(chainId, token)}
+        </InputRightElement>
+      </InputGroup>
 
-          {!loading && (
-            <Button
-              onClick={resolveFunds}
-              isDisabled={resolverAward.lte(0) || !comments}
-              textTransform='uppercase'
-              variant='solid'
-            >
-              Resolve
-            </Button>
-          )}
+      {isLoading && <Spinner size='xl' />}
 
-          {transaction && (
+      {true && (
+        <Button
+          type='submit'
+          isDisabled={resolverAward <= BigInt(0) || !comments || !resolve}
+          textTransform='uppercase'
+          variant='solid'
+        >
+          Resolve
+        </Button>
+      )}
+
+      {/* {transaction && (
             <Text color='white' textAlign='center' fontSize='sm'>
               Follow your transaction{' '}
               <Link
@@ -252,18 +235,9 @@ export const ResolveFunds = ({ invoice, balance, close }) => {
                 here
               </Link>
             </Text>
-          )}
-        </>
-      ) : (
-        <Button
-          onClick={close}
-          variant='solid'
-          textTransform='uppercase'
-          w='100%'
-        >
-          Close
-        </Button>
-      )}
+          )} */}
     </VStack>
   );
 };
+
+export default ResolveFunds;

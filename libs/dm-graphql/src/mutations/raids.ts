@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+
 import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAID_UPDATE_MUTATION = gql`
@@ -108,4 +109,18 @@ export const RAID_PARTY_DELETE_MUTATION = gql`
     }
   }
   ${RAID_PARTY_FRAGMENT}
+`;
+
+export const UPDATE_INVOICE_ADDRESS_QUERY = gql`
+  mutation MyMutation($invoiceAddress: String!, $raidId: uuid!) {
+    update_raids(
+      where: { id: { _eq: $raidId } }
+      _set: { invoice_address: $invoiceAddress }
+    ) {
+      returning {
+        ...RaidDetail
+      }
+    }
+  }
+  ${RAID_DETAIL_FRAGMENT}
 `;

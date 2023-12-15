@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import _ from 'lodash';
 import {
   Box,
   Button,
-  Input,
-  Stack,
   FormControl,
   FormLabel,
+  Input,
   Select,
+  Stack,
 } from '@raidguild/design-system';
-import { useSession } from 'next-auth/react';
-import { useForm, Controller } from 'react-hook-form';
 import { useMemberUpdate } from '@raidguild/dm-hooks';
+import { IApplication, IMember } from '@raidguild/dm-types';
 import {
   GUILD_CLASS_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
-  IMember,
-  IApplication,
 } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 interface UpdateMemberFormProps {
   memberId?: string;
@@ -26,7 +25,7 @@ interface UpdateMemberFormProps {
   member: IMember;
   application?: IApplication;
 }
-const UpdateMemberForm: React.FC<UpdateMemberFormProps> = ({
+const UpdateMemberForm = ({
   memberId,
   memberAddress,
   member,

@@ -1,7 +1,8 @@
-import _ from 'lodash';
+import { APPLICATION_DETAIL_QUERY, client } from '@raidguild/dm-graphql';
+import { IApplication } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
 import { useQuery } from '@tanstack/react-query';
-import { client, APPLICATION_DETAIL_QUERY } from '@raidguild/dm-graphql';
-import { camelize, IApplication } from '@raidguild/dm-utils';
+import _ from 'lodash';
 
 const useApplicationDetail = ({
   token,

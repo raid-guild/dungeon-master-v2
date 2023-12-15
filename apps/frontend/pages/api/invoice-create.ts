@@ -1,42 +1,38 @@
-import axios from 'axios';
-import { UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/dm-graphql';
+import { client, UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/dm-graphql';
+import _ from 'lodash';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
+
+import { authOptions } from './auth/[...nextauth]';
 
 // TODO gql-request & native client
-// ? user should have token from signing in. we could make this model public
 
-const handler = async (req, res) => {
-  const { method } = req;
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { method, body } = req;
+  const session = await getServerSession(req, res, authOptions);
 
   if (method !== 'POST') {
     return res.status(405).json('Method not allowed');
   }
+  // TODO could check for specific roles
+  if (!session) {
+    return res.status(401).json('Unauthorized');
+  }
 
-  if (req.method === 'POST') {
-    try {
-      const graphqlQuery = {
-        // operationName: 'updateInvoiceAddress',
-        query: UPDATE_INVOICE_ADDRESS_QUERY(
-          req.body.raidId,
-          req.body.invoiceAddress
-        ),
-        variables: {},
-      };
+  const { raidId, invoiceAddress } = _.pick(body, ['raidId', 'invoiceAddress']);
 
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}`,
-        graphqlQuery,
-        {
-          headers: {
-            'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET,
-          },
-        }
-      );
+  try {
+    // TODO move to helper
+    const result: any = await client({}).request(UPDATE_INVOICE_ADDRESS_QUERY, {
+      raidId,
+      invoiceAddress,
+    });
 
-      res.status(201).json(data.data);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json('Internal server error');
-    }
+    return res.status(201).json(result?.update_raids_by_pk?.returning);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    return res.status(500).json('Internal server error');
   }
 };
 

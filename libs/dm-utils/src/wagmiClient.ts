@@ -1,16 +1,21 @@
 /* eslint-disable import/prefer-default-export */
-import { createConfig, WagmiConfig } from 'wagmi';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
-  injectedWallet,
-  metaMaskWallet,
-  rainbowWallet,
-  walletConnectWallet,
   argentWallet,
   braveWallet,
   coinbaseWallet,
+  injectedWallet,
   ledgerWallet,
+  metaMaskWallet,
+  rainbowWallet,
+  walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+import {
+  Config,
+  createConfig,
+  PublicClient,
+  WebSocketPublicClient,
+} from 'wagmi';
 
 import { chains, publicClient } from './chains';
 
@@ -38,9 +43,8 @@ const connectors = connectorsForWallets([
   },
 ]);
 
-export const wagmiConfig: any = createConfig({
-  publicClient,
-  connectors,
-  // turn off autoConnect in development
-  autoConnect: true,
-});
+export const wagmiConfig: Config<PublicClient, WebSocketPublicClient> =
+  createConfig({
+    publicClient,
+    connectors,
+  });

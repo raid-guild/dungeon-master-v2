@@ -1,13 +1,11 @@
-import { BigNumber } from 'ethers';
-
 // * these should be post `camelize` types, db uses snake_case
 export type IMolochStatsBalance = {
   id: string;
   timestamp: string;
-  balance: string;
+  balance: bigint;
   tokenSymbol: string;
   tokenAddress: string;
-  tokenDecimals: string;
+  tokenDecimals: number;
   transactionHash: string;
   amount: string;
   payment: boolean;
@@ -31,16 +29,16 @@ export type IVaultTransaction = {
   tokenSymbol: string;
   tokenDecimals: number;
   tokenAddress: string;
-  in: number;
-  out: number;
-  net: number;
-  balance: number;
+  in: bigint;
+  out: bigint;
+  net: bigint;
+  balance: bigint;
   priceConversion?: number;
   counterparty: string; // receiver/sender to minion vault or sender to treasury
   proposalId?: string;
   proposalLink?: string;
-  proposalShares?: BigNumber; // requested in case of proposal, ragequitted in case of rage quit
-  proposalLoot?: BigNumber; // requested in case of proposal, ragequitted in case of rage quit
+  proposalShares?: bigint; // requested in case of proposal, ragequitted in case of rage quit
+  proposalLoot?: bigint; // requested in case of proposal, ragequitted in case of rage quit
   proposalTitle?: string; // title of the proposal in details
   proposalApplicant?: string; // submitted by address
   memberName?: string;
@@ -50,16 +48,16 @@ export type IVaultTransaction = {
 
 export type ICalculatedTokenBalances = {
   [tokenAddress: string]: {
-    in: BigNumber;
-    out: BigNumber;
-    balance: BigNumber;
+    in: bigint;
+    out: bigint;
+    balance: bigint;
   };
 };
 
 export type ISmartEscrowWithdrawal = {
   escrowId?: string;
-  childShare: BigNumber;
-  parentShare: BigNumber;
+  childShare: bigint;
+  parentShare: bigint;
   timestamp: string;
   token: string;
 };
@@ -88,7 +86,7 @@ export type ISpoils = {
 
 export type IToken = {
   tokenAddress: string;
-  decimals: string;
+  decimals: number;
   symbol: string;
 };
 
@@ -96,20 +94,20 @@ export type ITokenBalance = {
   token: IToken;
   tokenSymbol: string;
   date: Date;
-  tokenBalance: BigNumber;
+  tokenBalance: bigint;
 };
 
 export type ITokenBalanceLineItem = ITokenBalance & {
   id: string;
   tokenExplorerLink: string;
   inflow: {
-    tokenValue: number;
+    tokenValue: bigint;
   };
   outflow: {
-    tokenValue: number;
+    tokenValue: bigint;
   };
   closing: {
-    tokenValue: number;
+    tokenValue: bigint;
   };
   priceConversion?: number;
 };

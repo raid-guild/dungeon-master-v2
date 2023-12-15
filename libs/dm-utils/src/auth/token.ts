@@ -1,8 +1,9 @@
-import _ from 'lodash';
-import jwt from 'jsonwebtoken';
-import { JWT } from 'next-auth/jwt';
-import { Session, User } from 'next-auth';
 import { CreateTokenParams, HasuraAuthToken } from '@raidguild/dm-types';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
+import { Session, User } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+
 import { getOrCreateUser } from './queryHelpers';
 
 const { NEXTAUTH_SECRET } = process.env;
@@ -50,20 +51,28 @@ export const encodeAuth = async ({
   maxAge?: number;
 }) => {
   if (_.get(token, 'exp')) return encodeToken(token);
+  return getOrCreateUser(_.get(token, 'sub'))
+    .then((user) => {
+      if (user === 'AUTHED_USER') {
+        return encodeToken(
+          createToken({
+            user: { id: _.get(token, 'sub') },
+            token,
+            maxAge,
+            roles: ['user'],
+          })
+        );
+      }
 
-  const user = await getOrCreateUser(_.get(token, 'sub'));
-  if (user === 'AUTHED_USER') {
-    return encodeToken(
-      createToken({
-        user: { id: _.get(token, 'sub') },
-        token,
-        maxAge,
-        roles: ['user'],
-      })
-    );
-  }
-
-  return encodeToken(createToken({ user, token, maxAge, roles: ['member'] }));
+      return encodeToken(
+        createToken({ user, token, maxAge, roles: ['member'] })
+      );
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      return ''; // better fallback?
+    });
 };
 
 export const decodeToken = (token: string) =>
@@ -88,9 +97,9 @@ export const extendSessionWithUserAndToken = ({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
     address: _.get(token, 'sub'),
-    id: _.get(token, 'user.id'),
-    role: _.get(token, 'role'),
-    roles: _.get(token, 'roles'),
+    id: _.get(token, 'user.id') as string,
+    role: _.get(token, 'role') as string,
+    roles: _.get(token, 'roles') as string[],
   },
   token: encodeToken(token),
 });

@@ -1,9 +1,9 @@
 import React, {
   createContext,
-  useState,
-  useContext,
   ReactNode,
+  useContext,
   useMemo,
+  useState,
 } from 'react';
 
 export type IModals = {
@@ -31,9 +31,7 @@ interface OverlayProviderProps {
   children?: ReactNode | undefined;
 }
 
-export const OverlayContextProvider: React.FC<OverlayProviderProps> = ({
-  children,
-}: OverlayProviderProps) => {
+export const OverlayContextProvider = ({ children }: OverlayProviderProps) => {
   const [modals, setModals] = useState(defaults);
   const [commandPallet, setCommandPallet] = useState(false);
 

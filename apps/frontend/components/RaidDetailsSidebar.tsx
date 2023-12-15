@@ -1,20 +1,19 @@
-import React from 'react';
+import { Button, HStack, Stack } from '@raidguild/design-system';
+import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
-import { HStack, Button, Stack } from '@raidguild/design-system';
-import { IRaid } from '@raidguild/dm-utils';
-import StatusUpdateForm from './StatusUpdateForm';
-import RaidUpdateForm from './RaidUpdateForm';
+import React from 'react';
+
+import { useOverlay } from '../contexts/OverlayContext';
 import ModalWrapper from './ModalWrapper';
 import RaidPartyInfo from './RaidPartyInfo';
-import { useOverlay } from '../contexts/OverlayContext';
+import RaidUpdateForm from './RaidUpdateForm';
+import StatusUpdateForm from './StatusUpdateForm';
 
 interface RaidDetailsSidebarProps {
   raid: Partial<IRaid>;
 }
 
-const RaidDetailsSidebar: React.FC<RaidDetailsSidebarProps> = ({
-  raid,
-}: RaidDetailsSidebarProps) => {
+const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
   const localOverlay = useOverlay();
   const { setModals, closeModals } = localOverlay;
   // const relatedRaids = _.get(raid, 'raidByRelatedRaids');

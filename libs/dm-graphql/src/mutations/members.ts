@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
+
 import { MEMBER_DETAIL_FRAGMENT } from '../fragments';
 
 // contact infos fragment defined in the member detail fragment

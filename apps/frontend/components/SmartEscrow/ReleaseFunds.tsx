@@ -1,92 +1,76 @@
 import {
-  useToast,
   Button,
-  Heading,
-  Link,
   ChakraText as Text,
+  Heading,
+  Spinner,
+  // Link,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
-import React, { useContext, useState } from 'react';
-
-import { Loader } from './Loader';
-
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-
-import { getTxLink, parseTokenAddress, release } from '@raidguild/escrow-utils';
 import { getInvoice } from '@raidguild/escrow-gql';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { usePollSubgraph, useRelease } from '@raidguild/escrow-hooks';
+import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import { formatUnits } from 'viem';
+import { useChainId } from 'wagmi';
 
 type ReleaseFundsProp = {
-  invoice: any;
-  balance: any;
+  invoice: Invoice;
+  balance: bigint;
 };
 
-export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
-  const [loading, setLoading] = useState(false);
+const getReleaseAmount = (currentMilestone, amounts, balance) => {
+  if (
+    currentMilestone >= amounts.length ||
+    (currentMilestone === amounts.length - 1 &&
+      balance.gte(amounts[currentMilestone]))
+  ) {
+    return balance;
+  }
+  return BigInt(amounts[currentMilestone]);
+};
+
+const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   const toast = useToast();
-  const {
-    appState: { chainId, invoice_id, provider },
-  } = useContext(SmartEscrowContext);
-  const { currentMilestone, amounts, address, token } = invoice;
+  const chainId = useChainId();
 
-  const pollSubgraph = async () => {
-    let isSubscribed = true;
+  const { address, currentMilestone, amounts, token } = invoice;
 
-    const interval = setInterval(async () => {
-      let inv = await getInvoice(parseInt(chainId), invoice_id);
+  const waitForRelease = usePollSubgraph({
+    label: 'waiting for funds to be released',
+    fetchHelper: () => getInvoice(chainId, address),
+    checkResult: (updatedInvoice) => updatedInvoice.released > invoice.released,
+  });
 
-      if (isSubscribed && !!inv) {
-        if (
-          utils.formatUnits(inv.released, 18) >
-          utils.formatUnits(invoice.released, 18)
-        ) {
-          isSubscribed = false;
-          clearInterval(interval);
-
-          window.location.reload();
-        }
-      }
-    }, 5000);
+  const onSuccess = async () => {
+    await waitForRelease();
+    toast.success({ title: 'Funds released successfully' });
   };
 
-  const getReleaseAmount = (currentMilestone, amounts, balance) => {
-    if (
-      currentMilestone >= amounts.length ||
-      (currentMilestone === amounts.length - 1 &&
-        balance.gte(amounts[currentMilestone]))
-    ) {
-      return balance;
-    }
-    return BigNumber.from(amounts[currentMilestone]);
-  };
+  const { writeAsync: releaseFunds, isLoading } = useRelease({
+    invoice,
+    onSuccess,
+  });
 
-  const [transaction, setTransaction] = useState<any>();
+  // const pollSubgraph = async () => {
+  //   let isSubscribed = true;
 
-  const releaseFunds = async () => {
-    if (
-      !loading &&
-      provider &&
-      balance &&
-      balance.gte(getReleaseAmount(currentMilestone, amounts, balance))
-    ) {
-      try {
-        setLoading(true);
-        const tx = await release(provider, address);
-        setTransaction(tx);
-        await tx.wait();
-        await pollSubgraph();
-      } catch (releaseError) {
-        console.error(releaseError);
-        setLoading(false);
-        toast.error({
-          title: 'Oops there was an error',
-          iconName: 'alert',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
-  };
+  //   const interval = setInterval(async () => {
+  //     let inv = await getInvoice(parseInt(chainId), invoice_id);
+
+  //     if (isSubscribed && !!inv) {
+  //       if (
+  //         utils.formatUnits(inv.released, 18) >
+  //         utils.formatUnits(invoice.released, 18)
+  //       ) {
+  //         isSubscribed = false;
+  //         clearInterval(interval);
+
+  //         window.location.reload();
+  //       }
+  //     }
+  //   }, 5000);
+  // };
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -100,25 +84,32 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
       >
         Release Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem'>
+      <Text
+        textAlign='center'
+        fontSize='sm'
+        mb='1rem'
+        w='60%'
+        color='whiteAlpha.800'
+      >
         Follow the instructions in your wallet to release funds from escrow to
         the raid party.
       </Text>
       <VStack my='2rem' px='5rem' py='1rem' bg='black' borderRadius='0.5rem'>
-        <Text color='primary.300' fontSize='0.875rem' textAlign='center'>
+        <Text color='primary.200' fontSize='0.875rem' textAlign='center'>
           Amount To Be Released
         </Text>
         <Text
-          color='yellow'
-          fontSize='1rem'
+          color='yellow.500'
+          fontSize='xl'
           fontWeight='bold'
+          fontFamily='texturina'
           textAlign='center'
-        >{`${utils.formatUnits(
+        >{`${formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
           18
         )} ${parseTokenAddress(chainId, token)}`}</Text>
       </VStack>
-      {transaction && (
+      {/* {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
@@ -130,12 +121,14 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
             here
           </Link>
         </Text>
-      )}
-      {loading && <Loader />}
-
-      {!loading && (
+      )} */}
+      {isLoading ? (
+        <Spinner size='xl' />
+      ) : (
         <Button
           onClick={releaseFunds}
+          isDisabled={!releaseFunds || isLoading}
+          isLoading={isLoading}
           textTransform='uppercase'
           variant='solid'
         >
@@ -145,3 +138,5 @@ export const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
     </VStack>
   );
 };
+
+export default ReleaseFunds;

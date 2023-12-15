@@ -2,109 +2,86 @@ import {
   Button,
   Flex,
   Heading,
-  Link,
-  Text,
-  VStack,
   Image,
+  Link,
+  Spinner,
+  Text,
+  Textarea,
+  VStack,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
-import { useCallback, useContext, useState } from 'react';
+import { getTxLink } from '@raidguild/dm-utils';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { useDebounce, useLock } from '@raidguild/escrow-hooks';
 import {
-  getTxLink,
-  lock,
-  uploadDisputeDetails,
+  getResolverInfo,
+  getResolverString,
+  Invoice,
+  isKnownResolver,
   NETWORK_CONFIG,
+  // uploadDisputeDetails,
 } from '@raidguild/escrow-utils';
+import _ from 'lodash';
+import { useForm } from 'react-hook-form';
+import { formatUnits, Hex } from 'viem';
+import { useChainId } from 'wagmi';
 
 import LockImage from '../../assets/lock.svg';
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
+import AccountLink from './shared/AccountLink';
 
-import { AccountLink } from './shared/AccountLink';
-import { OrderedTextarea } from './shared/OrderedTextArea';
-
-import { Loader } from './Loader';
-
-const parseTokenAddress = (chainId, address) => {
-  for (const [key, value] of Object.entries(
-    NETWORK_CONFIG[parseInt(chainId)]['TOKENS']
-  )) {
-    if (value['address'] === address.toLowerCase()) {
+const parseTokenAddress = (chainId: number, address: Hex) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [key, value] of Object.entries(NETWORK_CONFIG[chainId].TOKENS)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((value as any).address === _.toLower(address)) {
       return key;
     }
   }
+  return address;
 };
 
-const resolverInfo = {
-  4: NETWORK_CONFIG[4].RESOLVERS,
-  100: NETWORK_CONFIG[100].RESOLVERS,
-  1: NETWORK_CONFIG[1].RESOLVERS,
-};
+const LockFunds = ({
+  invoice,
+  balance,
+}: {
+  invoice: Invoice;
+  balance: bigint;
+}) => {
+  const chainId = useChainId();
+  const { resolver, token, resolutionRate } = invoice;
 
-const getResolverInfo = (chainId, resolver) =>
-  (resolverInfo[chainId] || resolverInfo[4])[resolver];
+  const localForm = useForm();
+  const { watch, handleSubmit } = localForm;
 
-const resolvers = {
-  4: Object.keys(NETWORK_CONFIG[4].RESOLVERS),
-  100: Object.keys(NETWORK_CONFIG[100].RESOLVERS),
-  1: Object.keys(NETWORK_CONFIG[1].RESOLVERS),
-};
-
-const getResolvers = (chainId) => resolvers[chainId] || resolvers[4];
-const isKnownResolver = (chainId, resolver) =>
-  getResolvers(chainId).indexOf(resolver.toLowerCase()) !== -1;
-
-const getAccountString = (account) => {
-  const len = account.length;
-  return `0x${account.substr(2, 3).toUpperCase()}...${account
-    .substr(len - 3, len - 1)
-    .toUpperCase()}`;
-};
-const getResolverString = (chainId, resolver) => {
-  const info = getResolverInfo(chainId, resolver);
-  return info ? info.name : getAccountString(resolver);
-};
-
-export const LockFunds = ({ invoice, balance }) => {
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
-  const { address, resolver, token, resolutionRate } = invoice;
-
-  const [disputeReason, setDisputeReason] = useState('');
-
-  const fee = `${utils.formatUnits(
-    resolutionRate === '0'
-      ? BigNumber.from('0')
-      : BigNumber.from(balance).div(resolutionRate),
+  const fee = formatUnits(
+    resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
     18
-  )} ${parseTokenAddress(chainId, token)}`;
+  );
+  const feeDisplay = `${fee} ${parseTokenAddress(chainId, token)}`;
 
-  const [locking, setLocking] = useState<boolean>(false);
-  const [transaction, setTransaction] = useState<any>();
+  const disputeReason = useDebounce(watch('disputeReason'), 250);
+  const amount = formatUnits(BigInt(balance), 18);
 
-  const lockFunds = useCallback(async () => {
-    if (provider && !locking && balance.gt(0) && disputeReason) {
-      try {
-        setLocking(true);
-        const detailsHash = await uploadDisputeDetails({
-          reason: disputeReason,
-          invoice: address,
-          amount: balance.toString(),
-        });
-        const tx = await lock(provider, address, detailsHash);
-        setTransaction(tx);
-        await tx.wait();
-        setTimeout(() => {
-          window.location.reload();
-        }, 20000);
-      } catch (lockError) {
-        setLocking(false);
-        console.error(lockError);
-      }
-    }
-  }, [provider, locking, balance, disputeReason, address]);
+  // const onSuccess = () => {
+  //   // handle tx success
+  //   // mark locked
+  // };
 
-  if (locking) {
+  const {
+    writeAsync: lockFunds,
+    writeLoading,
+    txHash,
+  } = useLock({
+    invoice,
+    disputeReason,
+    amount,
+  });
+
+  const resolverInfo = getResolverInfo(chainId, resolver);
+  const resolverDisplayName = isKnownResolver(chainId, resolver)
+    ? resolverInfo.name
+    : resolver;
+
+  if (writeLoading) {
     return (
       <VStack w='100%' spacing='1rem'>
         <Heading
@@ -116,11 +93,11 @@ export const LockFunds = ({ invoice, balance }) => {
         >
           Locking Funds
         </Heading>
-        {transaction && (
+        {txHash && (
           <Text color='white' textAlign='center' fontSize='sm'>
             Follow your transaction{' '}
             <Link
-              href={getTxLink(chainId, transaction.hash)}
+              href={getTxLink(chainId, txHash)}
               isExternal
               color='primary.300'
               textDecoration='underline'
@@ -138,22 +115,19 @@ export const LockFunds = ({ invoice, balance }) => {
           position='relative'
           color='primary.300'
         >
-          <Loader size='6rem' />
-          <Flex
-            position='absolute'
-            left='50%'
-            top='50%'
-            transform='translate(-50%,-50%)'
-          >
-            <Image src={LockImage.src} width='2rem' alt='lock image' />
-          </Flex>
+          <Spinner size='xl' />
         </Flex>
       </VStack>
     );
   }
 
   return (
-    <VStack w='100%' spacing='1rem'>
+    <VStack
+      w='100%'
+      spacing='1rem'
+      as='form'
+      onSubmit={handleSubmit(lockFunds)}
+    >
       <Heading
         color='white'
         as='h3'
@@ -169,31 +143,39 @@ export const LockFunds = ({ invoice, balance }) => {
       </Text>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {'Once a dispute has been initiated, '}
-        <AccountLink address={resolver} chainId={chainId} />
+        <AccountLink
+          name={resolverDisplayName}
+          address={resolver}
+          chainId={chainId}
+        />
         {
           ' will review your case, the project agreement and dispute reasoning before making a decision on how to fairly distribute remaining funds.'
         }
       </Text>
 
-      <OrderedTextarea
+      <Textarea
+        name='disputeReason'
         tooltip='Why do you want to lock these funds?'
         label='Dispute Reason'
         placeholder='Dispute Reason'
-        value={disputeReason}
-        setValue={setDisputeReason}
+        localForm={localForm}
       />
       <Text color='white' textAlign='center' fontFamily='texturina'>
-        {`Upon resolution, a fee of ${fee} will be deducted from the locked fund amount and sent to `}
-        <AccountLink address={resolver} chainId={chainId} />
+        {`Upon resolution, a fee of ${feeDisplay} will be deducted from the locked fund amount and sent to `}
+        <AccountLink
+          name={resolverDisplayName}
+          address={resolver}
+          chainId={chainId}
+        />
         {` for helping resolve this dispute.`}
       </Text>
       <Button
-        onClick={lockFunds}
-        isDisabled={!disputeReason}
+        type='submit'
+        isDisabled={!disputeReason || !lockFunds}
         textTransform='uppercase'
         variant='solid'
       >
-        {`Lock ${utils.formatUnits(balance, 18)} ${parseTokenAddress(
+        {`Lock ${formatUnits(BigInt(balance), 18)} ${parseTokenAddress(
           chainId,
           token
         )}`}
@@ -212,3 +194,5 @@ export const LockFunds = ({ invoice, balance }) => {
     </VStack>
   );
 };
+
+export default LockFunds;

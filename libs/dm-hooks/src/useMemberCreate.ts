@@ -1,10 +1,10 @@
+import { useToast } from '@raidguild/design-system';
+import { client, MEMBER_CREATE_MUTATION } from '@raidguild/dm-graphql';
+import { IMemberCreate } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useToast } from '@raidguild/design-system';
 import { useRouter } from 'next/router';
-
-import { client, MEMBER_CREATE_MUTATION } from '@raidguild/dm-graphql';
-import { IMemberCreate, camelize } from '@raidguild/dm-utils';
 
 const useMemberCreate = ({ token }: { token: string }) => {
   const router = useRouter();
@@ -41,6 +41,8 @@ const useMemberCreate = ({ token }: { token: string }) => {
         }, 1000);
       },
       onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log(error);
         toast.error({
           title: 'Unable to create Member',
           iconName: 'alert',

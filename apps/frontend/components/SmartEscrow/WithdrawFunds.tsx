@@ -1,56 +1,32 @@
 import {
   Button,
   Heading,
-  Link,
+  // Link,
+  Spinner,
   Text,
   VStack,
-  useToast,
 } from '@raidguild/design-system';
-import { utils } from 'ethers';
-import { useContext, useState } from 'react';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { useWithdraw } from '@raidguild/escrow-hooks';
+import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import { formatUnits } from 'viem';
+import { useChainId } from 'wagmi';
 
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
-import {
-  getTxLink,
-  parseTokenAddress,
-  withdraw,
-} from '@raidguild/escrow-utils';
+const WithdrawFunds = ({
+  invoice,
+  balance,
+}: {
+  invoice: Invoice;
+  balance: bigint;
+}) => {
+  const chainId = useChainId();
 
-import { Loader } from './Loader';
+  // const onSuccess = () => {
+  //   // toast
+  //   // close modal
+  // };
 
-export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
-  const [loading, setLoading] = useState(false);
-  const toast = useToast();
-
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
-
-  const [transaction, setTransaction] = useState<any>();
-
-  const withdrawFunds = async () => {
-    if (!loading && provider && balance.gte(0)) {
-      try {
-        setLoading(true);
-        const tx = await withdraw(provider, contractAddress);
-        setTransaction(tx);
-        await tx.wait();
-        setLoading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 20000);
-      } catch (withdrawError) {
-        console.error(withdrawError);
-        toast.error({
-          title: 'Oops there was an error',
-          iconName: 'alert',
-          duration: 3000,
-          isClosable: true,
-        });
-        setLoading(false);
-      }
-    }
-  };
+  const { writeAsync: withdrawFunds, isLoading } = useWithdraw({ invoice });
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -64,7 +40,7 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
       >
         Withdraw Funds
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' w='70%'>
         Follow the instructions in your wallet to withdraw remaining funds from
         the escrow.
       </Text>
@@ -77,12 +53,12 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-        >{`${utils.formatUnits(balance, 18)} ${parseTokenAddress(
+        >{`${formatUnits(balance, 18)} ${parseTokenAddress(
           chainId,
-          token
+          invoice?.token
         )}`}</Text>
       </VStack>
-      {transaction && (
+      {/* {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>
           Follow your transaction{' '}
           <Link
@@ -94,11 +70,18 @@ export const WithdrawFunds = ({ contractAddress, token, balance, invoice }) => {
             here
           </Link>
         </Text>
-      )}
-      {loading && <Loader />}
-      <Button onClick={withdrawFunds} variant='solid' textTransform='uppercase'>
+      )} */}
+      {isLoading && <Spinner size='xl' />}
+      <Button
+        onClick={withdrawFunds}
+        isDisabled={!withdrawFunds}
+        variant='solid'
+        textTransform='uppercase'
+      >
         Withdraw
       </Button>
     </VStack>
   );
 };
+
+export default WithdrawFunds;

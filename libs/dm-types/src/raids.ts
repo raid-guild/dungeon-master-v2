@@ -1,5 +1,7 @@
-import { IMember } from './members';
+import { Hex } from 'viem';
+
 import { IConsultation } from './consultations';
+import { IMember } from './members';
 import { IStatusUpdate } from './statusUpdates';
 
 export type raidSortKeys =
@@ -17,7 +19,7 @@ export interface IRaid {
   raidName: string;
   status: string;
   category: string;
-  invoiceAddress: string;
+  invoiceAddress: Hex;
 
   // RELATIONSHIPS
   rolesRequired: {
@@ -97,6 +99,11 @@ export interface IRaidPartyInsert {
 
 export interface IRoleRequiredInsert {
   raidId: string;
+  role: string;
+}
+
+export interface IRoleRequiredInsertDb {
+  raid_id: string;
   role: string;
 }
 

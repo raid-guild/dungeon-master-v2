@@ -1,15 +1,16 @@
-import React from 'react';
 import {
-  Heading,
+  ChakraBoxProps,
   ChakraModal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
+  Heading,
   ModalBody,
   ModalCloseButton,
-  ChakraBoxProps,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
 } from '@raidguild/design-system';
-import { OverlayContextType, IModals } from '../contexts/OverlayContext';
+import React from 'react';
+
+import { IModals, OverlayContextType } from '../contexts/OverlayContext';
 // TODO replace this modal with the one from design-system
 
 interface CustomModalWrapperProps {
@@ -26,7 +27,7 @@ interface CustomModalWrapperProps {
 
 export type ModalWrapperProps = CustomModalWrapperProps & ChakraBoxProps;
 
-const ModalWrapper: React.FC<ModalWrapperProps> = ({
+const ModalWrapper = ({
   name,
   title,
   children,

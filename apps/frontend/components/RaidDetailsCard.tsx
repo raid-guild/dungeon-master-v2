@@ -1,32 +1,35 @@
-import React, { useState } from 'react';
-import _ from 'lodash';
 import {
   Accordion,
-  AccordionItem,
   AccordionButton,
-  AccordionPanel,
   AccordionIcon,
-  Flex,
-  Grid,
+  AccordionItem,
+  AccordionPanel,
   Button,
   Card,
+  Collapse,
+  Flex,
+  Grid,
+  Heading,
+  Stack,
   Text,
   VStack,
-  Stack,
-  Heading,
-  Collapse,
 } from '@raidguild/design-system';
-import { format } from 'date-fns';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
-  IConsultation,
-  IRaid,
-  BUDGET_DISPLAY,
-  truncateAddress,
-  DELIVERY_PRIORITIES_DISPLAY,
   AVAILABLE_PROJECT_SPECS_DISPLAY,
+  AvailableSpecsKey,
+  BUDGET_DISPLAY,
+  DELIVERY_PRIORITIES_DISPLAY,
+  PriorityKey,
   PROJECT_TYPE_DISPLAY,
+  ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
+  truncateAddress,
 } from '@raidguild/dm-utils';
+import { format } from 'date-fns';
+import _ from 'lodash';
+import React, { useState } from 'react';
+
 import InfoStack from './InfoStack';
 
 interface RaidProps {
@@ -97,10 +100,7 @@ const Bio = ({ bio }: { bio: string }) => {
   );
 };
 
-const RaidDetailsCard: React.FC<RaidProps> = ({
-  raid,
-  consultation,
-}: RaidProps) => {
+const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
   const keyLinkItems = [
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.
@@ -109,16 +109,20 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
       ? {
           label: 'Project Specs',
           details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
-              'YES'
+            (_.get(
+              consultation,
+              'availableProjectSpec.availableProjectSpec'
+            ) as AvailableSpecsKey) || 'YES'
           ),
           link: consultation?.link,
         }
       : {
           label: 'Project Specs',
           details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            _.get(consultation, 'availableProjectSpec.availableProjectSpec') ||
-              'NONE'
+            (_.get(
+              consultation,
+              'availableProjectSpec.availableProjectSpec'
+            ) as AvailableSpecsKey) || 'NONE'
           ),
         },
     _.get(consultation, 'consultationHash') && {
@@ -133,20 +137,6 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
     },
   ].filter((x) => x);
 
-  let smartEscrowLink;
-  const createdAt = _.get(raid, 'createdAt');
-  if (_.get(raid, 'invoiceAddress')) {
-    // smart escrow created after August 2023 use the new split-escrow type and front end inside DM
-    // url: https://dm.raidguild.org/escrow
-    if (new Date(createdAt) > new Date('2023-08-01')) {
-      smartEscrowLink = `/escrow/${raid.id}`;
-    } else {
-      // those created before use the first smart-escrow-nextjs app
-      // github: https://github.com/raid-guild/smart-escrow-nextjs
-      // url: https://smartescrow.raidguild.org
-      smartEscrowLink = `https://smartescrow.raidguild.org/escrow/${raid.id}`;
-    }
-  }
   const panels = [
     {
       title: 'Project Details',
@@ -177,7 +167,11 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
         {
           label: 'Project Type',
           details: PROJECT_TYPE_DISPLAY(
-            _.get(consultation, 'projectType.projectType', '-')
+            _.get(
+              consultation,
+              'projectType.projectType',
+              '-'
+            ) as ProjectTypeKey
           ),
         },
         {
@@ -187,13 +181,17 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
               consultation,
               'availableProjectSpec.availableProjectSpec',
               '-'
-            )
+            ) as AvailableSpecsKey
           ),
         },
         {
           label: 'Delivery Priority',
           details: DELIVERY_PRIORITIES_DISPLAY(
-            _.get(consultation, 'deliveryPriority.deliveryPriority', '-')
+            _.get(
+              consultation,
+              'deliveryPriority.deliveryPriority',
+              '-'
+            ) as PriorityKey
           ),
         },
       ].filter((x) => x),
@@ -280,17 +278,23 @@ const RaidDetailsCard: React.FC<RaidProps> = ({
           label: 'Locker Hash',
           details: _.get(raid, 'lockerHash'),
         },
-        _.get(raid, 'invoiceAddress') && {
-          label: 'Smart Escrow',
-          details: truncateAddress(_.get(raid, 'invoiceAddress')),
-          link: smartEscrowLink,
-        },
+        _.get(raid, 'invoiceAddress')
+          ? {
+              label: 'Smart Escrow',
+              details: truncateAddress(_.get(raid, 'invoiceAddress')),
+              link: `/escrow/${raid.id}`,
+            }
+          : {
+              label: 'Smart Escrow',
+              details: 'Create escrow',
+              link: `/escrow/new?raidId=${raid.id}`,
+            },
       ].filter((x) => x),
     },
   ];
 
   return (
-    <Card variant='filled' padding={2} minWidth={'lg'}>
+    <Card variant='filled' padding={2} minWidth='lg'>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;

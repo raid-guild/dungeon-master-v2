@@ -1,7 +1,6 @@
-import React from 'react';
-import { Stack, Image } from '@raidguild/design-system';
+import { Image, Stack } from '@raidguild/design-system';
 
-const Logo: React.FC = () => (
+const Logo = () => (
   <Stack
     direction='row'
     justifyContent='center'

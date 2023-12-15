@@ -1,17 +1,17 @@
-import _ from 'lodash';
 import {
+  Box,
+  Button,
   Flex,
   Heading,
-  Box,
-  Tag,
-  TagLabel,
-  TagCloseButton,
-  Stack,
-  Button,
   Icon,
+  Stack,
+  Tag,
+  TagCloseButton,
+  TagLabel,
 } from '@raidguild/design-system';
+import { IRaid } from '@raidguild/dm-types';
+import _ from 'lodash';
 import { FiPlus } from 'react-icons/fi';
-import { IRaid } from '@raidguild/dm-utils';
 
 const tempTags = ['Help Needed', 'PM Wanted'];
 

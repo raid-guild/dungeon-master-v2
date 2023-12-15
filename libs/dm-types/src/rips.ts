@@ -8,6 +8,7 @@ export type ripSortKeys =
 export interface IRip {
   number: number;
   title: string;
+  bodyText: string;
   url: string;
 
   // TIMELINE - ISO STRINGS

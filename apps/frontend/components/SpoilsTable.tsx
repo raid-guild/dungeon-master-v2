@@ -1,12 +1,13 @@
 import { Link, Tooltip } from '@raidguild/design-system';
-// @ts-ignore
-import { createColumnHelper } from '@tanstack/react-table';
 import { ISpoils } from '@raidguild/dm-types';
 import {
   minMaxDateFilter,
   minMaxNumberFilter,
   sortNumeric,
 } from '@raidguild/dm-utils';
+// @ts-expect-error - no types for react-table
+import { createColumnHelper } from '@tanstack/react-table';
+
 import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 

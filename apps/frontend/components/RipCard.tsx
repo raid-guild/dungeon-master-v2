@@ -1,18 +1,20 @@
-import React from 'react';
-import _ from 'lodash';
 import {
+  Button,
+  Card,
+  Collapse,
   Flex,
   Heading,
-  Button,
-  Text,
   HStack,
-  Card,
-  Stack,
-  Collapse,
   Icon,
+  Stack,
+  Text,
 } from '@raidguild/design-system';
-import { displayDate, IRip } from '@raidguild/dm-utils';
-import { FaExternalLinkAlt, FaChevronDown } from 'react-icons/fa';
+import { IRip } from '@raidguild/dm-types';
+import { displayDate } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { useState } from 'react';
+import { FaChevronDown, FaExternalLinkAlt } from 'react-icons/fa';
+
 import Link from './ChakraNextLink';
 import RipStatusBadge from './RipStatusBadge';
 
@@ -20,24 +22,22 @@ interface RipProps {
   rip: IRip;
 }
 
-const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const description = _.get(rip, 'bodyText');
+const RipCard = ({ rip }: RipProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const description = _.get(rip, 'bodyText', '');
   const link = _.get(rip, 'url');
   const ripStatus = _.get(rip, 'ripCategory');
   const raidDate = _.get(rip, 'createdAt');
   const ripDateLabel = 'Created on: ';
   const ripNumber = _.get(rip, 'number');
-  const updates = _.map(rip.comments.nodes, (node) => {
-    return {
-      createdAt: node.createdAt,
-      id: node.id,
-      member: {
-        name: _.get(node, 'author.login'),
-      },
-      update: node.bodyText,
-    };
-  });
+  const updates = _.map(rip.comments.nodes, (node: any) => ({
+    createdAt: node?.createdAt,
+    id: node?.id,
+    member: {
+      name: _.get(node, 'author.login'),
+    },
+    update: node?.bodyText,
+  }));
   const latestUpdate = updates ? updates[updates.length - 1] : null;
 
   return (
@@ -113,7 +113,7 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
             <Text>{displayDate(latestUpdate.createdAt)}</Text>
           </HStack>
 
-          <Flex alignItems={'baseline'} justify={'space-between'}>
+          <Flex alignItems='baseline' justify='space-between'>
             <Collapse startingHeight={24} in={isOpen}>
               <Text color='white'>{latestUpdate.update}</Text>
             </Collapse>
@@ -123,7 +123,7 @@ const RipCard: React.FC<RipProps> = ({ rip }: RipProps) => {
               cursor='pointer'
               ml={1}
               transform={isOpen ? 'rotate(180deg)' : ''}
-              transition={'all .25s ease-in-out'}
+              transition='all .25s ease-in-out'
             />
           </Flex>
         </Flex>

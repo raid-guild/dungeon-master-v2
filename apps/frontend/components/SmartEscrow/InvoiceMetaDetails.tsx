@@ -1,12 +1,29 @@
-import { HStack, Text, Tooltip } from '@raidguild/design-system';
+import { Flex, HStack, Stack, Text, Tooltip } from '@raidguild/design-system';
+import { getResolverInfo, Invoice } from '@raidguild/escrow-utils';
+import _ from 'lodash';
+import { useMemo } from 'react';
+import { useChainId } from 'wagmi';
+
 import { QuestionIcon } from './icons/QuestionIcon';
+import AccountLink from './shared/AccountLink';
 
-import { AccountLink } from './shared/AccountLink';
+const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
+  const chainId = useChainId();
 
-export const InvoiceMetaDetails = ({ invoice }) => {
+  const resolverInfo = getResolverInfo(chainId, invoice.resolver);
+
+  const dataValues = useMemo(
+    () => [
+      { label: 'Client', value: invoice.client },
+      { label: 'Raid Party', value: invoice.provider },
+      { label: 'Resolver', name: resolverInfo?.name, value: invoice.resolver },
+    ],
+    [invoice.client, invoice.provider, invoice.resolver, resolverInfo?.name]
+  );
+
   return (
-    <>
-      <HStack mb='.5rem' mt='2rem' justifyContent='space-between' fontSize='sm'>
+    <Stack mt='2rem' w='100%'>
+      <Flex justifyContent='space-between' fontSize='sm'>
         <Text fontWeight='bold' fontFamily='texturina'>
           Safety Valve Date:
         </Text>
@@ -19,25 +36,22 @@ export const InvoiceMetaDetails = ({ invoice }) => {
             <QuestionIcon boxSize='0.85rem' />
           </Tooltip>
         </HStack>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='texturina'>
-          Client:
-        </Text>
-        <AccountLink address={invoice.client} />
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='texturina'>
-          Raid Party:
-        </Text>
-        <AccountLink address={invoice.provider} />
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between' fontSize='sm'>
-        <Text fontWeight='bold' fontFamily='texturina'>
-          Resolver:
-        </Text>
-        <AccountLink address={invoice.resolver} />
-      </HStack>
-    </>
+      </Flex>
+
+      {_.map(dataValues, (dataValue) => (
+        <Flex
+          justifyContent='space-between'
+          fontSize='sm'
+          key={dataValue.label}
+        >
+          <Text fontWeight='bold' fontFamily='texturina'>
+            {dataValue.label}
+          </Text>
+          <AccountLink name={dataValue.name} address={dataValue.value} />
+        </Flex>
+      ))}
+    </Stack>
   );
 };
+
+export default InvoiceMetaDetails;

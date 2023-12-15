@@ -1,7 +1,8 @@
-import _ from 'lodash';
-import { useQuery } from '@tanstack/react-query';
 import { client, CONSULTATION_DETAIL_QUERY } from '@raidguild/dm-graphql';
-import { camelize, IConsultation } from '@raidguild/dm-utils';
+import { IConsultation } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 const useConsultationDetail = ({
   token,

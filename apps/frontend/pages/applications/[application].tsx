@@ -1,15 +1,15 @@
-import _ from 'lodash';
-import { Heading, Flex, Button, Stack } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
-import { GetServerSidePropsContext } from 'next';
+import { Button, Flex, Heading, Stack } from '@raidguild/design-system';
 import { useApplicationDetail, useMemberCreate } from '@raidguild/dm-hooks';
+import _ from 'lodash';
+import { GetServerSidePropsContext } from 'next';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
 
-import SiteLayout from '../../components/SiteLayout';
-import MemberDetailsCard from '../../components/MemberDetailsCard';
 import Link from '../../components/ChakraNextLink';
+import MemberDetailsCard from '../../components/MemberDetailsCard';
+import SiteLayout from '../../components/SiteLayout';
 
-const Application = ({ applicationId }) => {
+const Application = ({ applicationId }: { applicationId: string | null }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: application } = useApplicationDetail({ token, applicationId });
@@ -20,7 +20,7 @@ const Application = ({ applicationId }) => {
       application_id: _.get(application, 'id'),
       name: _.get(application, 'name'),
       contact_info_id: _.get(application, 'contactInfo.id'),
-      eth_address: _.get(application, 'ethAddress'),
+      eth_address: _.toLower(_.get(application, 'ethAddress')),
       member_type_key: 'COHORT',
     });
   };

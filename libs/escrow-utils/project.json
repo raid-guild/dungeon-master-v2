@@ -10,8 +10,10 @@
       "options": {
         "outputPath": "dist/libs/escrow-utils",
         "main": "libs/escrow-utils/src/index.ts",
+        "packageJson": "libs/escrow-utils/package.json",
         "tsConfig": "libs/escrow-utils/tsconfig.lib.json",
-        "assets": ["libs/escrow-utils/*.md"]
+        "assets": ["libs/escrow-utils/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

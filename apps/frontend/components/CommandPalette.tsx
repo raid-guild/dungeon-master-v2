@@ -1,23 +1,30 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-nested-ternary */
 // TODO fix
-import { useEffect, useState } from 'react';
+import 'react-cmdk/dist/cmdk.css';
+
+import { Flex, Spinner } from '@raidguild/design-system';
+import { useSearchResults } from '@raidguild/dm-hooks';
+import _ from 'lodash';
+import { useSession } from 'next-auth/react';
+import { ReactNode, useEffect, useState } from 'react';
 import CmdkCommandPalette, {
   filterItems,
   getItemIndex,
-  useHandleOpenCommandPalette,
   JsonStructure,
+  useHandleOpenCommandPalette,
 } from 'react-cmdk';
-import _ from 'lodash';
-import { useSession } from 'next-auth/react';
-import { Flex, Spinner } from '@raidguild/design-system';
-import { useSearchResults } from '@raidguild/dm-hooks';
-import 'react-cmdk/dist/cmdk.css';
 
-import ChakraNextLink from './ChakraNextLink';
 import { useOverlay } from '../contexts/OverlayContext';
+import ChakraNextLink from './ChakraNextLink';
 
-const CommandPaletteInternalLink = ({ href, children }) => (
+const CommandPaletteInternalLink = ({
+  href,
+  children,
+}: {
+  href: string;
+  children: ReactNode;
+}) => (
   <ChakraNextLink href={href}>
     <Flex w='100%' justify='space-between' p={2}>
       {children}
@@ -190,9 +197,9 @@ const CommandPalette = () => {
         )}
       </CmdkCommandPalette.Page>
 
-      <CmdkCommandPalette.Page id='projects'>
-        {/* Projects page */}
-      </CmdkCommandPalette.Page>
+      {/* <CmdkCommandPalette.Page id='projects'> */}
+      {/* Projects page */}
+      {/* </CmdkCommandPalette.Page> */}
     </CmdkCommandPalette>
   );
 };

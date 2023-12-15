@@ -1,35 +1,34 @@
-import React from 'react';
-import _ from 'lodash';
 import {
+  Avatar,
+  AvatarGroup,
+  Button,
+  Card,
   Flex,
   Heading,
-  Button,
-  Text,
   HStack,
-  Card,
   Icon,
-  Tooltip,
+  RoleBadge,
   SimpleGrid,
   Stack,
-  AvatarGroup,
-  RoleBadge,
-  Avatar,
+  Text,
+  Tooltip,
   useMediaQuery,
 } from '@raidguild/design-system';
+import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
-  PROJECT_TYPE_DISPLAY,
-  RAID_CATEGORY_DISPLAY,
   BUDGET_DISPLAY,
-  GUILD_CLASS_ICON,
   displayDate,
-  IConsultation,
-  IRaid,
+  GUILD_CLASS_ICON,
+  PROJECT_TYPE_DISPLAY,
+  ProjectTypeKey,
+  RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
+import _ from 'lodash';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 
-import MemberAvatar from './MemberAvatar';
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
+import MemberAvatar from './MemberAvatar';
 import MemberAvatarStack from './MemberAvatarStack';
 import RaidStatusBadge from './RaidStatusBadge';
 
@@ -38,7 +37,7 @@ interface RaidProps {
   consultation: IConsultation;
 }
 
-const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
+const RaidCard = ({ raid, consultation }: RaidProps) => {
   // const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
   // const uniqueServicesRequired = _.uniq(
   //   _.map(servicesRequired, (service: { guildService: string }) =>
@@ -51,7 +50,7 @@ const RaidCard: React.FC<RaidProps> = ({ raid, consultation }: RaidProps) => {
   const budget =
     BUDGET_DISPLAY[_.get(consultation, 'budgetOption.budgetOption')];
   const projectType = PROJECT_TYPE_DISPLAY(
-    _.get(consultation, 'projectType.projectType')
+    _.get(consultation, 'projectType.projectType') as ProjectTypeKey
   );
   const rolesRequired = _.map(_.get(raid, 'raidsRolesRequired', []), 'role');
 

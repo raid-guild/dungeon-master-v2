@@ -1,52 +1,29 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useContext } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import _ from 'lodash';
-import { useAccount, useDisconnect, useNetwork } from 'wagmi';
 import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Image,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  Icon,
-  HStack,
-  Box,
-  Flex,
-  Image,
+  MenuList,
   Text,
-  Button,
 } from '@raidguild/design-system';
-import { CgProfile } from 'react-icons/cg';
-import { FiKey, FiChevronDown, FiXCircle } from 'react-icons/fi';
 import { truncateAddress } from '@raidguild/dm-utils';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import _ from 'lodash';
+import { CgProfile } from 'react-icons/cg';
+import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
+import { useAccount, useDisconnect } from 'wagmi';
+
 import Link from './ChakraNextLink';
-import { SmartEscrowContext } from '../contexts/SmartEscrow';
-import { useWalletClient } from 'wagmi';
-import Web3 from 'web3';
-import { ethers } from 'ethers';
 
-const ConnectWallet: React.FC = () => {
-  const context = useContext(SmartEscrowContext);
+const ConnectWallet = () => {
   const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { data: walletClient } = useWalletClient();
   const { disconnect } = useDisconnect();
-
-  useEffect(() => {
-    if (address && walletClient && chain.id) {
-      const web3Provider = new Web3((window as any).ethereum);
-      const gotProvider = new ethers.providers.Web3Provider(
-        web3Provider.currentProvider as any
-      );
-      context.setAppState({
-        ...context.appState,
-        provider: walletClient,
-        account: address,
-        chainId: chain.id,
-        web3Provider: gotProvider,
-      });
-    }
-  }, [address, walletClient, chain]);
 
   return (
     <ConnectButton.Custom>

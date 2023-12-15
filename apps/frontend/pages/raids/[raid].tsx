@@ -1,17 +1,23 @@
-import _ from 'lodash';
-import { Heading, Flex, Stack, Box, Text } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
-import { GetServerSidePropsContext } from 'next';
+import { Box, Flex, Heading, Stack, Text } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import { displayDate } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { GetServerSidePropsContext } from 'next';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
 
 import RaidDetailsCard from '../../components/RaidDetailsCard';
-import SiteLayout from '../../components/SiteLayout';
 import RaidDetailsSidebar from '../../components/RaidDetailsSidebar';
 import RaidUpdatesFeed from '../../components/RaidUpdatesFeed';
+import SiteLayout from '../../components/SiteLayout';
 
-const RaidDate = ({ startDate, endDate }) => {
+const RaidDate = ({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}) => {
   if (endDate) {
     return (
       <Stack spacing={1}>
@@ -31,10 +37,14 @@ const RaidDate = ({ startDate, endDate }) => {
   return null;
 };
 
-const Raid = ({ raidId }) => {
+const Raid = ({ raidId }: { raidId: string }) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data: raid } = useRaidDetail({ raidId, token });
+  const { data: raid } = useRaidDetail({
+    raidId,
+    token,
+    roles: _.get(session, 'user.roles'),
+  });
 
   const startOrEnd = _.get(raid, 'startDate') || _.get(raid, 'endDate');
 

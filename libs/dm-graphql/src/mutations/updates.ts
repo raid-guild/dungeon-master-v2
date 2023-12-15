@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
+
 import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const STATUS_UPDATE_CREATE_MUTATION = gql`

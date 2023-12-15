@@ -7,7 +7,6 @@
     "noImplicitOverride": true,
     "declaration": false,
     "esModuleInterop": true,
-    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "types": ["node"]

@@ -1,11 +1,12 @@
-import React, { ReactNode } from 'react';
-import { useRouter } from 'next/router';
-import _ from 'lodash';
-import { useNetwork } from 'wagmi';
 import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import _ from 'lodash';
+import { useRouter } from 'next/router';
+import React, { ReactNode } from 'react';
+import { useNetwork } from 'wagmi';
+
 import CommandPalette from './CommandPalette';
+import Footer from './Footer';
+import Navbar from './Navbar';
 import ScrollToTopButton from './ScrollToTopButton';
 
 interface SiteLayoutPublicProps {
@@ -65,7 +66,7 @@ const GeneralLayout = ({
   </Flex>
 );
 
-const SiteLayoutPublic: React.FC<SiteLayoutPublicProps> = ({
+const SiteLayoutPublic = ({
   isLoading,
   data,
   error,

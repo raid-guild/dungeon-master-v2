@@ -5,6 +5,7 @@
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
+    "declarationMap": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,6 +15,7 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
       "@raidguild/dm-graphql": ["libs/dm-graphql/src/index.ts"],
@@ -21,11 +23,10 @@
       "@raidguild/dm-types": ["libs/dm-types/src/index.ts"],
       "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"],
       "@raidguild/escrow-gql": ["libs/escrow-gql/src/index.ts"],
-      "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"],
-      "contexts/*": ["apps/frontend/contexts/*"],
-      "components/*": ["apps/frontend/components/*"]
+      "@raidguild/escrow-hooks": ["libs/escrow-hooks/src/index.ts"],
+      "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "**/*.json"],
   "exclude": ["node_modules", "tmp"]
 }

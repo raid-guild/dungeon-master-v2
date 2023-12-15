@@ -1,69 +1,51 @@
 import {
   Card,
-  Stack,
+  Divider,
   Flex,
   HStack,
-  VStack,
-  Text,
-  Divider,
   Link,
+  Stack,
+  Text,
+  VStack,
 } from '@raidguild/design-system';
-import { BigNumber, utils } from 'ethers';
-import { useEffect, useState } from 'react';
-import { AccountLink } from './shared/AccountLink';
+import { commify, getTxLink } from '@raidguild/dm-utils';
+import { Invoice, ipfsUrl, parseTokenAddress } from '@raidguild/escrow-utils';
+// import _ from 'lodash';
+import { formatUnits } from 'viem';
+import { useBalance, useChainId } from 'wagmi';
 
-import {
-  balanceOf,
-  NETWORK_CONFIG,
-  IPFS_ENDPOINT,
-  getTxLink,
-} from '@raidguild/escrow-utils';
+import AccountLink from './shared/AccountLink';
 
-const parseTokenAddress = (chainId, address) => {
-  for (const [key, value] of Object.entries(
-    NETWORK_CONFIG[parseInt(chainId)]['TOKENS']
-  )) {
-    if (value['address'] === address.toLowerCase()) {
-      return key;
-    }
-  }
-};
-
-const getIpfsLink = (hash) => `${IPFS_ENDPOINT}/ipfs/${hash}`;
-
-export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
-  const [balance, setBalance] = useState(BigNumber.from(0));
-
-  useEffect(() => {
-    // this is the balance of the ERC20 token of payment of the Smart Invoice
-    balanceOf(provider, invoice.token, invoice.address)
-      .then((b) => {
-        setBalance(b);
-      })
-      .catch((balanceError) => {
-        console.error(balanceError);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
+  const chainId = useChainId();
 
   const {
     client,
     released,
     total,
+    token,
+    address: invoiceAddress,
     isLocked,
     disputes,
     resolutions,
     terminationTime,
     currentMilestone,
     amounts,
-    deposits,
+    // deposits,
     releases,
     resolver,
   } = invoice;
-  const deposited = BigNumber.from(released).add(balance);
-  const due = deposited.gte(total)
-    ? BigNumber.from(0)
-    : BigNumber.from(total).sub(deposited);
+
+  // console.log(invoiceAddress, token, chainId);
+  const { data } = useBalance({
+    address: invoiceAddress,
+    token,
+  });
+  const balance = data?.value || BigInt(0);
+  // console.log('balance', balance, isLoading, error, status);
+
+  const deposited = BigInt(released) + balance;
+  const due = deposited > total ? BigInt(0) : BigInt(total) - deposited;
   const dispute =
     isLocked && disputes.length > 0 ? disputes[disputes.length - 1] : undefined;
   const resolution =
@@ -71,12 +53,14 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
       ? resolutions[resolutions.length - 1]
       : undefined;
   const isExpired = terminationTime <= new Date().getTime() / 1000;
-  const amount = BigNumber.from(
+  const amount = BigInt(
     currentMilestone < amounts.length ? amounts[currentMilestone] : 0
   );
-  const isReleasable = !isLocked && balance.gte(amount) && balance.gt(0);
+  const isReleasable = !isLocked && balance >= amount && balance > 0;
 
-  let sum = BigNumber.from(0);
+  // const sum = BigInt(0);
+
+  // console.log(amounts);
 
   return (
     <Card variant='filled' p={1} direction='column' width='100%'>
@@ -89,53 +73,66 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
         >
           <Text variant='textOne'>Total Project Amount</Text>
           <Text variant='textOne'>
-            {utils.formatEther(invoice.total)}{' '}
-            {parseTokenAddress(chainId, invoice.token)}
+            {commify(formatUnits(BigInt(total), 18))}{' '}
+            {parseTokenAddress(chainId, token)}
           </Text>
         </HStack>
         <VStack align='stretch' spacing='0.25rem'>
-          {invoice.amounts.map((amt, index) => {
-            let tot = BigNumber.from(0);
-            let ind = -1;
-            let full = false;
-            if (deposits.length > 0) {
-              for (let i = 0; i < deposits.length; i += 1) {
-                tot = tot.add(deposits[i].amount);
-                if (tot.gt(sum)) {
-                  ind = i;
-                  if (tot.sub(sum).gte(amt)) {
-                    full = true;
-                    break;
-                  }
-                }
-              }
-            }
-            sum = sum.add(amt);
+          {amounts.map((amt, index) => (
+            // let tot = BigInt(0);
+            // let ind = -1;
+            // let full = false;
+            // if (deposits.length > 0) {
+            //   for (let i = 0; i < deposits.length; i += 1) {
+            //     tot += deposits[i].amount;
+            //     console.log(tot);
+            //     if (tot > sum) {
+            //       ind = i;
+            //       console.log(tot, sum, amt, full);
+            //       if (tot - sum >= BigInt(amt)) {
+            //         full = true;
+            //         break;
+            //       }
+            //     }
+            //   }
+            // }
+            // sum += BigInt(amt);
 
-            return (
-              <Flex
-                key={index.toString()}
-                justify='space-between'
-                align='stretch'
-                direction='row'
-              >
+            // const totalPayments = _.sum(amounts);
+            // const paidPayments = _.difference(
+            //   amounts,
+            //   _.map(deposits, 'amount')
+            // );
+            // const totalDeposits = _.sumBy(deposits, 'amount');
+            // console.log(totalPayments, paidPayments, totalDeposits);
+
+            <Flex
+              // eslint-disable-next-line react/no-array-index-key
+              key={index.toString()}
+              justify='space-between'
+              align='stretch'
+              direction='row'
+            >
+              <Stack spacing='2px'>
                 <Text variant='textOne'>Payment Milestone #{index + 1}</Text>
-                <HStack align='center' justify='flex-end'>
-                  {index < currentMilestone && releases.length > index && (
-                    <Link
-                      fontSize='xs'
-                      isExternal
-                      color='grey'
-                      fontStyle='italic'
-                      href={getTxLink(chainId, releases[index].txHash)}
-                    >
-                      Released{' '}
-                      {new Date(
-                        releases[index].timestamp * 1000
-                      ).toLocaleDateString()}
-                    </Link>
-                  )}
-                  {!(index < currentMilestone && releases.length > index) &&
+                {index < currentMilestone && releases.length > index && (
+                  <Link
+                    fontSize='xs'
+                    isExternal
+                    color='grey'
+                    fontStyle='italic'
+                    href={getTxLink(chainId, releases[index].txHash)}
+                  >
+                    Released{' '}
+                    {new Date(
+                      releases[index].timestamp * 1000
+                    ).toLocaleDateString()}
+                  </Link>
+                )}
+              </Stack>
+
+              <HStack align='center' justify='flex-end'>
+                {/* {!(index < currentMilestone && releases.length > index) &&
                     ind !== -1 && (
                       <Link
                         fontSize='xs'
@@ -149,39 +146,39 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
                           deposits[ind].timestamp * 1000
                         ).toLocaleDateString()}
                       </Link>
-                    )}
-                  <Text
-                    variant='textOne'
-                    textAlign='right'
-                    fontWeight='500'
-                  >{`${utils.formatUnits(amt, 18)} ${parseTokenAddress(
-                    chainId,
-                    invoice.token
-                  )}`}</Text>
-                </HStack>
-              </Flex>
-            );
-          })}
+                    )} */}
+                <Text
+                  variant='textOne'
+                  textAlign='right'
+                  fontWeight='500'
+                >{`${commify(formatUnits(BigInt(amt), 18))} ${parseTokenAddress(
+                  chainId,
+                  invoice.token
+                )}`}</Text>
+              </HStack>
+            </Flex>
+          ))}
         </VStack>
         <Divider mt='1rem' />
+        {/* TODO use array */}
         <HStack mt='1rem' mb='.2rem' justifyContent='space-between'>
           <Text variant='textOne'>Total Deposited</Text>
           <Text variant='textOne'>
-            {utils.formatUnits(deposited, 18)}{' '}
+            {commify(formatUnits(deposited, 18))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <HStack justifyContent='space-between' mb='.2rem'>
           <Text variant='textOne'>Total Released</Text>
           <Text variant='textOne'>
-            {utils.formatUnits(released, 18)}{' '}
+            {commify(formatUnits(BigInt(released), 18))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <HStack justifyContent='space-between'>
           <Text variant='textOne'>Remaining Amount Due</Text>
           <Text variant='textOne'>
-            {utils.formatUnits(due, 18)}{' '}
+            {commify(formatUnits(due, 18))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
@@ -196,10 +193,10 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
             fontSize='lg'
             fontFamily='texturina'
           >
-            {isExpired || (due.eq(0) && !isReleasable) ? (
+            {isExpired || (due === BigInt(0) && !isReleasable) ? (
               <>
                 <Text>Remaining Balance</Text>
-                <Text textAlign='right'>{`${utils.formatUnits(
+                <Text textAlign='right'>{`${formatUnits(
                   balance,
                   18
                 )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>{' '}
@@ -210,8 +207,8 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
                   {isReleasable && 'Next Amount to Release'}
                   {!isReleasable && 'Total Due Today'}
                 </Text>
-                <Text textAlign='right'>{`${utils.formatUnits(
-                  isReleasable ? amount : amount.sub(balance),
+                <Text textAlign='right'>{`${formatUnits(
+                  isReleasable ? amount : amount - balance,
                   18
                 )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
               </>
@@ -229,7 +226,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
               fontFamily='texturina'
             >
               <Text>Amount Locked</Text>
-              <Text textAlign='right'>{`${utils.formatUnits(
+              <Text textAlign='right'>{`${formatUnits(
                 balance,
                 18
               )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
@@ -238,7 +235,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
               {`A dispute is in progress with `}
               <AccountLink address={resolver} chainId={chainId} />
               <br />
-              <Link href={getIpfsLink(dispute.ipfsHash)} isExternal>
+              <Link href={ipfsUrl(dispute.ipfsHash)} isExternal>
                 <u>View details on IPFS</u>
               </Link>
               <br />
@@ -259,10 +256,12 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
               fontFamily='texturina'
             >
               <Text>Amount Dispersed</Text>
-              <Text textAlign='right'>{`${utils.formatUnits(
-                BigNumber.from(resolution.clientAward)
-                  .add(resolution.providerAward)
-                  .add(resolution.resolutionFee ? resolution.resolutionFee : 0),
+              <Text textAlign='right'>{`${formatUnits(
+                BigInt(resolution.clientAward) +
+                  resolution.providerAward +
+                  resolution.resolutionFee
+                  ? resolution.resolutionFee
+                  : 0,
                 18
               )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
             </Flex>
@@ -276,7 +275,7 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
                   {' has resolved the dispute and dispersed remaining funds'}
                   <br />
                   <br />
-                  <Link href={getIpfsLink(resolution.ipfsHash)} isExternal>
+                  <Link href={ipfsUrl(resolution.ipfsHash)} isExternal>
                     <u>View details on IPFS</u>
                   </Link>
                   <br />
@@ -292,23 +291,23 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
               >
                 {resolution.resolutionFee && (
                   <Text textAlign='right' color='purpleLight'>
-                    {`${utils.formatUnits(
-                      BigNumber.from(resolution.resolutionFee),
+                    {`${formatUnits(
+                      BigInt(resolution.resolutionFee),
                       18
                     )} ${parseTokenAddress(chainId, invoice.token)} to `}
                     <AccountLink address={resolver} chainId={chainId} />
                   </Text>
                 )}
                 <Text textAlign='right' color='purpleLight'>
-                  {`${utils.formatUnits(
-                    BigNumber.from(resolution.clientAward),
+                  {`${formatUnits(
+                    BigInt(resolution.clientAward),
                     18
                   )} ${parseTokenAddress(chainId, invoice.token)} to `}
                   <AccountLink address={client} chainId={chainId} />
                 </Text>
                 <Text textAlign='right' color='purpleLight'>
-                  {`${utils.formatUnits(
-                    BigNumber.from(resolution.providerAward),
+                  {`${formatUnits(
+                    BigInt(resolution.providerAward),
                     18
                   )} ${parseTokenAddress(chainId, invoice.token)} to `}
                   <AccountLink address={invoice.provider} chainId={chainId} />
@@ -321,3 +320,5 @@ export const InvoicePaymentDetails = ({ invoice, chainId, provider }) => {
     </Card>
   );
 };
+
+export default InvoicePaymentDetails;

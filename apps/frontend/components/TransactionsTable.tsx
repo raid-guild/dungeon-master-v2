@@ -1,6 +1,4 @@
 import { Link, Tooltip } from '@raidguild/design-system';
-// @ts-ignore
-import { createColumnHelper } from '@tanstack/react-table';
 import { IVaultTransaction } from '@raidguild/dm-types';
 import {
   formatNumber,
@@ -9,6 +7,9 @@ import {
   sortNumeric,
   truncateAddress,
 } from '@raidguild/dm-utils';
+// @ts-expect-error - no types for react-table
+import { createColumnHelper } from '@tanstack/react-table';
+
 import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 

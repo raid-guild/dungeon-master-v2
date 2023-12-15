@@ -1,6 +1,7 @@
 import { createIcon } from '@chakra-ui/icon';
 import * as React from 'react';
 
+// eslint-disable-next-line import/prefer-default-export
 export const CopyIcon = createIcon({
   displayName: 'CopyIcon',
   path: (
@@ -9,5 +10,5 @@ export const CopyIcon = createIcon({
       fill='currentColor'
     />
   ),
-  viewBox: '-40 0 512 512'
+  viewBox: '-40 0 512 512',
 });

@@ -1,34 +1,34 @@
 /* eslint-disable react/no-unstable-nested-components */
 // TODO fix nested component
-import _ from 'lodash';
 import {
-  Flex,
-  Heading,
-  Button,
-  Stack,
-  Spacer,
   Badge,
   Box,
-  useMediaQuery,
+  Button,
   Card,
-  Text,
+  Flex,
+  Heading,
   HStack,
   Icon,
+  Spacer,
+  Stack,
+  Text,
+  useMediaQuery,
 } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
-import { GetServerSidePropsContext } from 'next';
 import {
   useConsultationDetail,
   useConsultationUpdate,
   useRaidCreate,
 } from '@raidguild/dm-hooks';
-
-import SiteLayout from '../../components/SiteLayout';
-import RaidDetailsCard from '../../components/RaidDetailsCard';
-import { BsArrowRight } from 'react-icons/bs';
-import ChakraNextLink from 'components/ChakraNextLink';
 import { IRaid } from '@raidguild/dm-types';
+import _ from 'lodash';
+import { GetServerSidePropsContext } from 'next';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import { BsArrowRight } from 'react-icons/bs';
+
+import ChakraNextLink from '../../components/ChakraNextLink';
+import RaidDetailsCard from '../../components/RaidDetailsCard';
+import SiteLayout from '../../components/SiteLayout';
 
 type Props = {
   consultationId: string;
@@ -112,7 +112,7 @@ const Consultation = ({ consultationId }: Props) => {
             <Spacer />
             <Box>
               <Badge>
-                {raid?.name
+                {_.get(raid, 'name')
                   ? 'Accepted'
                   : _.get(
                       consultation,

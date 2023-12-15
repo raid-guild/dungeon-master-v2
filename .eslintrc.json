@@ -1,40 +1,48 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nx", "eslint-plugin-import"],
-  "extends": ["airbnb"],
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@nx/enforce-module-boundaries": [
-          "error",
+  "ignorePatterns": [
+    "node_modules/*",
+    "tmp/*",
+    "dist/*",
+    "coverage/*",
+    ".nx/*"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@nx", "eslint-plugin-import", "simple-import-sort"],
+  "extends": ["airbnb", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+    "@nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allow": [],
+        "depConstraints": [
           {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
-              }
-            ]
-          }
-        ],
-        // import
-        "import/no-extraneous-dependencies": "off",
-        "import/extensions": [
-          "error",
-          "ignorePackages",
-          {
-            "js": "never",
-            "jsx": "never",
-            "ts": "never",
-            "tsx": "never"
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": ["*"]
           }
         ]
       }
-    }
-  ],
+    ],
+    "no-unused-vars": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-explicit-any": "warn",
+    // import
+    "import/no-extraneous-dependencies": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
+  },
   "settings": {
     "import/resolver": {
       "typescript": {

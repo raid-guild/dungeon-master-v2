@@ -1,11 +1,16 @@
-import React, { ReactNode } from 'react';
-import { useRouter } from 'next/router';
-import _ from 'lodash';
+/* eslint-disable no-continue */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
+import _ from 'lodash';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { useAccount, useConfig, useConnect } from 'wagmi';
+
 import CommandPalette from './CommandPalette';
+import Footer from './Footer';
+import Navbar from './Navbar';
 import ScrollToTopButton from './ScrollToTopButton';
 
 interface SiteLayoutProps {
@@ -48,7 +53,7 @@ const GeneralLayout = ({
       justify='flex-start'
       flex='1'
       align='center'
-      minHeight={['100vh', '100vh', '0', '0']}
+      minHeight={['100vh', '100vh', '0', '600px']}
     >
       <Stack
         spacing={8}
@@ -65,7 +70,7 @@ const GeneralLayout = ({
   </Flex>
 );
 
-const SiteLayout: React.FC<SiteLayoutProps> = ({
+const SiteLayout = ({
   isLoading,
   data,
   error,
@@ -76,6 +81,39 @@ const SiteLayout: React.FC<SiteLayoutProps> = ({
 }: SiteLayoutProps) => {
   const { data: session } = useSession();
   const { pathname } = useRouter();
+
+  // TODO handle autoconnect
+  const [isAutoConnecting, setIsAutoConnecting] = useState(false);
+  const { address } = useAccount();
+  const { connectAsync, connectors } = useConnect();
+  const client = useConfig();
+
+  useEffect(() => {
+    if (isAutoConnecting) return;
+    if (address) return;
+
+    setIsAutoConnecting(true);
+
+    const autoConnect = async () => {
+      const lastUsedConnector = client.storage?.getItem('wallet');
+
+      const sorted = lastUsedConnector
+        ? [...connectors].sort((x) => (x.id === lastUsedConnector ? -1 : 1))
+        : connectors;
+
+      for (const connector of sorted) {
+        if (!connector.ready || !connector.isAuthorized) continue;
+        const isAuthorized = await connector.isAuthorized();
+        if (!isAuthorized) continue;
+
+        await connectAsync({ connector });
+        break;
+      }
+    };
+
+    autoConnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const showScrollToTopButton =
     pathname === '/raids' ||

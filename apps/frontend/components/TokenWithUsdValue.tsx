@@ -1,6 +1,6 @@
-// @ts-ignore
-import { CellContext } from '@tanstack/react-table';
 import { formatNumber, getUsdValue } from '@raidguild/dm-utils';
+// @ts-expect-error - no types for react-table
+import { CellContext } from '@tanstack/react-table';
 
 interface TokenWithUsdValueProps<TRow extends { priceConversion?: number }> {
   info: CellContext<TRow, number>;

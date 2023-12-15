@@ -1,7 +1,7 @@
-// @ts-ignore
-import gql from 'fake-tag';
+/* eslint-disable import/prefer-default-export */
+import { gql } from 'graphql-request';
 
-export const InvoiceDetails = gql`
+export const INVOICE_DETAILS_FRAGMENT = gql`
   fragment InvoiceDetails on Invoice {
     id
     address

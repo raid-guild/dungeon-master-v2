@@ -1,17 +1,12 @@
-import React, { useState } from 'react';
+import { Card, Divider, Flex, Heading, Stack } from '@raidguild/design-system';
+import { useSlimMemberList } from '@raidguild/dm-hooks';
+import { IMember, IRaid } from '@raidguild/dm-types';
+import { SIDEBAR_ACTION_STATES } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { Flex, Stack, Divider, Card, Heading } from '@raidguild/design-system';
-import {
-  IMember,
-  IRaid,
-  // IConsultation,
-  SIDEBAR_ACTION_STATES,
-} from '@raidguild/dm-utils';
-import { useSlimMemberList } from '@raidguild/dm-hooks';
+import React, { useState } from 'react';
 
 import RaidPartyButtons from './RaidPartyButtons';
-// import MemberAvatar from '../MemberAvatar';
 import RaidPartyCard from './RaidPartyCard';
 
 interface RaidInfoProps {
@@ -19,7 +14,7 @@ interface RaidInfoProps {
   // consultation?: IConsultation;
 }
 
-const RaidPartyInfo: React.FC<RaidInfoProps> = ({ raid }: RaidInfoProps) => {
+const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
   const [buttonSelection, setButtonSelection] = useState<string>(
     SIDEBAR_ACTION_STATES.none
   );

@@ -1,13 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import _ from 'lodash';
 import { useToast } from '@raidguild/design-system';
-
 import {
   client,
   RAID_PARTY_DELETE_MUTATION,
   RAID_PARTY_INSERT_MUTATION,
 } from '@raidguild/dm-graphql';
-import { IRaidPartyInsert, camelize } from '@raidguild/dm-utils';
+import { IRaidPartyInsert } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import _ from 'lodash';
 
 export const useRaidPartyAdd = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();

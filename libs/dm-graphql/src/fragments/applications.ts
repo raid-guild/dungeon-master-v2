@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+
 import { CONTACT_INFOS_FRAGMENT } from './contactInfo';
 import { SLIM_MEMBER_DETAIL_FRAGMENT } from './members';
 

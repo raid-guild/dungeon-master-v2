@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+
 import {
   CONTACT_INFOS_FRAGMENT,
   MEMBER_DETAIL_FRAGMENT,

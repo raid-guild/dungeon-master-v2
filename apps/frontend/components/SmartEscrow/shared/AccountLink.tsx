@@ -1,33 +1,33 @@
 import { Flex, Link, Text } from '@raidguild/design-system';
-import React, { useContext } from 'react';
-
-import { SmartEscrowContext } from '../../../contexts/SmartEscrow';
-
-import { getAddressLink } from '@raidguild/escrow-utils';
+import { getAddressLink } from '@raidguild/dm-utils';
+import blockies from 'blockies-ts';
+import _ from 'lodash';
+import { Hex } from 'viem';
+import { useChainId, useEnsName } from 'wagmi';
 
 type AccountLinkProps = {
-  address: string;
-  chainId?: string;
+  name?: string;
+  address: Hex;
+  chainId?: number;
 };
 
-export const AccountLink = ({
+const AccountLink = ({
+  name,
   address: inputAddress,
-  chainId: inputChainId,
+  chainId,
 }: AccountLinkProps) => {
-  const {
-    appState: { chainId, provider },
-  } = useContext(SmartEscrowContext);
+  const currentChainId = useChainId();
 
+  const { data: ensName } = useEnsName({ address: inputAddress, chainId: 1 });
   const address =
-    typeof inputAddress === 'string' ? inputAddress.toLowerCase() : '';
+    typeof inputAddress === 'string' ? _.toLower(inputAddress) : '';
+  const displayString = address;
 
-  let displayString = address;
-
-  let imageUrl;
+  const imageUrl = blockies.create({ seed: inputAddress }).toDataURL();
 
   return (
     <Link
-      href={getAddressLink(chainId, address)}
+      href={getAddressLink(chainId || currentChainId, address)}
       isExternal
       display='inline-flex'
       textAlign='right'
@@ -44,27 +44,28 @@ export const AccountLink = ({
       <Flex
         as='span'
         borderRadius='50%'
-        w='1.1rem'
-        h='1.1rem'
+        w='14px'
+        h='14px'
         overflow='hidden'
         justify='center'
         align='center'
-        bgColor='black'
-        bgImage={imageUrl && `url(${imageUrl})`}
+        bgImage={imageUrl && imageUrl}
         bgSize='cover'
         bgRepeat='no-repeat'
         bgPosition='center center'
       />
       <Text
         as='span'
-        pl='0.25rem'
+        px='0.25rem'
         fontSize='sm'
         maxW='12rem'
         color='white'
         isTruncated
       >
-        {displayString}
+        {name || ensName || displayString}
       </Text>
     </Link>
   );
 };
+
+export default AccountLink;

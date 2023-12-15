@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   BuiltByRaidGuild,
   Flex,
@@ -7,6 +6,7 @@ import {
   Stack,
   useMediaQuery,
 } from '@raidguild/design-system';
+import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 
 const links = [

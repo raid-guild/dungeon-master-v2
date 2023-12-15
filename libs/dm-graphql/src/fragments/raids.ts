@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
+
 import { CONSULTATION_DETAIL_FRAGMENT } from './consultations';
 import { SLIM_MEMBER_DETAIL_FRAGMENT } from './members';
 
@@ -57,4 +58,22 @@ export const RAID_DETAIL_FRAGMENT = gql`
   ${RAID_ENUMS_FRAGMENT}
   ${CONSULTATION_DETAIL_FRAGMENT}
   ${SLIM_MEMBER_DETAIL_FRAGMENT}
+`;
+
+export const RAID_SLIM_DETAIL_FRAGMENT = gql`
+  fragment RaidDetails on raids {
+    id
+    v1_id
+    invoice_address
+    name
+    start_date
+    end_date
+    consultation {
+      consultations_contacts {
+        contact {
+          name
+        }
+      }
+    }
+  }
 `;

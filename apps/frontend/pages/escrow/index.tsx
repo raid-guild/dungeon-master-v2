@@ -1,118 +1,69 @@
-import { useContext, useEffect, useState } from 'react';
-import Link from 'next/link';
 import {
-  ControlledInput,
-  Heading,
   Button,
-  Text,
-  Box,
-  Stack,
-  HStack,
   Flex,
+  Heading,
+  HStack,
+  Input,
+  Stack,
+  Text,
 } from '@raidguild/design-system';
+import { useRaidDetail } from '@raidguild/dm-hooks';
+import { IRaid } from '@raidguild/dm-types';
+import axios from 'axios';
+import _ from 'lodash';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import { useForm } from 'react-hook-form';
 
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
-import { NextSeo } from 'next-seo';
-import _ from 'lodash';
-import axios from 'axios';
-import { SmartEscrowContext } from '../../contexts/SmartEscrow';
 
-// ? slimmer client here? fetch?
+// ? move to helper/escrow-gql
 export const validateRaidId = async (raidId: string) => {
   const { data } = await axios.post('/api/validate', { raidId });
   return data;
 };
 
-export const Escrow = () => {
-  const { appState, setAppState } = useContext(SmartEscrowContext);
-  const [raidId, setRaidId] = useState('');
-  const [validId, setValidId] = useState<boolean | undefined>(undefined);
-  const [raid, setRaid] = useState<any>();
+// 7b733a60-03b7-472e-8157-c40563c1adaf
 
-  useEffect(() => {
-    if (validId === true || validId === false) {
-      setValidId(undefined);
-    }
-  }, [raidId]);
-
-  const validateID = async () => {
-    const raid = await validateRaidId(raidId);
-    setRaid(raid);
-
-    if (raid) {
-      setValidId(true);
-
-      setAppState({
-        ...appState,
-        invoice_id: raid.invoice_address,
-        v1_id: raid.v1_id,
-        raid_id: raid.id,
-        project_name: raid.name,
-        client_name:
-          raid.consultationByConsultation?.consultationContacts[0]?.contact
-            ?.name,
-        start_date: new Date(Number(raid.start_date)) || 'Not Specified',
-        end_date: new Date(Number(raid.end_date)) || 'Not Specified',
-        link_to_details: 'Not Specified',
-        brief_description: 'Not Specified',
-      });
-    } else {
-      setValidId(false);
-    }
-  };
-  const renderActionButton = () => {
-    const buttons = [];
-    buttons.push(
-      <Button
-        variant='outline'
-        onClick={validateID}
-        disabled={!raidId}
-        _hover={{
-          opacity: 0.8,
-        }}
-        mb='4'
-        key='validate'
-      >
-        Validate ID
-      </Button>
-    );
-    if (validId === true && raid && !raid.invoice_address) {
-      buttons.push(
-        <Link href='/escrow/new' passHref key='register'>
-          <Button variant='outline' mb='4'>
+const ActionButtons = ({ raid }: { raid: IRaid }) => (
+  <HStack>
+    {raid ? (
+      <>
+        <Link href={`/escrow/new?raidId=${raid?.id}`} passHref key='register'>
+          <Button
+            variant='outline'
+            isDisabled={!raid || !!raid?.invoiceAddress}
+          >
             Register Escrow
           </Button>
         </Link>
-      );
-    } else if (validId === true && raid && raid.invoice_address) {
-      buttons.push(
-        <Link href={`/escrow/${raidId}`} passHref key='view'>
-          <Button disabled={!raid} variant='outline' mb='4'>
+        <Link href={`/escrow/${raid?.id}`} passHref key='view'>
+          <Button variant='outline' isDisabled={!raid?.invoiceAddress}>
             View Escrow
           </Button>
         </Link>
-      );
-    }
-    return buttons;
-  };
+      </>
+    ) : (
+      <Link href='/escrow/new'>
+        <Button variant='outline'>I don&apos;t have one</Button>
+      </Link>
+    )}
+  </HStack>
+);
 
-  const renderValidationMessage = () => {
-    if (validId === true) {
-      return (
-        <Text color='green.500' mb='2'>
-          Raid ID is valid!
-        </Text>
-      );
-    } else if (validId === false) {
-      return (
-        <Text color='primary.300' mb='2'>
-          Raid ID is not valid!
-        </Text>
-      );
-    } else {
-      return <Box height='30px' mb='2'></Box>;
-    }
-  };
+export const Escrow = () => {
+  const { data: session } = useSession();
+  const token = _.get(session, 'token');
+  const localForm = useForm();
+  const { watch } = localForm;
+  const raidId = watch('raidId');
+
+  const { data: raid, isLoading } = useRaidDetail({
+    raidId,
+    token,
+    roles: _.get(session, 'user.roles'),
+  });
 
   return (
     <>
@@ -124,21 +75,24 @@ export const Escrow = () => {
       >
         <Flex justify='center' width='100%'>
           <Stack spacing={4}>
-            <ControlledInput
-              type='text'
-              value={raidId}
-              placeholder='Raid ID from Dungeon Master..'
-              onChange={(event) => setRaidId(event.target.value)}
+            <Input
+              name='raidId'
               label='Raid ID'
+              placeholder='Raid ID from Dungeon Master..'
               width={['300px', '500px']}
               borderColor='whiteAlpha.600'
               borderRadius='md'
+              localForm={localForm}
             />
             <Flex justify='flex-end'>
-              <HStack>
-                {renderValidationMessage()}
-                {renderActionButton()}
-              </HStack>
+              <Stack>
+                <ActionButtons raid={raid} />
+                {raidId && !isLoading && (
+                  <Text color={raid ? 'green.500' : 'red.500'} mb='2'>
+                    {raid ? 'Raid ID is valid!' : 'Raid not found'}
+                  </Text>
+                )}
+              </Stack>
             </Flex>
           </Stack>
         </Flex>

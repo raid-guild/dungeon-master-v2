@@ -1,30 +1,31 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-import { useState } from 'react';
-import _ from 'lodash';
 import {
-  Heading,
+  ChakraSelect,
   Flex,
   FormLabel,
-  Spinner,
-  Spacer,
-  Text,
-  ChakraSelect,
-  SimpleGrid,
+  Heading,
   HStack,
+  SimpleGrid,
+  Spacer,
+  Spinner,
+  Text,
 } from '@raidguild/design-system';
+import {
+  useDefaultTitle,
+  useMemberList,
+  useMembersCount,
+} from '@raidguild/dm-hooks';
+import { IMember } from '@raidguild/dm-types';
+import { GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
+import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
+import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { IMember } from '@raidguild/dm-types';
-import {
-  useMembersCount,
-  useMemberList,
-  useDefaultTitle,
-} from '@raidguild/dm-hooks';
-import { GUILD_CLASS_OPTIONS } from '@raidguild/dm-utils';
-import MemberCard from '../components/MemberCard';
-import SiteLayout from '../components/SiteLayout';
+
+import MemberCard from '../../components/MemberCard';
+import SiteLayout from '../../components/SiteLayout';
 
 const memberStatusOptions = [
   { label: 'Show All', value: 'ALL' },
@@ -190,11 +191,11 @@ const MemberList = () => {
               <Heading>{title} List</Heading>
               <Spacer />
               {count > 0 && (
-                <HStack alignItems={'baseline'} gap={1}>
+                <HStack alignItems='baseline' gap={1}>
                   <Text fontSize='3xl' fontWeight={800}>
                     {count}
                   </Text>
-                  <Text fontSize='sm' fontWeight={'normal'}>
+                  <Text fontSize='sm' fontWeight='normal'>
                     member{count > 1 ? 's' : ''}
                   </Text>
                 </HStack>

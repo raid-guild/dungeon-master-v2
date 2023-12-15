@@ -1,11 +1,12 @@
-import _ from 'lodash';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   client,
   CONSULTATION_LIST_QUERY,
   CONSULTATIONS_COUNT_QUERY,
 } from '@raidguild/dm-graphql';
-import { camelize, IConsultation } from '@raidguild/dm-utils';
+import { IConsultation } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 type consultationSortKeys = 'name' | 'recentlyAdded';
 

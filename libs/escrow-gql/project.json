@@ -10,8 +10,10 @@
       "options": {
         "outputPath": "dist/libs/escrow-gql",
         "main": "libs/escrow-gql/src/index.ts",
+        "packageJson": "libs/escrow-gql/package.json",
         "tsConfig": "libs/escrow-gql/tsconfig.lib.json",
-        "assets": ["libs/escrow-gql/*.md"]
+        "assets": ["libs/escrow-gql/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

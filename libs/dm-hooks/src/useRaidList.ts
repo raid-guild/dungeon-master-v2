@@ -1,13 +1,13 @@
 /* eslint-disable no-use-before-define */
-import _ from 'lodash';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   client,
-  RAIDS_LIST_QUERY,
   RAIDS_COUNT_QUERY,
+  RAIDS_LIST_QUERY,
 } from '@raidguild/dm-graphql';
-import { raidSortKeys } from '@raidguild/dm-types';
-import { camelize, IRaid } from '@raidguild/dm-utils';
+import { IRaid, raidSortKeys } from '@raidguild/dm-types';
+import { camelize } from '@raidguild/dm-utils';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 const where = (
   raidStatusFilterKey: string,

@@ -1,6 +1,7 @@
+import { HStack, Stack } from '@raidguild/design-system';
+import { IMember } from '@raidguild/dm-types';
 import _ from 'lodash';
-import { Stack, HStack } from '@raidguild/design-system';
-import { IMember } from '@raidguild/dm-utils';
+
 import MemberAvatar from './MemberAvatar';
 
 type MemberAvatarStackProps = {

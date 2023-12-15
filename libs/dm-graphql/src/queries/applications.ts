@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+
 import {
   APPLICATION_DETAIL_FRAGMENT,
   SLIM_APPLICATION_DETAIL_FRAGMENT,
@@ -24,7 +25,7 @@ export const APPLICATION_LIST_QUERY = gql`
 `;
 
 export const APPLICATIONS_LIST_COUNT_QUERY = gql`
-  query AppplicationsCountQuery($where: applications_bool_exp) {
+  query ApplicationsCountQuery($where: applications_bool_exp) {
     applications_aggregate(where: $where) {
       aggregate {
         count

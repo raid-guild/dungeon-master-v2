@@ -1,12 +1,13 @@
-import _ from 'lodash';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import {
   client,
   MEMBER_LIST_QUERY,
   MEMBER_SLIM_LIST_QUERY,
   MEMBERS_COUNT_QUERY,
 } from '@raidguild/dm-graphql';
-import { camelize, IMember, SIDEBAR_ACTION_STATES } from '@raidguild/dm-utils';
+import { IMember } from '@raidguild/dm-types';
+import { camelize, SIDEBAR_ACTION_STATES } from '@raidguild/dm-utils';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 const where = (
   memberRolesFilterKey: string,

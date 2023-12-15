@@ -1,202 +1,223 @@
-import { Button, Text, Flex, HStack } from '@raidguild/design-system';
-import { AccountLink } from './shared/AccountLink';
-import { utils } from 'ethers';
-import * as Web3Utils from 'web3-utils';
+import {
+  Button,
+  Card,
+  Flex,
+  Stack,
+  Text,
+  Tooltip,
+} from '@raidguild/design-system';
+import { IRaid } from '@raidguild/dm-types';
+import { commify } from '@raidguild/dm-utils';
+import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
+import { GANGGANG_MULTISIG } from '@raidguild/escrow-utils';
+import _ from 'lodash';
+import { Dispatch, SetStateAction, useMemo } from 'react';
+import { UseFormReturn } from 'react-hook-form';
+import { Hex, zeroAddress } from 'viem';
+import { WriteContractResult } from 'wagmi/dist/actions';
 
-import { SPOILS_BASIS_POINTS, NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import AccountLink from './shared/AccountLink';
 
-const REQUIRES_VERIFICATION = true;
-
-export const EscrowConfirmation = ({
-  appState,
-  client,
-  serviceProvider,
-  tokenType,
-  paymentDue,
-  milestones,
-  payments,
-  selectedDay,
-  isLoading,
-  setLoading,
+const EscrowConfirmation = ({
+  escrowForm,
+  raid,
+  setTxHash,
   updateStep,
-  register,
-  setTx,
+  backStep,
+}: {
+  escrowForm: UseFormReturn;
+  raid: IRaid;
+  setTxHash: Dispatch<SetStateAction<Hex | undefined>>;
+  updateStep: () => void;
+  backStep: () => void;
 }) => {
+  const { watch } = escrowForm;
+  const {
+    client,
+    provider,
+    token,
+    milestones,
+    ownersAndAllocations,
+    threshold,
+    projectName,
+    projectDescription,
+    projectAgreement,
+    startDate,
+    endDate,
+    daoSplit,
+    raidPartySplit,
+    safetyValveDate,
+  } = watch();
+
+  const detailsData = useMemo(() => {
+    if (raid) {
+      return {
+        projectName: raid?.id,
+        projectDescription: '',
+        projectAgreement: [],
+        startDate: Math.floor(Date.now() / 1000),
+        endDate: Math.floor(Date.now() / 1000),
+      };
+    }
+    return {
+      projectName,
+      projectDescription,
+      projectAgreement,
+      startDate: Math.floor(Date.parse(startDate) / 1000),
+      endDate: Math.floor(Date.parse(endDate) / 1000),
+    };
+  }, [
+    raid,
+    projectName,
+    projectDescription,
+    projectAgreement,
+    startDate,
+    endDate,
+  ]);
+
+  const canRegisterDirectly = !raidPartySplit && !daoSplit;
+
+  const { writeAsync, isLoading: registerLoading } = useRegister({
+    raidId: _.get(raid, 'id'),
+    escrowForm,
+    detailsData,
+    enabled: canRegisterDirectly,
+  });
+
+  const { writeAsync: writeEscrowZap, isLoading: zapLoading } = useEscrowZap({
+    ownersAndAllocations,
+    threshold,
+    milestones,
+    token,
+    provider: provider || zeroAddress,
+    client,
+    safetyValveDate,
+    detailsData,
+    projectTeamSplit: raidPartySplit,
+    daoSplit,
+    enabled: !canRegisterDirectly,
+    onSuccess: (tx: WriteContractResult) => setTxHash(tx?.hash),
+  });
+
   const createInvoice = async () => {
-    setLoading(true);
-
-    const chainId = appState.chainId;
-    const ethersProvider = appState.provider;
-    const clientAddress = client;
-
-    let daoAddress = '';
-
-    if (parseInt(chainId) === 100) {
-      daoAddress = NETWORK_CONFIG['RG_XDAI'];
-    } else if (parseInt(chainId) === 1) {
-      daoAddress = NETWORK_CONFIG['RG_MULTISIG'];
+    if (canRegisterDirectly) {
+      await writeAsync?.();
     } else {
-      daoAddress = serviceProvider;
+      await writeEscrowZap?.();
     }
 
-    const resolver =
-      NETWORK_CONFIG[parseInt(chainId)]['RESOLVERS']['LexDAO']['address'];
-    const tokenAddress =
-      NETWORK_CONFIG[parseInt(chainId)]['TOKENS'][tokenType]['address'];
-    const wrappedNativeToken =
-      NETWORK_CONFIG[parseInt(chainId)]['WRAPPED_NATIVE_TOKEN'];
-    const factoryAddress = NETWORK_CONFIG[parseInt(chainId)]['INVOICE_FACTORY'];
-    const paymentsInWei = [];
-    const terminationTime = new Date(selectedDay).getTime() / 1000;
-
-    payments.map((amount) =>
-      paymentsInWei.push(Web3Utils.toWei(amount, 'ether'))
-    );
-
-    const resolverType = 0; // 0 for individual, 1 for erc-792 arbitrator
-    const type = utils.formatBytes32String('split-escrow');
-
-    // THESE ARE THE REQUIRED FIELDS FOR SPLIT-ESCROW TYPE in correct order
-    // address _client,
-    // uint8 _resolverType,
-    // address _resolver,
-    // address _token,
-    // uint256 _terminationTime, // exact termination date in seconds since epoch
-    // bytes32 _details,
-    // address _wrappedNativeToken,
-    // bool _requireVerification,
-    // address _factory,
-    // address _dao,
-    // uint256 _daoFee
-
-    const data = utils.AbiCoder.prototype.encode(
-      [
-        'address',
-        'uint8',
-        'address',
-        'address',
-        'uint256',
-        'bytes32',
-        'address',
-        'bool',
-        'address',
-        'address',
-        'uint256',
-      ],
-      [
-        clientAddress,
-        resolverType,
-        resolver, // address _resolver (LEX DAO resolver address)
-        tokenAddress, // address _token (payment token address)
-        terminationTime, // safety valve date
-        '0x0000000000000000000000000000000000000000000000000000000000000000', //bytes32 _details detailHash
-        wrappedNativeToken,
-        REQUIRES_VERIFICATION, // requireVerification - this flag warns the client not to deposit funds until verifying they can release or lock funds
-        factoryAddress,
-        daoAddress,
-        SPOILS_BASIS_POINTS, // daoFee - basis points. percentage out of 10,000. 1,000 = 10% RG DAO fee
-      ]
-    );
-
-    try {
-      const transaction = await register(
-        chainId,
-        ethersProvider,
-        serviceProvider, // this is the recipient
-        paymentsInWei,
-        data,
-        type
-      );
-
-      setTx(transaction);
-
-      updateStep((prevStep) => prevStep + 1);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+    // move to next step
+    updateStep();
   };
 
-  return (
-    <Flex
-      direction='column'
-      background='#262626'
-      padding='1.5rem'
-      minWidth='50%'
-    >
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Project Name:
-        </Text>
-        <Text variant='textOne' color='white' maxWidth='200px' isTruncated>
-          {appState.project_name}
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Client Address:
-        </Text>
-        <AccountLink address={client} chainId={appState.chainId} />
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Raid Party Address:
-        </Text>
-        <AccountLink address={serviceProvider} chainId={appState.chainId} />
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Arbitration Provider:
-        </Text>
-        <Text variant='textOne' color='white'>
-          LexDAO
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Payment Token:
-        </Text>
-        <Text variant='textOne' color='yellow.500'>
-          {tokenType}
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          Payment Due:
-        </Text>
-        <Text variant='textOne' color='yellow.500'>
-          {paymentDue}
-        </Text>
-      </HStack>
-      <HStack mb='.5rem' justifyContent='space-between'>
-        <Text fontWeight='bold' variant='textOne'>
-          No of Payments:
-        </Text>
-        <Text variant='textOne' color='yellow.500'>
-          {milestones}
-        </Text>
-      </HStack>
+  const total = _.sumBy(
+    milestones,
+    (milestone: { value: string }) => _.toNumber(milestone.value) || 0
+  );
 
-      <Flex direction='row' width='100%' justify='center'>
-        <Button
-          variant='outline'
-          minW='25%'
-          mr='.5rem'
-          isDisabled={isLoading}
-          onClick={() => updateStep((prevStep) => prevStep - 1)}
+  const invoiceDetails = [
+    { label: 'Project Name', value: raid?.name || projectName },
+    {
+      label: 'Client Address',
+      value: (
+        <AccountLink
+          name={
+            _.includes(_.values(GANGGANG_MULTISIG), client) &&
+            'Ganggang Multisig'
+          }
+          address={client}
+        />
+      ),
+    },
+    {
+      label: `Raid Party ${provider ? 'Multisig' : 'Address'}`,
+      value: provider ? (
+        <AccountLink address={provider} />
+      ) : (
+        <Tooltip
+          label={`${_.size(ownersAndAllocations)} owners on the Safe and Split`}
+          shouldWrapChildren
+          placement='left'
+          hasArrow
         >
-          Back
-        </Button>
-        <Button
-          variant='solid'
-          w='100%'
-          isDisabled={isLoading}
-          onClick={createInvoice}
+          <Text>Split to be created</Text>
+        </Tooltip>
+      ),
+    },
+    daoSplit && { label: 'DAO Split for Spoils', value: '10%' },
+    { label: 'Full Escrow Amount', value: `${commify(total)} ${token}` },
+    { label: 'No of Payments', value: _.size(milestones) },
+    {
+      label: 'Arbitration Provider',
+      value: daoSplit ? (
+        'LexDAO'
+      ) : (
+        <Tooltip
+          label='No DAO split'
+          shouldWrapChildren
+          placement='left'
+          hasArrow
         >
-          {isLoading ? 'Creating Escrow..' : 'Create Escrow'}
-        </Button>
-      </Flex>
-    </Flex>
+          <Text>Raid Guild DAO</Text>
+        </Tooltip>
+      ),
+    },
+    startDate &&
+      endDate && {
+        label: 'Project Dates',
+        value: `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
+      },
+    {
+      label: 'Safety Valve Date',
+      value: safetyValveDate?.toLocaleDateString(),
+    },
+  ];
+
+  return (
+    <Card as={Flex} variant='filled' direction='column' minWidth='50%'>
+      <Stack spacing={6} w='100%'>
+        <Stack>
+          {_.map(_.compact(invoiceDetails), ({ label, value }) => (
+            <Flex justify='space-between' key={label}>
+              <Text fontWeight='bold' variant='textOne'>
+                {label}:
+              </Text>
+              {typeof value === 'string' ? (
+                <Text variant='textOne' color='yellow.500'>
+                  {value}
+                </Text>
+              ) : (
+                value
+              )}
+            </Flex>
+          ))}
+        </Stack>
+
+        <Flex direction='row' width='100%' justify='center'>
+          <Button
+            variant='outline'
+            minW='25%'
+            mr='.5rem'
+            isDisabled={zapLoading || registerLoading}
+            onClick={backStep}
+          >
+            Back
+          </Button>
+          <Button
+            variant='solid'
+            w='100%'
+            isDisabled={
+              registerLoading || zapLoading || !(writeAsync || writeEscrowZap)
+            }
+            isLoading={registerLoading || zapLoading}
+            onClick={createInvoice}
+          >
+            Create Escrow
+          </Button>
+        </Flex>
+      </Stack>
+    </Card>
   );
 };
+
+export default EscrowConfirmation;

@@ -1,35 +1,35 @@
-import _ from 'lodash';
 import {
-  Flex,
-  Card,
-  RoleBadge,
   Badge,
-  Heading,
   Button,
+  Card,
+  Flex,
+  Heading,
   HStack,
-  VStack,
-  Text,
+  RoleBadge,
   Stack,
-  Tabs,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
+  Tabs,
+  Text,
+  VStack,
 } from '@raidguild/design-system';
-import { NextSeo } from 'next-seo';
-import { useSession } from 'next-auth/react';
-import { useAccount } from 'wagmi';
-import { GetServerSidePropsContext } from 'next';
 import { useMemberDetail } from '@raidguild/dm-hooks';
-import { memberDisplayName, GUILD_CLASS_ICON } from '@raidguild/dm-utils';
+import { GUILD_CLASS_ICON, memberDisplayName } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { GetServerSidePropsContext } from 'next';
+import { useSession } from 'next-auth/react';
+import { NextSeo } from 'next-seo';
+import { useAccount } from 'wagmi';
 
-import SiteLayout from '../../components/SiteLayout';
-import ModalWrapper from '../../components/ModalWrapper';
-import MemberDetailsCard from '../../components/MemberDetailsCard';
-import MiniRaidCard from '../../components/MiniRaidCard';
-import { useOverlay } from '../../contexts/OverlayContext';
-import UpdateMemberForm from '../../components/MemberUpdateForm';
 import MemberAvatar from '../../components/MemberAvatar';
+import MemberDetailsCard from '../../components/MemberDetailsCard';
+import UpdateMemberForm from '../../components/MemberUpdateForm';
+import MiniRaidCard from '../../components/MiniRaidCard';
+import ModalWrapper from '../../components/ModalWrapper';
+import SiteLayout from '../../components/SiteLayout';
+import { useOverlay } from '../../contexts/OverlayContext';
 
 // TODO remove hardcoded limits on past and active raids
 
