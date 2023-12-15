@@ -1,4 +1,4 @@
-import Base58 from 'base-58';
+import Base58 from 'bs58';
 import { create } from 'ipfs-http-client';
 
 import { INVOICE_VERSION, IPFS_ENDPOINT } from './constants';
