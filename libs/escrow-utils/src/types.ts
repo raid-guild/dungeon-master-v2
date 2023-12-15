@@ -30,6 +30,6 @@ export type ProjectDetails = {
   projectName: string;
   projectDescription: string;
   projectAgreement: string;
-  startDate: string;
-  endDate: string;
+  startDate: number;
+  endDate: number;
 };

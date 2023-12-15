@@ -119,7 +119,7 @@ const EscrowDetailsForm = ({
 
   useEffect(() => {
     // set initial local values
-    localSetValue('client', client || !raid ? GANGGANG_MULTISIG[chainId] : '');
+    localSetValue('client', !raid ? GANGGANG_MULTISIG[chainId] : client || '');
     if (provider) localSetValue('provider', provider);
     localSetValue('safetyValveDate', safetyValveDate || sevenDaysFromNow());
     if (_.isUndefined(raidPartySplit)) localSetValue('raidPartySplit', true);

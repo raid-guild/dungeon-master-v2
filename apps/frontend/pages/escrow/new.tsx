@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from '@raidguild/design-system';
+import { Heading, Spinner, Stack, Text } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
@@ -30,7 +30,7 @@ const NewEscrow = () => {
   const raidId = _.get(router, 'query.raidId') as string;
   const token = _.get(session, 'token');
 
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number | undefined>();
 
   const updateStep = (increment?: number) => {
     if (_.isNumber(increment)) setStep((prev) => prev + increment);
@@ -56,8 +56,8 @@ const NewEscrow = () => {
   // }, []);
 
   useEffect(() => {
-    if (raid) setStep(1);
-  }, [raid]);
+    setStep(raidId ? 1 : 0);
+  }, [raidId]);
 
   return (
     <>
@@ -67,7 +67,9 @@ const NewEscrow = () => {
         <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
           {raid && <ProjectInfo raid={raid} />}
 
-          {step === 0 && !raid && (
+          {!step && <Spinner />}
+
+          {step === 0 && (
             <ProjectDetailsForm
               escrowForm={escrowForm}
               updateStep={updateStep}

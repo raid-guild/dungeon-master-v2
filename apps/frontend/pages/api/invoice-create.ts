@@ -27,9 +27,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       raidId,
       invoiceAddress,
     });
-    console.log(result);
 
-    return res.status(201).json(result?.data);
+    return res.status(201).json(result?.update_raids_by_pk?.returning);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err);

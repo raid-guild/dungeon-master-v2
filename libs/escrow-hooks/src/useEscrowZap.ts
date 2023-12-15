@@ -1,13 +1,7 @@
 import { NETWORK_CONFIG, ProjectDetails } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import {
-  encodeAbiParameters,
-  Hex,
-  isAddress,
-  parseEther,
-  TransactionReceipt,
-} from 'viem';
+import { encodeAbiParameters, Hex, isAddress, parseEther } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { WriteContractResult } from 'wagmi/dist/actions';
 
@@ -32,7 +26,7 @@ const separateOwnersAndAllocations = (
 
 const useEscrowZap = ({
   ownersAndAllocations,
-  // provider,
+  provider,
   milestones,
   client,
   threshold,
@@ -149,7 +143,7 @@ const useEscrowZap = ({
       percentAllocations,
       milestoneAmounts,
       encodedSafeData,
-      // provider, // _safeAddress
+      provider, // _safeAddress
       encodedSplitData,
       encodedEscrowData,
     ],
@@ -159,7 +153,7 @@ const useEscrowZap = ({
       !_.isEmpty(percentAllocations) &&
       !_.isEmpty(milestoneAmounts) &&
       !!encodedSafeData &&
-      // !!provider && // _safeAddress
+      !!provider && // _safeAddress
       !!encodedSplitData &&
       !!encodedEscrowData &&
       enabled,

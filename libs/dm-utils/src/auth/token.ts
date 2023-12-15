@@ -51,7 +51,6 @@ export const encodeAuth = async ({
   maxAge?: number;
 }) => {
   if (_.get(token, 'exp')) return encodeToken(token);
-  console.log(process.env.NEXT_PUBLIC_API_URL);
   return getOrCreateUser(_.get(token, 'sub'))
     .then((user) => {
       if (user === 'AUTHED_USER') {
@@ -70,6 +69,7 @@ export const encodeAuth = async ({
       );
     })
     .catch((err) => {
+      // eslint-disable-next-line no-console
       console.error(err);
       return ''; // better fallback?
     });

@@ -3,6 +3,8 @@ import { Flex, Heading, Stack, Text } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 
+import Link from '../ChakraNextLink';
+
 const ProjectInfo = ({
   raid,
   direction,
@@ -34,9 +36,11 @@ const ProjectInfo = ({
           {clientName}
         </Heading>
 
-        <Text color='gray.400' fontFamily='texturina'>
-          Raid ID: {raid?.v1Id || raid?.id}
-        </Text>
+        <Link href={`/raids/${raid?.id}`}>
+          <Text color='gray.400' fontFamily='texturina'>
+            Raid ID: {raid?.v1Id || raid?.id}
+          </Text>
+        </Link>
       </Stack>
     </Flex>
   );

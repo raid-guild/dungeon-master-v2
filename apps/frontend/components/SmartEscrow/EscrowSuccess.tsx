@@ -47,23 +47,20 @@ const EscrowSuccess = ({
     // TODO handle `canRegisterDirectly` & raidId
     const localAddresses: any = _.get(_.last(_.get(txData, 'logs')), 'data');
     if (!localAddresses) return;
-    console.log(localAddresses);
-    setAddresses(
-      decodeAbiParameters(
-        [
-          { name: 'safe', type: 'address' },
-          { name: 'projectTeamSplit', type: 'address' },
-          { name: 'daoSplit', type: 'address' },
-          { name: 'escrow', type: 'address' },
-        ] as { name: string; type: string }[],
-        localAddresses
-      ) as Hex[]
-    );
+    const decodedAddresses = decodeAbiParameters(
+      [
+        { name: 'safe', type: 'address' },
+        { name: 'projectTeamSplit', type: 'address' },
+        { name: 'daoSplit', type: 'address' },
+        { name: 'escrow', type: 'address' },
+      ] as { name: string; type: string }[],
+      localAddresses
+    ) as Hex[];
+    setAddresses(decodedAddresses);
     // update raid record with new invoice address
     if (!raidId) return;
-    updateRaidInvoice(raidId, _.nth(localAddresses, 3));
+    updateRaidInvoice(raidId, _.nth(decodedAddresses, 3));
   }, [txData, raidId]);
-  console.log(txData, addresses);
 
   // const pollSubgraph = () => {
   //   let isSubscribed = true;

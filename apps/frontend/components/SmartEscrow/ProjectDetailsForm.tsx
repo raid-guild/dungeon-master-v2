@@ -48,7 +48,7 @@ const ProjectDetailsForm = ({
   } = localForm;
   const { startDate: localStartDate, endDate: localEndDate } = localWatch();
 
-  const onSubmit = async (values: ProjectDetailsForm) => {
+  const onSubmit = async (values: any) => {
     const projectAgreement = [];
     if (values.agreement) {
       // TODO handle ipfs agreement link

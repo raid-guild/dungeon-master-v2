@@ -12,12 +12,18 @@ const useDetailsPin = ({
   projectAgreement,
   startDate,
   endDate,
+}: {
+  projectName: string;
+  projectDescription: string;
+  projectAgreement: string;
+  startDate: number;
+  endDate: number;
 }) => {
   const detailsData = useMemo(
     () => ({
       projectName,
       projectDescription,
-      projectAgreement,
+      projectAgreement, // TODO handle agreement
       startDate,
       endDate,
     }),
@@ -43,7 +49,7 @@ const useDetailsPin = ({
       { projectName, projectDescription, projectAgreement, startDate, endDate },
     ],
     queryFn: detailsPin,
-    enabled: !!projectName && !!projectDescription && !!startDate && !!endDate,
+    enabled: !!projectName && !!startDate && !!endDate,
   });
 
   return { data, isLoading, error };

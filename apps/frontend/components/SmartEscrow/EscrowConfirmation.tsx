@@ -13,7 +13,7 @@ import { GANGGANG_MULTISIG } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Hex } from 'viem';
+import { Hex, zeroAddress } from 'viem';
 import { WriteContractResult } from 'wagmi/dist/actions';
 
 import AccountLink from './shared/AccountLink';
@@ -55,16 +55,16 @@ const EscrowConfirmation = ({
         projectName: raid?.id,
         projectDescription: '',
         projectAgreement: [],
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: Math.floor(Date.now() / 1000),
+        endDate: Math.floor(Date.now() / 1000),
       };
     }
     return {
       projectName,
       projectDescription,
       projectAgreement,
-      startDate,
-      endDate,
+      startDate: Math.floor(Date.parse(startDate) / 1000),
+      endDate: Math.floor(Date.parse(endDate) / 1000),
     };
   }, [
     raid,
@@ -89,7 +89,7 @@ const EscrowConfirmation = ({
     threshold,
     milestones,
     token,
-    provider,
+    provider: provider || zeroAddress,
     client,
     safetyValveDate,
     detailsData,
@@ -162,10 +162,11 @@ const EscrowConfirmation = ({
         </Tooltip>
       ),
     },
-    {
-      label: 'Project Dates',
-      value: `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
-    },
+    startDate &&
+      endDate && {
+        label: 'Project Dates',
+        value: `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
+      },
     {
       label: 'Safety Valve Date',
       value: safetyValveDate?.toLocaleDateString(),

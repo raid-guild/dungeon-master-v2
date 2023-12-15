@@ -81,7 +81,7 @@ const PaymentsForm = ({
     setValue('token', values.token);
   };
 
-  const onSubmit = (values: Partial<Invoice>) => {
+  const onSubmit = (values: any) => {
     setEscrowValues(values);
     // navigate form
     updateStep();
@@ -113,7 +113,7 @@ const PaymentsForm = ({
 
   const total = _.sumBy(
     localMilestones,
-    (milestone) => _.toNumber(milestone.value) || 0
+    (milestone: any) => _.toNumber(milestone.value) || 0
   );
 
   return (

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { StaticImageData } from 'next/image';
+// import { StaticImageData } from 'next/image';
 import { Hex } from 'viem';
 
 import LexDAOLogo from './assets/lex-dao.png';
@@ -41,7 +41,7 @@ interface Tokens {
 interface Resolvers {
   [key: string]: {
     name: string;
-    logoUrl: StaticImageData;
+    logoUrl: any;
     termsUrl: string;
   };
 }
@@ -65,7 +65,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d'
     ) as Hex,
-    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
+    ZAP_ADDRESS: _.toLower('0xd6696534e273D7fa24e322aE6c7858BA5131036a') as Hex,
     DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
     TOKENS: {
       WXDAI: {
