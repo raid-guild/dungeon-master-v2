@@ -2,24 +2,25 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Button,
   Card,
   Flex,
   Heading,
   HStack,
   Icon,
+  LinkBox,
+  LinkOverlay,
   RoleBadge,
   SimpleGrid,
   Stack,
   Text,
-  LinkOverlay,
   Tooltip,
-  useMediaQuery,
+  useMediaQuery
 } from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
   BUDGET_DISPLAY,
   displayDate,
+  GUILD_CLASS_DISPLAY,
   GUILD_CLASS_ICON,
   PROJECT_TYPE_DISPLAY,
   ProjectTypeKey,
