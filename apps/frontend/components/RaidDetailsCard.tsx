@@ -106,6 +106,27 @@ const Bio = ({ bio }: { bio: string }) => {
 };
 
 const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
+
+  const raidContacts = _.map(consultation.consultationsContacts, (contact, index) => {
+    const name = _.get(contact, 'contact.name');
+    const email = _.get(contact, 'contact.contactInfo.email');
+    const discord = _.get(contact, 'contact.contactInfo.discord');
+    const telegram = _.get(contact, 'contact.contactInfo.telegram');
+    const bio = _.get(contact, 'contact.bio');
+
+    return {
+      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 0 ? ` #${index + 1}` : ''}`,
+      items: _.compact([
+        name && { label: 'Name', details: name },
+        email && { label: 'Email', details: email, link: `mailto:${email}` },
+        discord && { label: 'Discord', details: discord },
+        telegram && { label: 'Telegram', details: telegram, link: `https://t.me/${telegram}` },
+        bio && { label: 'Bio', details: bio }
+      ])
+    };
+});
+
+
   const keyLinkItems = [
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.
@@ -206,28 +227,10 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
       title: 'Key Links',
       items: keyLinkItems,
     },
-    {
-      title: 'Client Point of Contact',
-      items: 
-        _.flatMap(consultation.consultationsContacts, contact => {
-          const name = _.get(contact, 'contact.name');
-          const email = _.get(contact, 'contact.contactInfo.email');
-          const discord = _.get(contact, 'contact.contactInfo.discord');
-          const telegram = _.get(contact, 'contact.contactInfo.telegram');
-          const bio = _.get(contact, 'contact.bio');
-        
-            return _.compact([
-            name && { label: 'Name', details: name },
-            email && { label: 'Email', details: email, link: `mailto:${email}` },
-            discord && { label: 'Discord', details: discord },
-            telegram && { label: 'Telegram', details: telegram, link: `https://t.me/${telegram}` },
-            bio && { label: 'Bio', details: bio },
-            <Spacer/>,
-          ]);
-
-          
-        })
-      },
+    
+      ...raidContacts
+    ,
+     
     {
       title: 'Additional Info',
       items: [
