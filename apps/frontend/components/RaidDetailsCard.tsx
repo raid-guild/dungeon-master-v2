@@ -131,26 +131,22 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.
     // Logic below should be simplified if it ever becomes a required field.
-    consultation?.link
-      ? {
-          label: 'Project Specs',
-          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            (_.get(
-              consultation,
-              'availableProjectSpec.availableProjectSpec'
-            ) as AvailableSpecsKey) || 'YES'
-          ),
-          link: consultation?.link,
-        }
-      : {
-          label: 'Project Specs',
-          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            (_.get(
-              consultation,
-              'availableProjectSpec.availableProjectSpec'
-            ) as AvailableSpecsKey) || 'NONE'
-          ),
-        },
+
+  ...(  consultation.links?.length > 0
+  ? consultation.links.map(linkItem => ({
+      label: _.startCase(_.toLower(linkItem.type.toString())),
+      details: linkItem.link,
+      link: linkItem.link
+    })).filter((x) => x.link)
+  : [
+      {
+        label: 'Project Specs',
+        details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+          _.get(consultation, 'availableProjectSpec.availableProjectSpec', 'YES') as AvailableSpecsKey
+        ),
+        link: consultation.link || undefined
+      }
+    ]), 
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
       details:
@@ -161,7 +157,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         _.get(consultation, 'consultationHash') !== 'cancelled' &&
         `https://etherscan.io/tx/${_.get(consultation, 'consultationHash')}`,
     },
-  ].filter((x) => x);
+  ].filter((x) => x)
 
   const panels = [
     {
