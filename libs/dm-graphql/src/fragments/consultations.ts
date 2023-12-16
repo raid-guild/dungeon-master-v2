@@ -37,6 +37,8 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
         type
       }
     }
+    created_at
+    updated_at
     desired_delivery_date
     consultation_hash
     ...ConsultationEnumFragment

@@ -45,8 +45,8 @@ export interface IConsultation {
   rating: string;
 
   // TIMELINE - ISO STRINGS
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IConsultationUpdate {

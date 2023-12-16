@@ -33,9 +33,9 @@ const InfoStack = ({
   const copyText = useClipboard(details);
 
   return (
-    <Stack justify='center' minWidth='0.5'>
+    <Stack justify='center' minWidth='0.5' gap={0.5}>
       <HStack>
-        <Text color='white' fontSize='sm'>
+        <Text color='white' fontSize='md' textColor='primary.500'>
           {label}
         </Text>
         {tooltip && (
