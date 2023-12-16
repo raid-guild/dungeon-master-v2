@@ -40,4 +40,4 @@ export {
 } from './useRolesRequiredUpdate';
 export { default as useSearchResults } from './useSearchResults';
 export { default as useUpdateCreate } from './useUpdateCreate';
-export { default as useUpsertConsultationContacts } from './useUpsertConsultationContacts';
+export { default as useUpsertconsultationsContacts } from './useUpsertconsultationsContacts';

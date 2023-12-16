@@ -2,7 +2,7 @@ import { useToast } from '@raidguild/design-system';
 import { client, UPSERT_CONSULTATION_CONTACTS_MUTATION } from '@raidguild/dm-graphql';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const useUpsertConsultationContacts = ({ token }: { token: string }) => {
+const useUpsertconsultationsContacts = ({ token }: { token: string }) => {
     const queryClient = useQueryClient();
     const toast = useToast();
 
@@ -42,4 +42,4 @@ const useUpsertConsultationContacts = ({ token }: { token: string }) => {
     return { mutateAsync, isLoading, isError, isSuccess };
 };
 
-export default useUpsertConsultationContacts;
+export default useUpsertconsultationsContacts;

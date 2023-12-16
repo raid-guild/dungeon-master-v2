@@ -11,7 +11,10 @@ import {
   Text,
   VStack
 } from '@raidguild/design-system';
-import { useContacts, useUpsertConsultationContacts } from '@raidguild/dm-hooks';
+import {
+  useContacts,
+  useUpsertconsultationsContacts
+} from '@raidguild/dm-hooks';
 import { IContact, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
@@ -38,9 +41,6 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
   const { setModals, closeModals } = contactUpdateOverlay;
 
-
-  
-
   const handleContactUpdateModal = () => {
     setModals({ contactUpdate: true, raidForm: true });
   };
@@ -48,14 +48,16 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const { mutateAsync: upsertContacts } = useUpsertConsultationContacts({token})
+  const { mutateAsync: upsertContacts } = useUpsertconsultationsContacts({
+    token
+  });
   const { data, status } = useContacts({ token });
   const [sending, setSending] = useState(false);
   const contacts = data?.contacts as IContact[];
 
   const clientPoCs = raid['consultation'][
     'consultationsContacts'
-  ] as IContact[];
+  ] as unknown as IContact[];
 
   const defaultValues = _.map(
     clientPoCs,
@@ -65,7 +67,6 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     })
   );
 
-
   const POC_DISPLAY_OPTIONS = _.map(contacts, (contact) => ({
     label: `${contact?.name} - ${contact?.contactInfo?.email ?? 'N/A'}`,
     value: contact.id
@@ -73,8 +74,11 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
   const onSubmit = (values) => {
     setSending(true);
-    const updates = _.map(values.consultationContacts, contact => ({ contact_id: contact.value, consultation_id: raid.consultation.id }));
-    
+    const updates = _.map(values.consultationsContacts, (contact) => ({
+      contact_id: contact.value,
+      consultation_id: raid.consultation.id
+    }));
+
     upsertContacts({ updates });
 
     closeModal();
@@ -96,7 +100,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     formState: { isSubmitting } // will add errors in once we add validation
   } = localform;
 
-  const selectedPoCs = watch('consultationContacts');
+  const selectedPoCs = watch('consultationsContacts');
 
   return (
     <Box>
@@ -105,7 +109,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
           <FormControl>
             <FormLabel color='raid'>Client PoCs</FormLabel>
             <Controller
-              name='consultationContacts'
+              name='consultationsContacts'
               defaultValue={defaultValues}
               control={control}
               render={({ field }) => (
@@ -114,42 +118,43 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                   {...field}
                   isSearchable
                   isMulti
-                  name='consultationContacts'
+                  name='consultationsContacts'
                   options={POC_DISPLAY_OPTIONS}
                   localForm={localform}
                 />
               )}
             />
           </FormControl>
+          <HStack justify='space-between' align='center' w='full'>
+            <Button
+              w="full"
+              variant='link'
+              onClick={() => {
+                setEditContact(null);
 
-          <Button
-                      onClick={() => {
-                        setEditContact(null);
+                setTimeout(() => {
+                  handleContactUpdateModal();
+                }, 100);
+              }}
+            >
+              Create New Contact
+            </Button>
 
-                        // set delay
-                        setTimeout(() => {
-                          handleContactUpdateModal();
-                        }, 100);
-                      }}
-                    >
-                      Create New Contact
-                    </Button>
-
-
-          <Button
-            isLoading={isSubmitting || sending}
-            type='submit'
-            width='full'
-            color='raid'
-            borderColor='raid'
-            border='1px solid'
-            size='md'
-            textTransform='uppercase'
-            fontSize='sm'
-            fontWeight='bold'
-          >
-            Update Client PoCs
-          </Button>
+            <Button
+              isLoading={isSubmitting || sending}
+              type='submit'
+              width='full'
+              color='raid'
+              borderColor='raid'
+              border='1px solid'
+              size='md'
+              textTransform='uppercase'
+              fontSize='sm'
+              fontWeight='bold'
+            >
+              Update Client PoCs
+            </Button>
+          </HStack>
         </form>
       )}
 
@@ -183,6 +188,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                   textAlign='left'
                   border='1px solid #FFFFFF15'
                   borderRadius={12}
+                  
                 >
                   <HStack justify='space-between' align='center' w='full'>
                     <Heading
@@ -207,7 +213,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                       Edit
                     </Button>
                   </HStack>
-                  <HStack gap={6}>
+                  <HStack gap={6} >
                     <VStack
                       gap={1}
                       justifyContent='flex-start'

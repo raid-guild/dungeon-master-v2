@@ -4,12 +4,15 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Box,
   Button,
   Card,
   Collapse,
+  Divider,
   Flex,
   Grid,
   Heading,
+  Spacer,
   Stack,
   Text,
   VStack,
@@ -205,60 +208,26 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     },
     {
       title: 'Client Point of Contact',
-      items: [
-        {
-          label: 'Name',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.name',
-            '-'
-          ),
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.email'
-        ) && {
-          label: 'Email',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.email'
-          ),
-          link: `mailto:${_.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.email'
-          )}`,
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.discord'
-        ) && {
-          label: 'Discord',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.discord'
-          ),
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.telegram'
-        ) && {
-          label: 'Telegram',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.telegram'
-          ),
-          link: `https://t.me/${_.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.telegram'
-          )}`,
-        },
-      ].filter((x) => x),
-      extra: (
-        <Bio
-          bio={_.get(consultation, 'consultationsContacts[0].contact.bio')}
-        />
-      ),
-    },
+      items: 
+        _.flatMap(consultation.consultationsContacts, contact => {
+          const name = _.get(contact, 'contact.name');
+          const email = _.get(contact, 'contact.contactInfo.email');
+          const discord = _.get(contact, 'contact.contactInfo.discord');
+          const telegram = _.get(contact, 'contact.contactInfo.telegram');
+          const bio = _.get(contact, 'contact.bio');
+        
+            return _.compact([
+            name && { label: 'Name', details: name },
+            email && { label: 'Email', details: email, link: `mailto:${email}` },
+            discord && { label: 'Discord', details: discord },
+            telegram && { label: 'Telegram', details: telegram, link: `https://t.me/${telegram}` },
+            bio && { label: 'Bio', details: bio },
+            <Spacer/>,
+          ]);
+
+          
+        })
+      },
     {
       title: 'Additional Info',
       items: [

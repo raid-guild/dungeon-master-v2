@@ -35,7 +35,7 @@ export interface IConsultation {
   consultationHash: string;
 
   // CONTACT INFO
-  consultationContacts: {
+  consultationsContacts: {
     contact: IContact;
   };
 
