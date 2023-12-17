@@ -6,6 +6,13 @@ const DASHBOARD_CONSULTATION_FRAGMENT = gql`
     id
     name
     created_at
+    links {
+      link
+      link_type {
+        type
+      }
+    }
+    link
   }
 `;
 

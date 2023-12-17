@@ -9,15 +9,16 @@ interface LinkExternalProps {
 
 const LinkExternal: React.FC<LinkExternalProps> = ({ href, label }) => (
   <Link
-    href={href}
+    href={href ?? '#'}
     display='flex'
     alignItems='center'
     flexDir='row'
     fontFamily='mono'
-    textColor='purple.300'
-    _hover={{ textDecor: 'underline' }}
+    textColor={href ? 'purple.300' : 'gray.600'}
+    _hover={{ textDecor: href ?? 'underline' }}
+    
   >
-    <Tooltip label={href} placement='top'>
+    <Tooltip label={href ?? 'Disabled'} placement='top'>
     {label}
     </Tooltip>
     <CgExternal />

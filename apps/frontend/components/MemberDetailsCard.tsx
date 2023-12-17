@@ -22,9 +22,10 @@ import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 interface MemberProps {
   member?: IMember;
   application?: IApplication;
+  width?: string;
 }
 
-const MemberDetailsCard = ({ member, application }: MemberProps) => {
+const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
   const copyDiscord = useClipboard(
     _.get(
       member,
@@ -145,8 +146,9 @@ const MemberDetailsCard = ({ member, application }: MemberProps) => {
   ].filter((x) => x);
 
   return (
-    <Box minW={[null, null, null, '600px']} w={['100%', null, null, '60%']}>
+    <Box minW={[null, null, null, '500px']} w={['100%', null, null, width ?? '60%']}>
       <Card variant='filled' w='100%'>
+        
         <VStack p={8} height='100%' align='stretch'>
           {_.map(skillBlocks, (block) => (
             <Flex direction='column' flexGrow={1} key={block.label}>
