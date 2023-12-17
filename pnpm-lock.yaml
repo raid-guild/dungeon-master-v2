@@ -256,6 +256,9 @@ devDependencies:
   hasura-cli:
     specifier: latest
     version: 2.35.2
+  inspx:
+    specifier: 0.0.1-alpha.6
+    version: 0.0.1-alpha.6(react@18.2.0)
   jest:
     specifier: 29.4.3
     version: 29.4.3(@types/node@18.19.3)(ts-node@10.9.2)
@@ -5336,6 +5339,13 @@ packages:
   /@protobufjs/utf8@1.1.0:
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
     dev: false
+
+  /@radix-ui/popper@0.0.10:
+    resolution: {integrity: sha512-YFKuPqQPKscreQid7NuB4it3PMzSwGg03vgrud6sVliHkI43QNAOHyrHyMNo015jg6QK5GVDn+7J2W5uygqSGA==}
+    dependencies:
+      '@babel/runtime': 7.23.6
+      csstype: 3.1.3
+    dev: true
 
   /@raftlabs/nx-hasura@0.0.6:
     resolution: {integrity: sha512-CtBBHVBMRuONnXHgYRgs90vyqZYYulVwHAotrAr1cMirReDPiOsaRrtvjaSfvl1ETC4BGTRiVN2qXdBxJK+61A==}
@@ -11558,6 +11568,16 @@ packages:
   /ini@2.0.0:
     resolution: {integrity: sha512-7PnF4oN3CvZF23ADhA5wRaYEQpJ8qygSkbtTXWBeXWXmEVRXK+1ITciHWwHhsjv1TmW0MgacIv6hEi5pX5NQdA==}
     engines: {node: '>=10'}
+    dev: true
+
+  /inspx@0.0.1-alpha.6(react@18.2.0):
+    resolution: {integrity: sha512-2ZWTOUyPq11AUaHMiePWUkp47qLuSuQryQ5JGKQ61PCOi1N3PHYvFvR0/0l1elEjXEqLgwubjpYZ8JnPJQRjDw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      '@radix-ui/popper': 0.0.10
+      react: 18.2.0
     dev: true
 
   /interface-datastore@7.0.4:

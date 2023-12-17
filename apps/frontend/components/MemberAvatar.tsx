@@ -45,7 +45,7 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
       placement='left'
       hasArrow
     >
-      <Avatar src={ensAvatar || avatarSrc} boxSize={8} />
+      <Avatar src={ensAvatar || avatarSrc} boxSize={8}/>
     </Tooltip>
   );
 };

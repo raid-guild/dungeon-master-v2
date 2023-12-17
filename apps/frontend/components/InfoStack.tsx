@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-// TODO fix ternary
 import {
   Button,
   HStack,
@@ -9,13 +8,15 @@ import {
   Tooltip,
   useClipboard,
 } from '@raidguild/design-system';
+import _ from 'lodash';
+import { ReactElement } from 'react';
 import { FaCopy, FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
 
 import Link from './ChakraNextLink';
 
 interface InfoStackProps {
   label: string;
-  details: string;
+  details: string | ReactElement | React.ReactNode;
   link?: string;
   tooltip?: string;
   copy?: boolean;
@@ -30,7 +31,7 @@ const InfoStack = ({
   copy,
   isExternal,
 }: InfoStackProps) => {
-  const copyText = useClipboard(details);
+  const copyText = useClipboard(_.isString(details) ? details : '');
 
   return (
     <Stack justify='center' minWidth='0.5' gap={0.5}>
@@ -50,9 +51,11 @@ const InfoStack = ({
       {link ? (
         <Link href={link} isExternal={isExternal}>
           <HStack>
-            <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-              {details}
-            </Text>
+            {_.isString(details) ? (
+              <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
+                details
+              </Text>
+            ) : details}
             {isExternal && <Icon as={FaExternalLinkAlt} />}
           </HStack>
         </Link>

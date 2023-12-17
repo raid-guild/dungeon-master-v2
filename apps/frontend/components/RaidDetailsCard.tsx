@@ -4,18 +4,15 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
   Button,
   Card,
   Collapse,
-  Divider,
   Flex,
   Grid,
   Heading,
-  Spacer,
   Stack,
   Text,
-  VStack,
+  VStack
 } from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {

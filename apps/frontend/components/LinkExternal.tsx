@@ -1,4 +1,4 @@
-import { Link } from '@raidguild/design-system';
+import { Link, Tooltip } from '@raidguild/design-system';
 import React from 'react';
 import { CgExternal } from 'react-icons/cg';
 
@@ -17,7 +17,9 @@ const LinkExternal: React.FC<LinkExternalProps> = ({ href, label }) => (
     textColor='purple.300'
     _hover={{ textDecor: 'underline' }}
   >
+    <Tooltip label={href} placement='top'>
     {label}
+    </Tooltip>
     <CgExternal />
   </Link>
 );
