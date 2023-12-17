@@ -274,7 +274,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
               <HStack spacing={8} py={8}>
                 <LinkExternal href={contactToURL(raidContact)} label='Client' />
                 <LinkExternal
-                  href={String(_.get(raid, 'escrowIndex'))}
+                  href={`/escrow/${  String(_.get(raid, 'id'))}`}
                   label='Escrow'
                 />
                 <LinkExternal

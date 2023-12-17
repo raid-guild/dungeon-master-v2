@@ -78,6 +78,8 @@ const RaidPartyCard = ({
   const [clearRoles, setClearRoles] = useState(false);
   const [clericToAdd, setClericToAdd] = useState<string>();
 
+
+
   const { mutateAsync: updateRaid } = useRaidUpdate({
     token,
     raidId: _.get(raid, 'id'),
@@ -193,6 +195,7 @@ const RaidPartyCard = ({
           _hover={{ cursor: 'pointer', color: 'red.100' }}
           transition='all ease-in-out 0.25'
         >
+    
           {member && <MemberAvatar member={member} />}
 
           <Flex direction='column'>

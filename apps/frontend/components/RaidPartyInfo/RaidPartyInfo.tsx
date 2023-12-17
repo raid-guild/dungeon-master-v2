@@ -25,9 +25,12 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
     button: buttonSelection,
   });
 
+
+
   const localRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
   const cleric = _.get(raid, 'cleric');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
+
 
   return (
     <Stack spacing={3}>

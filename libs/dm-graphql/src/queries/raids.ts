@@ -143,6 +143,9 @@ export const RAID_DETAIL_QUERY = gql`
           eth_address
           name
           id
+          contact_info {
+        ...ContactInfos
+      }
           guild_class {
             guild_class
           }

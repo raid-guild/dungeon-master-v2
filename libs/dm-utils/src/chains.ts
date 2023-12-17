@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'development') {
 const chainsMap = (chainId: number) => chainsList[chainId];
 
 const data = configureChains(_.values(chainsList), [
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),
+  alchemyProvider({ apiKey: '_xjUMNooQnLZZ44pxpG9Zs7JzT8WN8vL' as string }),
   infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
   publicProvider(),
 ]);
