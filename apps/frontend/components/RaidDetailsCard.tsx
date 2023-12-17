@@ -107,7 +107,7 @@ const Bio = ({ bio }: { bio: string }) => {
 
 const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
 
-  const raidContacts = _.map(consultation.consultationsContacts, (contact, index) => {
+  const consultationContacts = _.map(consultation?.consultationsContacts, (contact, index) => {
     const name = _.get(contact, 'contact.name');
     const email = _.get(contact, 'contact.contactInfo.email');
     const discord = _.get(contact, 'contact.contactInfo.discord');
@@ -115,7 +115,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     const bio = _.get(contact, 'contact.bio');
 
     return {
-      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 0 ? ` #${index + 1}` : ''}`,
+      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 1 ? ` #${index + 1}` : ''}`,
       items: _.compact([
         name && { label: 'Name', details: name },
         email && { label: 'Email', details: email, link: `mailto:${email}` },
@@ -132,7 +132,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     // consultation form, so we handle edge cases here.
     // Logic below should be simplified if it ever becomes a required field.
 
-  ...(  consultation.links?.length > 0
+  ...(  consultation?.links?.length > 0
   ? consultation.links.map(linkItem => ({
       label: _.startCase(_.toLower(linkItem.type.toString())),
       details: linkItem.link,
@@ -144,7 +144,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         details: AVAILABLE_PROJECT_SPECS_DISPLAY(
           _.get(consultation, 'availableProjectSpec.availableProjectSpec', 'YES') as AvailableSpecsKey
         ),
-        link: consultation.link || undefined
+        link: consultation?.link || undefined
       }
     ]), 
     _.get(consultation, 'consultationHash') && {
@@ -224,7 +224,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
       items: keyLinkItems,
     },
     
-      ...raidContacts
+      ...consultationContacts
     ,
      
     {
