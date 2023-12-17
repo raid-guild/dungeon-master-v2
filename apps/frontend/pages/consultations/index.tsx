@@ -21,6 +21,7 @@ import {
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
+import Inspect from 'inspx';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -258,6 +259,7 @@ const ConsultationList = () => {
       >
         <InfiniteScroll
           pageStart={0}
+          style={{ width: '100%' }}
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
@@ -266,7 +268,7 @@ const ConsultationList = () => {
             </Flex>
           }
         >
-          <Stack spacing={4} mx='auto'>
+          <Stack spacing={4}>
             {_.map(consultations, (consultation: IConsultation) => (
               <RaidCard
                 consultation={consultation}
@@ -276,7 +278,8 @@ const ConsultationList = () => {
           </Stack>
         </InfiniteScroll>
       </SiteLayout>
-    </>
+      </>      
+    
   );
 };
 

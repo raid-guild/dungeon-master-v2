@@ -89,7 +89,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   .value() ?? consultation.link ?? '';
  
   return (
-    // <Inspect>
+    
       <LinkBox h='100%'>
         <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
           <Flex
