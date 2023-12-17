@@ -115,7 +115,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     const bio = _.get(contact, 'contact.bio');
 
     return {
-      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 1 ? ` #${index + 1}` : ''}`,
+      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 0 ? ` #${index + 1}` : ''}`,
       items: _.compact([
         name && { label: 'Name', details: name },
         email && { label: 'Email', details: email, link: `mailto:${email}` },

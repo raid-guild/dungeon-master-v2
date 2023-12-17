@@ -65,10 +65,8 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const raidCleric = _.get(raid, 'cleric');
   const raidStatus = _.get(raid, 'status');
   const raidHunter = _.get(raid, 'hunter');
-  const raidContact = _.first(consultation.consultationsContacts)?.contact
+  const raidContact = _.first([consultation?.consultationsContacts])[0];
   
-  console.log(raidContact)
-
   
 
 
@@ -256,13 +254,10 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
               <InfoStack
                 label='Submitted By'
                 details={
-                  raidContact.contactInfo.twitter ?? raidContact.contactInfo.github ?? raidContact.contactInfo.discord ?? raidContact.name ??
-                  raidContact.contactInfo.email ?? '-'
+                  _.get(raidContact, 'contact.contactInfo.twitter') ?? _.get(raidContact, 'contact.contactInfo.github') ?? _.get(raidContact, 'contact.contactInfo.discord') ?? _.get(raidContact, 'contact.name') ??
+                  _.get(raidContact, 'contact.contactInfo.email') ?? '-'
                 }
               />
-
-              
-
               <InfoStack label='Project Type' details={projectType || '-'} />
             </SimpleGrid>
           </Stack>
