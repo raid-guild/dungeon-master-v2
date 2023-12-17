@@ -64,7 +64,10 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const raidParty = _.map(_.get(raid, 'raidParties', []), 'member');
   const raidCleric = _.get(raid, 'cleric');
   const raidStatus = _.get(raid, 'status');
-
+  const raidHunter = _.get(raid, 'hunter');
+  const raidContact = _.first(consultation.consultationsContacts)?.contact
+  
+  console.log(raidContact)
 
   
 
@@ -165,6 +168,18 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             )}
 
             <HStack mr={4} mb={{ base: 4, md: 0 }}>
+
+            {raid &&
+                raidHunter &&
+                  <>
+                    <Heading size='sm' color='white' variant='shadow'>
+                      Hunter
+                    </Heading>
+                    <MemberAvatar member={raidHunter}/>
+                  </>
+                }
+
+
               {raid &&
                 (!raidCleric ? (
                   <Heading
@@ -172,15 +187,16 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                     color='white'
                     mr={4}
                     mb={{ base: 4, md: 0 }}
+                    variant='shadow'
                   >
                     Needs Cleric!
                   </Heading>
                 ) : (
                   <>
-                    <Heading size='sm' color='white'>
+                    <Heading size='sm' color='white' variant='shadow'>
                       Cleric
                     </Heading>
-                    <MemberAvatar member={raidCleric} />
+                    <MemberAvatar member={raidCleric}/>
                   </>
                 ))}
             </HStack>
@@ -240,22 +256,12 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
               <InfoStack
                 label='Submitted By'
                 details={
-                  _.get(consultation, 'consultationsContacts[0].name') ||
-                  _.get(
-                    consultation,
-                    'consultationsContacts[0].contactInfo.twitter'
-                  ) ||
-                  _.get(
-                    consultation,
-                    'consultationsContacts[0].contactInfo.discord'
-                  ) ||
-                  _.get(
-                    consultation,
-                    'consultationsContacts[0].contactInfo.github',
-                    '-'
-                  )
+                  raidContact.contactInfo.twitter ?? raidContact.contactInfo.github ?? raidContact.contactInfo.discord ?? raidContact.name ??
+                  raidContact.contactInfo.email ?? '-'
                 }
               />
+
+              
 
               <InfoStack label='Project Type' details={projectType || '-'} />
             </SimpleGrid>
@@ -263,7 +269,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
 
           {!_.isEmpty(raidParty) && !upTo780 && (
             <Stack spacing={4} minW='150px' align='center'>
-              <Heading size='sm' color='white'>
+              <Heading size='sm' color='white' variant='shadow'>
                 Raid Party
               </Heading>
 
@@ -282,11 +288,11 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
           </Stack>
         )}
         {latestUpdate && (
-          <Flex direction='column' paddingY={4} w='100%'>
-            <HStack spacing={10} align='center'>
-              <Heading size='sm' color='white'>
-                Last Status Update
-              </Heading>
+          <Flex direction='column' padding={4} w='100%' bg='blackAlpha.300' rounded={8}>
+            <HStack spacing={2} align='center'>
+              <Text color='primary.500'>
+                Last Update: 
+              </Text>
               <Text>{displayDate(latestUpdate.createdAt)}</Text>
             </HStack>
 
