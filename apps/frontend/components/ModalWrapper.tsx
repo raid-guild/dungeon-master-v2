@@ -52,7 +52,7 @@ const ModalWrapper = ({
         paddingY={8}
       >
         <ModalHeader>
-          <Heading>{title}</Heading>
+          <Heading variant='shadow'>{title}</Heading>
         </ModalHeader>
         <ModalCloseButton color='whiteAlpha.700' />
         <ModalBody>{children}</ModalBody>

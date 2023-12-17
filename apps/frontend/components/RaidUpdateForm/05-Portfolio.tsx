@@ -124,7 +124,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-    <VStack width='full' gap={14} fontFamily='texturina'>
+    <VStack width='full' gap={4}>
       <Input
         label='Project Name'
         name='projectName'
@@ -226,7 +226,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
         isLoading={isSubmitting || sending}
         type='submit'
         width='full'
-        color='raid'
+        bgColor='primary.500'
         borderColor='raid'
         border='1px solid'
         size='md'

@@ -91,9 +91,9 @@ const linkTypes: LINK_TYPES_ENUM = [
             // eslint-disable-next-line dot-notation
             defaultValue={(_.find(links, {type: linkType}) as ILink )?.link || ''}
             aria-label={linkType}
-            placeholder={linkType}
+            placeholder={_.startCase(_.toLower(linkType))}
             rounded="base"
-            label={linkType}
+            label={_.startCase(_.toLower(linkType))}
             localForm={localForm}
           />
         ))
@@ -107,6 +107,7 @@ const linkTypes: LINK_TYPES_ENUM = [
           borderColor="raid"
           border="1px solid"
           size="md"
+          bgColor='primary.500'
           textTransform="uppercase"
           fontSize="sm"
           fontWeight="bold"

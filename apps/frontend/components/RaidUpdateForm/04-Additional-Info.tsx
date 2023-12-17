@@ -102,6 +102,7 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
           textTransform='uppercase'
           fontSize='sm'
           fontWeight='bold'
+          bgColor='primary.500'
         >
           Update Additional Details
         </Button>

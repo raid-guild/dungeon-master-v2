@@ -145,6 +145,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
               type='submit'
               width='full'
               color='raid'
+              bgColor='primary.500'
               borderColor='raid'
               border='1px solid'
               size='md'
