@@ -17,7 +17,7 @@ import {
   Tooltip,
   useMediaQuery
 } from '@raidguild/design-system';
-import { contactToURL, IConsultation, IRaid } from '@raidguild/dm-types';
+import { contactToURL, IConsultation, IRaid, LINK_TYPES_ENUM } from '@raidguild/dm-types';
 import {
   BUDGET_DISPLAY,
   displayDate,
@@ -29,7 +29,6 @@ import {
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
-import { CgExternal } from 'react-icons/cg';
 
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
@@ -81,6 +80,14 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
 
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
+  // console.log(_.get(_.filter(consultation.links, (x) => _.get(x, 'linkType.type') === 'SPECIFICATION' && _.get(x, 'link'))[0],'link'));
+
+  const specLink =   _.chain(consultation.links)
+  .filter(x => _.get(x, 'linkType.type') === 'SPECIFICATION' && !!_.get(x, 'link'))
+  .map(x => _.get(x, 'link'))
+  .head()
+  .value() ?? consultation.link ?? '';
+ 
   return (
     // <Inspect>
       <LinkBox h='100%'>
@@ -190,7 +197,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                     Summary
                   </Heading>
                   <Spacer />
-                  <LinkExternal href='/specs' label='Specs' />
+                  <LinkExternal href={specLink} label='Specs' />
                 </HStack>
                 <Text color='white' fontFamily='texturina'>
                   {_.gt(_.size(description), 300)
