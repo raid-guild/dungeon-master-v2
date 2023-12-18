@@ -69,7 +69,7 @@ const Member = ({ memberAddress }: Props) => {
             w='100%'
             direction={['column', null, null, 'row']}
           >
-            <MemberAvatar member={member} />
+            <MemberAvatar member={member} size={8} />
             <Heading size='lg'>{memberDisplayName(member)}</Heading>
             <HStack spacing={4}>
               <VStack align='flex-end'>

@@ -6,26 +6,31 @@ import {
   Divider,
   Flex,
   Heading,
+  HStack,
   Icon,
   Link as ChakraLink,
+  RaidGuild,
+  Swords,
   Text,
   Tooltip,
   useClipboard,
-  VStack,
-} from '@raidguild/design-system';
+  VStack} from '@raidguild/design-system';
 import { IApplication, IMember } from '@raidguild/dm-types';
 import { SKILLS_DISPLAY, truncateAddress } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 
+import MemberAvatar from './MemberAvatar';
+
 interface MemberProps {
   member?: IMember;
   application?: IApplication;
   width?: string;
+  height?: string;
 }
 
-const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
+const MemberDetailsCard = ({ member, application, width, height }: MemberProps) => {
   const copyDiscord = useClipboard(
     _.get(
       member,
@@ -37,6 +42,7 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
     _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
   );
 
+  
   useEffect(() => {
     copyDiscord.setValue(
       _.get(member, 'contactInfo.discord') ??
@@ -70,7 +76,7 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
         'contactInfo.github',
         _.get(application, 'contactInfo.github')
       ),
-      icon: FaGithub,
+      icon: FaGithub
     },
     _.get(
       member,
@@ -92,7 +98,7 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
         'contactInfo.twitter',
         _.get(application, 'contactInfo.twitter')
       ),
-      icon: FaTwitter,
+      icon: FaTwitter
     },
     _.get(
       member,
@@ -110,7 +116,7 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
         _.get(application, 'contactInfo.discord')
       ),
       icon: FaDiscord,
-      onClick: copyDiscord.onCopy,
+      onClick: copyDiscord.onCopy
     },
     ((_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' &&
       _.get(member, 'ethAddress', _.get(application, 'ethAddress'))) ||
@@ -122,8 +128,8 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
           _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
         ),
       icon: FaEthereum,
-      onClick: copyEth.onCopy,
-    },
+      onClick: copyEth.onCopy
+    }
   ].filter((x) => x);
 
   const skillsByType = (skills, type) =>
@@ -137,22 +143,57 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
   const skillBlocks = [
     _.size(skillsByType(localSkills, 'PRIMARY')) && {
       label: 'Primary Skills',
-      skills: skillsByType(localSkills, 'PRIMARY'),
+      skills: skillsByType(localSkills, 'PRIMARY')
     },
     _.size(skillsByType(localSkills, 'SECONDARY')) && {
       label: 'Secondary Skills',
-      skills: skillsByType(localSkills, 'SECONDARY'),
-    },
+      skills: skillsByType(localSkills, 'SECONDARY')
+    }
   ].filter((x) => x);
 
   return (
-    <Box minW={[null, null, null, '500px']} w={['100%', null, null, width ?? '60%']}>
-      <Card variant='filled' w='100%'>
-        
-        <VStack p={8} height='100%' align='stretch'>
+    <Box
+      minW={[null, null, null, '500px']}
+      w={['100%', null, null, width ?? '60%']}
+      h={height ?? 'max-content'}
+    >
+      <Card variant='filled' w='100%' h={height ?? 'max-content'}>
+        <VStack
+          w='100%'
+          p={4}
+          justifyContent='flex-start'
+          alignItems='flex-start'
+        >
+          <MemberAvatar member={member} size={16} outlineColor='primary.500' />
+          <Heading size='lg' color='white' mt={4} variant='shadow'>
+            {_.get(member, 'name', _.get(application, 'name'))}
+          </Heading>
+          <Tooltip label='Copy ETH address' placement='top' hasArrow >
+            <HStack spacing={1} onClick={copyEth.onCopy} _hover={{cursor: 'pointer'}} _active={{textColor: 'primary.500'}}>
+              <Text color='white' fontSize='sm'>
+                {truncateAddress(
+                  _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
+                )}
+              </Text>
+
+              <Icon as={FaEthereum} />
+            </HStack>
+          </Tooltip>
+        </VStack>
+        <HStack w="100%" px={4}>
+          <Button p={5} fontFamily='monospace' w='full'>
+            
+        {_.get(member, 'isRaiding') === true ? 'RAIDING' : 'NOT RAIDING'}
+        </Button>
+        <Button p={5} fontFamily='monospace' bg='primary.600' w="30%">
+            
+        Edit
+        </Button>
+        </HStack>
+        <VStack p={4} height='100%' w="100%" alignItems='flex-start' justifyContent='flex-start'>
           {_.map(skillBlocks, (block) => (
-            <Flex direction='column' flexGrow={1} key={block.label}>
-              <Heading color='white' size='sm'>
+            <Flex direction='column' flexGrow={1} key={block.label} gap={2}>
+              <Heading color='primary.500' size='sm'>
                 {block.label}
               </Heading>
               <Flex
@@ -160,7 +201,7 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
                 maxWidth='100%'
                 wrap='wrap'
                 paddingTop={2}
-                alignItems='center'
+                alignItems='flex-start'
                 justifyContent='flex-start'
               >
                 {_.map(block.skills, (skill) => (
@@ -168,6 +209,9 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
                     marginX={1}
                     marginBottom={1}
                     bgColor='gray.700'
+                    px={1.5}
+                    py={1}
+                    rounded={4}
                     key={`${block.label}-${_.get(skill, 'skill')}`}
                     color='white'
                   >
@@ -180,12 +224,14 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
 
           {_.get(application, 'introduction') && (
             <>
-              <Divider paddingTop={2} width='100%' alignSelf='center' />
+              <Box py={4} opacity={0.3}>
+            <Divider />
+          </Box>
               <Text size='md'>{_.get(application, 'introduction')}</Text>
             </>
           )}
 
-          <Box py={4}>
+          <Box py={4} opacity={0.1}>
             <Divider />
           </Box>
 
@@ -201,13 +247,16 @@ const MemberDetailsCard = ({ member, application, width }: MemberProps) => {
                   variant='outline'
                   size='xs'
                   color='white'
+                  p={3}
                   leftIcon={<Icon as={_.get(link, 'icon')} color='white' />}
                   target='_blank'
                   rel='noreferrer noopener'
                   href={_.get(link, 'href')}
                   onClick={_.get(link, 'onClick')}
                 >
-                  {_.get(link, 'label')}
+                  <Text fontFamily="texturina">
+                  {_.capitalize(_.get(link, 'label'))}
+                  </Text>
                 </Button>
               </Tooltip>
             ))}

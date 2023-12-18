@@ -8,9 +8,11 @@ import { useEnsAvatar, useEnsName } from 'wagmi';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
+  size?: number;
+  outlineColor?: string;
 };
 
-const MemberAvatar = ({ member }: MemberAvatarProps) => {
+const MemberAvatar = ({ member, size=8, outlineColor }: MemberAvatarProps) => {
   const address = member?.ethAddress;
   const name = memberDisplayName(member);
   const github = member?.contactInfo?.github;
@@ -49,7 +51,7 @@ const MemberAvatar = ({ member }: MemberAvatarProps) => {
 
   return (
     <Tooltip label={name} placement={address ? 'left' : 'top'} hasArrow>
-      <Avatar src={finalAvatar || blockiesAvatar} boxSize={8} />
+      <Avatar src={finalAvatar || blockiesAvatar} boxSize={size} ringColor={outlineColor ?? 'none'}  ringOffset={2}/>
     </Tooltip>
   );
 };

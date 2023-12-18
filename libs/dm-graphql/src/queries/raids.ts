@@ -2,9 +2,8 @@ import { gql } from 'graphql-request';
 
 import {
   CONTACT_INFOS_FRAGMENT,
-  PORTFOLIO_DETAIL_FRAGMENT,
   RAID_DETAIL_FRAGMENT,
-  RAID_SLIM_DETAIL_FRAGMENT,
+  RAID_SLIM_DETAIL_FRAGMENT
 } from '../fragments';
 
 export const RAIDING_RAIDS_BY_LAST_UPDATE = gql`
