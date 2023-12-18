@@ -36,10 +36,6 @@ const MiniRaidCard = ({
     .head()
     .value() ?? consultation?.link;
 
-    console.log('consultation', consultation);
-    console.log('specLink', specLink);
-    console.log('raid', raid);
-
   return (
   
     <Card variant='outline' width='100%' minH='100px'>

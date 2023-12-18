@@ -20,6 +20,7 @@ import { NextSeo } from 'next-seo';
 import React from 'react';
 import { useAccount } from 'wagmi';
 
+import DashboardRaidCard from '../components/DashboardRaidCard';
 import MemberDetailsCard from '../components/MemberDetailsCard';
 import MiniRaidCard from '../components/MiniRaidCard';
 import SiteLayout from '../components/SiteLayout';
@@ -99,7 +100,7 @@ const Home = () => {
                     <Stack spacing={4}>
                       {!_.isEmpty(_.get(data, 'myRaids.active')) ? (
                         _.map(_.get(data, 'myRaids.active'), (raid: IRaid) => (
-                          <MiniRaidCard key={raid.id} raid={raid} />
+                          <DashboardRaidCard key={raid.id} raid={raid} />
                         ))
                       ) : (
                         <Heading size='lg'>No Active Raids</Heading>
@@ -172,7 +173,7 @@ const Home = () => {
                       _.map(
                         _.get(data, 'newConsultations'),
                         (consultation: IConsultation) => (
-                          <MiniRaidCard
+                          <DashboardRaidCard
                             key={consultation.id}
                             consultation={consultation}
                             newRaid
@@ -191,7 +192,7 @@ const Home = () => {
                 <TabPanel>
                   <Stack spacing={4}>
                     {_.map(_.get(data, 'newRaids'), (raid: IRaid) => (
-                      <MiniRaidCard key={raid.id} raid={raid} newRaid />
+                      <DashboardRaidCard key={raid.id} raid={raid} newRaid />
                     ))}
                   </Stack>
                 </TabPanel>
