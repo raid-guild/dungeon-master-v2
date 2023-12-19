@@ -11,7 +11,7 @@ import {
   Text,
   VStack
 } from '@raidguild/design-system';
-import { useDashboardList, useMemberDetail } from '@raidguild/dm-hooks';
+import { useAllSignals, useDashboardList, useMemberDetail } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
@@ -44,6 +44,10 @@ const Home = () => {
   if (role === 'user') {
     router.push('/escrow');
   }
+
+  const {data:signal} = useAllSignals(token);
+
+  console.log(signal)
 
   return (
     <>

@@ -3,47 +3,6 @@ import { gql } from 'graphql-request';
 
 import { CONSULTATION_DETAIL_FRAGMENT } from '../fragments';
 
-// const DASHBOARD_CONSULTATION_FRAGMENT = gql`
-//   fragment DashboardConsultation on consultations {
-//     id
-//     name
-//     created_at
-//     links {
-//       link
-//       link_type {
-//         type
-//       }
-//     }
-//     link
-//     consultations_services_required {
-//       guild_service {
-//         guild_service
-//       }
-//     }
-//     project_type {
-//       project_type
-//     }
-//     budget_option {
-//       budget_option
-//     }
-//     consultation_status {
-//       consultation_status
-//     }
-//     consultations_contacts {
-//       contact {
-//         name
-//         bio
-//         contact_info {
-//           email
-//           github
-//           twitter
-//           discord
-//         }
-//       }
-//     }
-//   }
-// `;
-
 const DASHBOARD_RAID_FRAGMENT = gql`
   fragment DashboardRaid on raids {
     id

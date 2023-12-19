@@ -4,4 +4,5 @@ export * from './links';
 export * from './members';
 export * from './portfolios'
 export * from './raids';
+export * from './signalInterest'
 export * from './updates';
