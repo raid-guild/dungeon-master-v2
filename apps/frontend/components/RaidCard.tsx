@@ -191,16 +191,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
               maxWidth='80%'
               paddingY={4}
             >
-              {/* {_.get(raid, "createdAt") && (
-                <HStack>
-                  <Text color="gray.100" fontSize="smaller">
-                    {raidDateLabel}
-                  </Text>
-                  <Text color="gray.100" fontSize="smaller">
-                    {displayDate(raidDate)}
-                  </Text>
-                </HStack>
-              )} */}
+    
               <HStack w='full'>
                 <Heading fontSize={20} color='primary.500'>
                   Summary
@@ -281,14 +272,16 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </SimpleGrid>
 
             <HStack spacing={8} py={8}>
-              <LinkExternal href={contactToURL(raidContact)} label='Client' />
+              <LinkExternal href={contactToURL(raidContact)} label='Client' hidden={!contactToURL(raidContact)}/>
               <LinkExternal
                 href={`/escrow/${String(_.get(raid, 'id'))}`}
                 label='Escrow'
               />
               <LinkExternal
-                href={String(_.get(raid, 'lockerHash'))}
+                href={`https://blockscan.com/search?q=${_.get(raid, 'lockerHash')}`}
+                hidden={!_.get(raid, 'lockerHash')}
                 label='Consultation'
+                
               />
             </HStack>
           </Stack>

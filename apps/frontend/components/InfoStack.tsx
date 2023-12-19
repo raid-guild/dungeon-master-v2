@@ -7,12 +7,15 @@ import {
   Text,
   Tooltip,
   useClipboard,
-} from '@raidguild/design-system';
-import _ from 'lodash';
+  VStack} from '@raidguild/design-system';
+import { truncateAddress } from '@raidguild/dm-utils';
+import _, { isString } from 'lodash';
 import { ReactElement } from 'react';
 import { FaCopy, FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
 
 import Link from './ChakraNextLink';
+import LinkExternal from './LinkExternal';
+import { useRouter } from 'next/router';
 
 interface InfoStackProps {
   label: string;
@@ -21,6 +24,7 @@ interface InfoStackProps {
   tooltip?: string;
   copy?: boolean;
   isExternal?: boolean;
+  truncate?: boolean;
 }
 
 const InfoStack = ({
@@ -30,9 +34,10 @@ const InfoStack = ({
   tooltip,
   copy,
   isExternal,
+  truncate= false
 }: InfoStackProps) => {
   const copyText = useClipboard(_.isString(details) ? details : '');
-
+  const router = useRouter()
   return (
     <Stack justify='center' minWidth='0.5' gap={0.5}>
       <HStack>
@@ -47,38 +52,14 @@ const InfoStack = ({
           </Tooltip>
         )}
       </HStack>
-
-      {link ? (
-        <Link href={link} isExternal={isExternal}>
-          <HStack>
-            {_.isString(details) ? (
-              <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-                details
-              </Text>
-            ) : details}
-            {isExternal && <Icon as={FaExternalLinkAlt} />}
-          </HStack>
-        </Link>
-      ) : copy ? (
-        <Tooltip label={`Copy ${label}`} size='sm' hasArrow>
-          <Button
-            variant='unstyled'
-            onClick={copyText.onCopy}
-            height='-webkit-fit-content'
-          >
-            <HStack>
-              <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-                {details}
-              </Text>
-              <Icon as={FaCopy} />
-            </HStack>
-          </Button>
-        </Tooltip>
-      ) : (
-        <Text color='white' fontSize='lg' fontWeight='medium'>
-          {details}
+      <Text>
+        {(link && isString(details) ? 
+        <LinkExternal href={link} label={String(details).length > 25 ? 'Link' : details} hidden={!link} />
+        :
+        details
+        
+        ) ?? '-'}
         </Text>
-      )}
     </Stack>
   );
 };

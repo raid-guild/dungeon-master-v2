@@ -1,13 +1,14 @@
 import { Link, Tooltip } from '@raidguild/design-system';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { CgExternal } from 'react-icons/cg';
 
 interface LinkExternalProps {
   href: string;
-  label: string;
+  label: string | ReactElement;
+  hidden?: boolean;
 }
 
-const LinkExternal: React.FC<LinkExternalProps> = ({ href, label }) => (
+const LinkExternal: React.FC<LinkExternalProps> = ({ href, label, hidden=false }) => (
   <Link
     href={href ?? '#'}
     display='flex'
@@ -16,9 +17,10 @@ const LinkExternal: React.FC<LinkExternalProps> = ({ href, label }) => (
     fontFamily='mono'
     textColor={href ? 'purple.300' : 'gray.600'}
     _hover={{ textDecor: href ?? 'underline' }}
-    
+    isExternal
+    hidden={hidden}
   >
-    <Tooltip label={href ?? 'Disabled'} placement='top'>
+    <Tooltip label={label ?? 'Disabled'} placement='top'>
     {label}
     </Tooltip>
     <CgExternal />

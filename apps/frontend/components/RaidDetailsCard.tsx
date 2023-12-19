@@ -25,6 +25,7 @@ import {
   ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
   truncateAddress,
+  truncateEmail,
 } from '@raidguild/dm-utils';
 import { format } from 'date-fns';
 import _ from 'lodash';
@@ -114,14 +115,16 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     return {
       title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 0 ? ` #${index + 1}` : ''}`,
       items: _.compact([
-        name && { label: 'Name', details: name },
-        email && { label: 'Email', details: email, link: `mailto:${email}` },
-        discord && { label: 'Discord', details: discord },
-        telegram && { label: 'Telegram', details: telegram, link: `https://t.me/${telegram}` },
+        name && { label: 'Name', details: `${name}` },
+        email && { label: 'Email', details: `${truncateEmail(email)}`, link: `mailto:${email}` },
+        discord && { label: 'Discord', details: `${discord}` },
+        telegram && { label: 'Telegram', details: `${telegram}`},
         bio && { label: 'Bio', details: bio }
       ])
     };
 });
+
+
 
 
   const keyLinkItems = [
@@ -227,14 +230,16 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     {
       title: 'Additional Info',
       items: [
-        (_.get(raid, 'airtableId') ||
-          _.get(raid, 'v1Id') ||
-          _.get(raid, 'id')) && {
+        (_.get(raid, 'id')) ||
+          _.get(raid, 'airtableId') ||
+          _.get(raid, 'v1Id')
+           && {
           label: 'Raid ID',
           details:
+          _.get(raid, 'id') ||
             _.get(raid, 'airtableId') ||
-            _.get(raid, 'v1Id') ||
-            _.get(raid, 'id'),
+            _.get(raid, 'v1Id')
+            ,
           copy: true,
         },
         _.get(raid, 'escrowIndex') && {
@@ -244,6 +249,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         _.get(raid, 'lockerHash') && {
           label: 'Locker Hash',
           details: _.get(raid, 'lockerHash'),
+          link: `https://blockscan.com/search?q=${_.get(raid, 'lockerHash')}`,
         },
         _.get(raid, 'invoiceAddress') && {
           label: 'Smart Escrow',
@@ -285,6 +291,8 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
                     autoFlow='wrap'
                   >
                     {_.map(_.get(panel, 'items'), (item) => (
+
+
                       <InfoStack
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
