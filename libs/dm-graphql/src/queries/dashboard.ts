@@ -89,5 +89,4 @@ export const DASHBOARD_QUERY = gql`
     }
   }
   ${DASHBOARD_RAID_FRAGMENT}
-  ${CONSULTATION_DETAIL_FRAGMENT}
 `;
