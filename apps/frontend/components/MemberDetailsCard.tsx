@@ -22,6 +22,12 @@ import React, { useEffect } from 'react';
 import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 
 import MemberAvatar from './MemberAvatar';
+import ModalWrapper from './ModalWrapper';
+import UpdateMemberForm from './MemberUpdateForm';
+import { useAccount } from 'wagmi';
+import { useSession } from 'next-auth/react';
+import { useMemberDetail } from '@raidguild/dm-hooks';
+import { useOverlay } from '../contexts/OverlayContext';
 
 interface MemberProps {
   member?: IMember;
@@ -135,6 +141,21 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
   const skillsByType = (skills, type) =>
     _.map(_.filter(skills, ['skillType.skillType', type]), 'skill');
 
+
+    const { address: memberAddress } = useAccount();
+    const { data: session } = useSession();
+    const token = _.get(session, 'token');
+  
+    const { data } = useMemberDetail({ memberAddress, token });
+  
+    const localOverlay = useOverlay();
+    const { setModals, closeModals } = localOverlay;
+  
+    const handleShowUpdateModal = () => {
+      setModals({ memberForm: true });
+    };
+  
+
   const localSkills = _.get(
     member,
     'membersSkills',
@@ -157,6 +178,20 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
       w={['100%', null, null, width ?? '60%']}
       h={height ?? 'max-content'}
     >
+      <ModalWrapper
+        name='memberForm'
+        size='xl'
+        title='Update Member Details'
+        localOverlay={localOverlay}
+      >
+        <UpdateMemberForm
+          memberId={_.get(member, 'id')}
+          memberAddress={memberAddress}
+          member={member}
+          application={_.get(member, 'application')}
+          closeModal={closeModals}
+        />
+      </ModalWrapper>
       <Card variant='filled' w='100%' h={height ?? 'max-content'}>
         <VStack
           w='100%'
@@ -185,7 +220,7 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
             
         {_.get(member, 'isRaiding') === true ? 'RAIDING' : 'NOT RAIDING'}
         </Button>
-        <Button p={5} fontFamily='monospace' bg='primary.600' w="30%">
+        <Button p={5} fontFamily='monospace' bg='primary.600' w="30%" onClick={handleShowUpdateModal}>
             
         Edit
         </Button>
