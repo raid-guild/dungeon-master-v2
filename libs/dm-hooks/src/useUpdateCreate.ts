@@ -1,7 +1,6 @@
 import { useToast } from '@raidguild/design-system';
 import { client, STATUS_UPDATE_CREATE_MUTATION } from '@raidguild/dm-graphql';
 import { IStatusUpdate } from '@raidguild/dm-types';
-import { camelize } from '@raidguild/dm-utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 
@@ -33,11 +32,6 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
     },
     {
       onSuccess: (data) => {
-        const raid = camelize(_.get(data, 'insert_updates_one.raid'));
-        queryClient.setQueryData(
-          ['raidDetail', _.get(data, 'insert_updates_one.raid.id')],
-          raid
-        );
         queryClient.invalidateQueries([
           'raidDetail',
           _.get(data, 'insert_updates_one.raid.id'),
@@ -48,6 +42,8 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
         });
       },
       onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log(error);
         toast.error({
           title: 'Unable to add Update',
         });

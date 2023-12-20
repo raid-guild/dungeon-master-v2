@@ -24,13 +24,12 @@ StatusUpdateProps) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
-  
 
   const handleSetStatus = async (selectedStatus) => {
     await updateRaidStatus({
       raid_updates: {
         status_key: selectedStatus,
-      }
+      },
     });
     closeModal();
   };

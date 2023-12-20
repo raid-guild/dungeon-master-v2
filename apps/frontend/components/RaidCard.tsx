@@ -15,7 +15,7 @@ import {
   Stack,
   Text,
   Tooltip,
-  useMediaQuery
+  useMediaQuery,
 } from '@raidguild/design-system';
 import { contactToURL, IConsultation, IRaid } from '@raidguild/dm-types';
 import {
@@ -25,7 +25,7 @@ import {
   GUILD_CLASS_ICON,
   PROJECT_TYPE_DISPLAY,
   ProjectTypeKey,
-  RAID_CATEGORY_DISPLAY
+  RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
@@ -67,7 +67,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const raidContact = _.first([
     raid
       ? raid.consultation.consultationsContacts
-      : consultation?.consultationsContacts
+      : consultation?.consultationsContacts,
   ])[0];
 
   let raidDate = _.get(raid, 'createdAt');
@@ -191,7 +191,6 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
               maxWidth='80%'
               paddingY={4}
             >
-    
               <HStack w='full'>
                 <Heading fontSize={20} color='primary.500'>
                   Summary
@@ -272,16 +271,22 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </SimpleGrid>
 
             <HStack spacing={8} py={8}>
-              <LinkExternal href={contactToURL(raidContact)} label='Client' hidden={!contactToURL(raidContact)}/>
+              <LinkExternal
+                href={contactToURL(raidContact)}
+                label='Client'
+                hidden={!contactToURL(raidContact)}
+              />
               <LinkExternal
                 href={`/escrow/${String(_.get(raid, 'id'))}`}
                 label='Escrow'
               />
               <LinkExternal
-                href={`https://blockscan.com/search?q=${_.get(raid, 'lockerHash')}`}
+                href={`https://blockscan.com/search?q=${_.get(
+                  raid,
+                  'lockerHash'
+                )}`}
                 hidden={!_.get(raid, 'lockerHash')}
                 label='Consultation'
-                
               />
             </HStack>
           </Stack>

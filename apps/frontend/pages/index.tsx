@@ -1,4 +1,5 @@
 import {
+  Card,
   Flex,
   Heading,
   Stack,
@@ -8,7 +9,6 @@ import {
   TabPanels,
   Tabs,
   Text,
-  VStack
 } from '@raidguild/design-system';
 import { useDashboardList, useMemberDetail } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
@@ -35,10 +35,6 @@ const Home = () => {
 
   const { data } = useDashboardList({ token, role, address: memberAddress });
 
-  const userRaids =
-    !_.isEmpty(_.get(data, 'myRaids.active')) ||
-    !_.isEmpty(_.get(data, 'myRaids.past'));
-
   if (role === 'user') {
     router.push('/escrow');
   }
@@ -48,10 +44,7 @@ const Home = () => {
       <NextSeo title='Dashboard' />
 
       <SiteLayout isLoading={!data}>
-        <Heading variant='shadow' size='lg'>
-          Raider Dashboard
-        </Heading>
-        <VStack
+        <Stack
           gap={10}
           maxW='1440px'
           w='100%'
@@ -60,45 +53,18 @@ const Home = () => {
         >
           <Flex
             direction={['column', null, null, 'row']}
-            alignItems='flex-start'
             justify='space-between'
             w='100%'
             gap={4}
           >
-            <Tabs
-              colorScheme='primary.500'
-              variant='unstyled'
-              w='full'
-              h='680px'
-            >
-              <Stack
-                spacing={6}
-                w='100%'
-                bgColor='gray.800'
-                p={5}
-                rounded='lg'
-                h='100%'
-              >
-                <TabList fontFamily='texturina'>
-                  <Tab
-                    fontWeight={500}
-                    _selected={{
-                      color: 'primary.500',
-                      borderBottomColor: 'primary.500',
-                      borderBottomWidth: '2px'
-                    }}
-                  >
+            <Card variant='filled' w='full' h='650px' p={2}>
+              <Tabs w='full'>
+                <TabList>
+                  <Tab>
                     <Text fontSize='xl'>Active Raids</Text>
                   </Tab>
 
-                  <Tab
-                    fontWeight={500}
-                    _selected={{
-                      color: 'primary.500',
-                      borderBottomColor: 'primary.500',
-                      borderBottomWidth: '2px'
-                    }}
-                  >
+                  <Tab>
                     <Text fontSize='xl'>Past Raids</Text>
                   </Tab>
                 </TabList>
@@ -115,7 +81,11 @@ const Home = () => {
                             )
                           )
                         ) : (
-                          <Heading size='lg'>No Active Raids</Heading>
+                          <Flex pt={10} justify='center'>
+                            <Heading fontFamily='spaceMono' size='sm'>
+                              No Active Raids
+                            </Heading>
+                          </Flex>
                         )}
                       </Stack>
                     </Stack>
@@ -133,43 +103,25 @@ const Home = () => {
                     </Stack>
                   </TabPanel>
                 </TabPanels>
-              </Stack>
-            </Tabs>
+              </Tabs>
+            </Card>
 
             <MemberDetailsCard
               member={member}
               application={_.get(member, 'application')}
               width='500px'
-              height='680px'
+              height='650px'
+              showHeader
             />
           </Flex>
 
-          <Tabs
-            colorScheme='primary.500'
-            variant='unstyled'
-            w='100%'
-            mt={{ base: '100px', lg: '40px' }}
-          >
-            <Stack spacing={6} bgColor='gray.800' p={5} rounded='lg' h='full'>
-              <TabList fontFamily='texturina'>
-                <Tab
-                  fontWeight={500}
-                  _selected={{
-                    color: 'primary.500',
-                    borderBottomColor: 'primary.500',
-                    borderBottomWidth: '2px'
-                  }}
-                >
+          <Card variant='filled' w='100%' p={2}>
+            <Tabs w='100%'>
+              <TabList>
+                <Tab>
                   <Text fontSize='xl'>Pending Consultations</Text>
                 </Tab>
-                <Tab
-                  fontWeight={500}
-                  _selected={{
-                    color: 'primary.500',
-                    borderBottomColor: 'primary.500',
-                    borderBottomWidth: '2px'
-                  }}
-                >
+                <Tab>
                   <Text fontSize='xl'>Recent Raids</Text>
                 </Tab>
               </TabList>
@@ -189,10 +141,10 @@ const Home = () => {
                         )
                       )
                     ) : (
-                      <Flex justify='center'>
-                        <Text fontSize='xl' my={10}>
+                      <Flex justify='center' pt={10}>
+                        <Heading fontFamily='spaceMono' size='sm'>
                           No pending consultations
-                        </Text>
+                        </Heading>
                       </Flex>
                     )}
                   </Stack>
@@ -205,9 +157,9 @@ const Home = () => {
                   </Stack>
                 </TabPanel>
               </TabPanels>
-            </Stack>
-          </Tabs>
-        </VStack>
+            </Tabs>
+          </Card>
+        </Stack>
       </SiteLayout>
     </>
   );

@@ -23,7 +23,6 @@ import {
   GUILD_CLASS_OPTIONS,
   memberDisplayName,
   membersExceptRaidParty,
-  rolesExceptRequiredRoles,
   SIDEBAR_ACTION_STATES,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
@@ -61,10 +60,6 @@ const RaidPartyButtons = ({
     label: GUILD_CLASS_DISPLAY[role],
   }));
 
-  const localRoles = rolesExceptRequiredRoles(
-    _.keys(GUILD_CLASS_DISPLAY),
-    raid
-  );
   const localForm = useForm({
     mode: 'all',
   });
@@ -177,7 +172,7 @@ const RaidPartyButtons = ({
               localForm={localForm}
               // Note: Below warning suggests this is a workaround to react hook form's intended use
               // "Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?"
-              
+
               onChange={(values) => {
                 setSelectedRoleOptions(values as any); // temp fix
               }}

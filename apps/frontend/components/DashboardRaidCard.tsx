@@ -10,7 +10,7 @@ import {
   RoleBadge,
   Spacer,
   Stack,
-  Tooltip
+  Tooltip,
 } from '@raidguild/design-system';
 import { useToggleInterest } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
@@ -20,7 +20,7 @@ import {
   GUILD_CLASS_ICON,
   PROJECT_TYPE_DISPLAY,
   ProjectTypeKey,
-  RAID_CATEGORY_DISPLAY
+  RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
@@ -29,7 +29,6 @@ import ChakraNextLink from './ChakraNextLink';
 import InfoStack from './InfoStack';
 import LinkExternal from './LinkExternal';
 import RaidStatusBadge from './RaidStatusBadge';
-import { useAccount } from 'wagmi';
 
 type DashboardRaidCardProps = {
   consultation?: IConsultation;
@@ -44,7 +43,7 @@ const DashboardRaidCard = ({
   raid,
   newRaid,
   noAvatar,
-  smallHeader
+  smallHeader,
 }: DashboardRaidCardProps) => {
   const specLink =
     _.chain(consultation?.links)
@@ -84,11 +83,12 @@ const DashboardRaidCard = ({
   const raidContact = _.first([
     raid
       ? raid.consultation.consultationsContacts
-      : consultation?.consultationsContacts
+      : consultation?.consultationsContacts,
   ])[0];
 
   const interestExists = _.find(
-    (raid?.consultation || consultation)?.signalledInterests,{ memberId }
+    (raid?.consultation || consultation)?.signalledInterests,
+    { memberId }
   );
 
   const action = interestExists ? 'delete' : 'insert';
@@ -104,7 +104,7 @@ const DashboardRaidCard = ({
           }
         >
           <Stack spacing={2} width='100%' gap={4}>
-            <Heading color='white' size={smallHeader ? 'sm' : 'md'}>
+            <Heading size={smallHeader ? 'sm' : 'md'}>
               {_.get(raid, 'name', _.get(consultation, 'name'))}
             </Heading>
             <HStack gap={3}>
@@ -126,14 +126,10 @@ const DashboardRaidCard = ({
         >
           <Button
             onClick={() => {
-              toggleSignal({ action, id: interestExists?.id})}}
+              toggleSignal({ action, id: interestExists?.id });
+            }}
             fontFamily='monospace'
-            sx={
-              interestExists
-                ? { backgroundColor: 'purple.500', color: 'white' }
-                : { backgroundColor: 'blackAlpha.300', color: 'purple.500' }
-            }
-            _hover={{ color: 'white', backgroundColor: 'primary.500' }}
+            variant={interestExists ? 'outline' : 'solid'}
           >
             {interestExists ? 'Interested' : 'Signal Interest'}
           </Button>

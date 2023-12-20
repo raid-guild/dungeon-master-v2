@@ -9,34 +9,39 @@ import {
   HStack,
   Icon,
   Link as ChakraLink,
-  RaidGuild,
-  Swords,
+  Stack,
   Text,
   Tooltip,
   useClipboard,
-  VStack} from '@raidguild/design-system';
+  VStack,
+} from '@raidguild/design-system';
 import { IApplication, IMember } from '@raidguild/dm-types';
 import { SKILLS_DISPLAY, truncateAddress } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
-
-import MemberAvatar from './MemberAvatar';
-import ModalWrapper from './ModalWrapper';
-import UpdateMemberForm from './MemberUpdateForm';
 import { useAccount } from 'wagmi';
-import { useSession } from 'next-auth/react';
-import { useMemberDetail } from '@raidguild/dm-hooks';
+
 import { useOverlay } from '../contexts/OverlayContext';
+import MemberAvatar from './MemberAvatar';
+import UpdateMemberForm from './MemberUpdateForm';
+import ModalWrapper from './ModalWrapper';
 
 interface MemberProps {
   member?: IMember;
   application?: IApplication;
   width?: string;
   height?: string;
+  showHeader?: boolean;
 }
 
-const MemberDetailsCard = ({ member, application, width, height }: MemberProps) => {
+const MemberDetailsCard = ({
+  member,
+  application,
+  width,
+  height,
+  showHeader = false,
+}: MemberProps) => {
   const copyDiscord = useClipboard(
     _.get(
       member,
@@ -48,7 +53,6 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
     _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
   );
 
-  
   useEffect(() => {
     copyDiscord.setValue(
       _.get(member, 'contactInfo.discord') ??
@@ -82,7 +86,7 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
         'contactInfo.github',
         _.get(application, 'contactInfo.github')
       ),
-      icon: FaGithub
+      icon: FaGithub,
     },
     _.get(
       member,
@@ -104,7 +108,7 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
         'contactInfo.twitter',
         _.get(application, 'contactInfo.twitter')
       ),
-      icon: FaTwitter
+      icon: FaTwitter,
     },
     _.get(
       member,
@@ -122,7 +126,7 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
         _.get(application, 'contactInfo.discord')
       ),
       icon: FaDiscord,
-      onClick: copyDiscord.onCopy
+      onClick: copyDiscord.onCopy,
     },
     ((_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' &&
       _.get(member, 'ethAddress', _.get(application, 'ethAddress'))) ||
@@ -134,27 +138,21 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
           _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
         ),
       icon: FaEthereum,
-      onClick: copyEth.onCopy
-    }
+      onClick: copyEth.onCopy,
+    },
   ].filter((x) => x);
 
   const skillsByType = (skills, type) =>
     _.map(_.filter(skills, ['skillType.skillType', type]), 'skill');
 
+  const { address: memberAddress } = useAccount();
 
-    const { address: memberAddress } = useAccount();
-    const { data: session } = useSession();
-    const token = _.get(session, 'token');
-  
-    const { data } = useMemberDetail({ memberAddress, token });
-  
-    const localOverlay = useOverlay();
-    const { setModals, closeModals } = localOverlay;
-  
-    const handleShowUpdateModal = () => {
-      setModals({ memberForm: true });
-    };
-  
+  const localOverlay = useOverlay();
+  const { setModals, closeModals } = localOverlay;
+
+  const handleShowUpdateModal = () => {
+    setModals({ memberForm: true });
+  };
 
   const localSkills = _.get(
     member,
@@ -164,12 +162,12 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
   const skillBlocks = [
     _.size(skillsByType(localSkills, 'PRIMARY')) && {
       label: 'Primary Skills',
-      skills: skillsByType(localSkills, 'PRIMARY')
+      skills: skillsByType(localSkills, 'PRIMARY'),
     },
     _.size(skillsByType(localSkills, 'SECONDARY')) && {
       label: 'Secondary Skills',
-      skills: skillsByType(localSkills, 'SECONDARY')
-    }
+      skills: skillsByType(localSkills, 'SECONDARY'),
+    },
   ].filter((x) => x);
 
   return (
@@ -192,60 +190,73 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
           closeModal={closeModals}
         />
       </ModalWrapper>
-      <Card variant='filled' w='100%' h={height ?? 'max-content'}>
+      <Card variant='filled' w='100%' h={height ?? 'max-content'} p={4}>
+        {showHeader && (
+          <>
+            <Flex w='100%' justifyContent='space-between'>
+              <MemberAvatar
+                member={member}
+                size={16}
+                outlineColor='primary.500'
+              />
+              <Stack align='flex-end'>
+                <Heading size='lg'>
+                  {_.get(member, 'name', _.get(application, 'name'))}
+                </Heading>
+                <Tooltip label='Copy ETH address' placement='left' hasArrow>
+                  <HStack
+                    spacing={1}
+                    onClick={copyEth.onCopy}
+                    _hover={{ cursor: 'pointer' }}
+                    _active={{ textColor: 'primary.500' }}
+                  >
+                    <Text fontSize='sm'>
+                      {truncateAddress(
+                        _.get(
+                          member,
+                          'ethAddress',
+                          _.get(application, 'ethAddress')
+                        )
+                      )}
+                    </Text>
+
+                    <Icon as={FaEthereum} />
+                  </HStack>
+                </Tooltip>
+              </Stack>
+            </Flex>
+
+            <HStack w='100%'>
+              <Button fontFamily='monospace' w='full'>
+                {_.get(member, 'isRaiding') === true
+                  ? 'RAIDING'
+                  : 'NOT RAIDING'}
+              </Button>
+              <Button variant='outline' w='30%' onClick={handleShowUpdateModal}>
+                Edit
+              </Button>
+            </HStack>
+          </>
+        )}
         <VStack
           w='100%'
-          p={4}
-          justifyContent='flex-start'
           alignItems='flex-start'
+          justifyContent='flex-start'
+          spacing={6}
         >
-          <MemberAvatar member={member} size={16} outlineColor='primary.500' />
-          <Heading size='lg' color='white' mt={4} variant='shadow'>
-            {_.get(member, 'name', _.get(application, 'name'))}
-          </Heading>
-          <Tooltip label='Copy ETH address' placement='top' hasArrow >
-            <HStack spacing={1} onClick={copyEth.onCopy} _hover={{cursor: 'pointer'}} _active={{textColor: 'primary.500'}}>
-              <Text color='white' fontSize='sm'>
-                {truncateAddress(
-                  _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
-                )}
-              </Text>
-
-              <Icon as={FaEthereum} />
-            </HStack>
-          </Tooltip>
-        </VStack>
-        <HStack w="100%" px={4}>
-          <Button p={5} fontFamily='monospace' w='full'>
-            
-        {_.get(member, 'isRaiding') === true ? 'RAIDING' : 'NOT RAIDING'}
-        </Button>
-        <Button p={5} fontFamily='monospace' bg='primary.600' w="30%" onClick={handleShowUpdateModal}>
-            
-        Edit
-        </Button>
-        </HStack>
-        <VStack p={4} height='100%' w="100%" alignItems='flex-start' justifyContent='flex-start'>
           {_.map(skillBlocks, (block) => (
             <Flex direction='column' flexGrow={1} key={block.label} gap={2}>
               <Heading color='primary.500' size='sm'>
                 {block.label}
               </Heading>
-              <Flex
-                direction='row'
-                maxWidth='100%'
-                wrap='wrap'
-                paddingTop={2}
-                alignItems='flex-start'
-                justifyContent='flex-start'
-              >
+              <Flex maxWidth='100%' wrap='wrap'>
                 {_.map(block.skills, (skill) => (
                   <Badge
-                    marginX={1}
-                    marginBottom={1}
+                    mx={1}
+                    mb={1}
+                    p={1}
+                    px={2}
                     bgColor='gray.700'
-                    px={1.5}
-                    py={1}
                     rounded={4}
                     key={`${block.label}-${_.get(skill, 'skill')}`}
                     color='white'
@@ -259,16 +270,12 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
 
           {_.get(application, 'introduction') && (
             <>
-              <Box py={4} opacity={0.3}>
-            <Divider />
-          </Box>
+              <Divider color='gray.200' />
               <Text size='md'>{_.get(application, 'introduction')}</Text>
             </>
           )}
 
-          <Box py={4} opacity={0.1}>
-            <Divider />
-          </Box>
+          <Divider my={2} />
 
           <Flex gap={4} direction={['column', null, null, 'row']} wrap='wrap'>
             {_.map(memberLinks, (link) => (
@@ -289,8 +296,8 @@ const MemberDetailsCard = ({ member, application, width, height }: MemberProps) 
                   href={_.get(link, 'href')}
                   onClick={_.get(link, 'onClick')}
                 >
-                  <Text fontFamily="texturina">
-                  {_.capitalize(_.get(link, 'label'))}
+                  <Text fontFamily='texturina'>
+                    {_.capitalize(_.get(link, 'label'))}
                   </Text>
                 </Button>
               </Tooltip>

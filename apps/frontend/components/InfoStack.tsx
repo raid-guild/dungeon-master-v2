@@ -5,7 +5,7 @@ import {
   Stack,
   Text,
   Tooltip,
-  useClipboard
+  useClipboard,
 } from '@raidguild/design-system';
 import _, { isString } from 'lodash';
 import { ReactElement } from 'react';
@@ -30,7 +30,7 @@ const InfoStack = ({
   tooltip,
   copy,
   isExternal,
-  truncate= false
+  truncate = false,
 }: InfoStackProps) => {
   const copyText = useClipboard(_.isString(details) ? details : '');
   return (
@@ -47,14 +47,17 @@ const InfoStack = ({
           </Tooltip>
         )}
       </HStack>
-      <Text onClick={() => !link && isString(details)  ?  null : copyText}>
-        {(link && isString(details) ? 
-        <LinkExternal href={link} label={String(details).length > 25 ? 'Link' : details} hidden={!link} />
-        :
-        details
-        
-        ) ?? '-'}
-        </Text>
+      <Text onClick={() => (!link && isString(details) ? null : copyText)}>
+        {(link && isString(details) ? (
+          <LinkExternal
+            href={link}
+            label={String(details).length > 25 ? 'Link' : details}
+            hidden={!link}
+          />
+        ) : (
+          details
+        )) ?? '-'}
+      </Text>
     </Stack>
   );
 };
