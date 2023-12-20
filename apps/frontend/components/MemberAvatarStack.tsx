@@ -1,4 +1,4 @@
-import { HStack, Stack } from '@raidguild/design-system';
+import { Box, Flex } from '@raidguild/design-system';
 import { IMember } from '@raidguild/dm-types';
 import _ from 'lodash';
 
@@ -19,20 +19,36 @@ const MemberAvatarStack = ({
 }: MemberAvatarStackProps) => {
   if (horizontal) {
     return (
-      <HStack spacing={4}>
-        {_.map(members, (member: IMember) => (
-          <MemberAvatar member={member} key={_.get(member, 'id')} />
+      <Flex>
+        {_.map(_.slice(members, 0, max), (member: IMember, i: number) => (
+          <Box
+            as='span'
+            display='inline-block'
+            overflow='hidden'
+            zIndex={max - i}
+            _notFirst={{ ml: '-10px' }}
+          >
+            <MemberAvatar member={member} key={_.get(member, 'id')} />
+          </Box>
         ))}
-      </HStack>
+      </Flex>
     );
   }
 
   return (
-    <Stack align='center' spacing={4}>
-      {_.map(members, (member: IMember) => (
-        <MemberAvatar member={member} key={_.get(member, 'id')} />
+    <Flex direction='column' align='center'>
+      {_.map(_.slice(members, 0, max), (member: IMember, i: number) => (
+        <Box
+          as='span'
+          display='inline-block'
+          overflow='hidden'
+          zIndex={max - i}
+          _notFirst={{ mt: '-10px' }}
+        >
+          <MemberAvatar member={member} key={_.get(member, 'id')} size={10} />
+        </Box>
       ))}
-    </Stack>
+    </Flex>
   );
 };
 
