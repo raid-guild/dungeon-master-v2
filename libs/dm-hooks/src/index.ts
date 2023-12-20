@@ -1,5 +1,4 @@
 export { default as useAccounting } from './useAccounting';
-export {default as useAllSignals}  from './useAllSignals';
 export { default as useApplicationDetail } from './useApplicationDetail';
 export {
   default as useApplicationList,
@@ -40,5 +39,6 @@ export {
   useUpdateRolesRequired,
 } from './useRolesRequiredUpdate';
 export { default as useSearchResults } from './useSearchResults';
+export {default as useToggleInterest} from './useToggleInterest';
 export { default as useUpdateCreate } from './useUpdateCreate';
 export { default as useUpsertconsultationsContacts } from './useUpsertconsultationsContacts';

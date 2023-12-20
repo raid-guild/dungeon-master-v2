@@ -10,6 +10,12 @@ const DASHBOARD_RAID_FRAGMENT = gql`
     cleric {
       name
     }
+    signalled_interests{
+            id
+            raid_id
+            consultation_id
+            member_id
+    }
     raid_status {
       raid_status
     }

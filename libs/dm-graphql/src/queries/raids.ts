@@ -71,6 +71,12 @@ export const RAID_DETAIL_QUERY = gql`
     raids_by_pk(id: $id) {
       id
       name
+      signalled_interests{
+            id
+            raid_id
+            consultation_id
+            member_id
+    }
       raid_status {
         raid_status
       }
@@ -98,6 +104,12 @@ export const RAID_DETAIL_QUERY = gql`
           link
           type
         }
+        signalled_interests {
+        id
+        member_id
+        raid_id
+        consultation_id
+      }
         budget_option {
           budget_option
         }

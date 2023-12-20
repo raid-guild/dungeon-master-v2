@@ -37,6 +37,12 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
         type
       }
     }
+    signalled_interests{
+            id
+            raid_id
+            consultation_id
+            member_id
+    }
     created_at
     updated_at
     desired_delivery_date

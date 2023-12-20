@@ -1,5 +1,6 @@
 import { IContact } from './contacts';
 import { ILink } from './misc';
+import { ISignalInterest } from './signalInterest';
 
 export interface IConsultation {
   id: string;
@@ -44,6 +45,8 @@ export interface IConsultation {
   feedback: string;
   rating: string;
 
+  signalledInterests: 
+    ISignalInterest[];
   // TIMELINE - ISO STRINGS
   createdAt?: string;
   updatedAt?: string;
@@ -71,3 +74,5 @@ export interface IConsultationUpdate {
       additional_info?: string;
   }
 }
+
+

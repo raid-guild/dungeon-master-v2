@@ -71,6 +71,10 @@ update_permissions:
       check: {}
     comment: ""
 delete_permissions:
+  - role: cohort
+    permission:
+      filter: {}
+    comment: ""
   - role: member
     permission:
       filter: {}
