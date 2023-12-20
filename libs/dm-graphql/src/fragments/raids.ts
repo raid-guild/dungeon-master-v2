@@ -44,6 +44,14 @@ export const RAID_DETAIL_FRAGMENT = gql`
       raid_id
       consultation_id
       member_id
+      member {
+        id
+        name
+        eth_address
+        contact_info {
+          ...ContactInfos
+        }
+      }
     }
     consultation {
       ...ConsultationDetail

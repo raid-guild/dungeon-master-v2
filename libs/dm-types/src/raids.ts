@@ -5,6 +5,7 @@ import { IMember } from './members';
 import { ILink } from './misc';
 import { IPortfolio } from './portfolios';
 import { IStatusUpdate } from './statusUpdates';
+import { ISignalInterest } from './signalInterest';
 
 export type raidSortKeys =
   | 'oldestComment'
@@ -49,7 +50,7 @@ export interface IRaid {
   createdAt: string;
   updatedAt: string;
 
-
+  signalledInterests?: ISignalInterest[];
   // LINKS
   links: ILink[];
   portfolios?: IPortfolio[];

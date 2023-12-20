@@ -11,6 +11,7 @@ mutation InsertSignalledInterestOne($interest_data: signalled_interest_insert_in
     id
     consultation_id
     member_id
+    raid_id
   }
 }`;
 
@@ -18,6 +19,9 @@ export const DELETE_INTEREST_SIGNAL = gql`
   mutation DeleteSignalledInterest($id: uuid!) {
     delete_signalled_interest_by_pk(id: $id) {
         id
+        consultation_id
+        member_id
+        raid_id
     }
 }
 `;

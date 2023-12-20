@@ -29,6 +29,7 @@ import ChakraNextLink from './ChakraNextLink';
 import InfoStack from './InfoStack';
 import LinkExternal from './LinkExternal';
 import RaidStatusBadge from './RaidStatusBadge';
+import { useAccount } from 'wagmi';
 
 type DashboardRaidCardProps = {
   consultation?: IConsultation;
@@ -64,7 +65,6 @@ const DashboardRaidCard = ({
     ];
 
   const { data: session } = useSession();
-
   const { token } = session;
   const memberId = session?.user?.id;
 
@@ -131,7 +131,7 @@ const DashboardRaidCard = ({
             sx={
               interestExists
                 ? { backgroundColor: 'purple.500', color: 'white' }
-                : { backgroundColor: 'whiteAlpha.100', color: 'purple.500' }
+                : { backgroundColor: 'blackAlpha.300', color: 'purple.500' }
             }
             _hover={{ color: 'white', backgroundColor: 'primary.500' }}
           >

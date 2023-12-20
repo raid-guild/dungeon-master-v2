@@ -1,21 +1,17 @@
 /* eslint-disable no-nested-ternary */
 import {
-  Button,
   HStack,
   Icon,
   Stack,
   Text,
   Tooltip,
-  useClipboard,
-  VStack} from '@raidguild/design-system';
-import { truncateAddress } from '@raidguild/dm-utils';
+  useClipboard
+} from '@raidguild/design-system';
 import _, { isString } from 'lodash';
 import { ReactElement } from 'react';
-import { FaCopy, FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
+import { FaInfoCircle } from 'react-icons/fa';
 
-import Link from './ChakraNextLink';
 import LinkExternal from './LinkExternal';
-import { useRouter } from 'next/router';
 
 interface InfoStackProps {
   label: string;
@@ -37,7 +33,6 @@ const InfoStack = ({
   truncate= false
 }: InfoStackProps) => {
   const copyText = useClipboard(_.isString(details) ? details : '');
-  const router = useRouter()
   return (
     <Stack justify='center' minWidth='0.5' gap={0.5}>
       <HStack>
@@ -52,7 +47,7 @@ const InfoStack = ({
           </Tooltip>
         )}
       </HStack>
-      <Text>
+      <Text onClick={() => !link && isString(details)  ?  null : copyText}>
         {(link && isString(details) ? 
         <LinkExternal href={link} label={String(details).length > 25 ? 'Link' : details} hidden={!link} />
         :

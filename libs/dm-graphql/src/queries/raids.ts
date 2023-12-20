@@ -3,7 +3,7 @@ import { gql } from 'graphql-request';
 import {
   CONTACT_INFOS_FRAGMENT,
   RAID_DETAIL_FRAGMENT,
-  RAID_SLIM_DETAIL_FRAGMENT
+  RAID_SLIM_DETAIL_FRAGMENT,
 } from '../fragments';
 
 export const RAIDING_RAIDS_BY_LAST_UPDATE = gql`
@@ -71,12 +71,23 @@ export const RAID_DETAIL_QUERY = gql`
     raids_by_pk(id: $id) {
       id
       name
-      signalled_interests{
-            id
-            raid_id
-            consultation_id
-            member_id
-    }
+      signalled_interests {
+        id
+        member_id
+        member {
+          id
+          name
+          eth_address
+          guild_class {
+            guild_class
+          }
+          contact_info {
+            ...ContactInfos
+          }
+        }
+        raid_id
+        consultation_id
+      }
       raid_status {
         raid_status
       }
@@ -105,11 +116,22 @@ export const RAID_DETAIL_QUERY = gql`
           type
         }
         signalled_interests {
-        id
-        member_id
-        raid_id
-        consultation_id
-      }
+          id
+          member_id
+          member {
+            id
+            name
+            eth_address
+            guild_class {
+              guild_class
+            }
+            contact_info {
+              ...ContactInfos
+            }
+          }
+          raid_id
+          consultation_id
+        }
         budget_option {
           budget_option
         }
@@ -155,8 +177,8 @@ export const RAID_DETAIL_QUERY = gql`
           name
           id
           contact_info {
-        ...ContactInfos
-      }
+            ...ContactInfos
+          }
           guild_class {
             guild_class
           }
