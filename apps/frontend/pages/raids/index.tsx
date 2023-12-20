@@ -106,7 +106,6 @@ const RaidList = () => {
           width='100%'
           name='raidStatus'
           value={raidStatusFilter}
-          defaultValue='Active'
           onChange={(e) => {
             handleRaidStatusFilterChange(e.target.value);
           }}
@@ -134,7 +133,6 @@ const RaidList = () => {
           name='raidRoles'
           id='raidRoles'
           value={raidRolesFilter}
-          defaultValue='Show All'
           onChange={(e) => {
             handleRaidRolesFilterChange(e.target.value);
           }}
@@ -161,7 +159,6 @@ const RaidList = () => {
           width='100%'
           name='raidSort'
           value={raidSort}
-          defaultValue='Name'
           onChange={(e) => {
             handleRaidSortFilterChange(e.target.value as raidSortKeys);
           }}
