@@ -31,9 +31,9 @@ const InterestedMembers = ({ members, raid }: { members: IMember[], raid: Partia
                 <VStack w='full'>
                    {members.length  && members.map((member) => (
                         <React.Fragment key={member.id}>
-                            <HStack w='full'>
+                            <HStack w='full' gap={2}>
                                 <MemberAvatar member={member} />
-                                <Stack justifyContent='flex-start' alignItems='center' gap={1}>
+                                <Stack justifyContent='flex-start' alignItems='flex-start' gap={0.5}>
                                     <Text>
                                         {member.name}
                                     </Text>
