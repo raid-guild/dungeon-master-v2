@@ -8,7 +8,7 @@ import { useEnsAvatar, useEnsName } from 'wagmi';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
-  size?: number;
+  size?: 'sm' | 'md' | 'lg' | number;
   outlineColor?: string;
 };
 
@@ -67,8 +67,9 @@ const MemberAvatar = ({
       <Avatar
         src={finalAvatar || blockiesAvatar}
         boxSize={size}
-        ringColor={outlineColor ?? 'none'}
-        ringOffset={2}
+        ringInset='inset'
+        ringColor='blue' // {outlineColor ?? 'none'}
+        // ringOffset={2}
       />
     </Tooltip>
   );

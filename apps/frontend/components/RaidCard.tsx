@@ -116,6 +116,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                 fontSize='2xl'
                 transition='all ease-in-out .25s'
                 variant='shadow'
+                noOfLines={1}
                 _hover={{ cursor: 'pointer', color: 'red.100' }}
               >
                 {_.get(raid, 'name', _.get(consultation, 'name'))}
@@ -155,7 +156,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                   <Heading size='sm' color='white' variant='shadow'>
                     Hunter
                   </Heading>
-                  <MemberAvatar member={raidHunter} />
+                  <MemberAvatar member={raidHunter} size={10} />
                 </>
               )}
 
@@ -175,7 +176,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                     <Heading size='sm' color='white' variant='shadow'>
                       Cleric
                     </Heading>
-                    <MemberAvatar member={raidCleric} />
+                    <MemberAvatar member={raidCleric} size={10} />
                   </>
                 ))}
             </HStack>
@@ -297,7 +298,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                 Raid Party
               </Heading>
 
-              <MemberAvatarStack members={raidParty} />
+              <MemberAvatarStack members={raidParty} size={12} />
             </Stack>
           )}
         </Flex>
@@ -308,7 +309,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
               Raid Party
             </Heading>
 
-            <MemberAvatarStack members={raidParty} horizontal />
+            <MemberAvatarStack members={raidParty} size={12} horizontal />
           </Stack>
         )}
         {latestUpdate && (

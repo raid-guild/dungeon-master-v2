@@ -6,7 +6,7 @@ import MemberAvatar from './MemberAvatar';
 
 type MemberAvatarStackProps = {
   members: IMember[];
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | number;
   max?: number;
   horizontal?: boolean;
 };
@@ -28,7 +28,12 @@ const MemberAvatarStack = ({
             zIndex={max - i}
             _notFirst={{ ml: '-10px' }}
           >
-            <MemberAvatar member={member} key={_.get(member, 'id')} />
+            <MemberAvatar
+              member={member}
+              outlineColor='gray.300'
+              size={size}
+              key={_.get(member, 'id')}
+            />
           </Box>
         ))}
       </Flex>
@@ -45,7 +50,12 @@ const MemberAvatarStack = ({
           zIndex={max - i}
           _notFirst={{ mt: '-10px' }}
         >
-          <MemberAvatar member={member} key={_.get(member, 'id')} size={10} />
+          <MemberAvatar
+            member={member}
+            size={size}
+            key={_.get(member, 'id')}
+            outlineColor='primary.500'
+          />
         </Box>
       ))}
     </Flex>
