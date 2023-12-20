@@ -14,9 +14,16 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
+const customGnosis = {
+  ...gnosis,
+  hasIcon: true,
+  iconUrl: '/icons/gnosis-light.png',
+  iconBackground: 'none',
+};
+
 const chainsList: { [key: number]: Chain } = {
   1: mainnet,
-  100: gnosis,
+  100: customGnosis,
   137: polygon,
   42151: arbitrum,
   10: optimism,
