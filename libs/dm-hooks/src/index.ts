@@ -39,6 +39,6 @@ export {
   useUpdateRolesRequired,
 } from './useRolesRequiredUpdate';
 export { default as useSearchResults } from './useSearchResults';
-export {default as useToggleInterest} from './useToggleInterest';
+export { default as useToggleInterest } from './useToggleInterest';
 export { default as useUpdateCreate } from './useUpdateCreate';
-export { default as useUpsertconsultationsContacts } from './useUpsertconsultationsContacts';
+export { default as useUpsertConsultationsContacts } from './useUpsertConsultationsContacts';

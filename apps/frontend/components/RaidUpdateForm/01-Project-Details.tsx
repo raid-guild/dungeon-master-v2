@@ -8,16 +8,15 @@ import {
   forwardRef,
   Input,
   Select,
-  Stack
+  Stack,
 } from '@raidguild/design-system';
 import { useRaidUpdate } from '@raidguild/dm-hooks';
 import { IRaid } from '@raidguild/dm-types';
 import {
   BUDGET_DISPLAY_OPTIONS,
   DELIVERY_PRIORITIES_DISPLAY_OPTIONS,
-  RAID_CATEGORY_OPTIONS
+  RAID_CATEGORY_OPTIONS,
 } from '@raidguild/dm-utils';
-import Inspect from 'inspx';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
@@ -31,7 +30,7 @@ interface ProjectDetailsUpdateFormProps {
 }
 const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   closeModal,
-  raid
+  raid,
 }: ProjectDetailsUpdateFormProps) => {
   const [sending, setSending] = useState(false);
 
@@ -51,18 +50,18 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   const { mutateAsync: updateRaidStatus } = useRaidUpdate({
     token,
     raidId: raid.id,
-    consultationId: raid.consultation.id
+    consultationId: raid.consultation.id,
   });
 
   const localForm = useForm({
-    mode: 'all'
+    mode: 'all',
   });
 
   const {
     handleSubmit,
     setValue,
     control,
-    formState: { isSubmitting } // will add errors in once we add validation
+    formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
 
   async function onSubmit(values) {
@@ -74,7 +73,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
           values.raidCategory.value ?? raid.raidCategory.raidCategory,
         status_key: values.status ?? raid.status,
         start_date: values.startDate ?? startDate,
-        end_date: values.endDate ?? endDate
+        end_date: values.endDate ?? endDate,
       },
       consultation_updates: {
         desired_delivery_date:
@@ -84,8 +83,9 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
           values.raidBudget.value ??
           raid['consultation'].budgetOption.budgetOption,
         delivery_priorities_key:
-          values.deliveryPriority.value ?? raid['consultation'].deliveryPriority
-      }
+          values.deliveryPriority.value ??
+          raid['consultation'].deliveryPriority,
+      },
     });
     closeModal();
     setSending(false);
@@ -207,25 +207,23 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
           localForm={localForm}
         />
 
-        
-          <FormControl>
-            <FormLabel color='raid'>Delivery Priority</FormLabel>
-            <Controller
-              name='deliveryPriority'
-              defaultValue={selectedDeliveryPriority}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...field}
-                  name='deliveryPriority'
-                  options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
-                  localForm={localForm}
-                />
-              )}
-            />
-          </FormControl>
-        
+        <FormControl>
+          <FormLabel color='raid'>Delivery Priority</FormLabel>
+          <Controller
+            name='deliveryPriority'
+            defaultValue={selectedDeliveryPriority}
+            control={control}
+            render={({ field }) => (
+              <Select
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...field}
+                name='deliveryPriority'
+                options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
+                localForm={localForm}
+              />
+            )}
+          />
+        </FormControl>
       </Stack>
 
       <Button

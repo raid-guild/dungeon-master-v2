@@ -1,5 +1,5 @@
 import { Box, Button, Input, Stack } from '@raidguild/design-system';
-import { useContactCreate, useContactUpdate } from '@raidguild/dm-hooks'; // Import useContactCreate
+import { useContactCreate, useContactUpdate } from '@raidguild/dm-hooks';
 import { IContact } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';

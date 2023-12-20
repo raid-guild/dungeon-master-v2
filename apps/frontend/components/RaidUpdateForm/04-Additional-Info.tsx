@@ -15,7 +15,7 @@ interface AdditionalInfoUpdateProps {
 const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
   raidId,
   closeModal,
-  raid
+  raid,
 }: AdditionalInfoUpdateProps) => {
   const { escrowIndex, lockerHash, invoiceAddress, id } = raid;
 
@@ -23,18 +23,17 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
   const token = _.get(session, 'token');
   const { mutateAsync: updateAdditionalRaidDetails } = useRaidUpdate({
     token,
-    raidId: id
+    raidId: id,
   });
 
   const [sending, setSending] = useState(false);
 
   const localForm = useForm({
-    mode: 'all'
+    mode: 'all',
   });
   const {
     handleSubmit,
-    control,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
   } = localForm;
 
   function onSubmit(values) {
@@ -43,8 +42,8 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
       raid_updates: {
         escrow_index: values.escrowIndex ?? escrowIndex,
         locker_hash: values.lockerHash ?? lockerHash,
-        invoice_address: values.invoiceAddress ?? invoiceAddress
-      }
+        invoice_address: values.invoiceAddress ?? invoiceAddress,
+      },
     });
     closeModal();
     setSending(false);

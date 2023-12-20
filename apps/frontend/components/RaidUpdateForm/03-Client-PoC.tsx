@@ -9,11 +9,11 @@ import {
   HStack,
   Select,
   Text,
-  VStack
+  VStack,
 } from '@raidguild/design-system';
 import {
   useContacts,
-  useUpsertconsultationsContacts
+  useUpsertConsultationsContacts,
 } from '@raidguild/dm-hooks';
 import { IContact, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
@@ -35,11 +35,11 @@ interface ClientPocUpdateProps {
 const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   raidId,
   closeModal,
-  raid
+  raid,
 }: ClientPocUpdateProps) => {
   const contactUpdateOverlay = useOverlay();
 
-  const { setModals, closeModals } = contactUpdateOverlay;
+  const { setModals } = contactUpdateOverlay;
 
   const handleContactUpdateModal = () => {
     setModals({ contactUpdate: true, raidForm: true });
@@ -48,8 +48,8 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const { mutateAsync: upsertContacts } = useUpsertconsultationsContacts({
-    token
+  const { mutateAsync: upsertContacts } = useUpsertConsultationsContacts({
+    token,
   });
   const { data, status } = useContacts({ token });
   const [sending, setSending] = useState(false);
@@ -63,20 +63,20 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     clientPoCs,
     ({ contact }: { contact: IContact }) => ({
       label: `${contact?.name} - ${contact?.contactInfo?.email}`,
-      value: contact?.id
+      value: contact?.id,
     })
   );
 
   const POC_DISPLAY_OPTIONS = _.map(contacts, (contact) => ({
     label: `${contact?.name} - ${contact?.contactInfo?.email ?? 'N/A'}`,
-    value: contact.id
+    value: contact.id,
   }));
 
   const onSubmit = (values) => {
     setSending(true);
     const updates = _.map(values.consultationsContacts, (contact) => ({
       contact_id: contact.value,
-      consultation_id: raid.consultation.id
+      consultation_id: raid.consultation.id,
     }));
 
     upsertContacts({ updates });
@@ -87,18 +87,16 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
   const [editContact, setEditContact] = useState<IContact>(null);
 
-  const localform = useForm({
-    mode: 'all'
+  const localForm = useForm({
+    mode: 'all',
   });
 
   const {
     handleSubmit,
-    getValues,
-    setValue,
     control,
     watch,
-    formState: { isSubmitting } // will add errors in once we add validation
-  } = localform;
+    formState: { isSubmitting }, // will add errors in once we add validation
+  } = localForm;
 
   const selectedPoCs = watch('consultationsContacts');
 
@@ -120,14 +118,14 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                   isMulti
                   name='consultationsContacts'
                   options={POC_DISPLAY_OPTIONS}
-                  localForm={localform}
+                  localForm={localForm}
                 />
               )}
             />
           </FormControl>
           <HStack justify='space-between' align='center' w='full'>
             <Button
-              w="full"
+              w='full'
               variant='link'
               onClick={() => {
                 setEditContact(null);
@@ -174,7 +172,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
         {_.compact(
           selectedPoCs?.map((contact, index) => {
             const foundContact: IContact = _.find(contacts, {
-              id: contact.value
+              id: contact.value,
             });
             return (
               foundContact && (
@@ -189,7 +187,6 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                   textAlign='left'
                   border='1px solid #FFFFFF15'
                   borderRadius={12}
-                  
                 >
                   <HStack justify='space-between' align='center' w='full'>
                     <Heading
@@ -214,7 +211,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                       Edit
                     </Button>
                   </HStack>
-                  <HStack gap={6} >
+                  <HStack gap={6}>
                     <VStack
                       gap={1}
                       justifyContent='flex-start'
