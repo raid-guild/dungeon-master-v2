@@ -9,7 +9,18 @@ const statusColorScheme = {
 };
 
 const RaidStatusBadge = ({ status }: { status: any }) => (
-  <Badge colorScheme={statusColorScheme[status]}>{status}</Badge>
+  <Badge
+    colorScheme={statusColorScheme[status]}
+    px={1.5}
+    py={1}
+    fontFamily='texturina'
+    textTransform='initial'
+    fill='transparent'
+    border='1px'
+    borderRadius='4px'
+  >
+    {status}
+  </Badge>
 );
 
 export default RaidStatusBadge;

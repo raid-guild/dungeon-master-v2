@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import { isAddress } from 'viem';
 
-import { altClient, client, thirdClient } from './client';
+import { client, v1Client } from './client';
 import { INVOICE_QUERY } from './queries';
 
 // also fetch the old subgraph for now
@@ -16,10 +16,8 @@ export const getInvoice = async (chainId: number, address: string) => {
       client(chainId).request(INVOICE_QUERY, {
         address: _.toLower(address),
       }),
-      altClient.request(INVOICE_QUERY, {
-        address: _.toLower(address),
-      }),
-      thirdClient.request(INVOICE_QUERY, {
+      // * temporarily index crashed
+      v1Client.request(INVOICE_QUERY, {
         address: _.toLower(address),
       }),
     ];

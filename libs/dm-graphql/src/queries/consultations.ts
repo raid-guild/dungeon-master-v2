@@ -31,6 +31,11 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     name
     description
     link
+    links {
+      id
+      link
+      type
+    }
     available_project_spec {
       available_project_spec
     }
@@ -84,7 +89,9 @@ export const CONSULTATION_LIST_QUERY = gql`
         consultation_status
       }
       consultations_contacts {
+        
         contact {
+          id
           name
           bio
           contact_info {
@@ -99,6 +106,11 @@ export const CONSULTATION_LIST_QUERY = gql`
       name
       description
       link
+      links {
+        id
+        link
+        type
+    }
       available_project_spec {
         available_project_spec
       }
@@ -130,3 +142,4 @@ export const CONSULTATION_DETAIL_QUERY = gql`
   }
   ${CONSULTATION_DETAIL_WITH_RAID_FRAGMENT}
 `;
+

@@ -24,10 +24,11 @@
         ]
       }
     ],
+    // prefer ts rules
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
     "no-unused-vars": "off",
     "no-use-before-define": "off",
-    "@typescript-eslint/no-unused-vars": ["warn"],
-    "@typescript-eslint/no-explicit-any": "warn",
     // import
     "import/no-extraneous-dependencies": "off",
     "import/extensions": [

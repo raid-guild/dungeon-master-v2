@@ -12,7 +12,7 @@ import {
   Heading,
   Stack,
   Text,
-  VStack,
+  VStack
 } from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
@@ -25,10 +25,11 @@ import {
   ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
   truncateAddress,
+  truncateEmail,
 } from '@raidguild/dm-utils';
 import { format } from 'date-fns';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import InfoStack from './InfoStack';
 
@@ -41,6 +42,8 @@ const Description = ({ description }: { description: string }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const handleToggleDesc = () => setShowFullDescription(!showFullDescription);
 
+  
+  
   return (
     <VStack align='flex-start'>
       <Collapse startingHeight={25} in={showFullDescription}>
@@ -101,30 +104,49 @@ const Bio = ({ bio }: { bio: string }) => {
 };
 
 const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
+
+  const consultationContacts = _.map(consultation?.consultationsContacts, (contact, index) => {
+    const name = _.get(contact, 'contact.name');
+    const email = _.get(contact, 'contact.contactInfo.email');
+    const discord = _.get(contact, 'contact.contactInfo.discord');
+    const telegram = _.get(contact, 'contact.contactInfo.telegram');
+    const bio = _.get(contact, 'contact.bio');
+
+    return {
+      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 0 ? ` #${index + 1}` : ''}`,
+      items: _.compact([
+        name && { label: 'Name', details: `${name}` },
+        email && { label: 'Email', details: `${truncateEmail(email)}`, link: `mailto:${email}` },
+        discord && { label: 'Discord', details: `${discord}` },
+        telegram && { label: 'Telegram', details: `${telegram}`},
+        bio && { label: 'Bio', details: bio }
+      ])
+    };
+});
+
+
+
+
   const keyLinkItems = [
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.
     // Logic below should be simplified if it ever becomes a required field.
-    consultation?.link
-      ? {
-          label: 'Project Specs',
-          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            (_.get(
-              consultation,
-              'availableProjectSpec.availableProjectSpec'
-            ) as AvailableSpecsKey) || 'YES'
-          ),
-          link: consultation?.link,
-        }
-      : {
-          label: 'Project Specs',
-          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            (_.get(
-              consultation,
-              'availableProjectSpec.availableProjectSpec'
-            ) as AvailableSpecsKey) || 'NONE'
-          ),
-        },
+
+  ...(  consultation?.links?.length > 0
+  ? consultation.links.map(linkItem => ({
+      label: _.startCase(_.toLower(linkItem.type.toString())),
+      details: linkItem.link,
+      link: linkItem.link
+    })).filter((x) => x.link)
+  : [
+      {
+        label: 'Project Specs',
+        details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+          _.get(consultation, 'availableProjectSpec.availableProjectSpec', 'YES') as AvailableSpecsKey
+        ),
+        link: consultation?.link || undefined
+      }
+    ]), 
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
       details:
@@ -135,7 +157,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         _.get(consultation, 'consultationHash') !== 'cancelled' &&
         `https://etherscan.io/tx/${_.get(consultation, 'consultationHash')}`,
     },
-  ].filter((x) => x);
+  ].filter((x) => x)
 
   const panels = [
     {
@@ -201,73 +223,23 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
       title: 'Key Links',
       items: keyLinkItems,
     },
-    {
-      title: 'Client Point of Contact',
-      items: [
-        {
-          label: 'Name',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.name',
-            '-'
-          ),
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.email'
-        ) && {
-          label: 'Email',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.email'
-          ),
-          link: `mailto:${_.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.email'
-          )}`,
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.discord'
-        ) && {
-          label: 'Discord',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.discord'
-          ),
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.telegram'
-        ) && {
-          label: 'Telegram',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.telegram'
-          ),
-          link: `https://t.me/${_.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.telegram'
-          )}`,
-        },
-      ].filter((x) => x),
-      extra: (
-        <Bio
-          bio={_.get(consultation, 'consultationsContacts[0].contact.bio')}
-        />
-      ),
-    },
+    
+      ...consultationContacts
+    ,
+     
     {
       title: 'Additional Info',
       items: [
-        (_.get(raid, 'airtableId') ||
-          _.get(raid, 'v1Id') ||
-          _.get(raid, 'id')) && {
+        (_.get(raid, 'id')) ||
+          _.get(raid, 'airtableId') ||
+          _.get(raid, 'v1Id')
+           && {
           label: 'Raid ID',
           details:
+          _.get(raid, 'id') ||
             _.get(raid, 'airtableId') ||
-            _.get(raid, 'v1Id') ||
-            _.get(raid, 'id'),
+            _.get(raid, 'v1Id')
+            ,
           copy: true,
         },
         _.get(raid, 'escrowIndex') && {
@@ -277,18 +249,13 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         _.get(raid, 'lockerHash') && {
           label: 'Locker Hash',
           details: _.get(raid, 'lockerHash'),
+          link: `https://blockscan.com/search?q=${_.get(raid, 'lockerHash')}`,
         },
-        _.get(raid, 'invoiceAddress')
-          ? {
-              label: 'Smart Escrow',
-              details: truncateAddress(_.get(raid, 'invoiceAddress')),
-              link: `/escrow/${raid.id}`,
-            }
-          : {
-              label: 'Smart Escrow',
-              details: 'Create escrow',
-              link: `/escrow/new?raidId=${raid.id}`,
-            },
+        _.get(raid, 'invoiceAddress') && {
+          label: 'Smart Escrow',
+          details: truncateAddress(_.get(raid, 'invoiceAddress')),
+          link: `/escrow/${raid.id}`,
+        },
       ].filter((x) => x),
     },
   ];
@@ -324,6 +291,8 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
                     autoFlow='wrap'
                   >
                     {_.map(_.get(panel, 'items'), (item) => (
+
+
                       <InfoStack
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}

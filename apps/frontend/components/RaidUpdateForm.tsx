@@ -1,82 +1,53 @@
 import {
   Box,
-  Button,
-  DatePicker,
-  Flex,
-  FormControl,
-  FormLabel,
-  forwardRef,
-  Input,
-  Select,
-  Stack,
+  Tab,
+  // TabIndicator,  //We will need to export this chakra component from @raidguild/design-system through a design system upgrade
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs
 } from '@raidguild/design-system';
-import { useRaidUpdate } from '@raidguild/dm-hooks';
 import { IRaid } from '@raidguild/dm-types';
-import { RAID_CATEGORY_OPTIONS } from '@raidguild/dm-utils';
-import { add } from 'date-fns';
-import _ from 'lodash';
-import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React from 'react';
+
+import ProjectDetailsUpdateForm from './RaidUpdateForm/01-Project-Details';
+import KeyLinksUpdateForm from './RaidUpdateForm/02-Key-Links';
+import ClientPoCUpdateForm from './RaidUpdateForm/03-Client-PoC';
+import AdditionalInfoUpdateForm from './RaidUpdateForm/04-Additional-Info';
+import PortfolioUpdateForm from './RaidUpdateForm/05-Portfolio';
+
+const raidTabs = [
+  'Project Details',
+  'Key Links',
+  'Client PoC',
+  'Additional Info',
+  'Portfolio'
+];
 
 interface RaidUpdateFormProps {
   raidId?: string;
   closeModal?: () => void;
   raid: Partial<IRaid>;
+  // consultation:  Partial<IConsultation>;
 }
-const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
-  const [sending, setSending] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(
-    raid?.startDate ? new Date(raid?.startDate) : new Date()
-  );
-  const [endDate, setEndDate] = useState<Date | null>(
-    raid?.endDate ? new Date(raid?.endDate) : add(new Date(), { weeks: 1 })
-  );
-  const { data: session } = useSession();
-  const token = _.get(session, 'token');
-  const { mutateAsync: updateRaidStatus } = useRaidUpdate({ token, raidId });
 
-  const localForm = useForm({
-    mode: 'all',
-  });
-  const {
-    handleSubmit,
-    setValue,
-    control,
-    formState: { isSubmitting }, // will add errors in once we add validation
-  } = localForm;
+const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
+  raidId,
+  closeModal,
+  raid
+}: RaidUpdateFormProps) => (
+  <Box as='section'>
+    <Tabs colorScheme='primary.500' variant='unstyled'>
+      <TabList fontFamily="texturina" >
+        {raidTabs.map((tab) => (
+          <Tab key={tab} fontWeight={500}  _selected={{color:'primary.500', borderBottomColor: 'primary.500', borderBottomWidth: '2px'}}>{tab}</Tab>
+        ))}
+      </TabList>
 
-  async function onSubmit(values) {
-    setSending(true);
-    await updateRaidStatus({
-      raid_updates: {
-        name: values.raidName ?? raid.raidName,
-        category_key:
-          values.raidCategory.value ?? raid.raidCategory.raidCategory,
-        status_key: raid.status ?? raid.status,
-        start_date: values.startDate ?? raid.startDate,
-        end_date: values.endDate ?? raid.endDate,
-      },
-    });
-    closeModal();
-    setSending(false);
-  }
+      {/* <TabIndicator mt='-1.5px' height='2px' bg='primary.500' borderRadius='1px' /> */}
 
-  const selectedCategory = RAID_CATEGORY_OPTIONS.find(
-    (v) => v.value === raid?.raidCategory.raidCategory
-  );
-
-  const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
-    <Button onClick={onClick} ref={ref} variant='outline'>
-      {value}
-    </Button>
-  ));
-
-  return (
-    <Box as='section'>
       <Box
         bg='gray.800'
-        shadow='lg'
         maxW={{ base: 'xl', md: '3xl' }}
         marginX='auto'
         paddingX={{ base: '6', md: '8' }}
@@ -85,103 +56,28 @@ const RaidUpdateForm = ({ raidId, closeModal, raid }: RaidUpdateFormProps) => {
       >
         <Box maxW='md' marginX='auto'>
           <Box marginY='6'>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack spacing={4}>
-                <Input
-                  name='raidName'
-                  defaultValue={raid?.name ? raid?.name : ''}
-                  aria-label='Enter the Raid name'
-                  placeholder='Enter the Raid name'
-                  rounded='base'
-                  label='Raid Name'
-                  localForm={localForm}
-                />
-                <FormControl>
-                  <FormLabel color='raid'>Raid Category</FormLabel>
-                  <Controller
-                    name='raidCategory'
-                    defaultValue={selectedCategory}
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        // eslint-disable-next-line react/jsx-props-no-spreading
-                        {...field}
-                        name='raidCategory'
-                        options={RAID_CATEGORY_OPTIONS}
-                        localForm={localForm}
-                      />
-                    )}
-                  />
-                </FormControl>
-                <Flex
-                  direction={{ base: 'column', lg: 'row' }}
-                  alignItems='center'
-                  justifyContent='space-between'
-                >
-                  <DatePicker
-                    name='startDate'
-                    label='Raid Start Date (UTC)'
-                    selected={startDate}
-                    onChange={(date) => {
-                      if (Array.isArray(date)) {
-                        return;
-                      }
-                      setStartDate(date);
-                      setValue('startDate', date);
-                    }}
-                    customInput={<CustomCalInput />}
-                    localForm={localForm}
-                  />
-                  <DatePicker
-                    name='endDate'
-                    label='Raid End Date (UTC)'
-                    selected={endDate}
-                    onChange={(date) => {
-                      if (Array.isArray(date)) {
-                        return;
-                      }
-                      setEndDate(date);
-                      setValue('endDate', date);
-                    }}
-                    customInput={<CustomCalInput />}
-                    localForm={localForm}
-                  />
-                </Flex>
-                {raid?.invoiceAddress !== null && (
-                  <Input
-                    name='invoiceAddress'
-                    isReadOnly
-                    defaultValue={
-                      raid?.invoiceAddress ? raid?.invoiceAddress : ''
-                    }
-                    aria-label='Enter the Invoice address'
-                    placeholder='Enter the Invoice address'
-                    rounded='base'
-                    label='Invoice Address'
-                    localForm={localForm}
-                  />
-                )}
-                <Button
-                  isLoading={isSubmitting || sending}
-                  type='submit'
-                  width='full'
-                  color='raid'
-                  borderColor='raid'
-                  border='1px solid'
-                  size='md'
-                  textTransform='uppercase'
-                  fontSize='sm'
-                  fontWeight='bold'
-                >
-                  Update Raid
-                </Button>
-              </Stack>
-            </form>
+            <TabPanels>
+              <TabPanel>
+                <ProjectDetailsUpdateForm raid={raid} closeModal={closeModal} />
+              </TabPanel>
+              <TabPanel>
+                <KeyLinksUpdateForm raid={raid} closeModal={closeModal} />
+              </TabPanel>
+              <TabPanel>
+                <ClientPoCUpdateForm raid={raid} closeModal={closeModal} />
+              </TabPanel>
+              <TabPanel>
+                <AdditionalInfoUpdateForm raid={raid} closeModal={closeModal} />
+              </TabPanel>
+              <TabPanel>
+                <PortfolioUpdateForm raid={raid} closeModal={closeModal} />
+              </TabPanel>
+            </TabPanels>
           </Box>
         </Box>
       </Box>
-    </Box>
-  );
-};
+    </Tabs>
+  </Box>
+);
 
 export default RaidUpdateForm;

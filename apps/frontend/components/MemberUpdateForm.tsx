@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import {
   Box,
   Button,
@@ -7,15 +8,17 @@ import {
   Select,
   Stack,
 } from '@raidguild/design-system';
+import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
 import { useMemberUpdate } from '@raidguild/dm-hooks';
 import { IApplication, IMember } from '@raidguild/dm-types';
 import {
   GUILD_CLASS_OPTIONS,
+  IS_RAIDING_OPTIONS,
   SKILLS_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 interface UpdateMemberFormProps {
@@ -50,14 +53,58 @@ const UpdateMemberForm = ({
     formState: { isSubmitting },
   } = localForm;
 
+  const primarySkills = _.chain(member['membersSkills'])
+    .filter({ skillType: { skillType: 'PRIMARY' } })
+    .map('skill.skill')
+    .value();
+
+  const secondarySkills = _.chain(member['membersSkills'])
+    .filter({ skillType: { skillType: 'SECONDARY' } })
+    .map('skill.skill')
+    .value();
+
   async function onSubmit(values) {
     setSending(true);
+
+    const newPrimarySkills = _.flatMap(values.primarySkills, (skill) => ({
+      skill_key: skill.value,
+      skill_type_key: 'PRIMARY',
+      member_id: memberId,
+    }));
+
+    const newSecondarySkills = _.flatMap(values.secondarySkills, (skill) => ({
+      skill_key: skill.value,
+      skill_type_key: 'SECONDARY',
+      member_id: memberId,
+    }));
+
+    const existingPrimarySkills = _.flatMap(primarySkills, (skill) => ({
+      skill_key: skill,
+      skill_type_key: 'PRIMARY',
+      member_id: memberId,
+    }));
+
+    const existingSecondarySkills = _.flatMap(secondarySkills, (skill) => ({
+      skill_key: skill,
+      skill_type_key: 'SECONDARY',
+      member_id: memberId,
+    }));
+
+    const updatePrimarySkills =
+      newPrimarySkills.length > 0 ? newPrimarySkills : existingPrimarySkills;
+    const updateSecondarySkills =
+      newSecondarySkills.length > 0
+        ? newSecondarySkills
+        : existingSecondarySkills;
+
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
         primary_class_key:
           values.guildClass?.value ?? member.guildClass.guildClass,
+        is_raiding: values?.isRaiding?.value ?? member.isRaiding,
       },
+      skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member.contactInfo.email,
@@ -188,7 +235,10 @@ const UpdateMemberForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
-                        isDisabled
+                        isMulti
+                        defaultValue={SKILLS_DISPLAY_OPTIONS.filter((option) =>
+                          primarySkills.includes(option.value)
+                        )}
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
@@ -204,10 +254,33 @@ const UpdateMemberForm = ({
                     control={control}
                     render={({ field }) => (
                       <Select
-                        isDisabled
+                        isMulti
+                        defaultValue={SKILLS_DISPLAY_OPTIONS.filter((option) =>
+                          secondarySkills.includes(option.value)
+                        )}
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
                         options={SKILLS_DISPLAY_OPTIONS}
+                        localForm={localForm}
+                      />
+                    )}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel color='raid'>Raiding?</FormLabel>
+                  <Controller
+                    name='isRaiding'
+                    control={control}
+                    defaultValue={
+                      IS_RAIDING_OPTIONS.filter(
+                        (option) => option.value === member?.isRaiding
+                      ) ?? { value: false, label: 'Not Raiding' }
+                    }
+                    render={({ field }) => (
+                      <Select
+                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        {...field}
+                        options={IS_RAIDING_OPTIONS as Option[]}
                         localForm={localForm}
                       />
                     )}

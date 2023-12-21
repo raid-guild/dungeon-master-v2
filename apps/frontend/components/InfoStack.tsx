@@ -1,7 +1,5 @@
 /* eslint-disable no-nested-ternary */
-// TODO fix ternary
 import {
-  Button,
   HStack,
   Icon,
   Stack,
@@ -9,17 +7,20 @@ import {
   Tooltip,
   useClipboard,
 } from '@raidguild/design-system';
-import { FaCopy, FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
+import _, { isString } from 'lodash';
+import { ReactElement } from 'react';
+import { FaInfoCircle } from 'react-icons/fa';
 
-import Link from './ChakraNextLink';
+import LinkExternal from './LinkExternal';
 
 interface InfoStackProps {
   label: string;
-  details: string;
+  details: string | ReactElement | React.ReactNode;
   link?: string;
   tooltip?: string;
   copy?: boolean;
   isExternal?: boolean;
+  truncate?: boolean;
 }
 
 const InfoStack = ({
@@ -29,13 +30,13 @@ const InfoStack = ({
   tooltip,
   copy,
   isExternal,
+  truncate = false,
 }: InfoStackProps) => {
-  const copyText = useClipboard(details);
-
+  const copyText = useClipboard(_.isString(details) ? details : '');
   return (
-    <Stack justify='center' minWidth='0.5'>
+    <Stack justify='center' minWidth='0.5' gap={0.5}>
       <HStack>
-        <Text color='white' fontSize='sm'>
+        <Text color='white' fontSize='md' textColor='primary.500'>
           {label}
         </Text>
         {tooltip && (
@@ -46,36 +47,17 @@ const InfoStack = ({
           </Tooltip>
         )}
       </HStack>
-
-      {link ? (
-        <Link href={link} isExternal={isExternal}>
-          <HStack>
-            <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-              {details}
-            </Text>
-            {isExternal && <Icon as={FaExternalLinkAlt} />}
-          </HStack>
-        </Link>
-      ) : copy ? (
-        <Tooltip label={`Copy ${label}`} size='sm' hasArrow>
-          <Button
-            variant='unstyled'
-            onClick={copyText.onCopy}
-            height='-webkit-fit-content'
-          >
-            <HStack>
-              <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-                {details}
-              </Text>
-              <Icon as={FaCopy} />
-            </HStack>
-          </Button>
-        </Tooltip>
-      ) : (
-        <Text color='white' fontSize='lg' fontWeight='medium'>
-          {details}
-        </Text>
-      )}
+      <Text onClick={() => (!link && isString(details) ? null : copyText)}>
+        {(link && isString(details) ? (
+          <LinkExternal
+            href={link}
+            label={String(details).length > 25 ? 'Link' : details}
+            hidden={!link}
+          />
+        ) : (
+          details
+        )) ?? '-'}
+      </Text>
     </Stack>
   );
 };

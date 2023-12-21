@@ -14,9 +14,16 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
+const customGnosis = {
+  ...gnosis,
+  hasIcon: true,
+  iconUrl: '/icons/gnosis-light.png',
+  iconBackground: 'none',
+};
+
 const chainsList: { [key: number]: Chain } = {
   1: mainnet,
-  100: gnosis,
+  100: customGnosis,
   137: polygon,
   42151: arbitrum,
   10: optimism,
@@ -29,7 +36,7 @@ if (process.env.NODE_ENV === 'development') {
 const chainsMap = (chainId: number) => chainsList[chainId];
 
 const data = configureChains(_.values(chainsList), [
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),
+  alchemyProvider({ apiKey: '_xjUMNooQnLZZ44pxpG9Zs7JzT8WN8vL' as string }),
   infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
   publicProvider(),
 ]);

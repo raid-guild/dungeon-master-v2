@@ -1,4 +1,5 @@
 import {
+  Card,
   Flex,
   Heading,
   Stack,
@@ -9,15 +10,16 @@ import {
   Tabs,
   Text,
 } from '@raidguild/design-system';
-import { useDashboardList } from '@raidguild/dm-hooks';
+import { useDashboardList, useMemberDetail } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
-import React from 'react';
 import { useAccount } from 'wagmi';
 
+import DashboardRaidCard from '../components/DashboardRaidCard';
+import MemberDetailsCard from '../components/MemberDetailsCard';
 import MiniRaidCard from '../components/MiniRaidCard';
 import SiteLayout from '../components/SiteLayout';
 
@@ -25,14 +27,13 @@ const Home = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const role = _.get(session, 'user.role');
-
+  const { address: memberAddress } = useAccount();
   const router = useRouter();
-  const { address } = useAccount();
-  const { data } = useDashboardList({ token, role, address });
+  const { data: memberData } = useMemberDetail({ memberAddress, token });
 
-  const userRaids =
-    !_.isEmpty(_.get(data, 'myRaids.active')) ||
-    !_.isEmpty(_.get(data, 'myRaids.past'));
+  const member = memberData?.member;
+
+  const { data } = useDashboardList({ token, role, address: memberAddress });
 
   if (role === 'user') {
     router.push('/escrow');
@@ -43,62 +44,79 @@ const Home = () => {
       <NextSeo title='Dashboard' />
 
       <SiteLayout isLoading={!data}>
-        <Flex
-          direction={['column', null, null, 'row']}
-          alignItems='flex-start'
-          justify='space-between'
-          gap={8}
+        <Stack
+          gap={10}
+          maxW='1440px'
           w='100%'
+          alignItems='center'
+          justifyContent='center'
         >
-          {userRaids && (
-            <Stack spacing={6} w={['90%', null, null, '45%']}>
-              <Heading size='lg'>My Raids</Heading>
-              <Tabs>
+          <Flex
+            direction={['column', null, null, 'row']}
+            justify='space-between'
+            w='100%'
+            gap={4}
+          >
+            <Card variant='filled' w='full' h='650px' p={2}>
+              <Tabs w='full'>
                 <TabList>
-                  {!_.isEmpty(_.get(data, 'myRaids.active')) && (
-                    <Tab>
-                      <Text fontSize='xl'>Active Raids</Text>
-                    </Tab>
-                  )}
-                  {!_.isEmpty(_.get(data, 'myRaids.past')) && (
-                    <Tab>
-                      <Text fontSize='xl'>Past Raids</Text>
-                    </Tab>
-                  )}
+                  <Tab>
+                    <Text fontSize='xl'>Active Raids</Text>
+                  </Tab>
+
+                  <Tab>
+                    <Text fontSize='xl'>Past Raids</Text>
+                  </Tab>
                 </TabList>
 
                 <TabPanels>
-                  {!_.isEmpty(_.get(data, 'myRaids.active')) && (
-                    <TabPanel>
+                  <TabPanel h='full'>
+                    <Stack spacing={4} h='100%'>
                       <Stack spacing={4}>
-                        <Stack spacing={4}>
-                          {_.map(
+                        {!_.isEmpty(_.get(data, 'myRaids.active')) ? (
+                          _.map(
                             _.get(data, 'myRaids.active'),
                             (raid: IRaid) => (
-                              <MiniRaidCard key={raid.id} raid={raid} />
+                              <DashboardRaidCard key={raid.id} raid={raid} />
                             )
-                          )}
-                        </Stack>
+                          )
+                        ) : (
+                          <Flex pt={10} justify='center'>
+                            <Heading fontFamily='spaceMono' size='sm'>
+                              No Active Raids
+                            </Heading>
+                          </Flex>
+                        )}
                       </Stack>
-                    </TabPanel>
-                  )}
-                  {!_.isEmpty(_.get(data, 'myRaids.past')) && (
-                    <TabPanel>
-                      <Stack spacing={4}>
-                        {_.map(_.get(data, 'myRaids.past'), (raid: IRaid) => (
+                    </Stack>
+                  </TabPanel>
+
+                  <TabPanel>
+                    <Stack spacing={4}>
+                      {!_.isEmpty(_.get(data, 'myRaids.past')) ? (
+                        _.map(_.get(data, 'myRaids.past'), (raid: IRaid) => (
                           <MiniRaidCard key={raid.id} raid={raid} />
-                        ))}
-                      </Stack>
-                    </TabPanel>
-                  )}
+                        ))
+                      ) : (
+                        <Heading>No Past Raids</Heading>
+                      )}
+                    </Stack>
+                  </TabPanel>
                 </TabPanels>
               </Tabs>
-            </Stack>
-          )}
+            </Card>
 
-          <Stack w={['90%', null, null, userRaids ? '45%' : '80%']} spacing={6}>
-            <Heading size='lg'>Incoming</Heading>
-            <Tabs>
+            <MemberDetailsCard
+              member={member}
+              application={_.get(member, 'application')}
+              width='500px'
+              height='650px'
+              showHeader
+            />
+          </Flex>
+
+          <Card variant='filled' w='100%' p={2}>
+            <Tabs w='100%'>
               <TabList>
                 <Tab>
                   <Text fontSize='xl'>Pending Consultations</Text>
@@ -115,7 +133,7 @@ const Home = () => {
                       _.map(
                         _.get(data, 'newConsultations'),
                         (consultation: IConsultation) => (
-                          <MiniRaidCard
+                          <DashboardRaidCard
                             key={consultation.id}
                             consultation={consultation}
                             newRaid
@@ -123,10 +141,10 @@ const Home = () => {
                         )
                       )
                     ) : (
-                      <Flex justify='center'>
-                        <Text fontSize='xl' my={10}>
+                      <Flex justify='center' pt={10}>
+                        <Heading fontFamily='spaceMono' size='sm'>
                           No pending consultations
-                        </Text>
+                        </Heading>
                       </Flex>
                     )}
                   </Stack>
@@ -134,14 +152,14 @@ const Home = () => {
                 <TabPanel>
                   <Stack spacing={4}>
                     {_.map(_.get(data, 'newRaids'), (raid: IRaid) => (
-                      <MiniRaidCard key={raid.id} raid={raid} newRaid />
+                      <DashboardRaidCard key={raid.id} raid={raid} newRaid />
                     ))}
                   </Stack>
                 </TabPanel>
               </TabPanels>
             </Tabs>
-          </Stack>
-        </Flex>
+          </Card>
+        </Stack>
       </SiteLayout>
     </>
   );

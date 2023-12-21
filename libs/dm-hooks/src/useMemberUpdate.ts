@@ -24,9 +24,11 @@ const useMemberUpdate = ({
         member_updates: args.member_updates,
         contact_info_pk: args.contact_info_id,
         contact_info_updates: args.contact_info_updates,
+        skills_updates: args.skills_updates
       });
-
+      
       return result;
+      
     },
     {
       onSuccess: () => {

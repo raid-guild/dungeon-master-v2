@@ -2,7 +2,10 @@ import { Hex } from 'viem';
 
 import { IConsultation } from './consultations';
 import { IMember } from './members';
+import { ILink } from './misc';
+import { IPortfolio } from './portfolios';
 import { IStatusUpdate } from './statusUpdates';
+import { ISignalInterest } from './signalInterest';
 
 export type raidSortKeys =
   | 'oldestComment'
@@ -32,7 +35,7 @@ export interface IRaid {
     memberbyMember: IMember;
   }[];
   memberByCleric: IMember;
-  consultationByConsultation: IConsultation;
+  consultation: IConsultation;
   updates: IStatusUpdate[];
 
   // LEGACY
@@ -46,6 +49,12 @@ export interface IRaid {
   endDate: string;
   createdAt: string;
   updatedAt: string;
+
+  signalledInterests?: ISignalInterest[];
+  // LINKS
+  links: ILink[];
+  portfolios?: IPortfolio[];
+  
 }
 
 export interface IRaidCreate {
@@ -64,6 +73,9 @@ export interface IRaidUpdate {
     start_date?: string;
     end_date?: string;
     cleric_id?: string;
+    escrow_index?: string;
+    locker_hash?: string;
+    invoice_address?: string;
     raids_roles_required?: {
       role: string; // ENUM
     }[];

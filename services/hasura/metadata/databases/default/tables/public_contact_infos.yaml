@@ -87,4 +87,4 @@ update_permissions:
         - twitter
         - id
       filter: {}
-      check: null
+      check: {}

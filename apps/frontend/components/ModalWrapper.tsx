@@ -49,10 +49,12 @@ const ModalWrapper = ({
       <ModalContent
         background={props.bgColor ? props.bgColor : 'gray.800'}
         minWidth='20vw'
-        paddingY={8}
+        paddingY={4}
       >
         <ModalHeader>
-          <Heading>{title}</Heading>
+          <Heading variant='shadow' size='md'>
+            {title}
+          </Heading>
         </ModalHeader>
         <ModalCloseButton color='whiteAlpha.700' />
         <ModalBody>{children}</ModalBody>

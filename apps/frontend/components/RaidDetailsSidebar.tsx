@@ -4,6 +4,7 @@ import _ from 'lodash';
 import React from 'react';
 
 import { useOverlay } from '../contexts/OverlayContext';
+import InterestedMembers from './InterestedMembers';
 import ModalWrapper from './ModalWrapper';
 import RaidPartyInfo from './RaidPartyInfo';
 import RaidUpdateForm from './RaidUpdateForm';
@@ -25,6 +26,10 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
   const handleShowRaidUpdatFormModal = () => {
     setModals({ raidForm: true });
   };
+
+  
+const interestedMembers = (_.map(raid.consultation.signalledInterests, 'member'))
+  
 
   return (
     <Stack spacing={5}>
@@ -64,6 +69,7 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
       </ModalWrapper>
 
       <RaidPartyInfo raid={raid} />
+      <InterestedMembers members={interestedMembers} raid={raid}/>
       {/* RAID TAGS */}
       {/* <RaidTags raid={raid} /> */}
       {/* RELATED RAIDS */}

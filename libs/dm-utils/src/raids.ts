@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import _ from 'lodash';
 import { IMember, IRaid } from '@raidguild/dm-types';
+import _ from 'lodash';
 
 export const membersExceptRaidParty = (
   members: Partial<IMember>[],
