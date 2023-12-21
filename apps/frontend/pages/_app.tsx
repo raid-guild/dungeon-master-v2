@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import '@rainbow-me/rainbowkit/styles.css';
+// eslint-disable-next-line import/no-unresolved
+import 'react-datepicker/dist/react-datepicker.css'; // trouble processing this css in the DS pkg currently
 
 import { RGThemeProvider, useToast } from '@raidguild/design-system';
 import { chains, wagmiConfig } from '@raidguild/dm-utils';
