@@ -70,6 +70,8 @@ const useRaidUpdate = ({
         });
       },
       onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log(error);
         toast.error({
           title: 'Unable to Update Raid',
           iconName: 'alert',

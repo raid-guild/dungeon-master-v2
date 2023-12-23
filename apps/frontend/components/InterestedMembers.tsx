@@ -69,7 +69,9 @@ const InterestedMembers = ({
               </React.Fragment>
             ))}
           {_.isEmpty(members) && (
-            <Heading size='sm'>No Interest Shown yet</Heading>
+            <Text size='md' fontFamily='spaceMono'>
+              No interest shown yet
+            </Text>
           )}
         </VStack>
       </Card>

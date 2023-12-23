@@ -12,7 +12,7 @@ import {
   Heading,
   Stack,
   Text,
-  VStack
+  VStack,
 } from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
@@ -42,8 +42,6 @@ const Description = ({ description }: { description: string }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const handleToggleDesc = () => setShowFullDescription(!showFullDescription);
 
-  
-  
   return (
     <VStack align='flex-start'>
       <Collapse startingHeight={25} in={showFullDescription}>
@@ -68,85 +66,98 @@ const Description = ({ description }: { description: string }) => {
   );
 };
 
-const Bio = ({ bio }: { bio: string }) => {
-  const [showFullBio, setShowFullBio] = useState(false);
-  const handleToggleBio = () => setShowFullBio(!showFullBio);
+// const Bio = ({ bio }: { bio: string }) => {
+//   const [showFullBio, setShowFullBio] = useState(false);
+//   const handleToggleBio = () => setShowFullBio(!showFullBio);
 
-  return (
-    <VStack align='flex-start'>
-      <Text color='white' fontSize='sm'>
-        Bio
-      </Text>
-      {bio?.length > 300 ? (
-        <>
-          <Collapse startingHeight={50} in={showFullBio}>
-            <Text color='white' fontSize='md'>
-              {bio}
-            </Text>
-          </Collapse>
-          <Button
-            onClick={handleToggleBio}
-            color='gray.400'
-            size='sm'
-            fontWeight='normal'
-            variant='link'
-          >
-            {showFullBio === true ? 'Show Less' : 'Show More'}
-          </Button>
-        </>
-      ) : (
-        <Text color='white' fontSize='md'>
-          {bio}
-        </Text>
-      )}
-    </VStack>
-  );
-};
+//   return (
+//     <VStack align='flex-start'>
+//       <Text color='white' fontSize='sm'>
+//         Bio
+//       </Text>
+//       {bio?.length > 300 ? (
+//         <>
+//           <Collapse startingHeight={50} in={showFullBio}>
+//             <Text color='white' fontSize='md'>
+//               {bio}
+//             </Text>
+//           </Collapse>
+//           <Button
+//             onClick={handleToggleBio}
+//             color='gray.400'
+//             size='sm'
+//             fontWeight='normal'
+//             variant='link'
+//           >
+//             {showFullBio === true ? 'Show Less' : 'Show More'}
+//           </Button>
+//         </>
+//       ) : (
+//         <Text color='white' fontSize='md'>
+//           {bio}
+//         </Text>
+//       )}
+//     </VStack>
+//   );
+// };
 
 const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
+  const consultationContacts = _.map(
+    consultation?.consultationsContacts,
+    (contact, index) => {
+      const name = _.get(contact, 'contact.name');
+      const email = _.get(contact, 'contact.contactInfo.email');
+      const discord = _.get(contact, 'contact.contactInfo.discord');
+      const telegram = _.get(contact, 'contact.contactInfo.telegram');
+      const bio = _.get(contact, 'contact.bio');
 
-  const consultationContacts = _.map(consultation?.consultationsContacts, (contact, index) => {
-    const name = _.get(contact, 'contact.name');
-    const email = _.get(contact, 'contact.contactInfo.email');
-    const discord = _.get(contact, 'contact.contactInfo.discord');
-    const telegram = _.get(contact, 'contact.contactInfo.telegram');
-    const bio = _.get(contact, 'contact.bio');
+      return {
+        title: `Client Point of Contact${
+          Array.from([consultation?.consultationsContacts]).length > 0
+            ? ` #${index + 1}`
+            : ''
+        }`,
+        items: _.compact([
+          name && { label: 'Name', details: `${name}` },
+          email && {
+            label: 'Email',
+            details: `${truncateEmail(email)}`,
+            link: `mailto:${email}`,
+          },
+          discord && { label: 'Discord', details: `${discord}` },
+          telegram && { label: 'Telegram', details: `${telegram}` },
+          bio && { label: 'Bio', details: bio },
+        ]),
+      };
+    }
+  );
 
-    return {
-      title: `Client Point of Contact${Array.from([consultation?.consultationsContacts]).length > 0 ? ` #${index + 1}` : ''}`,
-      items: _.compact([
-        name && { label: 'Name', details: `${name}` },
-        email && { label: 'Email', details: `${truncateEmail(email)}`, link: `mailto:${email}` },
-        discord && { label: 'Discord', details: `${discord}` },
-        telegram && { label: 'Telegram', details: `${telegram}`},
-        bio && { label: 'Bio', details: bio }
-      ])
-    };
-});
-
-
-
-
-  const keyLinkItems = [
+  const keyLinkItems = _.compact([
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.
     // Logic below should be simplified if it ever becomes a required field.
 
-  ...(  consultation?.links?.length > 0
-  ? consultation.links.map(linkItem => ({
-      label: _.startCase(_.toLower(linkItem.type.toString())),
-      details: linkItem.link,
-      link: linkItem.link
-    })).filter((x) => x.link)
-  : [
-      {
-        label: 'Project Specs',
-        details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-          _.get(consultation, 'availableProjectSpec.availableProjectSpec', 'YES') as AvailableSpecsKey
-        ),
-        link: consultation?.link || undefined
-      }
-    ]), 
+    ...(consultation?.links?.length > 0
+      ? consultation.links
+          .map((linkItem) => ({
+            label: _.startCase(_.toLower(linkItem.type.toString())),
+            details: linkItem.link,
+            link: linkItem.link,
+          }))
+          .filter((x) => x.link)
+      : [
+          {
+            label: 'Project Specs',
+            details: AVAILABLE_PROJECT_SPECS_DISPLAY(
+              _.get(
+                consultation,
+                'availableProjectSpec.availableProjectSpec',
+                'YES'
+              ) as AvailableSpecsKey
+            ),
+            link: consultation?.link || undefined,
+          },
+        ]),
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
       details:
@@ -157,12 +168,12 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         _.get(consultation, 'consultationHash') !== 'cancelled' &&
         `https://etherscan.io/tx/${_.get(consultation, 'consultationHash')}`,
     },
-  ].filter((x) => x)
+  ]);
 
   const panels = [
     {
       title: 'Project Details',
-      items: [
+      items: _.compact([
         {
           label: 'Budget',
           details:
@@ -216,30 +227,25 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
             ) as PriorityKey
           ),
         },
-      ].filter((x) => x),
+      ]),
       extra: <Description description={_.get(consultation, 'description')} />,
     },
     {
       title: 'Key Links',
       items: keyLinkItems,
     },
-    
-      ...consultationContacts
-    ,
-     
+    ...consultationContacts,
     {
       title: 'Additional Info',
-      items: [
-        (_.get(raid, 'id')) ||
+      items: _.compact([
+        (_.get(raid, 'id') ||
           _.get(raid, 'airtableId') ||
-          _.get(raid, 'v1Id')
-           && {
+          _.get(raid, 'v1Id')) && {
           label: 'Raid ID',
           details:
-          _.get(raid, 'id') ||
+            _.get(raid, 'id') ||
             _.get(raid, 'airtableId') ||
-            _.get(raid, 'v1Id')
-            ,
+            _.get(raid, 'v1Id'),
           copy: true,
         },
         _.get(raid, 'escrowIndex') && {
@@ -256,7 +262,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           details: truncateAddress(_.get(raid, 'invoiceAddress')),
           link: `/escrow/${raid.id}`,
         },
-      ].filter((x) => x),
+      ]),
     },
   ];
 
@@ -291,14 +297,15 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
                     autoFlow='wrap'
                   >
                     {_.map(_.get(panel, 'items'), (item) => (
-
-
                       <InfoStack
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
                         link={_.get(item, 'link')}
                         copy={_.get(item, 'copy')}
-                        key={_.get(item, 'label')}
+                        key={`${_.get(item, 'label')}-${_.get(
+                          item,
+                          'details'
+                        )}`}
                       />
                     ))}
                   </Grid>

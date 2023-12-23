@@ -33,6 +33,9 @@ export const RAID_DETAIL_FRAGMENT = gql`
     cleric {
       ...SlimMemberDetail
     }
+    hunter {
+      ...SlimMemberDetail
+    }
 
     raid_parties {
       member {

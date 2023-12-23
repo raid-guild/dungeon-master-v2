@@ -23,13 +23,14 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
     setModals({ raidStatus: true });
   };
 
-  const handleShowRaidUpdatFormModal = () => {
+  const handleShowRaidUpdateFormModal = () => {
     setModals({ raidForm: true });
   };
 
-  
-const interestedMembers = (_.map(raid.consultation.signalledInterests, 'member'))
-  
+  const interestedMembers = _.map(
+    raid.consultation.signalledInterests,
+    'member'
+  );
 
   return (
     <Stack spacing={5}>
@@ -37,7 +38,7 @@ const interestedMembers = (_.map(raid.consultation.signalledInterests, 'member')
         <Button onClick={handleShowStatusModal} flexGrow={1}>
           {_.get(raid, 'raidStatus.raidStatus')}
         </Button>
-        <Button variant='outline' onClick={handleShowRaidUpdatFormModal}>
+        <Button variant='outline' onClick={handleShowRaidUpdateFormModal}>
           Edit
         </Button>
       </HStack>
@@ -69,7 +70,7 @@ const interestedMembers = (_.map(raid.consultation.signalledInterests, 'member')
       </ModalWrapper>
 
       <RaidPartyInfo raid={raid} />
-      <InterestedMembers members={interestedMembers} raid={raid}/>
+      <InterestedMembers members={interestedMembers} raid={raid} />
       {/* RAID TAGS */}
       {/* <RaidTags raid={raid} /> */}
       {/* RELATED RAIDS */}

@@ -25,12 +25,10 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
     button: buttonSelection,
   });
 
-
-
   const localRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
   const cleric = _.get(raid, 'cleric');
+  const hunter = _.get(raid, 'hunter');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
-
 
   return (
     <Stack spacing={3}>
@@ -48,6 +46,20 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
                   member={cleric}
                   members={members}
                   isCleric
+                  setButtonSelection={setButtonSelection}
+                />
+              </Stack>
+            </Flex>
+            <Flex direction='column' py={2}>
+              <Stack>
+                <Heading color='white' size='sm'>
+                  Hunter
+                </Heading>
+                <RaidPartyCard
+                  raid={raid}
+                  member={hunter}
+                  members={members}
+                  isHunter
                   setButtonSelection={setButtonSelection}
                 />
               </Stack>

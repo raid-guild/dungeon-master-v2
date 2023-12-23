@@ -52,6 +52,7 @@ type RaidPartyCardProps = {
   */
   roles?: string[];
   isCleric?: boolean;
+  isHunter?: boolean;
   isRole?: boolean;
   // update fns
   setButtonSelection?: (buttonSelection: string) => void;
@@ -68,17 +69,16 @@ const RaidPartyCard = ({
   members,
   roles,
   isCleric,
+  isHunter,
   isRole,
   setButtonSelection,
 }: RaidPartyCardProps) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const [updateCleric, setUpdateCleric] = useState(false);
+  const [updateMember, setUpdateMember] = useState(false);
   const [localRoles, setLocalRoles] = useState(roles);
   const [clearRoles, setClearRoles] = useState(false);
-  const [clericToAdd, setClericToAdd] = useState<string>();
-
-
+  const [memberToAdd, setMemberToAdd] = useState<string>();
 
   const { mutateAsync: updateRaid } = useRaidUpdate({
     token,
@@ -89,25 +89,35 @@ const RaidPartyCard = ({
     token,
   });
 
-  // * fallback to current user
-  const submitUpdatedCleric = async () => {
-    const raidUpdates = {
-      cleric_id: clericToAdd || _.get(session, 'user.id'),
+  // fallback to current user
+  const submitUpdatedMember = async () => {
+    let raidUpdates = {};
+    const clericUpdate = {
+      cleric_id: memberToAdd || _.get(session, 'user.id'),
     };
+    const hunterUpdate = {
+      hunter_id: memberToAdd || _.get(session, 'user.id'),
+    };
+    if (isCleric) {
+      raidUpdates = { ...clericUpdate };
+    }
+    if (isHunter) {
+      raidUpdates = { ...hunterUpdate };
+    }
 
     await updateRaid({
       id: _.get(raid, 'id'),
       raid_updates: raidUpdates,
     });
     setTimeout(() => {
-      setUpdateCleric(false);
-      setClericToAdd(undefined);
+      setUpdateMember(false);
+      setMemberToAdd(undefined);
     }, 250);
   };
 
-  const handleSwitchCleric = () => {
+  const handleSwitchMember = () => {
     setButtonSelection(SIDEBAR_ACTION_STATES.cleric);
-    setUpdateCleric(true);
+    setUpdateMember(true);
   };
 
   const submitRemoveRaider = async (memberId: string) => {
@@ -130,7 +140,6 @@ const RaidPartyCard = ({
     setLocalRoles(newRoles);
   };
 
-  // TODO holy refactor
   const saveUpdatedRoles = async () => {
     const rolesRemoved = _.difference(roles, localRoles);
     // const rolesAdded = _.difference(localRoles, roles);
@@ -155,7 +164,7 @@ const RaidPartyCard = ({
       justify='space-between'
       align='center'
     >
-      {(isCleric && (!member || updateCleric)) || isRole ? (
+      {((isCleric || isHunter) && (!member || updateMember)) || isRole ? (
         <>
           {children}
 
@@ -172,7 +181,7 @@ const RaidPartyCard = ({
     </Flex>
   );
 
-  if (isCleric && !updateCleric) {
+  if ((isCleric || isHunter) && !updateMember) {
     return (
       <GeneralCard
         button={
@@ -186,7 +195,7 @@ const RaidPartyCard = ({
             }
             aria-label='Switch Cleric'
             variant='outline'
-            onClick={handleSwitchCleric}
+            onClick={handleSwitchMember}
           />
         }
       >
@@ -195,7 +204,6 @@ const RaidPartyCard = ({
           _hover={{ cursor: 'pointer', color: 'red.100' }}
           transition='all ease-in-out 0.25'
         >
-    
           {member && <MemberAvatar member={member} />}
 
           <Flex direction='column'>
@@ -210,32 +218,32 @@ const RaidPartyCard = ({
       </GeneralCard>
     );
   }
-  if (isCleric) {
+  if (isHunter || isCleric) {
     return (
       <GeneralCard
         button={
-          updateCleric ? (
-            <Button onClick={submitUpdatedCleric}>Go</Button>
+          updateMember ? (
+            <Button onClick={submitUpdatedMember}>Go</Button>
           ) : (
-            <Button variant='outline' onClick={submitUpdatedCleric}>
+            <Button variant='outline' onClick={submitUpdatedMember}>
               Claim
             </Button>
           )
         }
       >
         <Flex>
-          {updateCleric ? (
+          {updateMember ? (
             <HStack w='100%'>
               <IconButton
                 variant='outline'
                 icon={<Icon as={FiX} color='primary.300' />}
                 aria-label='Clear Set Raider for Raid'
-                onClick={() => setUpdateCleric(false)}
+                onClick={() => setUpdateMember(false)}
               />
               {!_.isEmpty(members) && (
                 <ChakraSelect
-                  value={clericToAdd}
-                  onChange={(e) => setClericToAdd(e.target.value)}
+                  value={memberToAdd}
+                  onChange={(e) => setMemberToAdd(e.target.value)}
                 >
                   {_.map(members, (m: Partial<IMember>) => (
                     <option value={m.id} key={m.id}>
@@ -311,20 +319,6 @@ const RaidPartyCard = ({
       </GeneralCard>
     );
   }
-
-  // * Remove role icon
-  // <Icon
-  //     as={FiX}
-  //     bg="raid"
-  //     color="white"
-  //     position="absolute"
-  //     borderRadius={10}
-  //     top="-2"
-  //     right="-2"
-  //     aria-label={`Remove ${role} role`}
-  //     _hover={{ cursor: 'pointer' }}
-  //     // onClick={() => removeLocalRole(role)}
-  //   />
 
   // DEFAULT OPTION IS RAIDER CARD
   return (
