@@ -119,22 +119,23 @@ select_permissions:
   - role: member
     permission:
       columns:
+        - escrow_index
         - airtable_id
         - category_key
-        - cleric_id
-        - consultation_id
-        - created_at
-        - end_date
-        - escrow_index
-        - id
         - invoice_address
         - locker_hash
         - name
         - raid_channel_id
-        - start_date
         - status_key
-        - updated_at
         - v1_id
+        - created_at
+        - end_date
+        - start_date
+        - updated_at
+        - cleric_id
+        - consultation_id
+        - hunter_id
+        - id
       filter: {}
       allow_aggregations: true
 update_permissions:

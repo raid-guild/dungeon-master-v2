@@ -21,6 +21,8 @@ const generateApiKey = async (keyRestrictions: KeyRestrictions) => {
   return fetch('https://api.pinata.cloud/users/generateApiKey', options)
     .then((response) => response.json())
     .then((json) => {
+      if (!_.includes(_.keys(json), 'JWT')) throw new Error('No JWT found');
+
       const { JWT } = json;
       return JWT;
     })
