@@ -282,7 +282,7 @@ const MemberDetailsCard = ({
               <Tooltip
                 label={_.get(link, 'tooltip')}
                 size='sm'
-                key={_.get(link, 'label')}
+                key={`${_.get(link, 'href')}-${_.get(link, 'label')}`}
               >
                 <Button
                   as={ChakraLink}

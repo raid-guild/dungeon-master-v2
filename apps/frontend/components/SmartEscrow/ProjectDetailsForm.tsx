@@ -107,24 +107,18 @@ const ProjectDetailsForm = ({
             <DatePicker
               label='Start Date'
               name='startDate'
-              // tooltip='The date the project is expected to start'
+              tooltip='The date the project is expected to start'
               localForm={localForm}
               selected={localStartDate}
-              onChange={(date) => {
-                localSetValue('startDate', date as Date);
-              }}
             />
           </Box>
           <Box w='50%'>
             <DatePicker
               label='Estimated End Date'
               name='endDate'
-              // tooltip='The date the project is expected to end. This value is not formally used in the escrow.'
+              tooltip='The date the project is expected to end. This value is not formally used in the escrow.'
               localForm={localForm}
               selected={localEndDate}
-              onChange={(date) => {
-                localSetValue('endDate', date as Date);
-              }}
             />
           </Box>
         </HStack>

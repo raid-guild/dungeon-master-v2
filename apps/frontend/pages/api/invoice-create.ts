@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // TODO move to helper
     const result: any = await client({}).request(UPDATE_INVOICE_ADDRESS_QUERY, {
       raidId,
-      invoiceAddress,
+      invoiceAddress: _.toLower(invoiceAddress),
     });
 
     return res.status(201).json(result?.update_raids_by_pk?.returning);

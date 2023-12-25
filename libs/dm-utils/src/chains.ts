@@ -43,7 +43,7 @@ const chainsList: { [key: number]: Chain } = {
 if (process.env.NODE_ENV === 'development') {
   chainsList[31337] = hardhat;
 }
-const chainsMap = (chainId: number) => chainsList[chainId];
+export const chainsMap = (chainId: number) => chainsList[chainId];
 
 const data = configureChains(
   _.map(orderedChains, (id: number) => chainsMap(id)),

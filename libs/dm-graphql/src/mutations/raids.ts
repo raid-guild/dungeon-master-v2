@@ -132,7 +132,7 @@ export const RAID_PARTY_DELETE_MUTATION = gql`
 `;
 
 export const UPDATE_INVOICE_ADDRESS_QUERY = gql`
-  mutation MyMutation($invoiceAddress: String!, $raidId: Int!) {
+  mutation MyMutation($invoiceAddress: String!, $raidId: uuid!) {
     update_raids(
       where: { id: { _eq: $raidId } }
       _set: { invoice_address: $invoiceAddress }

@@ -8,12 +8,14 @@ import { useChainId, useEnsName } from 'wagmi';
 type AccountLinkProps = {
   name?: string;
   address: Hex;
+  isSplit?: boolean;
   chainId?: number;
 };
 
 const AccountLink = ({
   name,
   address: inputAddress,
+  isSplit,
   chainId,
 }: AccountLinkProps) => {
   const currentChainId = useChainId();
@@ -25,9 +27,16 @@ const AccountLink = ({
 
   const imageUrl = blockies.create({ seed: inputAddress }).toDataURL();
 
+  let link = getAddressLink(chainId || currentChainId, address);
+  if (isSplit) {
+    link = `https://app.splits.org/accounts/${address}/?chainId=${
+      chainId || currentChainId
+    }`;
+  }
+
   return (
     <Link
-      href={getAddressLink(chainId || currentChainId, address)}
+      href={link}
       isExternal
       display='inline-flex'
       textAlign='right'

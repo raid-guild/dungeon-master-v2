@@ -1,3 +1,4 @@
+import { useSplitMetadata } from '@0xsplits/splits-sdk-react';
 import { Card, Flex, Heading, Spinner, Text } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
@@ -39,8 +40,15 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     invoiceAddress: raid?.invoiceAddress,
     chainId: 100, // chain?.id, // ! support multiple chains
   });
+  console.log(invoice);
+
+  console.log(invoice?.client);
+  const { splitMetadata, isLoading } = useSplitMetadata(
+    invoice?.providerReceiver
+  );
 
   const wrongChain = !_.includes(SUPPORTED_NETWORKS, chain?.id);
+  console.log(splitMetadata, isLoading);
 
   if (!token) {
     return (

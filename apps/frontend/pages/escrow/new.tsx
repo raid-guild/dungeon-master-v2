@@ -67,7 +67,7 @@ const NewEscrow = () => {
         <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
           {raid && <ProjectInfo raid={raid} />}
 
-          {!step && <Spinner />}
+          {!step && step !== 0 && <Spinner />}
 
           {step === 0 && (
             <ProjectDetailsForm

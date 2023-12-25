@@ -1,3 +1,4 @@
+import { useSplitMetadata } from '@0xsplits/splits-sdk-react';
 import { Flex, HStack, Stack, Text, Tooltip } from '@raidguild/design-system';
 import { getResolverInfo, Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
@@ -10,15 +11,27 @@ import AccountLink from './shared/AccountLink';
 const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
   const chainId = useChainId();
 
+  const { splitMetadata } = useSplitMetadata(invoice?.providerReceiver);
   const resolverInfo = getResolverInfo(chainId, invoice.resolver);
 
   const dataValues = useMemo(
     () => [
       { label: 'Client', value: invoice.client },
-      { label: 'Raid Party', value: invoice.provider },
+      {
+        label: 'Raid Party',
+        value: invoice.providerReceiver || invoice.provider,
+        isSplit: !!splitMetadata,
+      },
       { label: 'Resolver', name: resolverInfo?.name, value: invoice.resolver },
     ],
-    [invoice.client, invoice.provider, invoice.resolver, resolverInfo?.name]
+    [
+      invoice.client,
+      invoice.provider,
+      invoice.providerReceiver,
+      invoice.resolver,
+      splitMetadata,
+      resolverInfo?.name,
+    ]
   );
 
   return (
@@ -47,7 +60,11 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
           <Text fontWeight='bold' fontFamily='texturina'>
             {dataValue.label}
           </Text>
-          <AccountLink name={dataValue.name} address={dataValue.value} />
+          <AccountLink
+            name={dataValue.name}
+            address={dataValue.value}
+            isSplit={dataValue.isSplit}
+          />
         </Flex>
       ))}
     </Stack>

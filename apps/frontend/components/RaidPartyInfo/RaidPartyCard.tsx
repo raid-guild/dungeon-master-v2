@@ -265,23 +265,7 @@ const RaidPartyCard = ({
 
   if (isRole && localRoles) {
     return (
-      <GeneralCard
-        button={
-          <IconButton
-            variant='outline'
-            icon={
-              !clearRoles ? (
-                <Icon as={FiX} color='primary.500' fontSize='1.5rem' />
-              ) : (
-                <Icon as={FiCheck} color='primary.500' fontSize='1.5rem' />
-              )
-            }
-            aria-label='Remove roles'
-            onClick={!clearRoles ? clearRoleClick : saveUpdatedRoles}
-            isDisabled
-          />
-        }
-      >
+      <GeneralCard>
         <HStack spacing={1}>
           {!_.isEmpty(localRoles) ? (
             _.map(localRoles, (role: string, i) => (
