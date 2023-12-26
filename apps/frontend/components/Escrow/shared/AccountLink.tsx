@@ -1,5 +1,6 @@
 import { Flex, Link, Text } from '@raidguild/design-system';
-import { getAddressLink } from '@raidguild/dm-utils';
+import { getAddressLink, truncateAddress } from '@raidguild/dm-utils';
+import { safeUrl, splitsLink } from '@raidguild/escrow-utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
 import { Hex } from 'viem';
@@ -9,6 +10,7 @@ type AccountLinkProps = {
   name?: string;
   address: Hex;
   isSplit?: boolean;
+  isSafe?: boolean;
   chainId?: number;
 };
 
@@ -16,6 +18,7 @@ const AccountLink = ({
   name,
   address: inputAddress,
   isSplit,
+  isSafe,
   chainId,
 }: AccountLinkProps) => {
   const currentChainId = useChainId();
@@ -25,13 +28,19 @@ const AccountLink = ({
     typeof inputAddress === 'string' ? _.toLower(inputAddress) : '';
   const displayString = address;
 
-  const imageUrl = blockies.create({ seed: inputAddress }).toDataURL();
+  const imageUrl = blockies.create({ seed: address }).toDataURL();
 
   let link = getAddressLink(chainId || currentChainId, address);
   if (isSplit) {
-    link = `https://app.splits.org/accounts/${address}/?chainId=${
-      chainId || currentChainId
-    }`;
+    link = splitsLink(address, chainId || currentChainId);
+  }
+  if (isSafe) {
+    link = safeUrl(chainId || currentChainId, address as Hex);
+  }
+
+  let displayName = name || ensName || displayString;
+  if (isSplit) {
+    displayName = `0xSplit (${truncateAddress(address)})`;
   }
 
   return (
@@ -71,7 +80,7 @@ const AccountLink = ({
         color='white'
         isTruncated
       >
-        {name || ensName || displayString}
+        {displayName}
       </Text>
     </Link>
   );

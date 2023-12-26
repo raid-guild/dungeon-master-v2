@@ -62,11 +62,7 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
         title='Update Raid'
         localOverlay={localOverlay}
       >
-        <RaidUpdateForm
-          raidId={_.get(raid, 'id')}
-          raid={raid}
-          closeModal={closeModals}
-        />
+        <RaidUpdateForm raid={raid} closeModal={closeModals} />
       </ModalWrapper>
 
       <RaidPartyInfo raid={raid} />

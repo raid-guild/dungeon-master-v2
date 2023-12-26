@@ -22,7 +22,6 @@ export const getInvoice = async (chainId: number, address: string) => {
     ];
 
     const result = await Promise.all(promises);
-    console.log(result);
     const invoice = _.first(_.compact(_.map(result, 'invoice')));
 
     return invoice || null;

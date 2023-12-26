@@ -1,4 +1,3 @@
-import { useSplitMetadata } from '@0xsplits/splits-sdk-react';
 import { Flex, HStack, Stack, Text, Tooltip } from '@raidguild/design-system';
 import { getResolverInfo, Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
@@ -8,10 +7,15 @@ import { useChainId } from 'wagmi';
 import { QuestionIcon } from './icons/QuestionIcon';
 import AccountLink from './shared/AccountLink';
 
-const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
+const InvoiceMetaDetails = ({
+  invoice,
+  receiverIsSplit,
+}: {
+  invoice: Invoice;
+  receiverIsSplit: boolean;
+}) => {
   const chainId = useChainId();
 
-  const { splitMetadata } = useSplitMetadata(invoice?.providerReceiver);
   const resolverInfo = getResolverInfo(chainId, invoice.resolver);
 
   const dataValues = useMemo(
@@ -20,7 +24,7 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
       {
         label: 'Raid Party',
         value: invoice.providerReceiver || invoice.provider,
-        isSplit: !!splitMetadata,
+        isSplit: receiverIsSplit,
       },
       { label: 'Resolver', name: resolverInfo?.name, value: invoice.resolver },
     ],
@@ -29,8 +33,8 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
       invoice.provider,
       invoice.providerReceiver,
       invoice.resolver,
-      splitMetadata,
       resolverInfo?.name,
+      receiverIsSplit,
     ]
   );
 

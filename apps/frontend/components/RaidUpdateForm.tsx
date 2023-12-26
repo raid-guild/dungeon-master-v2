@@ -5,7 +5,7 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Tabs
+  Tabs,
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import React from 'react';
@@ -16,31 +16,35 @@ import ClientPoCUpdateForm from './RaidUpdateForm/03-Client-PoC';
 import AdditionalInfoUpdateForm from './RaidUpdateForm/04-Additional-Info';
 import PortfolioUpdateForm from './RaidUpdateForm/05-Portfolio';
 
-const raidTabs = [
-  'Project Details',
-  'Key Links',
-  'Client PoC',
-  'Additional Info',
-  'Portfolio'
-];
+const raidTabs = ['Details', 'Links', 'Contacts', 'Portfolio', 'More'];
 
 interface RaidUpdateFormProps {
-  raidId?: string;
   closeModal?: () => void;
   raid: Partial<IRaid>;
   // consultation:  Partial<IConsultation>;
 }
 
 const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
-  raidId,
   closeModal,
-  raid
+  raid,
 }: RaidUpdateFormProps) => (
   <Box as='section'>
     <Tabs colorScheme='primary.500' variant='unstyled'>
-      <TabList fontFamily="texturina" >
+      <TabList fontFamily='texturina' w='100%'>
         {raidTabs.map((tab) => (
-          <Tab key={tab} fontWeight={500}  _selected={{color:'primary.500', borderBottomColor: 'primary.500', borderBottomWidth: '2px'}}>{tab}</Tab>
+          <Tab
+            key={tab}
+            fontWeight={500}
+            w='20%'
+            textTransform='uppercase'
+            _selected={{
+              color: 'primary.500',
+              borderBottomColor: 'primary.500',
+              borderBottomWidth: '2px',
+            }}
+          >
+            {tab}
+          </Tab>
         ))}
       </TabList>
 
@@ -50,8 +54,7 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
         bg='gray.800'
         maxW={{ base: 'xl', md: '3xl' }}
         marginX='auto'
-        paddingX={{ base: '6', md: '8' }}
-        paddingY='6'
+        paddingY={4}
         rounded='lg'
       >
         <Box maxW='md' marginX='auto'>
@@ -67,10 +70,10 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
                 <ClientPoCUpdateForm raid={raid} closeModal={closeModal} />
               </TabPanel>
               <TabPanel>
-                <AdditionalInfoUpdateForm raid={raid} closeModal={closeModal} />
+                <PortfolioUpdateForm raid={raid} closeModal={closeModal} />
               </TabPanel>
               <TabPanel>
-                <PortfolioUpdateForm raid={raid} closeModal={closeModal} />
+                <AdditionalInfoUpdateForm raid={raid} closeModal={closeModal} />
               </TabPanel>
             </TabPanels>
           </Box>

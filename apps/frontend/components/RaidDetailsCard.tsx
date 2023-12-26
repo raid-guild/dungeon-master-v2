@@ -122,6 +122,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           email && {
             label: 'Email',
             details: `${truncateEmail(email)}`,
+            fullDetails: email,
             link: `mailto:${email}`,
           },
           discord && { label: 'Discord', details: `${discord}` },
@@ -238,14 +239,13 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     {
       title: 'Additional Info',
       items: _.compact([
-        (_.get(raid, 'id') ||
-          _.get(raid, 'airtableId') ||
-          _.get(raid, 'v1Id')) && {
+        // ? do we need to show airtable ID here?
+        (_.get(raid, 'v1Id') || // _.get(raid, 'airtableId') ||
+          _.get(raid, 'id')) && {
           label: 'Raid ID',
           details:
-            _.get(raid, 'id') ||
-            _.get(raid, 'airtableId') ||
-            _.get(raid, 'v1Id'),
+            _.get(raid, 'v1Id') || // _.get(raid, 'airtableId') ||
+            _.get(raid, 'id'),
           copy: true,
         },
         _.get(raid, 'escrowIndex') && {
@@ -258,8 +258,9 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           link: `https://blockscan.com/search?q=${_.get(raid, 'lockerHash')}`,
         },
         _.get(raid, 'invoiceAddress') && {
-          label: 'Smart Escrow',
+          label: 'Escrow',
           details: truncateAddress(_.get(raid, 'invoiceAddress')),
+          fullDetails: _.get(raid, 'invoiceAddress'),
           link: `/escrow/${raid.id}`,
         },
       ]),
@@ -300,6 +301,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
                       <InfoStack
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
+                        fullDetails={_.get(item, 'fullDetails')}
                         link={_.get(item, 'link')}
                         copy={_.get(item, 'copy')}
                         key={`${_.get(item, 'label')}-${_.get(

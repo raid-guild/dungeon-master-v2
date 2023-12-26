@@ -22,11 +22,11 @@ const customGnosis = {
 };
 
 const orderedChains = [
+  1, // mainnet
   100, // customGnosis
   137, // polygon
   42151, // arbitrum
   10, // optimism
-  1, // mainnet
   5, // goerli
   11155111, // sepolia
 ];

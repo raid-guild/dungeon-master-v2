@@ -69,10 +69,10 @@ export const Escrow = () => {
 
   return (
     <>
-      <NextSeo title='Smart Escrow' />
+      <NextSeo title='Escrow' />
 
       <SiteLayoutPublic
-        subheader={<Heading>Smart Escrow</Heading>}
+        subheader={<Heading>Escrow</Heading>}
         minHeight={[null, null, '100vh']}
       >
         <Flex justify='center' width='100%'>

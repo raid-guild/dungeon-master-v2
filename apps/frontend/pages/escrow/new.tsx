@@ -9,14 +9,14 @@ import { useForm } from 'react-hook-form';
 import { Hex } from 'viem';
 
 import Link from '../../components/ChakraNextLink';
+import EscrowConfirmation from '../../components/Escrow/EscrowConfirmation';
+import EscrowDetailsForm from '../../components/Escrow/EscrowDetailsForm';
+import EscrowSuccess from '../../components/Escrow/EscrowSuccess';
+import PaymentsForm from '../../components/Escrow/PaymentsForm';
+import ProjectDetailsForm from '../../components/Escrow/ProjectDetailsForm';
+import ProjectInfo from '../../components/Escrow/ProjectInfo';
+import RaidPartySplitForm from '../../components/Escrow/RaidPartySplitForm';
 import SiteLayout from '../../components/SiteLayout';
-import EscrowConfirmation from '../../components/SmartEscrow/EscrowConfirmation';
-import EscrowDetailsForm from '../../components/SmartEscrow/EscrowDetailsForm';
-import EscrowSuccess from '../../components/SmartEscrow/EscrowSuccess';
-import PaymentsForm from '../../components/SmartEscrow/PaymentsForm';
-import ProjectDetailsForm from '../../components/SmartEscrow/ProjectDetailsForm';
-import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
-import RaidPartySplitForm from '../../components/SmartEscrow/RaidPartySplitForm';
 
 const SMART_INVOICE_URL = 'https://smartinvoice.xyz';
 
@@ -61,9 +61,9 @@ const NewEscrow = () => {
 
   return (
     <>
-      <NextSeo title='Smart Escrow' />
+      <NextSeo title='Escrow' />
 
-      <SiteLayout subheader={<Heading>Register New Escrow</Heading>}>
+      <SiteLayout subheader={<Heading>Register a new escrow</Heading>}>
         <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
           {raid && <ProjectInfo raid={raid} />}
 

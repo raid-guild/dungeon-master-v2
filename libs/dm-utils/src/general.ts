@@ -5,7 +5,7 @@ import _ from 'lodash';
 export const truncateAddress = (addr: string | undefined): string =>
   addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : '';
 
-export const truncateEmail = (email: string | undefined): string =>
+export const truncateEmail: any = (email: string | undefined): string =>
   email ? `${email.slice(0, 10)}...` : '';
 
 export const clearNonObjects = (array: any[]): object[] => {

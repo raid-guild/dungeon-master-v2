@@ -36,10 +36,10 @@ dependencies:
     specifier: ^8.7.6
     version: 8.8.4
   '@tanstack/react-query':
-    specifier: ^4.19.1
+    specifier: ^4.36.1
     version: 4.36.1(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-query-devtools':
-    specifier: ^4.19.1
+    specifier: ^4.36.1
     version: 4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/react-table':
     specifier: 8.9.3

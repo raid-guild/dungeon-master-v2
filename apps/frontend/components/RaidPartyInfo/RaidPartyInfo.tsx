@@ -85,7 +85,7 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
                 <Heading color='white' size='sm'>
                   Recruiting
                 </Heading>
-                <RaidPartyCard roles={localRoles} isRole />
+                <RaidPartyCard roles={localRoles} />
               </Stack>
             )}
           </Stack>
