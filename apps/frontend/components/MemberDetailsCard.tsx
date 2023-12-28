@@ -13,6 +13,7 @@ import {
   Text,
   Tooltip,
   useClipboard,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
 import { IApplication, IMember } from '@raidguild/dm-types';
@@ -42,6 +43,7 @@ const MemberDetailsCard = ({
   height,
   showHeader = false,
 }: MemberProps) => {
+  const toast = useToast();
   const copyDiscord = useClipboard(
     _.get(
       member,
@@ -52,6 +54,16 @@ const MemberDetailsCard = ({
   const copyEth = useClipboard(
     _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
   );
+
+  const copyAndNotify = (value: string) => {
+    if (value === 'discord') {
+      copyDiscord.onCopy();
+      toast.success({ title: 'Copied Discord username to clipboard' });
+    } else if (value === 'eth') {
+      copyEth.onCopy();
+      toast.success({ title: 'Copied ETH address to clipboard' });
+    }
+  };
 
   useEffect(() => {
     copyDiscord.setValue(
@@ -126,7 +138,7 @@ const MemberDetailsCard = ({
         _.get(application, 'contactInfo.discord')
       ),
       icon: FaDiscord,
-      onClick: copyDiscord.onCopy,
+      onClick: () => copyAndNotify('discord'),
     },
     ((_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' &&
       _.get(member, 'ethAddress', _.get(application, 'ethAddress'))) ||
@@ -138,7 +150,7 @@ const MemberDetailsCard = ({
           _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
         ),
       icon: FaEthereum,
-      onClick: copyEth.onCopy,
+      onClick: () => copyAndNotify('eth'),
     },
   ].filter((x) => x);
 
@@ -200,17 +212,17 @@ const MemberDetailsCard = ({
                 outlineColor='primary.500'
               />
               <Stack align='flex-end'>
-                <Heading size='lg'>
+                <Heading size='lg' color='white'>
                   {_.get(member, 'name', _.get(application, 'name'))}
                 </Heading>
                 <Tooltip label='Copy ETH address' placement='left' hasArrow>
                   <HStack
                     spacing={1}
-                    onClick={copyEth.onCopy}
+                    onClick={() => copyAndNotify('eth')}
                     _hover={{ cursor: 'pointer' }}
                     _active={{ textColor: 'primary.500' }}
                   >
-                    <Text fontSize='sm'>
+                    <Text fontSize='sm' color='whiteAlpha.800'>
                       {truncateAddress(
                         _.get(
                           member,
@@ -226,8 +238,8 @@ const MemberDetailsCard = ({
               </Stack>
             </Flex>
 
-            <HStack w='100%'>
-              <Button fontFamily='monospace' w='full'>
+            <HStack w='100%' fontFamily='spaceMono'>
+              <Button w='full'>
                 {_.get(member, 'isRaiding') === true
                   ? 'RAIDING'
                   : 'NOT RAIDING'}
@@ -246,7 +258,12 @@ const MemberDetailsCard = ({
         >
           {_.map(skillBlocks, (block) => (
             <Flex direction='column' flexGrow={1} key={block.label} gap={2}>
-              <Heading color='primary.500' size='sm'>
+              <Heading
+                color='purple.400'
+                fontFamily='texturina'
+                textTransform='uppercase'
+                size='xs'
+              >
                 {block.label}
               </Heading>
               <Flex maxWidth='100%' wrap='wrap'>
@@ -282,7 +299,7 @@ const MemberDetailsCard = ({
               <Tooltip
                 label={_.get(link, 'tooltip')}
                 size='sm'
-                key={_.get(link, 'label')}
+                key={`${_.get(link, 'href')}-${_.get(link, 'label')}`}
               >
                 <Button
                   as={ChakraLink}

@@ -5,6 +5,9 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { useChainId } from 'wagmi';
+
+import SplitContext from './SplitsContext';
 
 export type IModals = {
   raidStatus: boolean;
@@ -34,6 +37,7 @@ interface OverlayProviderProps {
 }
 
 export const OverlayContextProvider = ({ children }: OverlayProviderProps) => {
+  const chainId = useChainId();
   const [modals, setModals] = useState(defaults);
   const [commandPallet, setCommandPallet] = useState(false);
 
@@ -59,9 +63,11 @@ export const OverlayContextProvider = ({ children }: OverlayProviderProps) => {
   );
 
   return (
-    <OverlayContext.Provider value={returnValue}>
-      {children}
-    </OverlayContext.Provider>
+    <SplitContext chainId={chainId}>
+      <OverlayContext.Provider value={returnValue}>
+        {children}
+      </OverlayContext.Provider>
+    </SplitContext>
   );
 };
 

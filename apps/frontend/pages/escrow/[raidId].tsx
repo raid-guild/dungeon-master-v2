@@ -1,19 +1,33 @@
-import { Card, Flex, Heading, Spinner, Text } from '@raidguild/design-system';
+import {
+  Card,
+  Flex,
+  Heading,
+  HStack,
+  Icon,
+  Spinner,
+  Stack,
+  Text,
+} from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
-import { useInvoiceDetails } from '@raidguild/escrow-hooks';
+import { useInvoiceDetails, useSplitsMetadata } from '@raidguild/escrow-hooks';
+import { invoiceUrl } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { GetServerSidePropsContext } from 'next';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
+import { useMemo } from 'react';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { useAccount, useNetwork } from 'wagmi';
 
+import ChakraNextLink from '../../components/ChakraNextLink';
+import InvoiceButtonManager from '../../components/Escrow/InvoiceButtonManager';
+import InvoiceMetaDetails from '../../components/Escrow/InvoiceMetaDetails';
+import InvoicePaymentDetails from '../../components/Escrow/InvoicePaymentDetails';
+import ProjectInfo from '../../components/Escrow/ProjectInfo';
+import ReceiverSplits from '../../components/Escrow/ReceiverSplits';
+import Page404 from '../../components/Escrow/shared/Page404';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
-import InvoiceButtonManager from '../../components/SmartEscrow/InvoiceButtonManager';
-import InvoiceMetaDetails from '../../components/SmartEscrow/InvoiceMetaDetails';
-import InvoicePaymentDetails from '../../components/SmartEscrow/InvoicePaymentDetails';
-import ProjectInfo from '../../components/SmartEscrow/ProjectInfo';
-import Page404 from '../../components/SmartEscrow/shared/Page404';
 
 const WRONG_NETWORK_MESSAGE =
   'This network is not supported: Switch to Gnosis Chain';
@@ -40,6 +54,17 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     chainId: 100, // chain?.id, // ! support multiple chains
   });
 
+  const initialSplit = useMemo(
+    () => [_.get(invoice, 'providerReceiver')],
+    [invoice]
+  );
+
+  const { data: initialSplitMetadata, isLoading: initialSplitIsLoading } =
+    useSplitsMetadata({
+      splits: initialSplit,
+      chainId: chain?.id,
+    });
+
   const wrongChain = !_.includes(SUPPORTED_NETWORKS, chain?.id);
 
   if (!token) {
@@ -47,7 +72,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
       <>
         <NextSeo title='Not Found' />
 
-        <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
+        <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
           <Flex direction='column' alignItems='center' w='100%' pt='150px'>
             <Heading size='md'>Connect your wallet & Sign in</Heading>
           </Flex>
@@ -58,7 +83,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
 
   if (raidLoading || invoiceLoading) {
     return (
-      <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
+      <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Flex direction='column' alignItems='center' w='100%'>
           <Spinner size='xl' mt='150px' />
         </Flex>
@@ -66,13 +91,16 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     );
   }
 
-  if (!raid) {
+  if (!raid || (raid && raid.invoiceAddress && !invoice)) {
     return (
       <>
         <NextSeo title='Not Found' />
 
-        <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
-          <Page404 />
+        <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
+          <Page404
+            heading='Invoice not found!'
+            primaryLink={{ link: '/escrow', label: 'Back to escrow' }}
+          />
         </SiteLayoutPublic>
       </>
     );
@@ -80,9 +108,9 @@ const Escrow = ({ raidId }: { raidId: string }) => {
 
   return (
     <>
-      <NextSeo title='Smart Escrow' />
+      <NextSeo title='Escrow' />
 
-      <SiteLayoutPublic subheader={<Heading>Smart Escrow</Heading>}>
+      <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         {!address && (
           <Flex direction='column' alignItems='center'>
             <Text variant='textOne'>{NOT_CONNECTED_MESSAGE}</Text>
@@ -96,13 +124,43 @@ const Escrow = ({ raidId }: { raidId: string }) => {
           <Flex
             width='100%'
             direction={{ md: 'column', lg: 'row' }}
-            alignItems='center'
+            // alignItems='center'
             justifyContent='space-evenly'
           >
-            <Card as={Flex} variant='filled' direction='column' minW='30%'>
-              <ProjectInfo raid={raid} direction='column' />
-              <InvoiceMetaDetails invoice={invoice} />
-            </Card>
+            <Stack spacing={4}>
+              <Card as={Flex} variant='filled' direction='column' minW='30%'>
+                <Stack>
+                  <ProjectInfo raid={raid} direction='column' />
+                  <InvoiceMetaDetails
+                    invoice={invoice}
+                    receiverIsSplit={
+                      !_.isEmpty(_.compact(initialSplitMetadata))
+                    }
+                  />
+                  <Flex justify='flex-end'>
+                    <ChakraNextLink
+                      href={invoiceUrl(chain?.id || 100, invoice?.id)}
+                    >
+                      <HStack>
+                        <Text fontSize='xs' textTransform='uppercase'>
+                          smartinvoice.xyz
+                        </Text>
+                        <Icon
+                          as={FaExternalLinkAlt}
+                          color='purple.400'
+                          boxSize='0.55rem'
+                        />
+                      </HStack>
+                    </ChakraNextLink>
+                  </Flex>
+                </Stack>
+              </Card>
+              <ReceiverSplits
+                initialSplitMetadata={_.first(initialSplitMetadata)}
+                chainId={chain?.id}
+                isLoading={initialSplitIsLoading}
+              />
+            </Stack>
 
             <Flex direction='column' minW='45%'>
               <InvoicePaymentDetails invoice={invoice} />

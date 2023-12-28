@@ -21,25 +21,38 @@ const customGnosis = {
   iconBackground: 'none',
 };
 
+const orderedChains = [
+  1, // mainnet
+  100, // customGnosis
+  137, // polygon
+  42151, // arbitrum
+  10, // optimism
+  5, // goerli
+  11155111, // sepolia
+];
+
 const chainsList: { [key: number]: Chain } = {
-  1: mainnet,
   100: customGnosis,
   137: polygon,
   42151: arbitrum,
   10: optimism,
+  1: mainnet,
   5: goerli,
   11155111: sepolia,
 };
 if (process.env.NODE_ENV === 'development') {
   chainsList[31337] = hardhat;
 }
-const chainsMap = (chainId: number) => chainsList[chainId];
+export const chainsMap = (chainId: number) => chainsList[chainId];
 
-const data = configureChains(_.values(chainsList), [
-  alchemyProvider({ apiKey: '_xjUMNooQnLZZ44pxpG9Zs7JzT8WN8vL' as string }),
-  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
-  publicProvider(),
-]);
+const data = configureChains(
+  _.map(orderedChains, (id: number) => chainsMap(id)),
+  [
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),
+    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
+    publicProvider(),
+  ]
+);
 
 const { chains, publicClient } = _.pick(data, ['chains', 'publicClient']);
 

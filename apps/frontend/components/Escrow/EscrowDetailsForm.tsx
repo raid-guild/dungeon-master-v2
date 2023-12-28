@@ -87,7 +87,7 @@ const EscrowDetailsForm = ({
     watch: localWatch,
   } = localForm;
   const {
-    safetyValveDate: localSafetyValveDate,
+    // safetyValveDate: localSafetyValveDate,
     daoSplit: localDaoSplit,
     spoilsPercent: localSpoilsPercent,
     raidPartySplit: localRaidPartySplit,
@@ -154,11 +154,7 @@ const EscrowDetailsForm = ({
             <DatePicker
               label='Safety Valve Date'
               name='safetyValveDate'
-              // tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
-              onChange={(date) => {
-                localSetValue('safetyValveDate', date as Date);
-              }}
-              selected={localSafetyValveDate}
+              tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
               localForm={localForm}
             />
           </Box>

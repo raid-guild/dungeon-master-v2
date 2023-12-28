@@ -48,6 +48,7 @@ const MemberAvatar = ({
   const guessAlias = name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
   const { data: guessedEnsAvatar } = useEnsAvatar({
     name: `${guessAlias}.eth`,
+    chainId: 1,
   });
   const guessedGithubAvatar = `https://github.com/${guessAlias}.png`;
 

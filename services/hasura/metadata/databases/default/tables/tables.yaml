@@ -29,6 +29,7 @@
 - "!include public_raid_categories.yaml"
 - "!include public_raid_parties.yaml"
 - "!include public_raid_statuses.yaml"
+- "!include public_raiding_raids_by_last_update.yaml"
 - "!include public_raids.yaml"
 - "!include public_raids_roles_required.yaml"
 - "!include public_related_raids.yaml"

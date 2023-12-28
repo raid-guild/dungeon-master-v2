@@ -66,6 +66,7 @@ export const RAIDS_COUNT_QUERY = gql`
   }
 `;
 
+// TODO extend RaidDetail fragment
 export const RAID_DETAIL_QUERY = gql`
   query RaidDetailQuery($id: uuid!) {
     raids_by_pk(id: $id) {
@@ -101,6 +102,14 @@ export const RAID_DETAIL_QUERY = gql`
       start_date
       end_date
       cleric {
+        eth_address
+        name
+        id
+        guild_class {
+          guild_class
+        }
+      }
+      hunter {
         eth_address
         name
         id

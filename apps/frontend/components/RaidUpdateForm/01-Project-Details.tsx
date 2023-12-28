@@ -112,136 +112,127 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
   ));
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={4}>
-        <Input
-          name='raidName'
-          defaultValue={raid?.name ? raid?.name : ''}
-          aria-label='Enter the Raid name'
-          placeholder='Enter the Raid name'
-          rounded='base'
-          label='Raid Name'
-          localForm={localForm}
-        />
-        <Flex
-          direction={{ base: 'column', lg: 'row' }}
-          alignItems='center'
-          justifyContent='space-between'
-        >
-          <DatePicker
-            name='startDate'
-            label='Raid Start Date (UTC)'
-            selected={startDate}
-            onChange={(date) => {
-              if (Array.isArray(date)) {
-                return;
-              }
-              setStartDate(date);
-              setValue('startDate', date);
-            }}
-            customInput={<CustomCalInput />}
-            localForm={localForm}
-          />
-          <DatePicker
-            name='endDate'
-            label='Raid End Date (UTC)'
-            selected={endDate}
-            onChange={(date) => {
-              if (Array.isArray(date)) {
-                return;
-              }
-              setEndDate(date);
-              setValue('endDate', date);
-            }}
-            customInput={<CustomCalInput />}
-            localForm={localForm}
-          />
-        </Flex>
-        <FormControl>
-          <FormLabel color='raid'>Raid Budget</FormLabel>
-          <Controller
-            name='raidBudget'
-            defaultValue={selectedBudget}
-            control={control}
-            render={({ field }) => (
-              <Select
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...field}
-                name='raidBudget'
-                options={BUDGET_DISPLAY_OPTIONS}
-                localForm={localForm}
-              />
-            )}
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel color='raid'>Raid Category</FormLabel>
-          <Controller
-            name='raidCategory'
-            defaultValue={selectedCategory}
-            control={control}
-            render={({ field }) => (
-              <Select
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...field}
-                name='raidCategory'
-                options={RAID_CATEGORY_OPTIONS}
-                localForm={localForm}
-              />
-            )}
-          />
-        </FormControl>
+    <Stack as='form' spacing={4} onSubmit={handleSubmit(onSubmit)}>
+      <Input
+        name='raidName'
+        defaultValue={raid?.name ? raid?.name : ''}
+        aria-label='Enter the Raid name'
+        placeholder='Enter the Raid name'
+        rounded='base'
+        label='Raid Name'
+        localForm={localForm}
+      />
+      <Flex
+        direction={{ base: 'column', lg: 'row' }}
+        alignItems='center'
+        justifyContent='space-between'
+      >
         <DatePicker
-          name='desiredDeliveryDate'
-          label='Desired Delivery Date'
-          selected={desiredDeliveryDate}
-          onChange={(date) => {
-            if (Array.isArray(date)) {
-              return;
-            }
-            setDesiredDeliveryDate(date);
-            setValue('desiredDeliveryDate', date);
-          }}
+          name='startDate'
+          label='Raid Start Date (UTC)'
+          // selected={startDate}
+          // onChange={(date) => {
+          //   if (Array.isArray(date)) {
+          //     return;
+          //   }
+          //   setStartDate(date);
+          //   setValue('startDate', date);
+          // }}
           customInput={<CustomCalInput />}
           localForm={localForm}
         />
+        <DatePicker
+          name='endDate'
+          label='Raid End Date (UTC)'
+          // selected={endDate}
+          // onChange={(date) => {
+          //   if (Array.isArray(date)) {
+          //     return;
+          //   }
+          //   setEndDate(date);
+          //   setValue('endDate', date);
+          // }}
+          customInput={<CustomCalInput />}
+          localForm={localForm}
+        />
+      </Flex>
+      <FormControl>
+        <FormLabel color='raid'>Raid Budget</FormLabel>
+        <Controller
+          name='raidBudget'
+          defaultValue={selectedBudget}
+          control={control}
+          render={({ field }) => (
+            <Select
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...field}
+              name='raidBudget'
+              options={BUDGET_DISPLAY_OPTIONS}
+              localForm={localForm}
+            />
+          )}
+        />
+      </FormControl>
 
-        <FormControl>
-          <FormLabel color='raid'>Delivery Priority</FormLabel>
-          <Controller
-            name='deliveryPriority'
-            defaultValue={selectedDeliveryPriority}
-            control={control}
-            render={({ field }) => (
-              <Select
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...field}
-                name='deliveryPriority'
-                options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
-                localForm={localForm}
-              />
-            )}
-          />
-        </FormControl>
-      </Stack>
+      <FormControl>
+        <FormLabel color='raid'>Raid Category</FormLabel>
+        <Controller
+          name='raidCategory'
+          defaultValue={selectedCategory}
+          control={control}
+          render={({ field }) => (
+            <Select
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...field}
+              name='raidCategory'
+              options={RAID_CATEGORY_OPTIONS}
+              localForm={localForm}
+            />
+          )}
+        />
+      </FormControl>
+      <DatePicker
+        name='desiredDeliveryDate'
+        label='Desired Delivery Date'
+        // selected={desiredDeliveryDate}
+        // onChange={(date) => {
+        //   if (Array.isArray(date)) {
+        //     return;
+        //   }
+        //   setDesiredDeliveryDate(date);
+        //   setValue('desiredDeliveryDate', date);
+        // }}
+        customInput={<CustomCalInput />}
+        localForm={localForm}
+      />
+
+      <FormControl>
+        <FormLabel color='raid'>Delivery Priority</FormLabel>
+        <Controller
+          name='deliveryPriority'
+          defaultValue={selectedDeliveryPriority}
+          control={control}
+          render={({ field }) => (
+            <Select
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...field}
+              name='deliveryPriority'
+              options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
+              localForm={localForm}
+            />
+          )}
+        />
+      </FormControl>
 
       <Button
         isLoading={isSubmitting || sending}
         type='submit'
         width='full'
-        color='raid'
-        borderColor='raid'
-        border='1px solid'
-        size='md'
-        textTransform='uppercase'
-        fontSize='sm'
-        bgColor='primary.500'
-        fontWeight='bold'
+        variant='solid'
       >
         Update Project Details
       </Button>
-    </form>
+    </Stack>
   );
 };
 

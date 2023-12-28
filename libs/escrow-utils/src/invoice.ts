@@ -1,10 +1,16 @@
 /* eslint-disable import/prefer-default-export */
 // TODO migrate to wagmi hooks
 
-import _ from 'lodash';
 import { Hex } from 'viem';
 
 import { NETWORK_CONFIG } from './constants';
+
+export const invoiceUrl = (chainId: number, address: Hex | undefined) => {
+  if (!chainId || !address) return '';
+  return `https://app.smartinvoice.xyz/invoice/0x${chainId.toString(
+    16
+  )}/${address}`;
+};
 
 export const getInvoiceFactoryAddress = (chainId: number) => {
   const invoiceFactory: { [key: number]: string } = {

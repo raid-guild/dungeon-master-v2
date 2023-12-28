@@ -294,7 +294,12 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
 
           {!_.isEmpty(raidParty) && !upTo780 && (
             <Stack spacing={4} minW='150px'>
-              <Heading size='sm' color='white' variant='shadow'>
+              <Heading
+                size='sm'
+                color='white'
+                variant='shadow'
+                textAlign='center'
+              >
                 Raid Party
               </Heading>
 

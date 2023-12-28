@@ -32,8 +32,9 @@ const useInvoiceDetails = ({
   }, [invoiceAddressError, wrappedInvoiceAddress]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['invoiceDetails', address, chainId],
-    queryFn: () => getInvoice(chainId, address as Hex),
+    queryKey: ['invoiceDetails', address || wrappedInvoiceAddress, chainId],
+    queryFn: () =>
+      getInvoice(chainId, (address as Hex) || wrappedInvoiceAddress),
     enabled: !!address && !!chainId && !invoiceAddressLoading,
     staleTime: 1000 * 60 * 15,
   });

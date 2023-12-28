@@ -23,12 +23,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const v2Id = req.body.raidId.includes('-');
-  const variables = {} as any;
+  let variables = {} as any;
+  const v2IdVariable = { raidId: req.body.raidId };
+  const v1IdVariable = { v1Id: req.body.raidId };
   if (v2Id) {
-    variables.raidId = req.body.raidId;
+    variables = { ...v2IdVariable };
   } else {
-    variables.v1Id = req.body.raidId;
+    variables = { ...v1IdVariable };
   }
+  console.log(v2Id, variables);
 
   try {
     const result = await client({}).request(

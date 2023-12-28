@@ -4,16 +4,18 @@ import { RAID_DETAIL_FRAGMENT } from '../fragments';
 
 export const RAID_UPDATE_MUTATION = gql`
   mutation RaidUpdateMutation(
-  $id: uuid!, 
-  $raid_updates: raids_set_input!, 
-  $consultation_updates: consultations_set_input!, 
-  $consultation_id: uuid!)
-  
-   {
+    $id: uuid!
+    $raid_updates: raids_set_input!
+    $consultation_updates: consultations_set_input!
+    $consultation_id: uuid!
+  ) {
     update_raids_by_pk(pk_columns: { id: $id }, _set: $raid_updates) {
       ...RaidDetail
     }
-    update_consultations_by_pk(pk_columns: { id: $consultation_id }, _set: $consultation_updates) {
+    update_consultations_by_pk(
+      pk_columns: { id: $consultation_id }
+      _set: $consultation_updates
+    ) {
       ...ConsultationDetail
     }
   }
@@ -28,7 +30,6 @@ export const RAID_MINI_UPDATE_MUTATION = gql`
   }
   ${RAID_DETAIL_FRAGMENT}
 `;
-
 
 export const RAID_CREATE_MUTATION = gql`
   mutation RaidCreateMutation($raid: raids_insert_input!) {
@@ -131,7 +132,7 @@ export const RAID_PARTY_DELETE_MUTATION = gql`
 `;
 
 export const UPDATE_INVOICE_ADDRESS_QUERY = gql`
-  mutation MyMutation($invoiceAddress: String!, $raidId: Int!) {
+  mutation MyMutation($invoiceAddress: String!, $raidId: uuid!) {
     update_raids(
       where: { id: { _eq: $raidId } }
       _set: { invoice_address: $invoiceAddress }

@@ -1,12 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import '@rainbow-me/rainbowkit/styles.css';
+// eslint-disable-next-line import/no-unresolved
+import 'react-datepicker/dist/react-datepicker.css'; // trouble processing this css in the DS pkg currently
 
-import { RGThemeProvider, useToast } from '@raidguild/design-system';
+import { RGThemeProvider } from '@raidguild/design-system';
 import { chains, wagmiConfig } from '@raidguild/dm-utils';
 import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import {
-  QueryCache,
+  // QueryCache,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
@@ -20,7 +22,7 @@ import { WagmiConfig } from 'wagmi';
 import { OverlayContextProvider } from '../contexts/OverlayContext';
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const toast = useToast();
+  // const toast = useToast();
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -28,15 +30,15 @@ const App = ({ Component, pageProps }: AppProps) => {
         refetchOnWindowFocus: false,
       },
     },
-    queryCache: new QueryCache({
-      onError: (error) => {
-        toast.error({
-          title: 'Something went wrong.',
-          iconName: 'alert',
-          description: `Please try again: ${error}`,
-        });
-      },
-    }),
+    // queryCache: new QueryCache({
+    //   onError: (error) => {
+    //     toast.error({
+    //       title: 'Something went wrong.',
+    //       iconName: 'alert',
+    //       description: `Please try again: ${error}`,
+    //     });
+    //   },
+    // }),
   });
 
   return (
@@ -56,7 +58,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           description: 'Adventurers, come and gather around the campfire.',
           // images: [
           //   {
-          //     url: '/raidguild-logo', // replcace with your OG image
+          //     url: '/raidguild-logo', // replace with your OG image
           //     width: 1200,
           //     height: 630,
           //     alt: "Raid Guild logo: Crossed swords with 'Raid Guild'",
