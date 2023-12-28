@@ -130,28 +130,28 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
         <DatePicker
           name='startDate'
           label='Raid Start Date (UTC)'
-          selected={startDate}
-          onChange={(date) => {
-            if (Array.isArray(date)) {
-              return;
-            }
-            setStartDate(date);
-            setValue('startDate', date);
-          }}
+          // selected={startDate}
+          // onChange={(date) => {
+          //   if (Array.isArray(date)) {
+          //     return;
+          //   }
+          //   setStartDate(date);
+          //   setValue('startDate', date);
+          // }}
           customInput={<CustomCalInput />}
           localForm={localForm}
         />
         <DatePicker
           name='endDate'
           label='Raid End Date (UTC)'
-          selected={endDate}
-          onChange={(date) => {
-            if (Array.isArray(date)) {
-              return;
-            }
-            setEndDate(date);
-            setValue('endDate', date);
-          }}
+          // selected={endDate}
+          // onChange={(date) => {
+          //   if (Array.isArray(date)) {
+          //     return;
+          //   }
+          //   setEndDate(date);
+          //   setValue('endDate', date);
+          // }}
           customInput={<CustomCalInput />}
           localForm={localForm}
         />
@@ -194,14 +194,14 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
       <DatePicker
         name='desiredDeliveryDate'
         label='Desired Delivery Date'
-        selected={desiredDeliveryDate}
-        onChange={(date) => {
-          if (Array.isArray(date)) {
-            return;
-          }
-          setDesiredDeliveryDate(date);
-          setValue('desiredDeliveryDate', date);
-        }}
+        // selected={desiredDeliveryDate}
+        // onChange={(date) => {
+        //   if (Array.isArray(date)) {
+        //     return;
+        //   }
+        //   setDesiredDeliveryDate(date);
+        //   setValue('desiredDeliveryDate', date);
+        // }}
         customInput={<CustomCalInput />}
         localForm={localForm}
       />

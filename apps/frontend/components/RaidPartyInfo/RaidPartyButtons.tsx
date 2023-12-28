@@ -7,10 +7,10 @@ import {
   HStack,
   Icon,
   IconButton,
+  // Option,
   Select,
   VStack,
 } from '@raidguild/design-system';
-import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
 import { useRaidPartyAdd, useUpdateRolesRequired } from '@raidguild/dm-hooks';
 import {
   IMember,
@@ -64,7 +64,7 @@ const RaidPartyButtons = ({
     mode: 'all',
   });
   const { control, handleSubmit } = localForm;
-  const [selectedRoleOptions, setSelectedRoleOptions] = useState<Option>();
+  const [selectedRoleOptions, setSelectedRoleOptions] = useState<any>(); // <Option>();
   const [raiderToAdd, setRaiderToAdd] = useState<string>();
 
   const { mutateAsync: updateRolesRequired } = useUpdateRolesRequired({
@@ -75,7 +75,7 @@ const RaidPartyButtons = ({
   const submitUpdateRoles = async () => {
     const selectedRoleValues: any[] = _.map(
       selectedRoleOptions,
-      (selection: Option) => selection.value
+      (selection: any) => selection.value // <Option>
     );
     const rolesAdded: string[] = _.difference(
       selectedRoleValues,
