@@ -5,10 +5,10 @@ import {
   FormControl,
   FormLabel,
   Input,
+  // Option,
   Select,
   Stack,
 } from '@raidguild/design-system';
-import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
 import { useMemberUpdate } from '@raidguild/dm-hooks';
 import { IApplication, IMember } from '@raidguild/dm-types';
 import {
@@ -280,7 +280,7 @@ const UpdateMemberForm = ({
                       <Select
                         // eslint-disable-next-line react/jsx-props-no-spreading
                         {...field}
-                        options={IS_RAIDING_OPTIONS as Option[]}
+                        options={IS_RAIDING_OPTIONS as any[]} // Option[]}
                         localForm={localForm}
                       />
                     )}

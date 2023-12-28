@@ -50,7 +50,7 @@ const useDeposit = ({
       console.log('deposit tx', tx);
 
       // TODO catch success
-      onSuccess(tx);
+      onSuccess?.(tx);
 
       // wait for tx
       // update invoice

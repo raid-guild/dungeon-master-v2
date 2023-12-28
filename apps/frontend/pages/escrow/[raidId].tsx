@@ -2,6 +2,8 @@ import {
   Card,
   Flex,
   Heading,
+  HStack,
+  Icon,
   Spinner,
   Stack,
   Text,
@@ -9,13 +11,16 @@ import {
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
 import { useInvoiceDetails, useSplitsMetadata } from '@raidguild/escrow-hooks';
+import { invoiceUrl } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { GetServerSidePropsContext } from 'next';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useMemo } from 'react';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { useAccount, useNetwork } from 'wagmi';
 
+import ChakraNextLink from '../../components/ChakraNextLink';
 import InvoiceButtonManager from '../../components/Escrow/InvoiceButtonManager';
 import InvoiceMetaDetails from '../../components/Escrow/InvoiceMetaDetails';
 import InvoicePaymentDetails from '../../components/Escrow/InvoicePaymentDetails';
@@ -124,11 +129,31 @@ const Escrow = ({ raidId }: { raidId: string }) => {
           >
             <Stack spacing={4}>
               <Card as={Flex} variant='filled' direction='column' minW='30%'>
-                <ProjectInfo raid={raid} direction='column' />
-                <InvoiceMetaDetails
-                  invoice={invoice}
-                  receiverIsSplit={!_.isEmpty(_.compact(initialSplitMetadata))}
-                />
+                <Stack>
+                  <ProjectInfo raid={raid} direction='column' />
+                  <InvoiceMetaDetails
+                    invoice={invoice}
+                    receiverIsSplit={
+                      !_.isEmpty(_.compact(initialSplitMetadata))
+                    }
+                  />
+                  <Flex justify='flex-end'>
+                    <ChakraNextLink
+                      href={invoiceUrl(chain?.id || 100, invoice?.id)}
+                    >
+                      <HStack>
+                        <Text fontSize='xs' textTransform='uppercase'>
+                          smartinvoice.xyz
+                        </Text>
+                        <Icon
+                          as={FaExternalLinkAlt}
+                          color='purple.400'
+                          boxSize='0.55rem'
+                        />
+                      </HStack>
+                    </ChakraNextLink>
+                  </Flex>
+                </Stack>
               </Card>
               <ReceiverSplits
                 initialSplitMetadata={_.first(initialSplitMetadata)}

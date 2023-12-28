@@ -71,7 +71,6 @@ const DepositFunds = ({
 
   const { data: nativeBalance } = useBalance({ address });
   const { data: tokenBalance } = useBalance({ address, token });
-  // console.log(nativeBalance, tokenBalance);
   const balance =
     paymentType?.value === PAYMENT_TYPES.NATIVE
       ? nativeBalance?.value
@@ -136,7 +135,7 @@ const DepositFunds = ({
         How much will you be depositing today?
       </Text>
       <VStack spacing='0.5rem' align='center'>
-        {amounts.map((a: number, i: number) => (
+        {_.map(amounts, (a: number, i: number) => (
           <HStack>
             <Checkbox
               mx='auto'
@@ -218,13 +217,14 @@ const DepositFunds = ({
                 onChange={(e) => {
                   setValue('paymentType', e);
                 }}
+                // width='100%'
               />
             ) : (
               parseTokenAddress(chainId, token)
             )}
           </Flex>
         </Flex>
-        {BigInt(amount) * BigInt(10) ** BigInt(decimals) > due && (
+        {BigInt(amount) * BigInt(10) ** BigInt(decimals || 0) > due && (
           <Alert bg='purple.900' borderRadius='md' mt={4}>
             <AlertIcon color='primary.300' />
             <AlertTitle fontSize='sm'>

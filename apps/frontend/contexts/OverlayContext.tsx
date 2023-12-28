@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { useChainId } from 'wagmi';
 
-import SplitProvider from './SplitProvider';
+import SplitContext from './SplitsContext';
 
 export type IModals = {
   raidStatus: boolean;
@@ -63,11 +63,11 @@ export const OverlayContextProvider = ({ children }: OverlayProviderProps) => {
   );
 
   return (
-    <SplitProvider chainId={chainId}>
+    <SplitContext chainId={chainId}>
       <OverlayContext.Provider value={returnValue}>
         {children}
       </OverlayContext.Provider>
-    </SplitProvider>
+    </SplitContext>
   );
 };
 

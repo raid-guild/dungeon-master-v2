@@ -1,8 +1,4 @@
-import {
-  Split,
-  SplitRecipient,
-  useSplitEarnings,
-} from '@0xsplits/splits-sdk-react';
+import { Split, SplitRecipient } from '@0xsplits/splits-sdk-react';
 import {
   Accordion,
   AccordionButton,
@@ -21,17 +17,24 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { truncateAddress } from '@raidguild/dm-utils';
-import { useSplitsMetadata } from '@raidguild/escrow-hooks';
-import { NETWORK_CONFIG, splitsLink } from '@raidguild/escrow-utils';
+import { useSplitEarnings, useSplitsMetadata } from '@raidguild/escrow-hooks';
+import {
+  handleFormattedBalance,
+  NETWORK_CONFIG,
+  splitsLink,
+} from '@raidguild/escrow-utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React, { useMemo } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import { formatUnits } from 'viem';
 import { useContractRead } from 'wagmi';
 
 import ChakraNextLink from '../ChakraNextLink';
 import AccountLink from './shared/AccountLink';
+
+const WXDAI_ADDRESS = '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d';
 
 // TODO handle other tokens in splits balances
 
@@ -58,12 +61,18 @@ const NestedSplit = ({
     functionName: 'VERSION',
     args: [],
   });
-  const { formattedSplitEarnings } = useSplitEarnings(
-    currentSplitMetadata?.address
-  );
-  console.log(
-    _.get(formattedSplitEarnings, 'activeBalances[0].formattedAmount')
-  );
+  const { data: splitEarnings } = useSplitEarnings({
+    address: _.get(currentSplitMetadata, 'address'),
+    chainId,
+  });
+  // todo handle other tokens, ideally SplitsKit will do this
+  const wxdaiBalance = useMemo(() => {
+    const activeBalances = _.get(splitEarnings, 'activeBalances');
+    if (!activeBalances || !activeBalances[WXDAI_ADDRESS]) return '0';
+    return handleFormattedBalance(
+      formatUnits(activeBalances[WXDAI_ADDRESS], 18) || '0'
+    );
+  }, [splitEarnings]);
 
   return (
     <Accordion allowToggle>
@@ -78,6 +87,9 @@ const NestedSplit = ({
                 isSplit
                 chainId={chainId}
               />
+              <Text fontFamily='spaceMono' fontSize='xs'>
+                ({_.size(currentSplitMetadata.recipients)})
+              </Text>
             </HStack>
 
             <Text fontFamily='spaceMono'>
@@ -92,14 +104,17 @@ const NestedSplit = ({
         >
           <Stack spacing={1}>
             <Text fontSize='10px' color='primary.500' textTransform='uppercase'>
-              Recipients
+              Recipients ({_.size(currentSplitMetadata.recipients)})
             </Text>
             {_.map(
               _.get(currentSplitMetadata, 'recipients'),
               (subRecipient) => (
-                <Flex justify='space-between' w='100%'>
+                <Flex
+                  justify='space-between'
+                  w='100%'
+                  key={_.get(subRecipient, 'recipient.address')}
+                >
                   <AccountLink
-                    key={_.get(subRecipient, 'recipient.address')}
                     address={_.get(subRecipient, 'recipient.address')}
                     chainId={chainId}
                   />
@@ -118,12 +133,7 @@ const NestedSplit = ({
                 Balance
               </Text>
               <Text fontFamily='spaceMono' fontSize='sm'>
-                {_.get(
-                  formattedSplitEarnings,
-                  'activeBalances[0].formattedAmount',
-                  '0'
-                )}{' '}
-                WXDAI
+                {wxdaiBalance} WXDAI
               </Text>
             </Flex>
             <Flex justify='space-between'>
@@ -171,9 +181,19 @@ const ReceiverSplits = ({
       splits: potentialSplitsAddresses,
       chainId,
     });
-  const { formattedSplitEarnings } = useSplitEarnings(
-    initialSplitMetadata?.address
-  );
+  const { data: splitEarnings } = useSplitEarnings({
+    address: _.get(initialSplitMetadata, 'address'),
+    chainId,
+  });
+  // todo handle other tokens, ideally SplitsKit will do this
+  const wxdaiBalance = useMemo(() => {
+    const activeBalances = _.get(splitEarnings, 'activeBalances');
+    if (!activeBalances || !activeBalances[WXDAI_ADDRESS]) return '0';
+    return handleFormattedBalance(
+      formatUnits(activeBalances[WXDAI_ADDRESS], 18)
+    );
+  }, [splitEarnings]);
+
   const { data: controllerIsSafe } = useContractRead({
     address: _.get(initialSplitMetadata, 'controller.address'),
     abi: [
@@ -195,121 +215,130 @@ const ReceiverSplits = ({
         seed: _.toLower(_.get(initialSplitMetadata, 'address')),
       })
       .toDataURL();
-  console.log(
-    _.get(formattedSplitEarnings, 'activeBalances[0].formattedAmount')
-  );
 
   if (isLoading || !_.includes(session.user.roles, 'member')) return null;
 
   return (
     <Card variant='filled'>
-      <Stack w='100%' spacing={4}>
-        <Flex justify='space-between' align='center'>
-          <ChakraNextLink
-            href={splitsLink(initialSplitMetadata.address, chainId)}
-            isExternal
-          >
-            <HStack>
-              <Avatar
-                src={splitAvatar}
-                boxSize='30px'
-                ring='1px'
-                ringColor='white'
-              />
-              <Heading size='sm'>0xSplit</Heading>
-              <Text fontFamily='spaceMono'>
-                ({truncateAddress(initialSplitMetadata.address)})
+      <Stack w='100%'>
+        <Stack w='100%' spacing={4}>
+          <Flex justify='space-between' align='center'>
+            <ChakraNextLink
+              href={splitsLink(initialSplitMetadata.address, chainId)}
+              isExternal
+            >
+              <HStack>
+                <Avatar
+                  src={splitAvatar}
+                  boxSize='30px'
+                  ring='1px'
+                  ringColor='white'
+                />
+                <Heading size='sm'>0xSplit</Heading>
+                <Text fontFamily='spaceMono'>
+                  ({truncateAddress(initialSplitMetadata.address)})
+                </Text>
+                <Icon
+                  as={FaExternalLinkAlt}
+                  boxSize='0.65rem'
+                  color='purple.400'
+                />
+              </HStack>
+            </ChakraNextLink>
+
+            <Stack spacing='2px' maxW='55px'>
+              <Text fontSize='xs' color='purple.400'>
+                Balance
+              </Text>
+              <Text fontFamily='spaceMono' fontSize='xs' noOfLines={1}>
+                {wxdaiBalance} WXDAI
+              </Text>
+            </Stack>
+          </Flex>
+          {splitsIsLoading && !initialSplitMetadata ? (
+            <Flex justify='center' py={10}>
+              <Spinner />
+            </Flex>
+          ) : (
+            <Stack w='100%'>
+              <Text color='purple.400' textTransform='uppercase' fontSize='xs'>
+                Recipients ({_.size(_.get(initialSplitMetadata, 'recipients'))})
+              </Text>
+              <Stack spacing={1}>
+                {_.map(
+                  _.get(initialSplitMetadata, 'recipients'),
+                  (recipient: SplitRecipient) => {
+                    const daoAddresses = [NETWORK_CONFIG[chainId].DAO_ADDRESS];
+                    const isDao = _.includes(
+                      daoAddresses,
+                      _.get(recipient, 'recipient.address')
+                    );
+                    const nestedSplit = _.find(splitsMetadata, {
+                      address: _.get(recipient, 'recipient.address'),
+                    });
+                    if (nestedSplit) {
+                      return (
+                        <NestedSplit
+                          chainId={chainId}
+                          recipient={recipient}
+                          currentSplitMetadata={nestedSplit}
+                          key={_.get(recipient, 'recipient.address')}
+                        />
+                      );
+                    }
+
+                    return (
+                      <Flex
+                        justify='space-between'
+                        key={_.get(recipient, 'recipient.address')}
+                      >
+                        <AccountLink
+                          address={_.get(recipient, 'recipient.address')}
+                          name={isDao ? 'Raid Guild DAO' : undefined}
+                          chainId={chainId}
+                        />
+                        <Text fontFamily='spaceMono'>
+                          {_.get(recipient, 'percentAllocation')}%
+                        </Text>
+                      </Flex>
+                    );
+                  }
+                )}
+              </Stack>
+              <Divider color='whiteAlpha.600' />
+              <Flex justify='space-between'>
+                <Text
+                  color='purple.400'
+                  textTransform='uppercase'
+                  fontSize='xs'
+                >
+                  Controller
+                </Text>
+
+                <AccountLink
+                  address={_.get(initialSplitMetadata, 'controller.address')}
+                  chainId={chainId}
+                  isSafe={!!controllerIsSafe}
+                />
+              </Flex>
+            </Stack>
+          )}
+        </Stack>
+        <Flex justify='flex-end'>
+          <ChakraNextLink href='https://splits.org' isExternal>
+            <HStack align='center'>
+              <Text fontSize='xs' textTransform='uppercase'>
+                powered by Splits
               </Text>
               <Icon
                 as={FaExternalLinkAlt}
-                boxSize='0.65rem'
+                boxSize='0.55rem'
                 color='purple.400'
               />
             </HStack>
           </ChakraNextLink>
-
-          <Stack spacing='2px'>
-            <Text fontSize='xs' color='purple.400'>
-              Balance
-            </Text>
-            <Text fontFamily='spaceMono' fontSize='sm'>
-              {_.get(
-                formattedSplitEarnings,
-                'activeBalances[0].formattedAmount',
-                '0'
-              )}{' '}
-              WXDAI
-            </Text>
-          </Stack>
         </Flex>
-        {splitsIsLoading && !initialSplitMetadata ? (
-          <Flex justify='center' py={10}>
-            <Spinner />
-          </Flex>
-        ) : (
-          <Stack w='100%'>
-            <Text color='purple.400' textTransform='uppercase' fontSize='xs'>
-              Recipients
-            </Text>
-            <Stack spacing={1}>
-              {_.map(
-                _.get(initialSplitMetadata, 'recipients'),
-                (recipient: SplitRecipient) => {
-                  const daoAddresses = [NETWORK_CONFIG[chainId].DAO_ADDRESS];
-                  const isDao = _.includes(
-                    daoAddresses,
-                    _.get(recipient, 'recipient.address')
-                  );
-                  const nestedSplit = _.find(splitsMetadata, {
-                    address: _.get(recipient, 'recipient.address'),
-                  });
-                  if (nestedSplit) {
-                    return (
-                      <NestedSplit
-                        chainId={chainId}
-                        recipient={recipient}
-                        currentSplitMetadata={nestedSplit}
-                        key={_.get(recipient, 'recipient.address')}
-                      />
-                    );
-                  }
-
-                  return (
-                    <Flex justify='space-between'>
-                      <AccountLink
-                        key={_.get(recipient, 'recipient.address')}
-                        address={_.get(recipient, 'recipient.address')}
-                        name={isDao ? 'Raid Guild DAO' : undefined}
-                        chainId={chainId}
-                      />
-                      <Text fontFamily='spaceMono'>
-                        {_.get(recipient, 'percentAllocation')}%
-                      </Text>
-                    </Flex>
-                  );
-                }
-              )}
-            </Stack>
-            <Divider color='whiteAlpha.600' />
-            <Flex justify='space-between'>
-              <Text color='purple.400' textTransform='uppercase' fontSize='xs'>
-                Controller
-              </Text>
-
-              <AccountLink
-                address={_.get(initialSplitMetadata, 'controller.address')}
-                chainId={chainId}
-                isSafe={!!controllerIsSafe}
-              />
-            </Flex>
-          </Stack>
-        )}
       </Stack>
-      <Flex justify='flex-end'>
-        <ChakraNextLink href='https://splits.org' isExternal>
-          <Text>powered by Splits</Text>
-        </ChakraNextLink>
-      </Flex>
     </Card>
   );
 };

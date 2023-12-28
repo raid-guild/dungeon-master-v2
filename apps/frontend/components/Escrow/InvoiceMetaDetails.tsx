@@ -19,15 +19,21 @@ const InvoiceMetaDetails = ({
   const resolverInfo = getResolverInfo(chainId, invoice.resolver);
 
   const dataValues = useMemo(
-    () => [
-      { label: 'Client', value: invoice.client },
-      {
-        label: 'Raid Party',
-        value: invoice.providerReceiver || invoice.provider,
-        isSplit: receiverIsSplit,
-      },
-      { label: 'Resolver', name: resolverInfo?.name, value: invoice.resolver },
-    ],
+    () =>
+      _.compact([
+        { label: 'Client', value: invoice.client },
+        { label: 'Provider', value: invoice.provider },
+        invoice.providerReceiver && {
+          label: 'Raid Party (Receiver)',
+          value: invoice.providerReceiver,
+          isSplit: receiverIsSplit,
+        },
+        {
+          label: 'Resolver',
+          name: resolverInfo?.name,
+          value: invoice.resolver,
+        },
+      ]),
     [
       invoice.client,
       invoice.provider,

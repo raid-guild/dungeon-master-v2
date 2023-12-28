@@ -24,8 +24,8 @@ dependencies:
     specifier: ^3.3.2
     version: 3.3.2(react-hook-form@7.49.2)
   '@raidguild/design-system':
-    specifier: ^0.5.2
-    version: 0.5.2(@chakra-ui/form-control@2.2.0)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/styled-system@2.9.2)(@chakra-ui/system@2.6.2)(@types/react@18.2.14)(react@18.2.0)(typescript@5.3.3)
+    specifier: ^0.5.3
+    version: 0.5.3(@chakra-ui/form-control@2.2.0)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/styled-system@2.9.2)(@chakra-ui/system@2.6.2)(@types/react@18.2.14)(react@18.2.0)(typescript@5.3.3)
   '@rainbow-me/rainbowkit':
     specifier: ^1.3.0
     version: 1.3.1(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(viem@1.20.0)(wagmi@1.4.12)
@@ -5360,8 +5360,8 @@ packages:
       lodash: 4.17.21
     dev: true
 
-  /@raidguild/design-system@0.5.2(@chakra-ui/form-control@2.2.0)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/styled-system@2.9.2)(@chakra-ui/system@2.6.2)(@types/react@18.2.14)(react@18.2.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-FLfqmH1JEggB95t3QyyKs3JI/qagdDPrZUEuPjdEGI42emhEQ8umu+CAcWwzeP68zbGwCVCb5K0q6dSd+djplA==}
+  /@raidguild/design-system@0.5.3(@chakra-ui/form-control@2.2.0)(@chakra-ui/icon@3.2.0)(@chakra-ui/layout@2.3.1)(@chakra-ui/media-query@3.3.0)(@chakra-ui/menu@2.2.1)(@chakra-ui/spinner@2.1.0)(@chakra-ui/styled-system@2.9.2)(@chakra-ui/system@2.6.2)(@types/react@18.2.14)(react@18.2.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-VZ++wq4ZRtMaMwKGpeUX7U5w37JgNAtIbLSfNv6AY/GeAZzzOyMySRR2F0Bs8DVDVvl9O+2hzI1sunLKpj5lAg==}
     engines: {node: '>=18'}
     peerDependencies:
       react: '>=18'

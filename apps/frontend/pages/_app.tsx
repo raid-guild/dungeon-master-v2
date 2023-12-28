@@ -58,7 +58,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           description: 'Adventurers, come and gather around the campfire.',
           // images: [
           //   {
-          //     url: '/raidguild-logo', // replcace with your OG image
+          //     url: '/raidguild-logo', // replace with your OG image
           //     width: 1200,
           //     height: 630,
           //     alt: "Raid Guild logo: Crossed swords with 'Raid Guild'",

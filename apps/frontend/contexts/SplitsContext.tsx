@@ -3,14 +3,14 @@ import { chainsMap } from '@raidguild/dm-utils';
 import { ReactNode, useMemo } from 'react';
 import { createPublicClient, http } from 'viem';
 
-const publicClient = (chainId: number) =>
+export const publicClient = (chainId: number) =>
   chainId &&
   createPublicClient({
     chain: chainsMap(chainId),
     transport: http(),
   });
 
-const SplitProvider = ({
+const SplitsContext = ({
   chainId = 100,
   children,
 }: {
@@ -29,4 +29,4 @@ const SplitProvider = ({
   return <SplitsProvider config={splitsConfig}>{children}</SplitsProvider>;
 };
 
-export default SplitProvider;
+export default SplitsContext;
