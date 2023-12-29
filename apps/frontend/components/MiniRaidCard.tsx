@@ -65,7 +65,7 @@ const MiniRaidCard = ({
                 />
               )}
               <Box zIndex={100}>
-                <LinkExternal href={specLink} label='Specs' />
+                {specLink && <LinkExternal href={specLink} label='Specs' />}
               </Box>
             </HStack>
           </Stack>

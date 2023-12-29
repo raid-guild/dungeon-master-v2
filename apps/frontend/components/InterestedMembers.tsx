@@ -14,6 +14,7 @@ import { IMember, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React from 'react';
+import { FaCheck } from 'react-icons/fa';
 
 import MemberAvatar from './MemberAvatar';
 
@@ -51,7 +52,7 @@ const InterestedMembers = ({
         <VStack w='full'>
           {members.length &&
             members.map((member) => (
-              <React.Fragment key={member.id}>
+              <React.Fragment key={member?.id}>
                 <HStack w='full' gap={2}>
                   <MemberAvatar member={member} />
                   <Stack
@@ -59,7 +60,7 @@ const InterestedMembers = ({
                     alignItems='flex-start'
                     gap={0.5}
                   >
-                    <Text>{member.name}</Text>
+                    <Text>{member?.name}</Text>
                     <Text color='primary.500'>
                       {_.startCase(_.toLower(member?.guildClass?.guildClass))}
                     </Text>
@@ -81,9 +82,10 @@ const InterestedMembers = ({
       >
         <Button
           onClick={() => toggleSignal({ action, id: interestExists?.id })}
-          fontFamily='spaceMono'
-          variant='outline'
+          variant='ghost'
+          gap={2}
         >
+          {interestExists && <FaCheck />}
           {interestExists ? 'Interested' : 'Signal Interest'}
         </Button>
       </Tooltip>

@@ -24,6 +24,7 @@ import {
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
+import { FaCheck } from 'react-icons/fa';
 
 import ChakraNextLink from './ChakraNextLink';
 import InfoStack from './InfoStack';
@@ -114,7 +115,7 @@ const DashboardRaidCard = ({
                 />
               )}
               <Box zIndex={100}>
-                <LinkExternal href={specLink} label='Specs' />
+                {specLink && <LinkExternal href={specLink} label='Specs' />}
               </Box>
             </HStack>
           </Stack>
@@ -128,9 +129,10 @@ const DashboardRaidCard = ({
             onClick={() => {
               toggleSignal({ action, id: interestExists?.id });
             }}
-            fontFamily='monospace'
-            variant={interestExists ? 'outline' : 'solid'}
+            variant='ghost'
+            gap={2}
           >
+            {interestExists && <FaCheck />}
             {interestExists ? 'Interested' : 'Signal Interest'}
           </Button>
         </Tooltip>

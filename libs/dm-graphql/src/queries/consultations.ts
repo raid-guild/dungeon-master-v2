@@ -6,6 +6,7 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     budget_option {
       budget_option
     }
+    created_at 
     consultation_status {
       consultation_status
     }
@@ -79,6 +80,7 @@ export const CONSULTATION_LIST_QUERY = gql`
       budget_option {
         budget_option
       }
+      created_at 
       consultation_hash
       consultations_services_required {
         guild_service {

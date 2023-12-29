@@ -54,8 +54,8 @@ const MemberAvatar = ({
 
   // eslint-disable-next-line no-nested-ternary
   const githubAvatar = _.isString(github)
-    ? github.startsWith('http')
-      ? `${github}.png`
+    ? github?.startsWith('http')
+      ? `${github.endsWith('/') ? github.slice(0, -1) : github}.png`
       : `https://github.com/${github}.png`
     : guessedGithubAvatar;
 

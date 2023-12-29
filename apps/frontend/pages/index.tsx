@@ -58,7 +58,7 @@ const Home = () => {
             gap={4}
           >
             <Card variant='filled' w='full' h='650px' p={2}>
-              <Tabs w='full'>
+              <Tabs w='full' variant='default'>
                 <TabList>
                   <Tab>
                     <Text fontSize='xl'>Active Raids</Text>
@@ -116,7 +116,7 @@ const Home = () => {
           </Flex>
 
           <Card variant='filled' w='100%' p={2}>
-            <Tabs w='100%'>
+            <Tabs w='100%' variant='default'>
               <TabList>
                 <Tab>
                   <Text fontSize='xl'>Pending Consultations</Text>

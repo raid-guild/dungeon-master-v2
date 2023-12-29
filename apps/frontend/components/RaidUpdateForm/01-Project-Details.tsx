@@ -115,6 +115,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
     <Stack as='form' spacing={4} onSubmit={handleSubmit(onSubmit)}>
       <Input
         name='raidName'
+        variant='solidOutline'
         defaultValue={raid?.name ? raid?.name : ''}
         aria-label='Enter the Raid name'
         placeholder='Enter the Raid name'
@@ -143,6 +144,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
         />
         <DatePicker
           name='endDate'
+          variant='solidOutline'
           label='Raid End Date (UTC)'
           // selected={endDate}
           // onChange={(date) => {
@@ -166,6 +168,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             <Select
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
+              variant='solidOutline'
               name='raidBudget'
               options={BUDGET_DISPLAY_OPTIONS}
               localForm={localForm}
@@ -184,6 +187,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             <Select
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
+              variant='solidOutline'
               name='raidCategory'
               options={RAID_CATEGORY_OPTIONS}
               localForm={localForm}
@@ -194,6 +198,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
       <DatePicker
         name='desiredDeliveryDate'
         label='Desired Delivery Date'
+        // variant='solidOutline'
         // selected={desiredDeliveryDate}
         // onChange={(date) => {
         //   if (Array.isArray(date)) {
@@ -216,6 +221,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
             <Select
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
+              variant='solidOutline'
               name='deliveryPriority'
               options={DELIVERY_PRIORITIES_DISPLAY_OPTIONS}
               localForm={localForm}
