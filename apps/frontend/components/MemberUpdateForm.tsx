@@ -92,16 +92,16 @@ const UpdateMemberForm = ({
         name: values.memberName ?? member.name,
         primary_class_key:
           values.guildClass?.value ?? member.guildClass.guildClass,
-        is_raiding: values?.isRaiding?.value ?? member.isRaiding,
+        is_raiding: values?.isRaiding?.value ?? member?.isRaiding,
       },
       skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
-        email: values.emailAddress ?? member.contactInfo.email,
-        discord: values.discordHandle ?? member.contactInfo.discord,
-        github: values.githubHandle ?? member.contactInfo.github,
-        twitter: values.twitterHandle ?? member.contactInfo.twitter,
-        telegram: values.telegramHandle ?? member.contactInfo.telegram,
+        email: values.emailAddress ?? member?.contactInfo?.email,
+        discord: values.discordHandle ?? member?.contactInfo?.discord,
+        github: values.githubHandle ?? member?.contactInfo?.github,
+        twitter: values.twitterHandle ?? member?.contactInfo?.twitter,
+        telegram: values.telegramHandle ?? member?.contactInfo?.telegram,
       },
     });
     closeModal();
