@@ -125,18 +125,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
               Create New Contact
             </Button>
 
-            <Button
-              isLoading={isSubmitting || sending}
-              type='submit'
-              width='full'
-              color='raid'
-              borderColor='raid'
-              border='1px solid'
-              size='md'
-              textTransform='uppercase'
-              fontSize='sm'
-              fontWeight='bold'
-            >
+            <Button isLoading={isSubmitting || sending} type='submit' w='100%'>
               Update Client PoCs
             </Button>
           </HStack>

@@ -120,7 +120,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack width='full' gap={4}>
+      <Stack width='full' gap={4} mb={4}>
         <Input
           label='Project Name'
           name='projectName'
@@ -204,11 +204,11 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
           options={categoryOptions}
           localForm={localForm}
         />
+      </Stack>
 
-        <Button isLoading={isSubmitting || sending} type='submit'>
-          Publish Portfolio Updates
-        </Button>
-      </VStack>
+      <Button isLoading={isSubmitting || sending} type='submit' w='100%'>
+        Publish Portfolio Updates
+      </Button>
     </form>
   );
 };
