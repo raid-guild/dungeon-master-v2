@@ -307,7 +307,7 @@ const MemberDetailsCard = ({
                   size='xs'
                   color='white'
                   p={3}
-                  leftIcon={<Icon as={_.get(link, 'icon')} color='white' />}
+                  leftIcon={<Icon as={_.get(link, 'icon')} />}
                   target='_blank'
                   rel='noreferrer noopener'
                   href={_.get(link, 'href')}

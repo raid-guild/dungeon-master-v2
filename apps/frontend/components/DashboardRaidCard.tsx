@@ -129,7 +129,7 @@ const DashboardRaidCard = ({
             onClick={() => {
               toggleSignal({ action, id: interestExists?.id });
             }}
-            variant='ghost'
+            variant='outline'
             gap={2}
           >
             {interestExists && <FaCheck />}
@@ -150,39 +150,41 @@ const DashboardRaidCard = ({
           />
         )}
 
-        <InfoStack
-          label='Roles Required'
-          details={
-            !_.isEmpty(rolesRequired) ? (
-              <HStack mb={{ base: 4, md: 0 }} mr={4}>
-                <AvatarGroup>
-                  {_.map(rolesRequired, (role: string) => (
-                    <Box key={role}>
-                      <Tooltip
-                        label={GUILD_CLASS_DISPLAY[role]}
-                        aria-label={GUILD_CLASS_DISPLAY[role]}
-                      >
-                        <Avatar
-                          bgColor='transparent'
-                          icon={
-                            <RoleBadge
-                              roleName={GUILD_CLASS_ICON[role]}
-                              width='44px'
-                              height='44px'
-                              border='2px solid'
-                            />
-                          }
-                        />
-                      </Tooltip>
-                    </Box>
-                  ))}
-                </AvatarGroup>
-              </HStack>
-            ) : (
-              '-'
-            )
-          }
-        />
+        {!_.isEmpty(raid) && (
+          <InfoStack
+            label='Roles Required'
+            details={
+              !_.isEmpty(rolesRequired) ? (
+                <HStack mb={{ base: 4, md: 0 }} mr={4}>
+                  <AvatarGroup>
+                    {_.map(rolesRequired, (role: string) => (
+                      <Box key={role}>
+                        <Tooltip
+                          label={GUILD_CLASS_DISPLAY[role]}
+                          aria-label={GUILD_CLASS_DISPLAY[role]}
+                        >
+                          <Avatar
+                            bgColor='transparent'
+                            icon={
+                              <RoleBadge
+                                roleName={GUILD_CLASS_ICON[role]}
+                                width='44px'
+                                height='44px'
+                                border='2px solid'
+                              />
+                            }
+                          />
+                        </Tooltip>
+                      </Box>
+                    ))}
+                  </AvatarGroup>
+                </HStack>
+              ) : (
+                '-'
+              )
+            }
+          />
+        )}
 
         <InfoStack
           label='Submitted By'

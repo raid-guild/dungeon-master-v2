@@ -82,7 +82,7 @@ const InterestedMembers = ({
       >
         <Button
           onClick={() => toggleSignal({ action, id: interestExists?.id })}
-          variant='ghost'
+          variant='outline'
           gap={2}
         >
           {interestExists && <FaCheck />}
