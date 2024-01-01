@@ -1,4 +1,11 @@
-import { Card, Divider, Flex, Heading, Stack } from '@raidguild/design-system';
+import {
+  Card,
+  Divider,
+  Flex,
+  Heading,
+  Stack,
+  Text,
+} from '@raidguild/design-system';
 import { useSlimMemberList } from '@raidguild/dm-hooks';
 import { IMember, IRaid } from '@raidguild/dm-types';
 import { SIDEBAR_ACTION_STATES } from '@raidguild/dm-utils';
@@ -55,6 +62,7 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
                 <Heading color='white' size='sm'>
                   Hunter
                 </Heading>
+
                 <RaidPartyCard
                   raid={raid}
                   member={hunter}

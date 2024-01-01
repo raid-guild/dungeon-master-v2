@@ -1,7 +1,5 @@
 import {
   Button,
-  FormControl,
-  FormLabel,
   Input,
   Link,
   Select,
@@ -15,7 +13,9 @@ import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+
+import ImageUpload from '../ImageUpload';
 
 interface PortfolioUpdateProps {
   raidId?: string;
@@ -79,7 +79,6 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
 
   const {
     handleSubmit,
-    control,
     formState: { isSubmitting },
   } = localForm;
 
@@ -161,13 +160,12 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
         />
 
         <VStack alignItems='flex-start' width='100%'>
-          {/*  handle Image upload */}
-          {/* <ImageUpload
-        name='imageUrl'
-        label='Project Logo:'
-        localForm={localForm}
-        defaultValue={ portfolio?.imageUrl}
-      /> */}
+          <ImageUpload
+            name='imageUrl'
+            label='Project Logo:'
+            localForm={localForm}
+            defaultValue={portfolio?.image_url}
+          />
         </VStack>
         {questions.map((question) => (
           <Stack width='full' key={question.label}>
@@ -197,31 +195,21 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
           </Stack>
         ))}
 
-        <FormControl>
-          <FormLabel color='raid'>Project Category</FormLabel>
-          <Controller
-            name='categoryOptions'
-            defaultValue={_.find(categoryOptions, {
-              value: portfolio?.category,
-            })}
-            control={control}
-            render={({ field }) => (
-              <Select
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...field}
-                name='categoryOptions'
-                options={categoryOptions}
-                localForm={localForm}
-              />
-            )}
-          />
-        </FormControl>
+        <Select
+          name='categoryOptions'
+          label='Project Category'
+          defaultValue={_.find(categoryOptions, {
+            value: portfolio?.category,
+          })}
+          options={categoryOptions}
+          localForm={localForm}
+        />
 
         <Button
           isLoading={isSubmitting || sending}
           type='submit'
           width='full'
-          bgColor='primary.500'
+          color='raid'
           borderColor='raid'
           border='1px solid'
           size='md'

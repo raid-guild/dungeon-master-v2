@@ -77,7 +77,7 @@ const Home = () => {
                           _.map(
                             _.get(data, 'myRaids.active'),
                             (raid: IRaid) => (
-                              <DashboardRaidCard key={raid.id} raid={raid} />
+                              <MiniRaidCard key={raid.id} raid={raid} />
                             )
                           )
                         ) : (

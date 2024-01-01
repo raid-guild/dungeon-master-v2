@@ -38,8 +38,6 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
         ))}
       </TabList>
 
-      {/* <TabIndicator mt='-1.5px' height='2px' bg='primary.500' borderRadius='1px' /> */}
-
       <Box
         bg='gray.800'
         maxW={{ base: 'xl', md: '3xl' }}

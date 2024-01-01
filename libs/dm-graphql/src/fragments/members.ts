@@ -65,6 +65,7 @@ export const MEMBER_DETAIL_FRAGMENT = gql`
         raid_status {
           raid_status
         }
+        updated_at
       }
     }
   }

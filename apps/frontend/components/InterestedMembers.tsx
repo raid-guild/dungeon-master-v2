@@ -2,21 +2,23 @@ import {
   Button,
   Card,
   Divider,
+  Flex,
   Heading,
   HStack,
   Stack,
   Text,
   Tooltip,
-  VStack,
 } from '@raidguild/design-system';
 import { useToggleInterest } from '@raidguild/dm-hooks';
 import { IMember, IRaid } from '@raidguild/dm-types';
+import { GUILD_CLASS_DISPLAY } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 import { FaCheck } from 'react-icons/fa';
 
 import MemberAvatar from './MemberAvatar';
+import MemberRoleStack from './MemberRoleStack';
 
 const InterestedMembers = ({
   members,
@@ -49,23 +51,36 @@ const InterestedMembers = ({
         Interested Members
       </Heading>
       <Card variant='filled'>
-        <VStack w='full'>
+        <Stack w='full'>
           {members.length &&
             members.map((member) => (
               <React.Fragment key={member?.id}>
-                <HStack w='full' gap={2}>
-                  <MemberAvatar member={member} />
-                  <Stack
-                    justifyContent='flex-start'
-                    alignItems='flex-start'
-                    gap={0.5}
+                <MemberRoleStack member={member} withLink>
+                  <HStack
+                    spacing={4}
+                    _hover={{ cursor: 'pointer', color: 'red.100' }}
+                    transition='all ease-in-out 0.25'
                   >
-                    <Text>{member?.name}</Text>
-                    <Text color='primary.500'>
-                      {_.startCase(_.toLower(member?.guildClass?.guildClass))}
-                    </Text>
-                  </Stack>
-                </HStack>
+                    {member && <MemberAvatar member={member} />}
+
+                    <Flex direction='column'>
+                      <Text as='span' color='white' fontSize='md'>
+                        {_.get(member, 'name')}
+                      </Text>
+                      <Text
+                        color='whiteAlpha.600'
+                        fontSize='xs'
+                        textTransform='uppercase'
+                      >
+                        {
+                          GUILD_CLASS_DISPLAY[
+                            _.get(member, 'guildClass.guildClass')
+                          ]
+                        }
+                      </Text>
+                    </Flex>
+                  </HStack>
+                </MemberRoleStack>
                 <Divider opacity={0.1} />
               </React.Fragment>
             ))}
@@ -74,7 +89,7 @@ const InterestedMembers = ({
               No interest shown yet
             </Text>
           )}
-        </VStack>
+        </Stack>
       </Card>
       <Tooltip
         label={interestExists ? 'Remove Interest' : 'Add Interest'}

@@ -9,6 +9,7 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
+import { displayDate } from '@raidguild/dm-utils';
 import _ from 'lodash';
 
 import ChakraNextLink from './ChakraNextLink';
@@ -39,10 +40,9 @@ const MiniRaidCard = ({
       .map((x) => _.get(x, 'link'))
       .head()
       .value() ?? consultation?.link;
-
   return (
     <Card variant='outline' width='100%' minH='100px'>
-      <Flex alignItems='center' width='100%' h='100%'>
+      <Flex width='100%' h='100%'>
         <ChakraNextLink
           href={
             raid
@@ -71,7 +71,7 @@ const MiniRaidCard = ({
           </Stack>
         </ChakraNextLink>
         <Spacer />
-        <Text>{_.get(raid, 'updatedAt')}</Text>
+        <Text>Updated: {displayDate(_.get(raid, 'updatedAt'))}</Text>
       </Flex>
     </Card>
   );
