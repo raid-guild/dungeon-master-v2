@@ -1,5 +1,4 @@
 import { fetchToken, pinImageFile } from '@raidguild/dm-utils';
-import { convertIpfsCidV0ToByte32 } from '@raidguild/escrow-utils';
 import { useQuery } from '@tanstack/react-query';
 
 const usePinataUpload = ({

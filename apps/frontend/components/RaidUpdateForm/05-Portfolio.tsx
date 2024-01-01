@@ -205,18 +205,7 @@ const PortfolioUpdateForm: React.FC<PortfolioUpdateProps> = ({
           localForm={localForm}
         />
 
-        <Button
-          isLoading={isSubmitting || sending}
-          type='submit'
-          width='full'
-          color='raid'
-          borderColor='raid'
-          border='1px solid'
-          size='md'
-          textTransform='uppercase'
-          fontSize='sm'
-          fontWeight='bold'
-        >
+        <Button isLoading={isSubmitting || sending} type='submit'>
           Publish Portfolio Updates
         </Button>
       </VStack>

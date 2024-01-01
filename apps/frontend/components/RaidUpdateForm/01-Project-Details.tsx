@@ -152,18 +152,7 @@ const ProjectDetailsUpdateForm: React.FC<ProjectDetailsUpdateFormProps> = ({
         localForm={localForm}
       />
 
-      <Button
-        isLoading={isSubmitting || sending}
-        type='submit'
-        width='full'
-        color='raid'
-        borderColor='raid'
-        border='1px solid'
-        size='md'
-        textTransform='uppercase'
-        fontSize='sm'
-        fontWeight='bold'
-      >
+      <Button isLoading={isSubmitting || sending} type='submit'>
         Update Project Details
       </Button>
     </Stack>

@@ -186,6 +186,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                       Contact #{index + 1}
                     </Heading>
                     <Button
+                      variant='solid'
                       onClick={() => {
                         setEditContact(foundContact);
 
