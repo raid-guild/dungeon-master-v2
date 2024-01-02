@@ -27,7 +27,7 @@ const MemberAvatar = ({
     chainId: 1,
     enabled: !!address,
   });
-  const { data: ensAvatar, isFetched } = useEnsAvatar({
+  const { data: ensAvatar } = useEnsAvatar({
     name: ensName,
     chainId: 1,
     enabled: !!ensName,
@@ -35,14 +35,14 @@ const MemberAvatar = ({
   });
 
   // State for Blockies Avatar
-  const [blockiesAvatar, setBlockiesAvatar] = useState<string>('');
+  const [blockiesAvatar, setBlockiesAvatar] = useState<string>();
 
   // Generate Blockies Avatar as fallback
   useEffect(() => {
-    if (!ensAvatar && isFetched && address) {
+    if (address) {
       setBlockiesAvatar(blockies.create({ seed: address }).toDataURL());
     }
-  }, [ensAvatar, isFetched, address]);
+  }, [address]);
 
   // Guess ENS and GitHub Avatars
   const guessAlias = name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
@@ -50,18 +50,18 @@ const MemberAvatar = ({
     name: `${guessAlias}.eth`,
     chainId: 1,
   });
-  const guessedGithubAvatar = `https://github.com/${guessAlias}.png`;
+  // const guessedGithubAvatar = `https://github.com/${guessAlias}.png`;
 
   // eslint-disable-next-line no-nested-ternary
   const githubAvatar = _.isString(github)
     ? github?.startsWith('http')
       ? `${github.endsWith('/') ? github.slice(0, -1) : github}.png`
       : `https://github.com/${github}.png`
-    : guessedGithubAvatar;
+    : undefined; // guessedGithubAvatar;
 
   // Determine Final Avatar
   const finalAvatar =
-    ensAvatar || githubAvatar || guessedEnsAvatar || blockiesAvatar;
+    ensAvatar || githubAvatar || guessedEnsAvatar || blockiesAvatar; // || guessedEnsAvatar;
 
   return (
     <Tooltip label={name} placement={address ? 'left' : 'top'} hasArrow>

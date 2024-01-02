@@ -23,6 +23,7 @@ const MemberAvatarStack = ({
         {_.map(_.slice(members, 0, max), (member: IMember, i: number) => (
           <Box
             as='span'
+            key={_.get(member, 'id')}
             display='inline-block'
             overflow='hidden'
             zIndex={max - i}
@@ -45,6 +46,7 @@ const MemberAvatarStack = ({
       {_.map(_.slice(members, 0, max), (member: IMember, i: number) => (
         <Box
           as='span'
+          key={_.get(member, 'id')}
           display='inline-block'
           overflow='hidden'
           zIndex={max - i}
