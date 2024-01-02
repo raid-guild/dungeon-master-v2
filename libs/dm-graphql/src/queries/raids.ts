@@ -108,6 +108,9 @@ export const RAID_DETAIL_QUERY = gql`
         guild_class {
           guild_class
         }
+        contact_info {
+          ...ContactInfos
+        }
       }
       hunter {
         eth_address
@@ -115,6 +118,9 @@ export const RAID_DETAIL_QUERY = gql`
         id
         guild_class {
           guild_class
+        }
+        contact_info {
+          ...ContactInfos
         }
       }
       consultation {

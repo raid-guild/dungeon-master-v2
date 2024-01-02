@@ -216,7 +216,12 @@ const ReceiverSplits = ({
       })
       .toDataURL();
 
-  if (isLoading || !_.includes(session.user.roles, 'member')) return null;
+  if (
+    isLoading ||
+    !_.includes(session.user.roles, 'member') ||
+    !initialSplitMetadata
+  )
+    return null;
 
   return (
     <Card variant='filled'>

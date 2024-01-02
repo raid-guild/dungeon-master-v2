@@ -24,6 +24,7 @@ import {
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
+import { FaCheck } from 'react-icons/fa';
 
 import ChakraNextLink from './ChakraNextLink';
 import InfoStack from './InfoStack';
@@ -114,7 +115,7 @@ const DashboardRaidCard = ({
                 />
               )}
               <Box zIndex={100}>
-                <LinkExternal href={specLink} label='Specs' />
+                {specLink && <LinkExternal href={specLink} label='Specs' />}
               </Box>
             </HStack>
           </Stack>
@@ -128,9 +129,10 @@ const DashboardRaidCard = ({
             onClick={() => {
               toggleSignal({ action, id: interestExists?.id });
             }}
-            fontFamily='monospace'
-            variant={interestExists ? 'outline' : 'solid'}
+            variant='outline'
+            gap={2}
           >
+            {interestExists && <FaCheck />}
             {interestExists ? 'Interested' : 'Signal Interest'}
           </Button>
         </Tooltip>
@@ -148,39 +150,41 @@ const DashboardRaidCard = ({
           />
         )}
 
-        <InfoStack
-          label='Roles Required'
-          details={
-            !_.isEmpty(rolesRequired) ? (
-              <HStack mb={{ base: 4, md: 0 }} mr={4}>
-                <AvatarGroup>
-                  {_.map(rolesRequired, (role: string) => (
-                    <Box key={role}>
-                      <Tooltip
-                        label={GUILD_CLASS_DISPLAY[role]}
-                        aria-label={GUILD_CLASS_DISPLAY[role]}
-                      >
-                        <Avatar
-                          bgColor='transparent'
-                          icon={
-                            <RoleBadge
-                              roleName={GUILD_CLASS_ICON[role]}
-                              width='44px'
-                              height='44px'
-                              border='2px solid'
-                            />
-                          }
-                        />
-                      </Tooltip>
-                    </Box>
-                  ))}
-                </AvatarGroup>
-              </HStack>
-            ) : (
-              '-'
-            )
-          }
-        />
+        {!_.isEmpty(raid) && (
+          <InfoStack
+            label='Roles Required'
+            details={
+              !_.isEmpty(rolesRequired) ? (
+                <HStack mb={{ base: 4, md: 0 }} mr={4}>
+                  <AvatarGroup>
+                    {_.map(rolesRequired, (role: string) => (
+                      <Box key={role}>
+                        <Tooltip
+                          label={GUILD_CLASS_DISPLAY[role]}
+                          aria-label={GUILD_CLASS_DISPLAY[role]}
+                        >
+                          <Avatar
+                            bgColor='transparent'
+                            icon={
+                              <RoleBadge
+                                roleName={GUILD_CLASS_ICON[role]}
+                                width='44px'
+                                height='44px'
+                                border='2px solid'
+                              />
+                            }
+                          />
+                        </Tooltip>
+                      </Box>
+                    ))}
+                  </AvatarGroup>
+                </HStack>
+              ) : (
+                '-'
+              )
+            }
+          />
+        )}
 
         <InfoStack
           label='Submitted By'

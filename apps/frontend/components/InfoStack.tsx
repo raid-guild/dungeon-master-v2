@@ -52,7 +52,7 @@ const InfoStack = ({
   return (
     <Stack justify='center' minWidth='0.5' gap={0.5}>
       <HStack>
-        <Text fontSize='xs' color='purple.300' textTransform='uppercase'>
+        <Text fontSize='xs' color='purple.200' textTransform='capitalize'>
           {label}
         </Text>
         {tooltip && (
@@ -63,20 +63,28 @@ const InfoStack = ({
           </Tooltip>
         )}
       </HStack>
-
-      {link && isString(details) ? (
-        <ChakraNextLink href={link} hidden={!link}>
-          <Tooltip label={fullDetails || details} shouldWrapChildren>
+      <Tooltip
+        label={
+          link || typeof fullDetails === 'string'
+            ? fullDetails
+            : typeof details === 'string'
+            ? details
+            : ''
+        }
+        shouldWrapChildren
+      >
+        {link && isString(details) ? (
+          <ChakraNextLink href={link} hidden={!link}>
             <HStack>
-              <Text fontFamily='spaceMono'>{details}</Text>
+              <Text fontFamily='spaceMono'>
+                {details.replace(/https?:\/\//g, '')}
+              </Text>
               {isExternal && (
                 <Icon as={FaExternalLinkAlt} color='whiteAlpha.400' />
               )}
             </HStack>
-          </Tooltip>
-        </ChakraNextLink>
-      ) : (
-        <Tooltip label={fullDetails || details} shouldWrapChildren>
+          </ChakraNextLink>
+        ) : (
           <Text
             onClick={copy && handleCopy}
             _hover={{ cursor: copy ? 'pointer' : 'default' }}
@@ -85,8 +93,8 @@ const InfoStack = ({
           >
             {details || '-'}
           </Text>
-        </Tooltip>
-      )}
+        )}
+      </Tooltip>
     </Stack>
   );
 };

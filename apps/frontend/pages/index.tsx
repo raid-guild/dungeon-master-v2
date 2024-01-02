@@ -1,7 +1,9 @@
 import {
+  Button,
   Card,
   Flex,
   Heading,
+  HStack,
   Stack,
   Tab,
   TabList,
@@ -10,7 +12,11 @@ import {
   Tabs,
   Text,
 } from '@raidguild/design-system';
-import { useDashboardList, useMemberDetail } from '@raidguild/dm-hooks';
+import {
+  useDashboardList,
+  useMemberDetail,
+  usePagination,
+} from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
@@ -39,6 +45,38 @@ const Home = () => {
     router.push('/escrow');
   }
 
+  const pastRaids = _.get(data, 'myRaids.past');
+  const activeRaids = _.get(data, 'myRaids.active');
+  const newConsultations = _.get(data, 'newConsultations');
+  const newRaids = _.get(data, 'newRaids');
+  const {
+    currentItems: currentActiveRaids,
+    currentPage: activeRaidsPage,
+    setPage: setActiveRaidsPage,
+    totalPages: totalActiveRaidsPages,
+  } = usePagination(activeRaids, 3);
+
+  const {
+    currentItems: currentPastRaids,
+    currentPage: pastRaidsPage,
+    setPage: setPastRaidsPage,
+    totalPages: totalPastRaidsPages,
+  } = usePagination(pastRaids, 3);
+
+  const {
+    currentItems: currentNewConsultations,
+    currentPage: newConsultationsPage,
+    setPage: setNewconsutlationsPage,
+    totalPages: totalNewconsutlationsPages,
+  } = usePagination(newConsultations, 3);
+
+  const {
+    currentItems: currentNewRaids,
+    currentPage: newRaidsPage,
+    setPage: setNewRaidsPage,
+    totalPages: totalNewRaidsPages,
+  } = usePagination(newRaids, 3);
+
   return (
     <>
       <NextSeo title='Dashboard' />
@@ -58,7 +96,7 @@ const Home = () => {
             gap={4}
           >
             <Card variant='filled' w='full' h='650px' p={2}>
-              <Tabs w='full'>
+              <Tabs w='full' variant='default'>
                 <TabList>
                   <Tab>
                     <Text fontSize='xl'>Active Raids</Text>
@@ -74,18 +112,34 @@ const Home = () => {
                     <Stack spacing={4} h='100%'>
                       <Stack spacing={4}>
                         {!_.isEmpty(_.get(data, 'myRaids.active')) ? (
-                          _.map(
-                            _.get(data, 'myRaids.active'),
-                            (raid: IRaid) => (
-                              <DashboardRaidCard key={raid.id} raid={raid} />
-                            )
-                          )
+                          _.map(currentActiveRaids, (raid: IRaid) => (
+                            <MiniRaidCard key={raid.id} raid={raid} />
+                          ))
                         ) : (
                           <Flex pt={10} justify='center'>
                             <Heading fontFamily='spaceMono' size='sm'>
                               No Active Raids
                             </Heading>
                           </Flex>
+                        )}
+                        {totalActiveRaidsPages > 1 && (
+                          <HStack>
+                            {[...Array(totalActiveRaidsPages).keys()].map(
+                              (page) => (
+                                <Button
+                                  variant={
+                                    activeRaidsPage === page + 1
+                                      ? 'solid'
+                                      : 'outline'
+                                  }
+                                  key={page}
+                                  onClick={() => setActiveRaidsPage(page + 1)}
+                                >
+                                  {page + 1}
+                                </Button>
+                              )
+                            )}
+                          </HStack>
                         )}
                       </Stack>
                     </Stack>
@@ -94,11 +148,31 @@ const Home = () => {
                   <TabPanel>
                     <Stack spacing={4}>
                       {!_.isEmpty(_.get(data, 'myRaids.past')) ? (
-                        _.map(_.get(data, 'myRaids.past'), (raid: IRaid) => (
+                        _.map(currentPastRaids, (raid: IRaid) => (
                           <MiniRaidCard key={raid.id} raid={raid} />
                         ))
                       ) : (
                         <Heading>No Past Raids</Heading>
+                      )}
+
+                      {totalPastRaidsPages > 1 && (
+                        <HStack>
+                          {[...Array(totalPastRaidsPages).keys()].map(
+                            (page) => (
+                              <Button
+                                key={page}
+                                variant={
+                                  pastRaidsPage === page + 1
+                                    ? 'solid'
+                                    : 'outline'
+                                }
+                                onClick={() => setPastRaidsPage(page + 1)}
+                              >
+                                {page + 1}
+                              </Button>
+                            )
+                          )}
+                        </HStack>
                       )}
                     </Stack>
                   </TabPanel>
@@ -116,7 +190,7 @@ const Home = () => {
           </Flex>
 
           <Card variant='filled' w='100%' p={2}>
-            <Tabs w='100%'>
+            <Tabs w='100%' variant='default'>
               <TabList>
                 <Tab>
                   <Text fontSize='xl'>Pending Consultations</Text>
@@ -131,7 +205,7 @@ const Home = () => {
                   <Stack spacing={4}>
                     {!_.isEmpty(_.get(data, 'newConsultations')) ? (
                       _.map(
-                        _.get(data, 'newConsultations'),
+                        currentNewConsultations,
                         (consultation: IConsultation) => (
                           <DashboardRaidCard
                             key={consultation.id}
@@ -147,13 +221,49 @@ const Home = () => {
                         </Heading>
                       </Flex>
                     )}
+
+                    {totalNewconsutlationsPages > 1 && (
+                      <HStack>
+                        {[...Array(totalNewconsutlationsPages).keys()].map(
+                          (page) => (
+                            <Button
+                              key={page}
+                              variant={
+                                newConsultationsPage === page + 1
+                                  ? 'solid'
+                                  : 'outline'
+                              }
+                              onClick={() => setNewconsutlationsPage(page + 1)}
+                            >
+                              {page + 1}
+                            </Button>
+                          )
+                        )}
+                      </HStack>
+                    )}
                   </Stack>
                 </TabPanel>
                 <TabPanel>
                   <Stack spacing={4}>
-                    {_.map(_.get(data, 'newRaids'), (raid: IRaid) => (
+                    {_.map(currentNewRaids, (raid: IRaid) => (
                       <DashboardRaidCard key={raid.id} raid={raid} newRaid />
                     ))}
+
+                    {totalNewRaidsPages > 1 && (
+                      <HStack>
+                        {[...Array(totalNewRaidsPages).keys()].map((page) => (
+                          <Button
+                            key={page}
+                            variant={
+                              newRaidsPage === page + 1 ? 'solid' : 'outline'
+                            }
+                            onClick={() => setNewRaidsPage(page + 1)}
+                          >
+                            {page + 1}
+                          </Button>
+                        ))}
+                      </HStack>
+                    )}
                   </Stack>
                 </TabPanel>
               </TabPanels>

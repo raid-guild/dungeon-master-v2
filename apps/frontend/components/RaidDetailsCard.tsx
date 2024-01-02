@@ -66,40 +66,40 @@ const Description = ({ description }: { description: string }) => {
   );
 };
 
-// const Bio = ({ bio }: { bio: string }) => {
-//   const [showFullBio, setShowFullBio] = useState(false);
-//   const handleToggleBio = () => setShowFullBio(!showFullBio);
+const Bio = ({ bio }: { bio: string }) => {
+  const [showFullBio, setShowFullBio] = useState(false);
+  const handleToggleBio = () => setShowFullBio(!showFullBio);
 
-//   return (
-//     <VStack align='flex-start'>
-//       <Text color='white' fontSize='sm'>
-//         Bio
-//       </Text>
-//       {bio?.length > 300 ? (
-//         <>
-//           <Collapse startingHeight={50} in={showFullBio}>
-//             <Text color='white' fontSize='md'>
-//               {bio}
-//             </Text>
-//           </Collapse>
-//           <Button
-//             onClick={handleToggleBio}
-//             color='gray.400'
-//             size='sm'
-//             fontWeight='normal'
-//             variant='link'
-//           >
-//             {showFullBio === true ? 'Show Less' : 'Show More'}
-//           </Button>
-//         </>
-//       ) : (
-//         <Text color='white' fontSize='md'>
-//           {bio}
-//         </Text>
-//       )}
-//     </VStack>
-//   );
-// };
+  return (
+    <VStack align='flex-start'>
+      <Text color='white' fontSize='sm'>
+        Bio
+      </Text>
+      {bio?.length > 300 ? (
+        <>
+          <Collapse startingHeight={50} in={showFullBio}>
+            <Text color='white' fontSize='md'>
+              {bio}
+            </Text>
+          </Collapse>
+          <Button
+            onClick={handleToggleBio}
+            color='gray.400'
+            size='sm'
+            fontWeight='normal'
+            variant='link'
+          >
+            {showFullBio === true ? 'Show Less' : 'Show More'}
+          </Button>
+        </>
+      ) : (
+        <Text color='white' fontSize='md'>
+          {bio}
+        </Text>
+      )}
+    </VStack>
+  );
+};
 
 const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
   const consultationContacts = _.map(
@@ -127,8 +127,8 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           },
           discord && { label: 'Discord', details: `${discord}` },
           telegram && { label: 'Telegram', details: `${telegram}` },
-          bio && { label: 'Bio', details: bio },
         ]),
+        extra: bio && <Bio bio={bio} />,
       };
     }
   );
@@ -141,21 +141,15 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
     ...(consultation?.links?.length > 0
       ? consultation.links
           .map((linkItem) => ({
-            label: _.startCase(_.toLower(linkItem.type.toString())),
-            details: linkItem.link,
+            label: _.startCase(_.toLower(String(linkItem?.type))),
+            details: _.truncate(linkItem.link, { length: 18 }),
             link: linkItem.link,
           }))
           .filter((x) => x.link)
       : [
           {
-            label: 'Project Specs',
-            details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-              _.get(
-                consultation,
-                'availableProjectSpec.availableProjectSpec',
-                'YES'
-              ) as AvailableSpecsKey
-            ),
+            label: 'Specification',
+            details: consultation?.link ? 'Link' : undefined,
             link: consultation?.link || undefined,
           },
         ]),
@@ -167,7 +161,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           : truncateAddress(_.get(consultation, 'consultationHash')),
       link:
         _.get(consultation, 'consultationHash') !== 'cancelled' &&
-        `https://etherscan.io/tx/${_.get(consultation, 'consultationHash')}`,
+        `https://gnosisscan.io/tx/${_.get(consultation, 'consultationHash')}`,
     },
   ]);
 
@@ -254,8 +248,8 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         },
         _.get(raid, 'lockerHash') && {
           label: 'Locker Hash',
-          details: _.get(raid, 'lockerHash'),
-          link: `https://blockscan.com/search?q=${_.get(raid, 'lockerHash')}`,
+          details: truncateAddress(_.get(raid, 'lockerHash')),
+          link: `https://gnosisscan.com/tx/${_.get(raid, 'lockerHash')}`,
         },
         _.get(raid, 'invoiceAddress') && {
           label: 'Escrow',

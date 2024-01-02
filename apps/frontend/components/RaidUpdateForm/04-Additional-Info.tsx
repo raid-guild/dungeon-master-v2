@@ -90,19 +90,7 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
           localForm={localForm}
         />
 
-        <Button
-          isLoading={isSubmitting || sending}
-          type='submit'
-          width='full'
-          color='raid'
-          borderColor='raid'
-          border='1px solid'
-          size='md'
-          textTransform='uppercase'
-          fontSize='sm'
-          fontWeight='bold'
-          bgColor='primary.500'
-        >
+        <Button isLoading={isSubmitting || sending} type='submit'>
           Update Additional Details
         </Button>
       </Stack>

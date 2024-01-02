@@ -6,6 +6,7 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     budget_option {
       budget_option
     }
+    created_at
     consultation_status {
       consultation_status
     }
@@ -79,6 +80,7 @@ export const CONSULTATION_LIST_QUERY = gql`
       budget_option {
         budget_option
       }
+      created_at
       consultation_hash
       consultations_services_required {
         guild_service {
@@ -89,7 +91,6 @@ export const CONSULTATION_LIST_QUERY = gql`
         consultation_status
       }
       consultations_contacts {
-        
         contact {
           id
           name
@@ -110,7 +111,7 @@ export const CONSULTATION_LIST_QUERY = gql`
         id
         link
         type
-    }
+      }
       available_project_spec {
         available_project_spec
       }
@@ -142,4 +143,3 @@ export const CONSULTATION_DETAIL_QUERY = gql`
   }
   ${CONSULTATION_DETAIL_WITH_RAID_FRAGMENT}
 `;
-

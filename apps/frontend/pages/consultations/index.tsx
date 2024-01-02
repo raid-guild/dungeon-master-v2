@@ -21,7 +21,6 @@ import {
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
-import Inspect from 'inspx';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -278,8 +277,7 @@ const ConsultationList = () => {
           </Stack>
         </InfiniteScroll>
       </SiteLayout>
-      </>      
-    
+    </>
   );
 };
 

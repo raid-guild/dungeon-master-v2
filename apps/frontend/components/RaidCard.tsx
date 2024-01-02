@@ -43,12 +43,6 @@ interface RaidProps {
 }
 
 const RaidCard = ({ raid, consultation }: RaidProps) => {
-  // const servicesRequired = _.get(consultation, 'consultationsServicesRequired');
-  // const uniqueServicesRequired = _.uniq(
-  //   _.map(servicesRequired, (service: { guildService: string }) =>
-  //     _.get(service, 'guildService.guildService')
-  //   )
-  // );
   const id = _.get(raid || consultation, 'id');
   const submissionType = _.get(consultation, 'submissionType.submissionType');
   const description = _.get(consultation, 'description');
@@ -62,7 +56,6 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const link = raid ? `/raids/${id}/` : `/consultations/${id}/`;
   const raidParty = _.map(_.get(raid, 'raidParties', []), 'member');
   const raidCleric = _.get(raid, 'cleric');
-  // const raidStatus = _.get(raid, 'status');
   const raidHunter = _.get(raid, 'hunter');
   const raidContact = _.first([
     raid
@@ -70,21 +63,10 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
       : consultation?.consultationsContacts,
   ])[0];
 
-  // let raidDate = _.get(raid, 'createdAt');
-  // let raidDateLabel = 'Created on: ';
-  // if (raidStatus === 'RAIDING') {
-  //   raidDate = _.get(raid, 'startDate');
-  //   raidDateLabel = 'Started on: ';
-  // } else if (raidStatus === 'SHIPPED' || raidStatus === 'LOST') {
-  //   raidDate = _.get(raid, 'endDate');
-  //   raidDateLabel = 'Ended on: ';
-  // }
   const updates = _.get(raid, 'updates');
   const latestUpdate = updates ? updates[0] : null;
 
   const [upTo780] = useMediaQuery('(max-width: 780px)');
-
-  // console.log(_.get(_.filter(consultation.links, (x) => _.get(x, 'linkType.type') === 'SPECIFICATION' && _.get(x, 'link'))[0],'link'));
 
   const specLink =
     _.chain(consultation.links)
@@ -197,7 +179,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                   Summary
                 </Heading>
                 <Spacer />
-                <LinkExternal href={specLink} label='Specs' />
+                {specLink && <LinkExternal href={specLink} label='Specs' />}
               </HStack>
               <Text color='white' fontFamily='texturina'>
                 {_.gt(_.size(description), 300)
@@ -225,6 +207,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
 
               <InfoStack
                 label='Roles Required'
+                tooltip=''
                 details={
                   !_.isEmpty(rolesRequired) ? (
                     <HStack mb={{ base: 4, md: 0 }} mr={4}>
@@ -281,14 +264,13 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                 href={`/escrow/${String(_.get(raid, 'id'))}`}
                 label='Escrow'
               />
-              <LinkExternal
-                href={`https://blockscan.com/search?q=${_.get(
-                  raid,
-                  'lockerHash'
-                )}`}
-                hidden={!_.get(raid, 'lockerHash')}
-                label='Consultation'
-              />
+              {_.get(raid, 'lockerHash') && (
+                <LinkExternal
+                  href={`https://gnosisscan.io/tx/${_.get(raid, 'lockerHash')}`}
+                  hidden={!_.get(raid, 'lockerHash')}
+                  label='Consultation'
+                />
+              )}
             </HStack>
           </Stack>
 

@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Box,
   Button,
   ChakraSelect,
   Flex,
@@ -20,12 +19,12 @@ import {
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { FiX } from 'react-icons/fi';
 import { HiSwitchVertical } from 'react-icons/hi';
 
-import ChakraNextLink from '../ChakraNextLink';
 import MemberAvatar from '../MemberAvatar';
+import MemberRoleStack from '../MemberRoleStack';
 
 type RaidPartyCardProps = {
   /*
@@ -49,41 +48,6 @@ type RaidPartyCardProps = {
   // update fns
   setButtonSelection?: (buttonSelection: string) => void;
 };
-
-type GeneralCardProps = {
-  member?: Partial<IMember>;
-  withLink?: boolean;
-  button?: ReactNode;
-  children: ReactNode;
-};
-
-const GeneralCard = ({
-  member,
-  withLink,
-  button,
-  children,
-}: GeneralCardProps) => (
-  <Flex
-    key={_.get(member, 'id', 'roles')}
-    justify='space-between'
-    align='center'
-  >
-    {!withLink ? (
-      <>
-        {children}
-
-        <Box ml={2}>{button}</Box>
-      </>
-    ) : (
-      <>
-        <ChakraNextLink href={`/members/${member?.ethAddress}/`}>
-          {children}
-        </ChakraNextLink>
-        {button}
-      </>
-    )}
-  </Flex>
-);
 
 const RaidPartyCard = ({
   raid,
@@ -145,7 +109,7 @@ const RaidPartyCard = ({
 
   if ((isCleric || isHunter) && !updateMember) {
     return (
-      <GeneralCard
+      <MemberRoleStack
         member={member}
         button={
           <IconButton
@@ -183,12 +147,12 @@ const RaidPartyCard = ({
             </Text>
           </Flex>
         </HStack>
-      </GeneralCard>
+      </MemberRoleStack>
     );
   }
   if (isHunter || isCleric) {
     return (
-      <GeneralCard
+      <MemberRoleStack
         member={member}
         button={
           updateMember ? (
@@ -228,13 +192,13 @@ const RaidPartyCard = ({
             </Flex>
           )}
         </Flex>
-      </GeneralCard>
+      </MemberRoleStack>
     );
   }
 
   if (roles) {
     return (
-      <GeneralCard>
+      <MemberRoleStack>
         <HStack spacing={1}>
           {!_.isEmpty(roles) ? (
             _.map(roles, (role: string, i) => (
@@ -254,13 +218,13 @@ const RaidPartyCard = ({
             <Text color='whiteAlpha.600'>No Roles Needed</Text>
           )}
         </HStack>
-      </GeneralCard>
+      </MemberRoleStack>
     );
   }
 
   // DEFAULT OPTION IS RAIDER CARD
   return (
-    <GeneralCard
+    <MemberRoleStack
       member={member}
       button={
         <IconButton
@@ -288,7 +252,7 @@ const RaidPartyCard = ({
           </Text>
         </Flex>
       </HStack>
-    </GeneralCard>
+    </MemberRoleStack>
   );
 };
 

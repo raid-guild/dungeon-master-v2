@@ -11,7 +11,6 @@ interface KeyLinksUpdateFormProps {
   raidId?: string;
   closeModal?: () => void;
   raid: Partial<IRaid>;
-  // consultation:  Partial<IConsultation>;
 }
 const KeyLinksUpdateForm: React.FC<KeyLinksUpdateFormProps> = ({
   raidId,
@@ -58,12 +57,6 @@ const KeyLinksUpdateForm: React.FC<KeyLinksUpdateFormProps> = ({
     setSending(false);
   }
 
-  // const CustomCalInput = forwardRef(({ value, onClick }, ref) => (
-  //   <Button onClick={onClick} ref={ref} variant='outline'>
-  //     {value}
-  //   </Button>
-  // ));
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={4} gap={4}>
@@ -83,19 +76,7 @@ const KeyLinksUpdateForm: React.FC<KeyLinksUpdateFormProps> = ({
           />
         ))}
 
-        <Button
-          isLoading={isSubmitting || sending}
-          type='submit'
-          width='full'
-          color='raid'
-          borderColor='raid'
-          border='1px solid'
-          size='md'
-          bgColor='primary.500'
-          textTransform='uppercase'
-          fontSize='sm'
-          fontWeight='bold'
-        >
+        <Button isLoading={isSubmitting || sending} type='submit'>
           Update Key Links
         </Button>
       </Stack>

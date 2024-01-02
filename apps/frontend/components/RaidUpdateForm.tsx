@@ -29,26 +29,14 @@ const RaidUpdateForm: React.FC<RaidUpdateFormProps> = ({
   raid,
 }: RaidUpdateFormProps) => (
   <Box as='section'>
-    <Tabs colorScheme='primary.500' variant='unstyled'>
-      <TabList fontFamily='texturina' w='100%'>
+    <Tabs variant='default'>
+      <TabList w='100%'>
         {raidTabs.map((tab) => (
-          <Tab
-            key={tab}
-            fontWeight={500}
-            w='20%'
-            textTransform='uppercase'
-            _selected={{
-              color: 'primary.500',
-              borderBottomColor: 'primary.500',
-              borderBottomWidth: '2px',
-            }}
-          >
+          <Tab key={tab} fontWeight={500}>
             {tab}
           </Tab>
         ))}
       </TabList>
-
-      {/* <TabIndicator mt='-1.5px' height='2px' bg='primary.500' borderRadius='1px' /> */}
 
       <Box
         bg='gray.800'

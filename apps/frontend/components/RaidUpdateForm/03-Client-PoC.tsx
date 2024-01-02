@@ -1,13 +1,11 @@
 /* eslint-disable dot-notation */
 import {
-  Box,
   Button,
   defaultTheme,
-  FormControl,
-  FormLabel,
   Heading,
   HStack,
   Select,
+  Stack,
   Text,
   VStack,
 } from '@raidguild/design-system';
@@ -19,7 +17,7 @@ import { IContact, IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { useOverlay } from '../../contexts/OverlayContext';
 import ContactUpdateForm from '../ContactUpdateForm';
@@ -80,7 +78,6 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
     }));
 
     upsertContacts({ updates });
-
     closeModal();
     setSending(false);
   };
@@ -93,7 +90,6 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
 
   const {
     handleSubmit,
-    control,
     watch,
     formState: { isSubmitting }, // will add errors in once we add validation
   } = localForm;
@@ -101,29 +97,20 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
   const selectedPoCs = watch('consultationsContacts');
 
   return (
-    <Box>
+    <Stack>
       {status === 'success' && (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl>
-            <FormLabel color='raid'>Client PoCs</FormLabel>
-            <Controller
-              name='consultationsContacts'
-              defaultValue={defaultValues}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...field}
-                  isSearchable
-                  isMulti
-                  name='consultationsContacts'
-                  options={POC_DISPLAY_OPTIONS}
-                  localForm={localForm}
-                />
-              )}
-            />
-          </FormControl>
-          <HStack justify='space-between' align='center' w='full'>
+          <Select
+            label='Client PoCs'
+            defaultValue={defaultValues as any[]}
+            name='consultationsContacts'
+            isSearchable
+            isMulti
+            options={POC_DISPLAY_OPTIONS}
+            localForm={localForm}
+          />
+
+          <HStack justify='space-between' align='center' w='full' mt={8}>
             <Button
               w='full'
               variant='link'
@@ -138,19 +125,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
               Create New Contact
             </Button>
 
-            <Button
-              isLoading={isSubmitting || sending}
-              type='submit'
-              width='full'
-              color='raid'
-              bgColor='primary.500'
-              borderColor='raid'
-              border='1px solid'
-              size='md'
-              textTransform='uppercase'
-              fontSize='sm'
-              fontWeight='bold'
-            >
+            <Button isLoading={isSubmitting || sending} type='submit' w='100%'>
               Update Client PoCs
             </Button>
           </HStack>
@@ -166,9 +141,10 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
       >
         <ContactUpdateForm contact={editContact} />
       </ModalWrapper>
+
       {/* // display selected client PoCs */}
 
-      <VStack overflowX='auto' maxH='500px' mt={6} w='fit-content'>
+      <VStack overflowX='auto' maxH='500px' mt={6} w='full'>
         {_.compact(
           selectedPoCs?.map((contact, index) => {
             const foundContact: IContact = _.find(contacts, {
@@ -199,6 +175,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
                       Contact #{index + 1}
                     </Heading>
                     <Button
+                      variant='solid'
                       onClick={() => {
                         setEditContact(foundContact);
 
@@ -249,7 +226,7 @@ const ClientPoCUpdateForm: React.FC<ClientPocUpdateProps> = ({
           })
         )}
       </VStack>
-    </Box>
+    </Stack>
   );
 };
 
