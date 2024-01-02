@@ -66,8 +66,8 @@ const Home = () => {
   const {
     currentItems: currentNewConsultations,
     currentPage: newConsultationsPage,
-    setPage: setNewConsulationsPage,
-    totalPages: totalNewConsulationsPages,
+    setPage: setNewconsutlationsPage,
+    totalPages: totalNewconsutlationsPages,
   } = usePagination(newConsultations, 3);
 
   const {
@@ -222,9 +222,9 @@ const Home = () => {
                       </Flex>
                     )}
 
-                    {totalNewConsulationsPages > 1 && (
+                    {totalNewconsutlationsPages > 1 && (
                       <HStack>
-                        {[...Array(totalNewConsulationsPages).keys()].map(
+                        {[...Array(totalNewconsutlationsPages).keys()].map(
                           (page) => (
                             <Button
                               key={page}
@@ -233,7 +233,7 @@ const Home = () => {
                                   ? 'solid'
                                   : 'outline'
                               }
-                              onClick={() => setNewConsulationsPage(page + 1)}
+                              onClick={() => setNewconsutlationsPage(page + 1)}
                             >
                               {page + 1}
                             </Button>
