@@ -1,5 +1,8 @@
 import {
   Button,
+  Card,
+  CardBody,
+  CardFooter,
   Flex,
   Heading,
   HStack,
@@ -9,7 +12,7 @@ import {
 } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
 import { IRaid } from '@raidguild/dm-types';
-import axios from 'axios';
+// import axios from 'axios';
 import _ from 'lodash';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -19,10 +22,12 @@ import { useForm } from 'react-hook-form';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 
 // ? move to helper/escrow-gql
-export const validateRaidId = async (raidId: string) => {
-  const { data } = await axios.post('/api/validate', { raidId });
-  return data;
-};
+// export const validateRaidId = async (raidId: string) => {
+//   console.log(raidId);
+//   const { data } = await axios.post('/api/validate', { raidId });
+//   console.log(data);
+//   return data;
+// };
 
 // 7b733a60-03b7-472e-8157-c40563c1adaf
 
@@ -67,34 +72,39 @@ export const Escrow = () => {
 
   return (
     <>
-      <NextSeo title='Smart Escrow' />
+      <NextSeo title='Escrow' />
 
       <SiteLayoutPublic
-        subheader={<Heading>Smart Escrow</Heading>}
+        subheader={<Heading>Escrow</Heading>}
         minHeight={[null, null, '100vh']}
       >
         <Flex justify='center' width='100%'>
-          <Stack spacing={4}>
-            <Input
-              name='raidId'
-              label='Raid ID'
-              placeholder='Raid ID from Dungeon Master..'
-              width={['300px', '500px']}
-              borderColor='whiteAlpha.600'
-              borderRadius='md'
-              localForm={localForm}
-            />
-            <Flex justify='flex-end'>
-              <Stack>
-                <ActionButtons raid={raid} />
-                {raidId && !isLoading && (
-                  <Text color={raid ? 'green.500' : 'red.500'} mb='2'>
-                    {raid ? 'Raid ID is valid!' : 'Raid not found'}
-                  </Text>
-                )}
-              </Stack>
-            </Flex>
-          </Stack>
+          <Card variant='filled'>
+            <CardBody>
+              <Input
+                name='raidId'
+                label='Raid ID'
+                placeholder='Raid ID from Dungeon Master..'
+                width={['300px', '500px']}
+                borderColor='whiteAlpha.600'
+                borderRadius='md'
+                localForm={localForm}
+              />
+            </CardBody>
+
+            <CardFooter w='100%'>
+              <Flex justify='flex-end' w='100%'>
+                <Stack>
+                  <ActionButtons raid={raid} />
+                  {raidId && !isLoading && (
+                    <Text color={raid ? 'green.500' : 'red.500'} mb='2'>
+                      {raid ? 'Raid ID is valid!' : 'Raid not found'}
+                    </Text>
+                  )}
+                </Stack>
+              </Flex>
+            </CardFooter>
+          </Card>
         </Flex>
       </SiteLayoutPublic>
     </>

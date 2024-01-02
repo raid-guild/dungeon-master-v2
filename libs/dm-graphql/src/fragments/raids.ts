@@ -33,13 +33,29 @@ export const RAID_DETAIL_FRAGMENT = gql`
     cleric {
       ...SlimMemberDetail
     }
+    hunter {
+      ...SlimMemberDetail
+    }
 
     raid_parties {
       member {
         ...SlimMemberDetail
       }
     }
-
+    signalled_interests {
+      id
+      raid_id
+      consultation_id
+      member_id
+      member {
+        id
+        name
+        eth_address
+        contact_info {
+          ...ContactInfos
+        }
+      }
+    }
     consultation {
       ...ConsultationDetail
     }
@@ -54,6 +70,28 @@ export const RAID_DETAIL_FRAGMENT = gql`
       }
       update
     }
+
+    portfolios {
+      id
+      raid_id
+      name
+      slug
+      description
+      case_study
+      approach
+      challenge
+      category
+      result
+      repo_link
+      result_link
+      image_url
+    }
+
+    locker_hash
+    invoice_address
+    escrow_index
+    airtable_id
+    v1_id
   }
   ${RAID_ENUMS_FRAGMENT}
   ${CONSULTATION_DETAIL_FRAGMENT}

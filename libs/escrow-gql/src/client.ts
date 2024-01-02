@@ -8,9 +8,6 @@ const graphUrl = (chainId: number = 4) =>
 export const SUPPORTED_NETWORKS = _.map(_.keys(NETWORK_CONFIG), _.toNumber);
 
 export const client = (chainId: number) => new GraphQLClient(graphUrl(chainId));
-export const altClient = new GraphQLClient(
-  'https://api.thegraph.com/subgraphs/name/psparacino/v1-xdai-smart-invoices'
-);
-export const thirdClient = new GraphQLClient(
+export const v1Client = new GraphQLClient(
   'https://api.thegraph.com/subgraphs/name/dan13ram/xdai-smart-invoices'
 );

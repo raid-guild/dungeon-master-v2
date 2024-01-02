@@ -69,7 +69,7 @@ const Member = ({ memberAddress }: Props) => {
             w='100%'
             direction={['column', null, null, 'row']}
           >
-            <MemberAvatar member={member} />
+            <MemberAvatar member={member} size={8} />
             <Heading size='lg'>{memberDisplayName(member)}</Heading>
             <HStack spacing={4}>
               <VStack align='flex-end'>
@@ -115,7 +115,7 @@ const Member = ({ memberAddress }: Props) => {
           {(!_.isEmpty(_.get(raids, 'active')) ||
             !_.isEmpty(_.get(raids, 'past'))) && (
             <Card variant='filled' w={['100%', null, null, '35%']}>
-              <Tabs w='100%'>
+              <Tabs w='100%' variant='default'>
                 <TabList>
                   {!_.isEmpty(_.get(raids, 'active')) && <Tab>Active</Tab>}
                   {!_.isEmpty(_.get(raids, 'past')) && <Tab>Past</Tab>}

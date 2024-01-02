@@ -10,3 +10,16 @@ array_relationships:
         table:
           name: links
           schema: public
+select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - type
+      filter: {}
+    comment: ""
+  - role: member
+    permission:
+      columns:
+        - type
+      filter: {}
+    comment: ""

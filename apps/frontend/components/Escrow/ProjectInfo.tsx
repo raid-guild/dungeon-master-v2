@@ -1,5 +1,10 @@
-// import { FlexDirection, ResponsiveValue } from '@chakra-ui/react';
-import { Flex, Heading, Stack, Text } from '@raidguild/design-system';
+import {
+  Flex,
+  Heading,
+  ResponsiveValue,
+  Stack,
+  Text,
+} from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import _ from 'lodash';
 
@@ -10,7 +15,7 @@ const ProjectInfo = ({
   direction,
 }: {
   raid: IRaid;
-  direction?: any; // ResponsiveValue<FlexDirection>;
+  direction?: ResponsiveValue<'column' | 'row'>;
 }) => {
   const clientName = _.get(
     raid,
@@ -37,7 +42,7 @@ const ProjectInfo = ({
         </Heading>
 
         <Link href={`/raids/${raid?.id}`}>
-          <Text color='gray.400' fontFamily='texturina'>
+          <Text color='gray.400' fontFamily='spaceMono' fontSize='sm'>
             Raid ID: {raid?.v1Id || raid?.id}
           </Text>
         </Link>

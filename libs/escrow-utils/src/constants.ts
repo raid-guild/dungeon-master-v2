@@ -1,5 +1,4 @@
 import _ from 'lodash';
-// import { StaticImageData } from 'next/image';
 import { Hex } from 'viem';
 
 import LexDAOLogo from './assets/lex-dao.png';
@@ -41,6 +40,7 @@ interface Tokens {
 interface Resolvers {
   [key: string]: {
     name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     logoUrl: any;
     termsUrl: string;
   };
@@ -58,14 +58,14 @@ interface NetworkConfig {
 
 export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
   100: {
-    SUBGRAPH: 'geovgy/v1-gnosis-chain-smart-invoice', // scottrepreneur/smart-invoice-gnosis
+    SUBGRAPH: 'scottrepreneur/smart-invoice-gnosis',
     INVOICE_FACTORY: _.toLower(
       '0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'
     ) as Hex,
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0xe91D153E0b41518A2Ce8Dd3D7944Fa863463a97d'
     ) as Hex,
-    ZAP_ADDRESS: _.toLower('0xd6696534e273D7fa24e322aE6c7858BA5131036a') as Hex,
+    ZAP_ADDRESS: _.toLower('0x3f2da49623D40DEE50963055EEA0eFaB27e7b840') as Hex,
     DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
     TOKENS: {
       WXDAI: {

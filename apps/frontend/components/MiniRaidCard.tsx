@@ -1,17 +1,19 @@
 import {
+  Box,
   Card,
   Flex,
   Heading,
   HStack,
+  Spacer,
   Stack,
   Text,
 } from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
-import { format } from 'date-fns';
+import { displayDate } from '@raidguild/dm-utils';
 import _ from 'lodash';
 
 import ChakraNextLink from './ChakraNextLink';
-import MemberAvatar from './MemberAvatar';
+import LinkExternal from './LinkExternal';
 import RaidStatusBadge from './RaidStatusBadge';
 
 type MiniRaidCardProps = {
@@ -28,42 +30,51 @@ const MiniRaidCard = ({
   newRaid,
   noAvatar,
   smallHeader,
-}: MiniRaidCardProps) => (
-  <ChakraNextLink
-    href={
-      raid
-        ? `/raids/${_.get(raid, 'id')}`
-        : `/consultations/${_.get(consultation, 'id')}`
-    }
-  >
+}: MiniRaidCardProps) => {
+  const specLink =
+    _.chain(consultation?.links)
+      .filter(
+        (x) =>
+          _.get(x, 'linkType.type') === 'SPECIFICATION' && !!_.get(x, 'link')
+      )
+      .map((x) => _.get(x, 'link'))
+      .head()
+      .value() ?? consultation?.link;
+  return (
     <Card variant='outline' width='100%' minH='100px'>
-      <Flex alignItems='center' width='100%' h='100%'>
-        <Stack spacing={2} width='100%'>
-          <Heading color='white' size={smallHeader ? 'sm' : 'md'}>
-            {_.get(raid, 'name', _.get(consultation, 'name'))}
-          </Heading>
-          <HStack>
-            {_.get(raid, 'raidStatus.raidStatus') && (
-              <RaidStatusBadge status={_.get(raid, 'raidStatus.raidStatus')} />
-            )}
-            {newRaid &&
-              _.get(raid, 'createdAt', _.get(consultation, 'createdAt')) && (
-                <Text>
-                  {!raid && 'Created: '}
-                  {format(
-                    new Date(
-                      _.get(raid, 'createdAt', _.get(consultation, 'createdAt'))
-                    ),
-                    'Pp'
-                  )}
-                </Text>
+      <Flex width='100%' h='100%'>
+        <ChakraNextLink
+          href={
+            raid
+              ? `/raids/${_.get(raid, 'id')}`
+              : `/consultations/${_.get(consultation, 'id')}`
+          }
+        >
+          <Stack spacing={2} width='100%' gap={4}>
+            <Heading
+              color='white'
+              size={smallHeader ? 'sm' : 'md'}
+              noOfLines={1}
+            >
+              {_.get(raid, 'name', _.get(consultation, 'name'))}
+            </Heading>
+            <HStack gap={3}>
+              {_.get(raid, 'raidStatus.raidStatus') && (
+                <RaidStatusBadge
+                  status={_.get(raid, 'raidStatus.raidStatus')}
+                />
               )}
-          </HStack>
-        </Stack>
-        {!noAvatar && <MemberAvatar member={_.get(raid, 'cleric')} />}
+              <Box zIndex={100}>
+                {specLink && <LinkExternal href={specLink} label='Specs' />}
+              </Box>
+            </HStack>
+          </Stack>
+        </ChakraNextLink>
+        <Spacer />
+        <Text>Updated: {displayDate(_.get(raid, 'updatedAt'))}</Text>
       </Flex>
     </Card>
-  </ChakraNextLink>
-);
+  );
+};
 
 export default MiniRaidCard;

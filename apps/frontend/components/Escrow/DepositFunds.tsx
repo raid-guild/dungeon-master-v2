@@ -1,18 +1,17 @@
 /* eslint-disable react/no-array-index-key */
 import {
-  // Alert,
-  // AlertIcon,
-  // AlertTitle,
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Button,
   ChakraCheckbox as Checkbox,
   ControlledSelect,
   Flex,
   Heading,
   HStack,
-  InputGroup,
-  InputRightElement,
   Link,
   NumberInput,
+  Stack,
   Text,
   Tooltip,
   VStack,
@@ -67,12 +66,11 @@ const DepositFunds = ({
   const amount = watch('amount', '0');
   const checked = watch('checked');
 
-  const amountsSum = _.sumBy(amounts); // bigint, not parsed
+  const amountsSum = _.sumBy(amounts); // number, not parsed
   const paidMilestones = depositedMilestones(BigInt(deposited), amounts);
 
   const { data: nativeBalance } = useBalance({ address });
   const { data: tokenBalance } = useBalance({ address, token });
-  // console.log(nativeBalance, tokenBalance);
   const balance =
     paymentType?.value === PAYMENT_TYPES.NATIVE
       ? nativeBalance?.value
@@ -83,7 +81,8 @@ const DepositFunds = ({
       : tokenBalance?.formatted;
   const decimals =
     paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
-  const hasAmount = balance > BigInt(amount) * BigInt(10) ** BigInt(decimals);
+  const hasAmount =
+    balance > BigInt(amount) * BigInt(10) ** BigInt(decimals || 0);
 
   const { handleDeposit, isLoading, isReady } = useDeposit({
     invoice,
@@ -104,6 +103,7 @@ const DepositFunds = ({
 
   useEffect(() => {
     setValue('paymentType', paymentTypeOptions[0]);
+    setValue('amount', '0');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -127,15 +127,15 @@ const DepositFunds = ({
       >
         Pay Invoice
       </Heading>
-      <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
+      <Text textAlign='center' fontSize='sm' mb='1rem' color='whiteAlpha.700'>
         At a minimum, you’ll need to deposit enough to cover the{' '}
         {currentMilestone === 0 ? 'first' : 'next'} project payment.
       </Text>
-      <Text textAlign='center' color='primary.500' fontFamily='texturina'>
+      <Text textAlign='center' color='purple.400'>
         How much will you be depositing today?
       </Text>
       <VStack spacing='0.5rem' align='center'>
-        {amounts.map((a: number, i: number) => (
+        {_.map(amounts, (a: number, i: number) => (
           <HStack>
             <Checkbox
               mx='auto'
@@ -158,7 +158,7 @@ const DepositFunds = ({
 
                 setValue('amount', formatUnits(newAmount, 18));
               }}
-              color='yellow.500'
+              color='yellow.300'
               border='none'
               size='lg'
               fontSize='1rem'
@@ -176,7 +176,7 @@ const DepositFunds = ({
 
       <Text variant='textOne'>OR</Text>
 
-      <VStack spacing='0.5rem' align='stretch' fontFamily='texturina'>
+      <Stack spacing='0.5rem' align='center' fontFamily='texturina'>
         <Flex justify='space-between' w='100%'>
           <Text fontWeight='500' color='whiteAlpha.700'>
             Enter a Manual Deposit Amount
@@ -195,19 +195,21 @@ const DepositFunds = ({
             </Tooltip>
           )}
         </Flex>
-        <InputGroup w='400px'>
+
+        <Flex>
           <NumberInput
             localForm={localForm}
             name='amount'
             type='number'
             variant='outline'
+            placeholder='0'
             color='yellow.500'
             defaultValue='0'
             min={0}
             max={amountsSum}
-            mr={TOKEN_DATA.isWrapped ? '8.5rem' : '3.5rem'}
           />
-          <InputRightElement w={TOKEN_DATA.isWrapped ? '8.5rem' : '3.5rem'}>
+
+          <Flex width={250}>
             {TOKEN_DATA.isWrapped ? (
               <ControlledSelect
                 options={paymentTypeOptions}
@@ -215,21 +217,22 @@ const DepositFunds = ({
                 onChange={(e) => {
                   setValue('paymentType', e);
                 }}
+                // width='100%'
               />
             ) : (
               parseTokenAddress(chainId, token)
             )}
-          </InputRightElement>
-        </InputGroup>
-        {/* {amount.gt(due) && (
-          <Alert bg='none'>
+          </Flex>
+        </Flex>
+        {BigInt(amount) * BigInt(10) ** BigInt(decimals || 0) > due && (
+          <Alert bg='purple.900' borderRadius='md' mt={4}>
             <AlertIcon color='primary.300' />
             <AlertTitle fontSize='sm'>
-              Your deposit is greater than the due amount!
+              Your deposit is greater than the total amount due!
             </AlertTitle>
           </Alert>
-        )} */}
-      </VStack>
+        )}
+      </Stack>
       <Flex
         color='white'
         justify='space-between'

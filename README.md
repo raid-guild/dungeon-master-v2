@@ -6,35 +6,23 @@ Monorepo built with [nx](https://nx.dev/)
 
 1. Copy env file
 
-```
+```sh
 cp apps/frontend/.env.example ./apps/frontend/.env.local
 ```
 
-2. Fill in the required credentials in env file.
+2. Install dependencies with Yarn.
 
-```
-HASURA_GRAPHQL_ADMIN_SECRET
-
-NEXTAUTH_SECRET
-
-NEXT_PUBLIC_ALCHEMY_KEY
-
-GITHUB_API_TOKEN
-```
-
-3. Install dependencies with Yarn.
-
-```
+```sh
 yarn
 ```
 
-4. Run frontend app locally.
+3. Run frontend app locally.
 
-```
-yarn start
+```sh
+yarn dev
 ```
 
-5. Open the app in your browser at https://localhost:4200
+4. Open the app in your browser at https://localhost:4200
 
 ## using 'nx' workspaces
 
@@ -42,25 +30,25 @@ yarn start
 
 build all packages
 
-```
+```sh
 yarn nx run-many --target=build --all
 ```
 
 remove a project
 
-```
+```sh
 npx nx generate @nx/workspace:remove --projectName=<your project name>
 ```
 
 generate a new next.js app
 
-```
+```sh
 npx nx generate @nx/next:application <your application name>
 ```
 
 generate a new react library
 
-```
+```sh
 npx nx generate @nx/react:library <your component name>
 ```
 
@@ -80,7 +68,7 @@ npx nx generate @nx/react:library <your component name>
 
 This will start the Hasura server on port 8080. Connect the frontend above by using the associated variables.
 
-```bash
+```sh
 NEXT_PUBLIC_API_URL='http://localhost:8080/v1/graphql'
 HASURA_GRAPHQL_ADMIN_SECRET=
 ```

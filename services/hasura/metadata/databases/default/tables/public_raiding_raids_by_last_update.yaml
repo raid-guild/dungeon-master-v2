@@ -1,0 +1,3 @@
+table:
+  name: raiding_raids_by_last_update
+  schema: public

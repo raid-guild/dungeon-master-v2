@@ -7,7 +7,7 @@ import { Flex, Spinner } from '@raidguild/design-system';
 import { useSearchResults } from '@raidguild/dm-hooks';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import CmdkCommandPalette, {
   filterItems,
   getItemIndex,
@@ -64,17 +64,18 @@ const CommandPalette = () => {
     }, 500);
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
+    console.log(isOpen);
     if (isOpen) {
       setOpen(false);
       setTimeout(() => {
         setServerSearch(null);
         setSearch('');
-      }, 250);
+      }, 500);
     } else {
       setOpen(true);
     }
-  };
+  }, [isOpen]);
 
   useHandleOpenCommandPalette(setOpen);
 

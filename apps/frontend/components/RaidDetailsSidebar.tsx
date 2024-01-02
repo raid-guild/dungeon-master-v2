@@ -4,6 +4,7 @@ import _ from 'lodash';
 import React from 'react';
 
 import { useOverlay } from '../contexts/OverlayContext';
+import InterestedMembers from './InterestedMembers';
 import ModalWrapper from './ModalWrapper';
 import RaidPartyInfo from './RaidPartyInfo';
 import RaidUpdateForm from './RaidUpdateForm';
@@ -22,9 +23,14 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
     setModals({ raidStatus: true });
   };
 
-  const handleShowRaidUpdatFormModal = () => {
+  const handleShowRaidUpdateFormModal = () => {
     setModals({ raidForm: true });
   };
+
+  const interestedMembers = _.map(
+    raid.consultation.signalledInterests,
+    'member'
+  );
 
   return (
     <Stack spacing={5}>
@@ -32,7 +38,7 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
         <Button onClick={handleShowStatusModal} flexGrow={1}>
           {_.get(raid, 'raidStatus.raidStatus')}
         </Button>
-        <Button variant='outline' onClick={handleShowRaidUpdatFormModal}>
+        <Button variant='outline' onClick={handleShowRaidUpdateFormModal}>
           Edit
         </Button>
       </HStack>
@@ -56,14 +62,11 @@ const RaidDetailsSidebar = ({ raid }: RaidDetailsSidebarProps) => {
         title='Update Raid'
         localOverlay={localOverlay}
       >
-        <RaidUpdateForm
-          raidId={_.get(raid, 'id')}
-          raid={raid}
-          closeModal={closeModals}
-        />
+        <RaidUpdateForm raid={raid} closeModal={closeModals} />
       </ModalWrapper>
 
       <RaidPartyInfo raid={raid} />
+      <InterestedMembers members={interestedMembers} raid={raid} />
       {/* RAID TAGS */}
       {/* <RaidTags raid={raid} /> */}
       {/* RELATED RAIDS */}

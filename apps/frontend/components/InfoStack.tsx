@@ -1,41 +1,58 @@
 /* eslint-disable no-nested-ternary */
-// TODO fix ternary
 import {
-  Button,
   HStack,
   Icon,
   Stack,
   Text,
   Tooltip,
   useClipboard,
+  useToast,
 } from '@raidguild/design-system';
-import { FaCopy, FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
+import _, { isString } from 'lodash';
+import { ReactElement } from 'react';
+import { FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
 
-import Link from './ChakraNextLink';
+import ChakraNextLink from './ChakraNextLink';
 
 interface InfoStackProps {
   label: string;
-  details: string;
+  details: string | ReactElement | React.ReactNode;
+  fullDetails?: string;
   link?: string;
   tooltip?: string;
   copy?: boolean;
-  isExternal?: boolean;
+  truncate?: boolean;
 }
 
 const InfoStack = ({
   label,
   details,
+  fullDetails,
   link,
   tooltip,
   copy,
-  isExternal,
+  truncate = false,
 }: InfoStackProps) => {
-  const copyText = useClipboard(details);
+  const copyText = useClipboard(_.isString(details) ? details : '');
+  const toast = useToast();
+
+  const handleCopy = () => {
+    if (link || !isString(details)) return;
+
+    copyText.onCopy();
+    toast.info({
+      title: 'Copied to clipboard!',
+      // description: details,
+      duration: 2000,
+    });
+  };
+
+  const isExternal = link && link.startsWith('http');
 
   return (
-    <Stack justify='center' minWidth='0.5'>
+    <Stack justify='center' minWidth='0.5' gap={0.5}>
       <HStack>
-        <Text color='white' fontSize='sm'>
+        <Text fontSize='xs' color='purple.200' textTransform='capitalize'>
           {label}
         </Text>
         {tooltip && (
@@ -46,36 +63,38 @@ const InfoStack = ({
           </Tooltip>
         )}
       </HStack>
-
-      {link ? (
-        <Link href={link} isExternal={isExternal}>
-          <HStack>
-            <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-              {details}
-            </Text>
-            {isExternal && <Icon as={FaExternalLinkAlt} />}
-          </HStack>
-        </Link>
-      ) : copy ? (
-        <Tooltip label={`Copy ${label}`} size='sm' hasArrow>
-          <Button
-            variant='unstyled'
-            onClick={copyText.onCopy}
-            height='-webkit-fit-content'
-          >
+      <Tooltip
+        label={
+          link || typeof fullDetails === 'string'
+            ? fullDetails
+            : typeof details === 'string'
+            ? details
+            : ''
+        }
+        shouldWrapChildren
+      >
+        {link && isString(details) ? (
+          <ChakraNextLink href={link} hidden={!link}>
             <HStack>
-              <Text color='white' fontSize='lg' fontWeight='medium' isTruncated>
-                {details}
+              <Text fontFamily='spaceMono'>
+                {details.replace(/https?:\/\//g, '')}
               </Text>
-              <Icon as={FaCopy} />
+              {isExternal && (
+                <Icon as={FaExternalLinkAlt} color='whiteAlpha.400' />
+              )}
             </HStack>
-          </Button>
-        </Tooltip>
-      ) : (
-        <Text color='white' fontSize='lg' fontWeight='medium'>
-          {details}
-        </Text>
-      )}
+          </ChakraNextLink>
+        ) : (
+          <Text
+            onClick={copy && handleCopy}
+            _hover={{ cursor: copy ? 'pointer' : 'default' }}
+            noOfLines={1}
+            fontFamily='spaceMono'
+          >
+            {details || '-'}
+          </Text>
+        )}
+      </Tooltip>
     </Stack>
   );
 };

@@ -31,6 +31,20 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
     name
     description
     link
+    links {
+      link
+      link_type {
+        type
+      }
+    }
+    signalled_interests{
+            id
+            raid_id
+            consultation_id
+            member_id
+    }
+    created_at
+    updated_at
     desired_delivery_date
     consultation_hash
     ...ConsultationEnumFragment
@@ -43,8 +57,10 @@ export const CONSULTATION_DETAIL_FRAGMENT = gql`
 
     consultations_contacts {
       contact {
+        id
         name
         bio
+        contact_info_id
         contact_info {
           email
         }

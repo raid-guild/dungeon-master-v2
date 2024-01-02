@@ -4,6 +4,6 @@
     "buildCommand": "pnpm build"
   },
   "deploy": {
-    "startCommand": "pnpm start:production"
+    "startCommand": "pnpm start"
   }
 }

@@ -1,4 +1,8 @@
-import { client, RAID_DETAIL_QUERY } from '@raidguild/dm-graphql';
+import {
+  client,
+  RAID_BY_V1_ID_QUERY,
+  RAID_DETAIL_QUERY,
+} from '@raidguild/dm-graphql';
 import { IRaid } from '@raidguild/dm-types';
 import { camelize } from '@raidguild/dm-utils';
 import { useQuery } from '@tanstack/react-query';
@@ -23,11 +27,22 @@ const useRaidDetail = ({
       return camelize(_.get(result, 'data'));
     }
 
-    const result = await client({ token }).request(RAID_DETAIL_QUERY, {
-      id: raidId,
-    });
+    const v2Id = raidId.includes('-');
+    const v2IdVariable = { id: raidId };
+    const v1IdVariable = { v1Id: raidId };
+    const variables = {
+      ...(v2Id && v2IdVariable),
+      ...(!v2Id && v1IdVariable),
+    };
 
-    return camelize(_.get(result, 'raids_by_pk'));
+    const result = await client({ token }).request(
+      v2Id ? RAID_DETAIL_QUERY : RAID_BY_V1_ID_QUERY,
+      variables
+    );
+
+    return camelize(
+      _.get(result, 'raids_by_pk', _.first(_.get(result, 'raids')))
+    );
   };
 
   const { isLoading, isFetching, isError, error, data } = useQuery<

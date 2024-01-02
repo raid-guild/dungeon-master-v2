@@ -7,10 +7,10 @@ import {
   HStack,
   Icon,
   IconButton,
+  // Option,
   Select,
   VStack,
 } from '@raidguild/design-system';
-import { Option } from '@raidguild/design-system/dist/components/forms/CreatableSelect/CreatableSelect';
 import { useRaidPartyAdd, useUpdateRolesRequired } from '@raidguild/dm-hooks';
 import {
   IMember,
@@ -23,7 +23,6 @@ import {
   GUILD_CLASS_OPTIONS,
   memberDisplayName,
   membersExceptRaidParty,
-  rolesExceptRequiredRoles,
   SIDEBAR_ACTION_STATES,
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
@@ -61,15 +60,11 @@ const RaidPartyButtons = ({
     label: GUILD_CLASS_DISPLAY[role],
   }));
 
-  const localRoles = rolesExceptRequiredRoles(
-    _.keys(GUILD_CLASS_DISPLAY),
-    raid
-  );
   const localForm = useForm({
     mode: 'all',
   });
   const { control, handleSubmit } = localForm;
-  const [selectedRoleOptions, setSelectedRoleOptions] = useState<Option>();
+  const [selectedRoleOptions, setSelectedRoleOptions] = useState<any>(); // <Option>();
   const [raiderToAdd, setRaiderToAdd] = useState<string>();
 
   const { mutateAsync: updateRolesRequired } = useUpdateRolesRequired({
@@ -80,7 +75,7 @@ const RaidPartyButtons = ({
   const submitUpdateRoles = async () => {
     const selectedRoleValues: any[] = _.map(
       selectedRoleOptions,
-      (selection: Option) => selection.value
+      (selection: any) => selection.value // <Option>
     );
     const rolesAdded: string[] = _.difference(
       selectedRoleValues,
@@ -177,8 +172,9 @@ const RaidPartyButtons = ({
               localForm={localForm}
               // Note: Below warning suggests this is a workaround to react hook form's intended use
               // "Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?"
+
               onChange={(values) => {
-                setSelectedRoleOptions(values);
+                setSelectedRoleOptions(values as any); // temp fix
               }}
               value={selectedRoleOptions}
             />

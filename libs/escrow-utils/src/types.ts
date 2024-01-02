@@ -5,6 +5,7 @@ export interface Invoice {
   // onchain
   client: Hex;
   provider: Hex;
+  providerReceiver?: Hex;
   token: Hex;
   isLocked: boolean;
   disputes: any[]; // Dispute[];

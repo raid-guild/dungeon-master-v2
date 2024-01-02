@@ -94,8 +94,7 @@ const ConnectWallet = () => {
                       <Image
                         alt={chain.name ?? 'Chain icon'}
                         src={chain.iconUrl}
-                        width={25}
-                        height={25}
+                        boxSize={chain?.id === 100 ? '20px' : '25px'}
                         mr={2}
                       />
                       {chain.name}

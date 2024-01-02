@@ -170,6 +170,7 @@ select_permissions:
         - id
       filter: {}
       allow_aggregations: true
+    comment: ""
 update_permissions:
   - role: member
     permission:
@@ -193,6 +194,7 @@ update_permissions:
         - id
       filter: {}
       check: null
+    comment: ""
 event_triggers:
   - name: consultation_submission
     definition:

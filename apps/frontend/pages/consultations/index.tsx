@@ -258,6 +258,7 @@ const ConsultationList = () => {
       >
         <InfiniteScroll
           pageStart={0}
+          style={{ width: '100%' }}
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
@@ -266,7 +267,7 @@ const ConsultationList = () => {
             </Flex>
           }
         >
-          <Stack spacing={4} mx='auto'>
+          <Stack spacing={4}>
             {_.map(consultations, (consultation: IConsultation) => (
               <RaidCard
                 consultation={consultation}

@@ -25,6 +25,20 @@ array_relationships:
         table:
           name: applications
           schema: public
+  - name: cleric_raids
+    using:
+      foreign_key_constraint_on:
+        column: cleric_id
+        table:
+          name: raids
+          schema: public
+  - name: hunter_raids
+    using:
+      foreign_key_constraint_on:
+        column: hunter_id
+        table:
+          name: raids
+          schema: public
   - name: links
     using:
       foreign_key_constraint_on:
@@ -59,20 +73,6 @@ array_relationships:
         column: member_id
         table:
           name: raid_parties
-          schema: public
-  - name: cleric_raids
-    using:
-      foreign_key_constraint_on:
-        column: cleric_id
-        table:
-          name: raids
-          schema: public
-  - name: hunter_raids
-    using:
-      foreign_key_constraint_on:
-        column: hunter_id
-        table:
-          name: raids
           schema: public
   - name: signalled_interests
     using:

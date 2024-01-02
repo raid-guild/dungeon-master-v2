@@ -1,13 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { gql } from 'graphql-request';
 
-const DASHBOARD_CONSULTATION_FRAGMENT = gql`
-  fragment DashboardConsultation on consultations {
-    id
-    name
-    created_at
-  }
-`;
+import { CONSULTATION_DETAIL_FRAGMENT } from '../fragments';
 
 const DASHBOARD_RAID_FRAGMENT = gql`
   fragment DashboardRaid on raids {
@@ -16,14 +10,22 @@ const DASHBOARD_RAID_FRAGMENT = gql`
     cleric {
       name
     }
+    signalled_interests {
+      id
+      raid_id
+      consultation_id
+      member_id
+    }
     raid_status {
       raid_status
     }
     consultation {
-      ...DashboardConsultation
+      ...ConsultationDetail
     }
     created_at
+    updated_at
   }
+  ${CONSULTATION_DETAIL_FRAGMENT}
 `;
 
 export const DASHBOARD_QUERY = gql`
@@ -49,9 +51,8 @@ export const DASHBOARD_QUERY = gql`
         }
       }
     ) {
-      ...DashboardConsultation
+      ...ConsultationDetail
     }
   }
   ${DASHBOARD_RAID_FRAGMENT}
-  ${DASHBOARD_CONSULTATION_FRAGMENT}
 `;

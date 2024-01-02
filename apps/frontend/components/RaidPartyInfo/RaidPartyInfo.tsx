@@ -1,4 +1,11 @@
-import { Card, Divider, Flex, Heading, Stack } from '@raidguild/design-system';
+import {
+  Card,
+  Divider,
+  Flex,
+  Heading,
+  Stack,
+  Text,
+} from '@raidguild/design-system';
 import { useSlimMemberList } from '@raidguild/dm-hooks';
 import { IMember, IRaid } from '@raidguild/dm-types';
 import { SIDEBAR_ACTION_STATES } from '@raidguild/dm-utils';
@@ -27,6 +34,7 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
 
   const localRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
   const cleric = _.get(raid, 'cleric');
+  const hunter = _.get(raid, 'hunter');
   const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
 
   return (
@@ -45,6 +53,21 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
                   member={cleric}
                   members={members}
                   isCleric
+                  setButtonSelection={setButtonSelection}
+                />
+              </Stack>
+            </Flex>
+            <Flex direction='column' py={2}>
+              <Stack>
+                <Heading color='white' size='sm'>
+                  Hunter
+                </Heading>
+
+                <RaidPartyCard
+                  raid={raid}
+                  member={hunter}
+                  members={members}
+                  isHunter
                   setButtonSelection={setButtonSelection}
                 />
               </Stack>
@@ -70,7 +93,7 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
                 <Heading color='white' size='sm'>
                   Recruiting
                 </Heading>
-                <RaidPartyCard roles={localRoles} isRole />
+                <RaidPartyCard roles={localRoles} />
               </Stack>
             )}
           </Stack>

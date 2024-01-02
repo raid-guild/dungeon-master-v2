@@ -23,6 +23,13 @@ export const MEMBER_LIST_QUERY = gql`
       name
       eth_address
       is_raiding
+      #   links {
+      #   id
+      #   link
+      #   link_type {
+      #     type
+      #   }
+      # }
       contact_info {
         ...ContactInfos
       }
@@ -60,6 +67,8 @@ export const MEMBER_ADDRESS_LOOKUP_QUERY = gql`
       raid_status {
         raid_status
       }
+      created_at
+      updated_at
     }
   }
   ${MEMBER_DETAIL_FRAGMENT}

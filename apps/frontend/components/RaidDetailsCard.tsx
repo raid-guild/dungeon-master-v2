@@ -25,10 +25,11 @@ import {
   ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
   truncateAddress,
+  truncateEmail,
 } from '@raidguild/dm-utils';
 import { format } from 'date-fns';
 import _ from 'lodash';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import InfoStack from './InfoStack';
 
@@ -101,30 +102,57 @@ const Bio = ({ bio }: { bio: string }) => {
 };
 
 const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
-  const keyLinkItems = [
+  const consultationContacts = _.map(
+    consultation?.consultationsContacts,
+    (contact, index) => {
+      const name = _.get(contact, 'contact.name');
+      const email = _.get(contact, 'contact.contactInfo.email');
+      const discord = _.get(contact, 'contact.contactInfo.discord');
+      const telegram = _.get(contact, 'contact.contactInfo.telegram');
+      const bio = _.get(contact, 'contact.bio');
+
+      return {
+        title: `Client Point of Contact${
+          Array.from([consultation?.consultationsContacts]).length > 0
+            ? ` #${index + 1}`
+            : ''
+        }`,
+        items: _.compact([
+          name && { label: 'Name', details: `${name}` },
+          email && {
+            label: 'Email',
+            details: `${truncateEmail(email)}`,
+            fullDetails: email,
+            link: `mailto:${email}`,
+          },
+          discord && { label: 'Discord', details: `${discord}` },
+          telegram && { label: 'Telegram', details: `${telegram}` },
+        ]),
+        extra: bio && <Bio bio={bio} />,
+      };
+    }
+  );
+
+  const keyLinkItems = _.compact([
     // AVAILABLE_PROJECT_SPECS_DISPLAY is not a required field on the
     // consultation form, so we handle edge cases here.
     // Logic below should be simplified if it ever becomes a required field.
-    consultation?.link
-      ? {
-          label: 'Project Specs',
-          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            (_.get(
-              consultation,
-              'availableProjectSpec.availableProjectSpec'
-            ) as AvailableSpecsKey) || 'YES'
-          ),
-          link: consultation?.link,
-        }
-      : {
-          label: 'Project Specs',
-          details: AVAILABLE_PROJECT_SPECS_DISPLAY(
-            (_.get(
-              consultation,
-              'availableProjectSpec.availableProjectSpec'
-            ) as AvailableSpecsKey) || 'NONE'
-          ),
-        },
+
+    ...(consultation?.links?.length > 0
+      ? consultation.links
+          .map((linkItem) => ({
+            label: _.startCase(_.toLower(String(linkItem?.type))),
+            details: _.truncate(linkItem.link, { length: 18 }),
+            link: linkItem.link,
+          }))
+          .filter((x) => x.link)
+      : [
+          {
+            label: 'Specification',
+            details: consultation?.link ? 'Link' : undefined,
+            link: consultation?.link || undefined,
+          },
+        ]),
     _.get(consultation, 'consultationHash') && {
       label: 'Consultation Hash',
       details:
@@ -133,14 +161,14 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           : truncateAddress(_.get(consultation, 'consultationHash')),
       link:
         _.get(consultation, 'consultationHash') !== 'cancelled' &&
-        `https://etherscan.io/tx/${_.get(consultation, 'consultationHash')}`,
+        `https://gnosisscan.io/tx/${_.get(consultation, 'consultationHash')}`,
     },
-  ].filter((x) => x);
+  ]);
 
   const panels = [
     {
       title: 'Project Details',
-      items: [
+      items: _.compact([
         {
           label: 'Budget',
           details:
@@ -194,79 +222,23 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
             ) as PriorityKey
           ),
         },
-      ].filter((x) => x),
+      ]),
       extra: <Description description={_.get(consultation, 'description')} />,
     },
     {
       title: 'Key Links',
       items: keyLinkItems,
     },
-    {
-      title: 'Client Point of Contact',
-      items: [
-        {
-          label: 'Name',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.name',
-            '-'
-          ),
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.email'
-        ) && {
-          label: 'Email',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.email'
-          ),
-          link: `mailto:${_.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.email'
-          )}`,
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.discord'
-        ) && {
-          label: 'Discord',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.discord'
-          ),
-        },
-        _.get(
-          consultation,
-          'consultationsContacts[0].contact.contactInfo.telegram'
-        ) && {
-          label: 'Telegram',
-          details: _.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.telegram'
-          ),
-          link: `https://t.me/${_.get(
-            consultation,
-            'consultationsContacts[0].contact.contactInfo.telegram'
-          )}`,
-        },
-      ].filter((x) => x),
-      extra: (
-        <Bio
-          bio={_.get(consultation, 'consultationsContacts[0].contact.bio')}
-        />
-      ),
-    },
+    ...consultationContacts,
     {
       title: 'Additional Info',
-      items: [
-        (_.get(raid, 'airtableId') ||
-          _.get(raid, 'v1Id') ||
+      items: _.compact([
+        // ? do we need to show airtable ID here?
+        (_.get(raid, 'v1Id') || // _.get(raid, 'airtableId') ||
           _.get(raid, 'id')) && {
           label: 'Raid ID',
           details:
-            _.get(raid, 'airtableId') ||
-            _.get(raid, 'v1Id') ||
+            _.get(raid, 'v1Id') || // _.get(raid, 'airtableId') ||
             _.get(raid, 'id'),
           copy: true,
         },
@@ -276,20 +248,16 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         },
         _.get(raid, 'lockerHash') && {
           label: 'Locker Hash',
-          details: _.get(raid, 'lockerHash'),
+          details: truncateAddress(_.get(raid, 'lockerHash')),
+          link: `https://gnosisscan.com/tx/${_.get(raid, 'lockerHash')}`,
         },
-        _.get(raid, 'invoiceAddress')
-          ? {
-              label: 'Smart Escrow',
-              details: truncateAddress(_.get(raid, 'invoiceAddress')),
-              link: `/escrow/${raid.id}`,
-            }
-          : {
-              label: 'Smart Escrow',
-              details: 'Create escrow',
-              link: `/escrow/new?raidId=${raid.id}`,
-            },
-      ].filter((x) => x),
+        _.get(raid, 'invoiceAddress') && {
+          label: 'Escrow',
+          details: truncateAddress(_.get(raid, 'invoiceAddress')),
+          fullDetails: _.get(raid, 'invoiceAddress'),
+          link: `/escrow/${raid.id}`,
+        },
+      ]),
     },
   ];
 
@@ -327,9 +295,13 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
                       <InfoStack
                         label={_.get(item, 'label')}
                         details={_.get(item, 'details')}
+                        fullDetails={_.get(item, 'fullDetails')}
                         link={_.get(item, 'link')}
                         copy={_.get(item, 'copy')}
-                        key={_.get(item, 'label')}
+                        key={`${_.get(item, 'label')}-${_.get(
+                          item,
+                          'details'
+                        )}`}
                       />
                     ))}
                   </Grid>

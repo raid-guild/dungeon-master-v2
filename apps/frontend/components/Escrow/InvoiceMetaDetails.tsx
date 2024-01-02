@@ -7,18 +7,41 @@ import { useChainId } from 'wagmi';
 import { QuestionIcon } from './icons/QuestionIcon';
 import AccountLink from './shared/AccountLink';
 
-const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
+const InvoiceMetaDetails = ({
+  invoice,
+  receiverIsSplit,
+}: {
+  invoice: Invoice;
+  receiverIsSplit: boolean;
+}) => {
   const chainId = useChainId();
 
   const resolverInfo = getResolverInfo(chainId, invoice.resolver);
 
   const dataValues = useMemo(
-    () => [
-      { label: 'Client', value: invoice.client },
-      { label: 'Raid Party', value: invoice.provider },
-      { label: 'Resolver', name: resolverInfo?.name, value: invoice.resolver },
-    ],
-    [invoice.client, invoice.provider, invoice.resolver, resolverInfo?.name]
+    () =>
+      _.compact([
+        { label: 'Client', value: invoice.client },
+        { label: 'Provider', value: invoice.provider },
+        invoice.providerReceiver && {
+          label: 'Raid Party (Receiver)',
+          value: invoice.providerReceiver,
+          isSplit: receiverIsSplit,
+        },
+        {
+          label: 'Resolver',
+          name: resolverInfo?.name,
+          value: invoice.resolver,
+        },
+      ]),
+    [
+      invoice.client,
+      invoice.provider,
+      invoice.providerReceiver,
+      invoice.resolver,
+      resolverInfo?.name,
+      receiverIsSplit,
+    ]
   );
 
   return (
@@ -47,7 +70,11 @@ const InvoiceMetaDetails = ({ invoice }: { invoice: Invoice }) => {
           <Text fontWeight='bold' fontFamily='texturina'>
             {dataValue.label}
           </Text>
-          <AccountLink name={dataValue.name} address={dataValue.value} />
+          <AccountLink
+            name={dataValue.name}
+            address={dataValue.value}
+            isSplit={dataValue.isSplit}
+          />
         </Flex>
       ))}
     </Stack>

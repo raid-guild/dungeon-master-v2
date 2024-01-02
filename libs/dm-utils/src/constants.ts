@@ -136,6 +136,13 @@ export type PriorityKey =
   | 'FAST_AND_POLISHED'
   | 'FAST_AND_INEXPENSIVE'
   | 'POLISHED_AND_INEXPENSIVE';
+
+export const DELIVERY_PRIORITIES_DISPLAY_OPTIONS = [
+  { label: 'Fast & Polished', value: 'FAST_AND_POLISHED' },
+  { label: 'Fast & Inexpensive', value: 'FAST_AND_INEXPENSIVE' },
+  { label: 'Polished & Inexpensive', value: 'POLISHED_AND_INEXPENSIVE' },
+];
+
 export function DELIVERY_PRIORITIES_DISPLAY(priority: PriorityKey) {
   const deliveryPrioritiesMap = {
     FAST_AND_POLISHED: 'Fast & Polished',
@@ -260,6 +267,14 @@ export const GUILD_CLASS_OPTIONS = [
   { label: 'Cleric (Client Manager)', value: 'ACCOUNT_MANAGER' },
 ];
 
+export const IS_RAIDING_OPTIONS = [
+  { label: 'Raiding', value: true },
+  {
+    label: 'Not Raiding',
+    value: false,
+  },
+];
+
 export const GUILD_CLASS_DISPLAY = {
   COMMUNITY: 'Tavern Keeper (Community)',
   DESIGN: 'Archer (Design)',
@@ -275,7 +290,6 @@ export const GUILD_CLASS_DISPLAY = {
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
 };
 
-// accounting
 export const GUILD_GNOSIS_DAO_ADDRESS =
   '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 
@@ -285,4 +299,5 @@ export const SIDEBAR_ACTION_STATES = {
   raider: 'RAIDER',
   role: 'ROLE',
   cleric: 'CLERIC',
+  hunter: 'HUNTER',
 };

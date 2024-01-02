@@ -1,6 +1,5 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-
 import {
   ChakraSelect,
   Flex,
@@ -30,6 +29,8 @@ import InfiniteScroll from 'react-infinite-scroller';
 
 import MemberCard from '../../components/MemberCard';
 import SiteLayout from '../../components/SiteLayout';
+
+// TODO optimize/separate filter/sort selects
 
 const applicationSkillTypeOptions = [
   { label: 'Show All', value: 'ALL' },

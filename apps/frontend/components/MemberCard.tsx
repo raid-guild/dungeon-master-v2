@@ -60,6 +60,7 @@ const SocialButton = ({
       size='xs'
       marginX={1}
       marginTop={1}
+      zIndex={2}
       leftIcon={icon}
       target='_blank'
       rel='noreferrer noopener'
@@ -174,41 +175,39 @@ const MemberCard = ({ application, member }: MemberProps) => {
           )
         }
         heading={
-          <Link href={link}>
-            <LinkOverlay>
-              <HStack
-                spacing={4}
-                alignItems='center'
-                justifyContent='space-between'
-                width='100%'
+          <LinkOverlay as={Link} href={link}>
+            <HStack
+              spacing={4}
+              alignItems='center'
+              justifyContent='space-between'
+              width='100%'
+            >
+              <Heading
+                color='white'
+                as='h3'
+                fontSize='2xl'
+                transition='all ease-in-out .25s'
+                _hover={{ cursor: 'pointer', color: 'raid' }}
               >
-                <Heading
-                  color='white'
-                  as='h3'
-                  fontSize='2xl'
-                  transition='all ease-in-out .25s'
-                  _hover={{ cursor: 'pointer', color: 'raid' }}
-                >
-                  {_.get(member, 'name', _.get(application, 'name'))}
-                </Heading>
-                <VStack align='end'>
-                  {_.get(member, 'name') && (
-                    <Badge background='blackAlpha' fontSize='sm'>
-                      {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
-                    </Badge>
-                  )}
-                  <Badge
-                    marginX={1}
-                    marginBottom={1}
-                    color='raid'
-                    bgColor='gray.700'
-                  >
-                    {memberType}
+                {_.get(member, 'name', _.get(application, 'name'))}
+              </Heading>
+              <VStack align='end'>
+                {_.get(member, 'name') && (
+                  <Badge background='blackAlpha' fontSize='sm'>
+                    {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
                   </Badge>
-                </VStack>
-              </HStack>
-            </LinkOverlay>
-          </Link>
+                )}
+                <Badge
+                  marginX={1}
+                  marginBottom={1}
+                  color='raid'
+                  bgColor='gray.700'
+                >
+                  {memberType}
+                </Badge>
+              </VStack>
+            </HStack>
+          </LinkOverlay>
         }
         width='100%'
       >

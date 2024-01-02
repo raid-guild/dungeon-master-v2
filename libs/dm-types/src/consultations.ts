@@ -1,4 +1,6 @@
 import { IContact } from './contacts';
+import { ILink } from './misc';
+import { ISignalInterest } from './signalInterest';
 
 export interface IConsultation {
   id: string;
@@ -11,11 +13,13 @@ export interface IConsultation {
   };
   description: string;
   link: string;
+  links: ILink[];
   servicesRequired: {
     guildService: {
       guildService: string; // ENUM
     };
   }[];
+
   desiredDeliveryDate: string;
   budgetOption: {
     budgetOption: string;
@@ -32,7 +36,7 @@ export interface IConsultation {
   consultationHash: string;
 
   // CONTACT INFO
-  consultationContacts: {
+  consultationsContacts: {
     contact: IContact;
   };
 
@@ -41,14 +45,34 @@ export interface IConsultation {
   feedback: string;
   rating: string;
 
+  signalledInterests: 
+    ISignalInterest[];
   // TIMELINE - ISO STRINGS
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IConsultationUpdate {
-  id: string;
-  update: {
-    consultation_status_key?: string;
-  };
+  id?: string;
+  consultation_updates: {
+      id?: string;
+      name?: string;
+      description?: string;
+      link?: string;
+      type_key?: string;
+      specs_key?: string;
+      submission_type_key?: string;
+      submission_hash?: string;
+      consultation_status_key?: string;
+      consultation_hash?: string;
+      budget_key?: string;
+      delivery_priorities_key?: string;
+      desired_delivery_date?: Date;
+      created_at?: Date;
+      updated_at?: Date;
+      v1_id?: string;
+      additional_info?: string;
+  }
 }
+
+

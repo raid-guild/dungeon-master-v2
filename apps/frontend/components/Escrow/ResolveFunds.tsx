@@ -164,7 +164,7 @@ const ResolveFunds = ({
           label='Client Award'
           localForm={localForm}
           placeholder='Client Award'
-          customValidations={{
+          registerOptions={{
             onChange: (value) => {
               if (value > availableFunds) {
                 setValue('clientAward', availableFunds);
@@ -184,7 +184,7 @@ const ResolveFunds = ({
           label='Provider Award'
           localForm={localForm}
           placeholder='Provider Award'
-          customValidations={{
+          registerOptions={{
             onChange: (value) => {
               if (value > availableFunds) {
                 setValue('providerAward', availableFunds);

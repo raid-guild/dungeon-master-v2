@@ -3,36 +3,21 @@ import {
   Box,
   Button,
   Card,
-  ChakraInput,
   Checkbox,
   DatePicker,
   Flex,
-  FormControl,
-  FormLabel,
   HStack,
-  Icon,
   Input,
-  Link,
   Stack,
-  Tooltip,
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
-import {
-  GANGGANG_MULTISIG,
-  getResolverUrl,
-  getSpoilsUrl,
-  Invoice,
-} from '@raidguild/escrow-utils';
+import { GANGGANG_MULTISIG, Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
-import { FaInfoCircle } from 'react-icons/fa';
 import { useChainId } from 'wagmi';
 import * as Yup from 'yup';
-
-// TODO migrate to design system
-// TODO migrate to react-hook-form
 
 const unsupportedNetwork = (chainId: number) =>
   !_.includes(SUPPORTED_NETWORKS, chainId);
@@ -87,7 +72,7 @@ const EscrowDetailsForm = ({
     watch: localWatch,
   } = localForm;
   const {
-    safetyValveDate: localSafetyValveDate,
+    // safetyValveDate: localSafetyValveDate,
     daoSplit: localDaoSplit,
     spoilsPercent: localSpoilsPercent,
     raidPartySplit: localRaidPartySplit,
@@ -154,11 +139,7 @@ const EscrowDetailsForm = ({
             <DatePicker
               label='Safety Valve Date'
               name='safetyValveDate'
-              // tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
-              onChange={(date) => {
-                localSetValue('safetyValveDate', date as Date);
-              }}
-              selected={localSafetyValveDate}
+              tooltip='The funds can be withdrawn by the client after 00:00:00 GMT on this date'
               localForm={localForm}
             />
           </Box>
@@ -172,14 +153,6 @@ const EscrowDetailsForm = ({
               options={['Add Raid Party split']}
             />
           </Stack>
-          {/* <Stack w='33%'>
-            <Checkbox
-              label='DAO Split'
-              name='daoSplit'
-              localForm={localForm}
-              options={['Add DAO spoils split']}
-            />
-          </Stack> */}
         </Flex>
 
         {!localRaidPartySplit && (
@@ -196,66 +169,21 @@ const EscrowDetailsForm = ({
         )}
 
         <Flex>
-          <FormControl isReadOnly mr='.5em'>
-            <Stack>
-              <HStack>
-                <Link href={getResolverUrl(chainId)} isExternal>
-                  <FormLabel cursor='pointer' fontWeight='bold' m={0}>
-                    Arbitration Provider
-                  </FormLabel>
-                </Link>
-                <Tooltip
-                  label='Will resolve disputes between the client and the raid party members.'
-                  placement='right'
-                  hasArrow
-                  shouldWrapChildren
-                >
-                  <Icon
-                    as={FaInfoCircle}
-                    boxSize={3}
-                    color='purple.500'
-                    bg='white'
-                    borderRadius='full'
-                  />
-                </Tooltip>
-              </HStack>
-              <ChakraInput
-                value={localDaoSplit ? 'LexDAO' : 'RaidGuild DAO'}
-                isDisabled
-              />
-            </Stack>
-          </FormControl>
+          <Input
+            name='resolver'
+            label='Arbitration Provider'
+            value={localDaoSplit ? 'LexDAO' : 'RaidGuild DAO'}
+            localForm={localForm}
+            isDisabled
+          />
 
-          <FormControl isReadOnly mr='.5em'>
-            <Stack>
-              <HStack align='center'>
-                <Link href={getSpoilsUrl(chainId, provider)} isExternal>
-                  <FormLabel cursor='pointer' fontWeight='bold' m={0}>
-                    Spoils Percent
-                  </FormLabel>
-                </Link>
-                <Tooltip
-                  label='Percentage sent to the DAO for raids. Handled via the DAO split.'
-                  placement='right'
-                  hasArrow
-                  shouldWrapChildren
-                >
-                  <Icon
-                    as={FaInfoCircle}
-                    boxSize={3}
-                    color='purple.500'
-                    bg='white'
-                    borderRadius='full'
-                  />
-                </Tooltip>
-              </HStack>
-              <ChakraInput
-                value={`${localSpoilsPercent}%`}
-                readOnly
-                isDisabled
-              />
-            </Stack>
-          </FormControl>
+          <Input
+            name='spoilsPercent'
+            label='Spoils'
+            value={`${localSpoilsPercent}%`}
+            localForm={localForm}
+            isDisabled
+          />
         </Flex>
 
         <Flex justify='center'>
