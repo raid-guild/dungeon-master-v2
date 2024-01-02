@@ -25,6 +25,7 @@ export {
   useSlimMemberList,
 } from './useMemberList';
 export { default as useMemberUpdate } from './useMemberUpdate';
+export { default as usePagination } from './usePagination';
 export { default as usePinataUpload } from './usePinataUpload';
 export { default as usePortfolioUpdate } from './usePortfolioUpdate';
 export { default as useRaidCreate } from './useRaidCreate';
