@@ -34,7 +34,7 @@ const resolverInfo = {
 };
 
 export const getResolverInfo = (chainId: number, resolver?: string) =>
-  resolver ? resolverInfo[chainId][resolver] : resolverInfo[chainId];
+  resolver ? resolverInfo[chainId]?.[resolver] : resolverInfo[chainId];
 
 export const isKnownResolver = (chainId: number, resolver: Hex) =>
   !!_.get(getResolverInfo(chainId), _.toLower(resolver));
