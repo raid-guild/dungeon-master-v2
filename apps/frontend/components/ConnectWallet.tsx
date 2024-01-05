@@ -91,18 +91,21 @@ const ConnectWallet = () => {
                       width='fit'
                       onClick={openChainModal}
                     >
-                      <Image
-                        alt={chain.name ?? 'Chain icon'}
-                        src={chain.iconUrl}
-                        boxSize={chain?.id === 100 ? '20px' : '25px'}
-                        mr={2}
-                      />
-                      {chain.name}
+                      <HStack spacing={1} align='center'>
+                        <Image
+                          alt={chain.name ?? 'Chain icon'}
+                          src={chain.iconUrl}
+                          boxSize={chain?.id === 100 ? '20px' : '25px'}
+                        />
+                        <Text color='whiteAlpha.700' fontFamily='texturina'>
+                          {chain.name}
+                        </Text>
+                      </HStack>
                     </Button>
 
                     <MenuButton as={Button} variant='outline' width='fit'>
                       <HStack spacing={3}>
-                        <Text color='white'>
+                        <Text color='whiteAlpha.700'>
                           {account.ensName
                             ? account.ensName
                             : truncateAddress(account.address)}

@@ -48,13 +48,6 @@ const NewEscrow = () => {
     roles: _.get(session, 'user.roles'),
   });
 
-  // useEffect(() => {
-  //   if (!raidId) {
-  //     router.push(`/escrow`);
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   useEffect(() => {
     setStep(raidId ? 1 : 0);
   }, [raidId]);
@@ -107,13 +100,7 @@ const NewEscrow = () => {
               backStep={backStep}
             />
           )}
-          {step === 5 && (
-            <EscrowSuccess
-              raidId={raidId}
-              txHash={txHash}
-              escrowForm={escrowForm}
-            />
-          )}
+          {step === 5 && <EscrowSuccess raidId={raidId} txHash={txHash} />}
           {(step === 0 || step === 1) && (
             <Text fontSize='sm' color='whiteAlpha.700'>
               The Raid Guild escrow uses{' '}
