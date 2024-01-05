@@ -4,7 +4,6 @@ import {
   Flex,
   Heading,
   HStack,
-  Spacer,
   Stack,
   Text,
 } from '@raidguild/design-system';
@@ -41,16 +40,16 @@ const MiniRaidCard = ({
       .head()
       .value() ?? consultation?.link;
   return (
-    <Card variant='outline' width='100%' minH='100px'>
-      <Flex width='100%' h='100%'>
-        <ChakraNextLink
-          href={
-            raid
-              ? `/raids/${_.get(raid, 'id')}`
-              : `/consultations/${_.get(consultation, 'id')}`
-          }
-        >
-          <Stack spacing={2} width='100%' gap={4}>
+    <ChakraNextLink
+      href={
+        raid
+          ? `/raids/${_.get(raid, 'id')}`
+          : `/consultations/${_.get(consultation, 'id')}`
+      }
+    >
+      <Card variant='outline' width='100%' minH='100px'>
+        <Flex width='100%' h='100%'>
+          <Stack spacing={2} w='100%' gap={4}>
             <Heading
               color='white'
               size={smallHeader ? 'sm' : 'md'}
@@ -58,22 +57,25 @@ const MiniRaidCard = ({
             >
               {_.get(raid, 'name', _.get(consultation, 'name'))}
             </Heading>
-            <HStack gap={3}>
-              {_.get(raid, 'raidStatus.raidStatus') && (
-                <RaidStatusBadge
-                  status={_.get(raid, 'raidStatus.raidStatus')}
-                />
-              )}
-              <Box zIndex={100}>
-                {specLink && <LinkExternal href={specLink} label='Specs' />}
-              </Box>
-            </HStack>
+            <Flex justify='space-between' w='100%'>
+              <HStack gap={3}>
+                {_.get(raid, 'raidStatus.raidStatus') && (
+                  <RaidStatusBadge
+                    status={_.get(raid, 'raidStatus.raidStatus')}
+                  />
+                )}
+                <Box zIndex={100}>
+                  {specLink && <LinkExternal href={specLink} label='Specs' />}
+                </Box>
+              </HStack>
+              <Text size='sm' color='whiteAlpha.700'>
+                Updated: {displayDate(_.get(raid, 'updatedAt'))}
+              </Text>
+            </Flex>
           </Stack>
-        </ChakraNextLink>
-        <Spacer />
-        <Text>Updated: {displayDate(_.get(raid, 'updatedAt'))}</Text>
-      </Flex>
-    </Card>
+        </Flex>
+      </Card>
+    </ChakraNextLink>
   );
 };
 

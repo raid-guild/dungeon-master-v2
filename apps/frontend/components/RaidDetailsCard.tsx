@@ -251,11 +251,17 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           details: truncateAddress(_.get(raid, 'lockerHash')),
           link: `https://gnosisscan.com/tx/${_.get(raid, 'lockerHash')}`,
         },
-        _.get(raid, 'invoiceAddress') && {
+        {
           label: 'Escrow',
-          details: truncateAddress(_.get(raid, 'invoiceAddress')),
-          fullDetails: _.get(raid, 'invoiceAddress'),
-          link: `/escrow/${raid.id}`,
+          details: _.get(raid, 'invoiceAddress')
+            ? truncateAddress(_.get(raid, 'invoiceAddress'))
+            : 'Create Escrow',
+          fullDetails: _.get(raid, 'invoiceAddress')
+            ? _.get(raid, 'invoiceAddress')
+            : undefined,
+          link: _.get(raid, 'invoiceAddress')
+            ? `/escrow/${raid.id}`
+            : `/escrow/new?raidId=${raid.id}`,
         },
       ]),
     },

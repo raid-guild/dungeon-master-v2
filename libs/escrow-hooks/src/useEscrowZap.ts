@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { NETWORK_CONFIG, ProjectDetails } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -53,7 +54,6 @@ const useEscrowZap = ({
   const { data: details, isLoading: detailsLoading } = useDetailsPin({
     ...detailsData,
   });
-  // eslint-disable-next-line no-console
   console.log('details', details);
 
   const tokenAddress = _.get(
@@ -65,16 +65,28 @@ const useEscrowZap = ({
     ? (_.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))) as Hex)
     : NETWORK_CONFIG[chainId].DAO_ADDRESS;
 
-  console.log('encodeSafeData', threshold, saltNonce);
   const encodedSafeData = useMemo(() => {
-    if (!threshold || !saltNonce) return undefined;
+    if (!threshold || !saltNonce)
+      return encodeAbiParameters(
+        [{ type: 'uint256' }, { type: 'uint256' }],
+        [BigInt(0), BigInt(0)]
+      );
+
     return encodeAbiParameters(
       [{ type: 'uint256' }, { type: 'uint256' }],
       [BigInt(threshold), BigInt(saltNonce)]
     );
   }, [threshold, saltNonce]);
+  console.log(
+    'encodeSafeData - ',
+    'threshold',
+    threshold,
+    'nonce',
+    saltNonce,
+    'compiled data',
+    !!encodedSafeData
+  );
 
-  console.log('encodeSplitData', projectTeamSplit, daoSplit);
   const encodedSplitData = useMemo(
     () =>
       encodeAbiParameters(
@@ -83,17 +95,16 @@ const useEscrowZap = ({
       ),
     [projectTeamSplit, daoSplit]
   );
-
   console.log(
-    'encodeEscrowData',
-    client,
-    arbitration,
-    resolver,
-    tokenAddress,
-    safetyValveDate,
-    saltNonce,
-    details
+    'encodeSplitData - ',
+    'team split',
+    projectTeamSplit,
+    'dao split',
+    daoSplit,
+    'compiled data',
+    !!encodedSplitData
   );
+
   const encodedEscrowData = useMemo(() => {
     if (
       !isAddress(client) ||
@@ -126,13 +137,46 @@ const useEscrowZap = ({
       ]
     );
   }, [tokenAddress, safetyValveDate, details, client, arbitration, resolver]);
-  // eslint-disable-next-line no-console
-  console.log('escrow data', !!encodedEscrowData);
+  console.log(
+    'encodeEscrowData - ',
+    {
+      client,
+      arbitration,
+      resolver,
+      tokenAddress,
+      safetyValveDate,
+      saltNonce,
+      details,
+    },
+    'compiled data',
+    !!encodedEscrowData
+  );
 
+  console.log(
+    'enabled prepare',
+    {
+      owners,
+      percentAllocations,
+      milestoneAmounts,
+      encodedSafeData,
+      provider,
+      encodedSplitData,
+      encodedEscrowData,
+      enabled,
+    },
+    _.isEqual(_.size(percentAllocations), _.size(owners)) &&
+      !_.isEmpty(milestoneAmounts) &&
+      !!encodedSafeData &&
+      !!provider && // _safeAddress
+      !!encodedSplitData &&
+      !!encodedEscrowData &&
+      enabled
+  );
   const {
     config,
     isLoading: prepareLoading,
     error: prepareError,
+    status,
   } = usePrepareContractWrite({
     chainId,
     address: NETWORK_CONFIG[chainId].ZAP_ADDRESS,
@@ -148,9 +192,7 @@ const useEscrowZap = ({
       encodedEscrowData,
     ],
     enabled:
-      !_.isEmpty(owners) &&
-      _.every(owners, isAddress) &&
-      !_.isEmpty(percentAllocations) &&
+      _.isEqual(_.size(percentAllocations), _.size(owners)) &&
       !_.isEmpty(milestoneAmounts) &&
       !!encodedSafeData &&
       !!provider && // _safeAddress
@@ -158,6 +200,7 @@ const useEscrowZap = ({
       !!encodedEscrowData &&
       enabled,
   });
+  console.log('prepareError', prepareError, status);
 
   const {
     writeAsync,
