@@ -27,7 +27,7 @@ const ProjectInfo = ({
       direction={direction}
       justify='space-between'
       align={direction === 'column' ? 'flex-start' : 'center'}
-      minW='400px'
+      minW={{ base: 'none', lg: '400px' }}
     >
       <Heading size='md' fontFamily='spaceMono' color='white' maxWidth='400px'>
         {raid?.name}
@@ -42,7 +42,12 @@ const ProjectInfo = ({
         </Heading>
 
         <Link href={`/raids/${raid?.id}`}>
-          <Text color='gray.400' fontFamily='spaceMono' fontSize='sm'>
+          <Text
+            color='gray.400'
+            fontFamily='spaceMono'
+            fontSize='sm'
+            noOfLines={1}
+          >
             Raid ID: {raid?.v1Id || raid?.id}
           </Text>
         </Link>

@@ -18,18 +18,13 @@ import {
 } from '@raidguild/design-system';
 import { truncateAddress } from '@raidguild/dm-utils';
 import { useSplitEarnings, useSplitsMetadata } from '@raidguild/escrow-hooks';
-import {
-  handleFormattedBalance,
-  NETWORK_CONFIG,
-  splitsLink,
-} from '@raidguild/escrow-utils';
+import { handleFormattedBalance, splitsLink } from '@raidguild/escrow-utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React, { useMemo } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { formatUnits } from 'viem';
-import { useContractRead } from 'wagmi';
 
 import ChakraNextLink from '../ChakraNextLink';
 import AccountLink from './shared/AccountLink';
@@ -47,20 +42,6 @@ const NestedSplit = ({
   recipient: SplitRecipient;
   currentSplitMetadata: Split;
 }) => {
-  const { data: subControllerIsSafe } = useContractRead({
-    address: _.get(currentSplitMetadata, 'controller.address'),
-    abi: [
-      {
-        inputs: [],
-        name: 'VERSION',
-        outputs: [{ internalType: 'string', name: '', type: 'string' }],
-        stateMutability: 'view',
-        type: 'function',
-      },
-    ],
-    functionName: 'VERSION',
-    args: [],
-  });
   const { data: splitEarnings } = useSplitEarnings({
     address: _.get(currentSplitMetadata, 'address'),
     chainId,
@@ -148,7 +129,6 @@ const NestedSplit = ({
               <AccountLink
                 address={_.get(currentSplitMetadata, 'controller.address')}
                 chainId={chainId}
-                isSafe={!!subControllerIsSafe}
               />
             </Flex>
           </Stack>
@@ -194,20 +174,6 @@ const ReceiverSplits = ({
     );
   }, [splitEarnings]);
 
-  const { data: controllerIsSafe } = useContractRead({
-    address: _.get(initialSplitMetadata, 'controller.address'),
-    abi: [
-      {
-        inputs: [],
-        name: 'VERSION',
-        outputs: [{ internalType: 'string', name: '', type: 'string' }],
-        stateMutability: 'view',
-        type: 'function',
-      },
-    ],
-    functionName: 'VERSION',
-    args: [],
-  });
   const splitAvatar =
     initialSplitMetadata &&
     blockies
@@ -240,7 +206,11 @@ const ReceiverSplits = ({
                   ringColor='white'
                 />
                 <Heading size='sm'>0xSplit</Heading>
-                <Text fontFamily='spaceMono'>
+
+                <Text
+                  fontFamily='spaceMono'
+                  display={{ base: 'none', lg: 'inline-block' }}
+                >
                   ({truncateAddress(initialSplitMetadata.address)})
                 </Text>
                 <Icon
@@ -273,11 +243,6 @@ const ReceiverSplits = ({
                 {_.map(
                   _.get(initialSplitMetadata, 'recipients'),
                   (recipient: SplitRecipient) => {
-                    const daoAddresses = [NETWORK_CONFIG[chainId].DAO_ADDRESS];
-                    const isDao = _.includes(
-                      daoAddresses,
-                      _.get(recipient, 'recipient.address')
-                    );
                     const nestedSplit = _.find(splitsMetadata, {
                       address: _.get(recipient, 'recipient.address'),
                     });
@@ -299,7 +264,6 @@ const ReceiverSplits = ({
                       >
                         <AccountLink
                           address={_.get(recipient, 'recipient.address')}
-                          name={isDao ? 'Raid Guild DAO' : undefined}
                           chainId={chainId}
                         />
                         <Text fontFamily='spaceMono'>
@@ -323,7 +287,6 @@ const ReceiverSplits = ({
                 <AccountLink
                   address={_.get(initialSplitMetadata, 'controller.address')}
                   chainId={chainId}
-                  isSafe={!!controllerIsSafe}
                 />
               </Flex>
             </Stack>

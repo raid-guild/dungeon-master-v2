@@ -74,6 +74,7 @@ const InvoiceMetaDetails = ({
             name={dataValue.name}
             address={dataValue.value}
             isSplit={dataValue.isSplit}
+            chainId={chainId}
           />
         </Flex>
       ))}

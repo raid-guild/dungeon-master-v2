@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Hex, zeroAddress } from 'viem';
+import { useChainId } from 'wagmi';
 import { WriteContractResult } from 'wagmi/dist/actions';
 
 import AccountLink from './shared/AccountLink';
@@ -48,6 +49,7 @@ const EscrowConfirmation = ({
     raidPartySplit,
     safetyValveDate,
   } = watch();
+  const chainId = useChainId();
 
   const detailsData = useMemo(() => {
     if (raid) {
@@ -126,13 +128,14 @@ const EscrowConfirmation = ({
             'Ganggang Multisig'
           }
           address={client}
+          chainId={chainId}
         />
       ),
     },
     {
       label: `Raid Party ${provider ? 'Multisig' : 'Address'}`,
       value: provider ? (
-        <AccountLink address={provider} />
+        <AccountLink address={provider} chainId={chainId} />
       ) : (
         <Tooltip
           label={`${_.size(ownersAndAllocations)} owners on the Safe and Split`}

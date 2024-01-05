@@ -69,15 +69,11 @@ const Escrow = ({ raidId }: { raidId: string }) => {
 
   if (!token) {
     return (
-      <>
-        <NextSeo title='Not Found' />
-
-        <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
-          <Flex direction='column' alignItems='center' w='100%' pt='150px'>
-            <Heading size='md'>Connect your wallet & Sign in</Heading>
-          </Flex>
-        </SiteLayoutPublic>
-      </>
+      <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
+        <Flex direction='column' alignItems='center' w='100%' pt='150px'>
+          <Heading size='md'>Connect your wallet & Sign in</Heading>
+        </Flex>
+      </SiteLayoutPublic>
     );
   }
 
@@ -93,16 +89,12 @@ const Escrow = ({ raidId }: { raidId: string }) => {
 
   if (!raid || (raid && raid.invoiceAddress && !invoice)) {
     return (
-      <>
-        <NextSeo title='Not Found' />
-
-        <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
-          <Page404
-            heading='Invoice not found!'
-            primaryLink={{ link: '/escrow', label: 'Back to escrow' }}
-          />
-        </SiteLayoutPublic>
-      </>
+      <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
+        <Page404
+          heading='Invoice not found!'
+          primaryLink={{ link: '/escrow', label: 'Back to escrow' }}
+        />
+      </SiteLayoutPublic>
     );
   }
 
@@ -123,12 +115,17 @@ const Escrow = ({ raidId }: { raidId: string }) => {
         {invoice && (
           <Flex
             width='100%'
-            direction={{ md: 'column', lg: 'row' }}
+            direction={{ base: 'column', lg: 'row' }}
             // alignItems='center'
             justifyContent='space-evenly'
           >
             <Stack spacing={4}>
-              <Card as={Flex} variant='filled' direction='column' minW='30%'>
+              <Card
+                as={Flex}
+                variant='filled'
+                direction='column'
+                minW={{ base: '90%', lg: '30%' }}
+              >
                 <Stack>
                   <ProjectInfo raid={raid} direction='column' />
                   <InvoiceMetaDetails
@@ -162,7 +159,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
               />
             </Stack>
 
-            <Flex direction='column' minW='45%'>
+            <Flex direction='column' minW='45%' mt={{ base: 4, lg: 0 }}>
               <InvoicePaymentDetails invoice={invoice} />
               <InvoiceButtonManager invoice={invoice} />
             </Flex>

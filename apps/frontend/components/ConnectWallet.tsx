@@ -66,7 +66,9 @@ const ConnectWallet = () => {
                     onClick={openConnectModal}
                     data-cy='connect-wallet'
                   >
-                    Connect
+                    <Text color='whiteAlpha.900' fontFamily='texturina'>
+                      Connect
+                    </Text>
                   </Button>
                 );
               }
@@ -97,7 +99,11 @@ const ConnectWallet = () => {
                           src={chain.iconUrl}
                           boxSize={chain?.id === 100 ? '20px' : '25px'}
                         />
-                        <Text color='whiteAlpha.700' fontFamily='texturina'>
+                        <Text
+                          color='whiteAlpha.700'
+                          fontFamily='texturina'
+                          display={{ base: 'none', lg: 'inline-block' }}
+                        >
                           {chain.name}
                         </Text>
                       </HStack>
