@@ -54,6 +54,7 @@ interface NetworkConfig {
   RESOLVERS: Resolvers;
   ZAP_ADDRESS?: Hex;
   DAO_ADDRESS?: Hex;
+  TREASURY_ADDRESS?: Hex;
   SPOILS_MANAGER?: Hex;
 }
 
@@ -68,6 +69,9 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     ) as Hex,
     ZAP_ADDRESS: _.toLower('0xE52fFb810cFb882A5C1085b9c01F189cD356a9B4') as Hex,
     DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
+    TREASURY_ADDRESS: _.toLower(
+      '0x181ebdb03cb4b54f4020622f1b0eacd67a8c63ac'
+    ) as Hex,
     SPOILS_MANAGER: _.toLower(
       '0x8C9c85b41a9491388320eA27d74A037D93d07C0F'
     ) as Hex,

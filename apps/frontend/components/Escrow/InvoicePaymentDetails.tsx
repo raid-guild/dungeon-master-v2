@@ -114,7 +114,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
               direction='row'
             >
               <Stack spacing='2px'>
-                <Text variant='textOne'>Payment Milestone #{index + 1}</Text>
+                <Text variant='textOne'>Milestone #{index + 1}</Text>
                 {index < currentMilestone && releases.length > index && (
                   <Link
                     fontSize='xs'
@@ -207,9 +207,8 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                   {isReleasable && 'Next Amount to Release'}
                   {!isReleasable && 'Total Due Today'}
                 </Text>
-                <Text textAlign='right'>{`${formatUnits(
-                  isReleasable ? amount : amount - balance,
-                  18
+                <Text textAlign='right'>{`${commify(
+                  formatUnits(isReleasable ? amount : amount - balance, 18)
                 )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
               </>
             )}
