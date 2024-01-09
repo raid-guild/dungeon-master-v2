@@ -260,8 +260,8 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
             ? _.get(raid, 'invoiceAddress')
             : undefined,
           link: _.get(raid, 'invoiceAddress')
-            ? `/escrow/${raid.id}`
-            : `/escrow/new?raidId=${raid.id}`,
+            ? `/escrow/${raid?.id}`
+            : `/escrow/new${raid?.id ? `?raidId=${raid?.id}` : ''}`,
         },
       ]),
     },
