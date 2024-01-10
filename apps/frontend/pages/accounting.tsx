@@ -148,19 +148,19 @@ export const Accounting = () => {
             ['Inflow']: b.inflow.tokenValue,
             ['Inflow USD']: b.priceConversion
               ? `$${(
-                  b.inflow.tokenValue * BigInt(b.priceConversion)
+                  Number(b.inflow.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
             ['Outflow']: b.outflow.tokenValue,
             ['Outflow USD']: b.priceConversion
               ? `$${(
-                  b.outflow.tokenValue * BigInt(b.priceConversion)
+                  Number(b.outflow.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
             ['Balance']: b.closing.tokenValue,
             ['Balance USD']: b.priceConversion
               ? `$${(
-                  b.closing.tokenValue * BigInt(b.priceConversion)
+                  Number(b.closing.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
           }));
