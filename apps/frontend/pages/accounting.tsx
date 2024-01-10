@@ -128,15 +128,15 @@ export const Accounting = () => {
           ['Token Address']: t.tokenAddress,
           ['Inflow']: t.in,
           ['Inflow USD']: t.priceConversion
-            ? `$${(t.in * BigInt(t.priceConversion)).toLocaleString()}`
+            ? `$${(t.in * t.priceConversion).toLocaleString()}`
             : '$-',
           ['Outflow']: t.out,
           ['Outflow USD']: t.priceConversion
-            ? `$${(t.out * BigInt(t.priceConversion)).toLocaleString()}`
+            ? `$${(t.out * t.priceConversion).toLocaleString()}`
             : '$-',
           ['Balance']: t.balance,
           ['Balance USD']: t.priceConversion
-            ? `$${(t.balance * BigInt(t.priceConversion)).toLocaleString()}`
+            ? `$${(t.balance * t.priceConversion).toLocaleString()}`
             : '$-',
         }));
         csvString = Papa.unparse(formattedTransactions);

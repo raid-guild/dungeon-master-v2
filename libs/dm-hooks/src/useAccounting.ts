@@ -65,7 +65,7 @@ class CalculateTokenBalances {
     this.calculatedTokenBalances[tokenAddress] = {
       ...tokenStats,
       out: tokenStats.out + outValue,
-      balance: tokenStats.balance + outValue,
+      balance: tokenStats.balance - outValue,
     };
   }
 
@@ -91,9 +91,13 @@ const formatBalancesAsTransactions = async (
            * so instead, we track the previous balance of the token in the calculatedTokenBalances class state
            * and subtract from current balance to get the amount.
            */
-          const tokenValue =
+          let tokenValue =
             calculatedTokenBalances.getBalance(molochStatBalance.tokenAddress) -
             BigInt(molochStatBalance.balance);
+
+          // Ensure the value is absolute
+          tokenValue = tokenValue >= BigInt(0) ? tokenValue : -tokenValue;
+
           const tokenFormattedValue = formatUnitsAsNumber(
             tokenValue,
             molochStatBalance.tokenDecimals
@@ -112,10 +116,10 @@ const formatBalancesAsTransactions = async (
               );
 
               return {
-                in: BigInt(0),
-                out: BigInt(0),
-                net: BigInt(0),
-                balance: BigInt(balance),
+                in: 0,
+                out: 0,
+                net: 0,
+                balance,
               };
             }
             if (
@@ -135,10 +139,10 @@ const formatBalancesAsTransactions = async (
               );
 
               return {
-                in: BigInt(tokenFormattedValue),
-                out: BigInt(0),
-                net: BigInt(tokenFormattedValue),
-                balance: BigInt(balance),
+                in: tokenFormattedValue,
+                out: 0,
+                net: tokenFormattedValue,
+                balance,
               };
             }
 
@@ -159,10 +163,10 @@ const formatBalancesAsTransactions = async (
               );
 
               return {
-                in: BigInt(0),
-                out: BigInt(tokenFormattedValue),
-                net: -BigInt(tokenFormattedValue),
-                balance: BigInt(balance),
+                in: 0,
+                out: tokenFormattedValue,
+                net: -tokenFormattedValue,
+                balance,
               };
             }
 
@@ -174,10 +178,10 @@ const formatBalancesAsTransactions = async (
             );
 
             return {
-              in: BigInt(0),
-              out: BigInt(0),
-              net: BigInt(0),
-              balance: BigInt(balance),
+              in: 0,
+              out: 0,
+              net: 0,
+              balance,
             };
           })();
 
