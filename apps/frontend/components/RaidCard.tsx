@@ -260,10 +260,12 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                 label='Client'
                 hidden={!contactToURL(raidContact)}
               />
-              <LinkExternal
-                href={`/escrow/${String(_.get(raid, 'id'))}`}
-                label='Escrow'
-              />
+              {_.get(raid, 'invoiceAddress') && (
+                <LinkExternal
+                  href={`/escrow/${String(_.get(raid, 'id'))}`}
+                  label='Escrow'
+                />
+              )}
               {_.get(raid, 'lockerHash') && (
                 <LinkExternal
                   href={`https://gnosisscan.io/tx/${_.get(raid, 'lockerHash')}`}
