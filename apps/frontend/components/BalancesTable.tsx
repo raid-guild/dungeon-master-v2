@@ -2,7 +2,7 @@ import { Link, Tooltip } from '@raidguild/design-system';
 import { ITokenBalanceLineItem } from '@raidguild/dm-types';
 import { minMaxNumberFilter, sortNumeric } from '@raidguild/dm-utils';
 // @ts-expect-error - no types from RT
-import { ColumnHelper, createColumnHelper } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
