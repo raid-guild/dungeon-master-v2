@@ -20,30 +20,36 @@ import {
 import {
   // @ts-ignore
   ColumnDef,
-  // @ts-ignore ? not sure why these aren't exported
+  // @ts-ignore
   ColumnFiltersState,
   flexRender,
   // @ts-ignore
   getCoreRowModel,
   // @ts-ignore
+  getFacetedMinMaxValues,
+  // @ts-ignore
+  getFacetedRowModel,
+  // @ts-ignore
+  getFacetedUniqueValues,
+  // @ts-ignore
+  getFilteredRowModel,
+  // @ts-ignore
   getPaginationRowModel,
   // @ts-ignore
   getSortedRowModel,
-  // @ts-ignore
-  RowData,
   // @ts-ignore
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
+// import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import Filter from './Filter';
 
 export type DataTableProps<TData extends object> = ThemingProps & {
   id: string;
   data: TData[];
-  columns: ColumnDef<any, unknown>[];
+  columns: ColumnDef<TData, unknown>[];
   sort?: SortingState | (() => SortingState);
 };
 
@@ -55,20 +61,24 @@ const DataTable = ({
   ...props
 }: DataTableProps<object>) => {
   const [sorting, setSorting] = useState<SortingState>(sort);
-  const [columnFilters, setColumnFilters] = useState<any | undefined>(
-    undefined
-  );
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState(
     Object.assign(
       {},
-      ...columns.map((c: any) => ({ [c.id]: !c.meta?.hidden ?? true }))
+      ...columns.map((c) => ({ [c.id]: !c.meta?.hidden ?? true }))
     )
   );
 
   const table = useReactTable({
     columns,
     data,
+    getCoreRowModel: getCoreRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
@@ -82,9 +92,7 @@ const DataTable = ({
         pageIndex: 0,
       },
     },
-    getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     // debugTable: true,
     // debugHeaders: true,
     // debugColumns: true,

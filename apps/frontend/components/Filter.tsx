@@ -74,10 +74,8 @@ const Filter = <TData, TValue>({ column }: FilterProps<TData, TValue>) => {
   }
 
   if (columnDataType === 'datetime') {
-    const min = sortedUniqueValues[0] as unknown as Date;
-    const max = sortedUniqueValues[
-      sortedUniqueValues.length - 1
-    ] as unknown as Date;
+    const min = sortedUniqueValues[0] as Date;
+    const max = sortedUniqueValues[sortedUniqueValues.length - 1] as Date;
 
     return (
       <Flex direction='column'>
