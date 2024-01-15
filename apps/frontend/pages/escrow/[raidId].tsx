@@ -28,6 +28,7 @@ import InvoicePaymentDetails from '../../components/Escrow/InvoicePaymentDetails
 import ProjectInfo from '../../components/Escrow/ProjectInfo';
 import ReceiverSplits from '../../components/Escrow/ReceiverSplits';
 import Page404 from '../../components/Escrow/shared/Page404';
+import SiteLayout from '../../components/SiteLayout';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import { authOptions } from '../api/auth/[...nextauth]';
 
@@ -53,6 +54,7 @@ const Escrow = ({
     token,
     roles: _.get(session, 'user.roles'),
   });
+
   const {
     data: invoice,
     isLoading: invoiceLoading,
@@ -75,7 +77,7 @@ const Escrow = ({
 
   const wrongChain = !_.includes(SUPPORTED_NETWORKS, chain?.id);
 
-  if (!token) {
+  if (!token && !invoice) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Flex direction='column' alignItems='center' w='100%' pt='150px'>
@@ -85,7 +87,7 @@ const Escrow = ({
     );
   }
 
-  if (raidLoading || invoiceLoading) {
+  if ((raidLoading || invoiceLoading) && !invoice) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Flex direction='column' alignItems='center' w='100%'>
@@ -95,7 +97,7 @@ const Escrow = ({
     );
   }
 
-  if (!raid || (raid && raid.invoiceAddress && !invoice)) {
+  if ((!raid || (raid && raid.invoiceAddress && !invoice)) && !invoice) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Page404
