@@ -81,6 +81,7 @@ const SiteLayoutPublic = ({
   const { chain } = useNetwork();
   const { pathname } = useRouter();
 
+  // Copied as it is from 'SiteLayout.tsx'
   // TODO handle autoconnect
   const [isAutoConnecting, setIsAutoConnecting] = useState(false);
   const { address } = useAccount();

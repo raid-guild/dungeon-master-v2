@@ -44,6 +44,12 @@ const raidRolesOptions = [
   ...GUILD_CLASS_OPTIONS,
 ];
 
+const raidPortfolioStatusOptions = [
+  { label: 'Show All', value: 'ALL' },
+  { label: 'Published', value: 'PUBLISHED' },
+  { label: 'Pending', value: 'PENDING' },
+];
+
 const raidSortOptions = [
   { label: 'Oldest Comment', value: 'oldestComment' },
   { label: 'Recent Comment', value: 'recentComment' },
@@ -61,6 +67,8 @@ const RaidList = () => {
 
   const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
   const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
+  const [raidPortfolioStatusFilter, setRaidPortfolioStatusFilter] =
+    useState<string>('ALL');
   const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
 
   const handleRaidStatusFilterChange = async (status: string) => {
@@ -75,6 +83,15 @@ const RaidList = () => {
       setRaidSort('name');
     }
   };
+
+  const handleRaidPortfolioStatusChange = async (status: string) => {
+    setRaidPortfolioStatusFilter(status);
+    // todo; test if requires useMemo
+    if (status === 'PUBLISHED') {
+      setRaidStatusFilter('SHIPPED');
+    }
+  };
+
   const handleRaidSortFilterChange = async (sortOption: raidSortKeys) => {
     setRaidSort(sortOption);
     if (sortOption === 'oldestComment' || sortOption === 'recentComment') {
@@ -146,6 +163,33 @@ const RaidList = () => {
       </Flex>
       <Flex direction='column' flexBasis='25%'>
         <FormLabel
+          htmlFor='raidPortfolioStatus'
+          maxWidth='720px'
+          fontFamily='texturina'
+          lineHeight='1.8'
+          color='white'
+          textAlign='left'
+        >
+          Raid Portfolio
+        </FormLabel>
+        <ChakraSelect
+          width='100%'
+          name='raidPortfolioStatus'
+          id='raidPortfolioStatus'
+          value={raidPortfolioStatusFilter}
+          onChange={(e) => {
+            handleRaidPortfolioStatusChange(e.target.value);
+          }}
+        >
+          {raidPortfolioStatusOptions.map((status) => (
+            <option key={status.value} value={status.value}>
+              {status.label}
+            </option>
+          ))}
+        </ChakraSelect>
+      </Flex>
+      <Flex direction='column' flexBasis='25%'>
+        <FormLabel
           htmlFor='raidSort'
           maxWidth='720px'
           fontFamily='texturina'
@@ -175,6 +219,7 @@ const RaidList = () => {
 
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({
     token,
+    raidPortfolioStatusFilterKey: raidPortfolioStatusFilter,
     raidStatusFilterKey: raidStatusFilter,
     raidRolesFilterKey: raidRolesFilter,
     raidSortKey: raidSort,
@@ -184,6 +229,7 @@ const RaidList = () => {
     raidStatusFilterKey: raidStatusFilter,
     raidRolesFilterKey: raidRolesFilter,
     raidSortKey: raidSort,
+    raidPortfolioStatusFilterKey: raidPortfolioStatusFilter,
   });
 
   const raids = _.flatten(_.get(data, 'pages'));
