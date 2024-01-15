@@ -28,7 +28,6 @@ import InvoicePaymentDetails from '../../components/Escrow/InvoicePaymentDetails
 import ProjectInfo from '../../components/Escrow/ProjectInfo';
 import ReceiverSplits from '../../components/Escrow/ReceiverSplits';
 import Page404 from '../../components/Escrow/shared/Page404';
-import SiteLayout from '../../components/SiteLayout';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import { authOptions } from '../api/auth/[...nextauth]';
 
