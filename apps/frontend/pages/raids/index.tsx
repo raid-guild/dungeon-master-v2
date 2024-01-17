@@ -82,9 +82,6 @@ const RaidList = () => {
     mode: 'all',
   });
 
-  const { watch } = localForm;
-
-  watch('all');
   const handleRaidStatusFilterChange = async (status: Option) => {
     setRaidStatusFilter(status);
     if (
