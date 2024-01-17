@@ -61,7 +61,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
     raid
       ? raid.consultation.consultationsContacts
       : consultation?.consultationsContacts,
-  ])[0];
+  ])?.[0];
 
   const updates = _.get(raid, 'updates');
   const latestUpdate = updates ? updates[0] : null;
@@ -69,7 +69,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   const specLink =
-    _.chain(consultation.links)
+    _.chain(consultation?.links)
       .filter(
         (x) =>
           _.get(x, 'linkType.type') === 'SPECIFICATION' && !!_.get(x, 'link')
@@ -77,7 +77,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
       .map((x) => _.get(x, 'link'))
       .head()
       .value() ??
-    consultation.link ??
+    consultation?.link ??
     '';
 
   return (

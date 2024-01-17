@@ -87,7 +87,7 @@ const RaidList = () => {
   const handleRaidPortfolioStatusChange = async (status: string) => {
     setRaidPortfolioStatusFilter(status);
     // todo; test if requires useMemo
-    if (status === 'PUBLISHED') {
+    if (status === 'PUBLISHED' || status === 'PENDING') {
       setRaidStatusFilter('SHIPPED');
     }
   };
