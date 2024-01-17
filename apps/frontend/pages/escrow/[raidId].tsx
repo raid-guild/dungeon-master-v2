@@ -96,7 +96,7 @@ const Escrow = ({
     );
   }
 
-  if ((!raid || (raid && raid.invoiceAddress && !invoice)) && !invoice) {
+  if (!raid || (raid && raid?.invoiceAddress && !invoice)) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Page404
