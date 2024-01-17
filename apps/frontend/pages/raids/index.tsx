@@ -1,11 +1,11 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  ChakraSelect,
   Flex,
-  FormLabel,
   Heading,
   HStack,
+  Option,
+  Select,
   Spacer,
   Spinner,
   Stack,
@@ -16,12 +16,13 @@ import {
   useRaidList,
   useRaidsCount,
 } from '@raidguild/dm-hooks';
-import { IRaid, raidSortKeys } from '@raidguild/dm-types';
+import { IRaid } from '@raidguild/dm-types';
 import { GUILD_CLASS_OPTIONS, RAID_STATUS } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import RaidCard from '../../components/RaidCard';
@@ -33,8 +34,8 @@ const raidStatusMapped = RAID_STATUS.map((status) => ({
 }));
 
 const raidStatusOptions = [
-  ...[{ label: 'Active', value: 'ACTIVE' }],
   ...[{ label: 'Show All', value: 'ALL' }],
+  ...[{ label: 'Active', value: 'ACTIVE' }],
   ...raidStatusMapped,
 ];
 
@@ -65,38 +66,60 @@ const RaidList = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const [raidStatusFilter, setRaidStatusFilter] = useState<string>('ACTIVE');
-  const [raidRolesFilter, setRaidRolesFilter] = useState<string>('ALL');
+  const [raidStatusFilter, setRaidStatusFilter] = useState<Option>(
+    raidPortfolioStatusOptions.find((x) => x.value === 'ALL')
+  );
+  const [raidRolesFilter, setRaidRolesFilter] = useState<Option>(
+    raidRolesOptions.find((x) => x.value === 'ALL')
+  );
   const [raidPortfolioStatusFilter, setRaidPortfolioStatusFilter] =
-    useState<string>('ALL');
-  const [raidSort, setRaidSort] = useState<raidSortKeys>('oldestComment');
+    useState<Option>(raidPortfolioStatusOptions.find((x) => x.value === 'ALL'));
+  const [raidSort, setRaidSort] = useState<Option>(
+    raidSortOptions.find((x) => x.value === 'oldestComment')
+  );
 
-  const handleRaidStatusFilterChange = async (status: string) => {
+  const localForm = useForm({
+    mode: 'all',
+  });
+
+  const { watch } = localForm;
+
+  watch('all');
+  const handleRaidStatusFilterChange = async (status: Option) => {
     setRaidStatusFilter(status);
-    if (raidSort === 'oldestComment' || raidSort === 'recentComment') {
-      setRaidSort('name');
+    if (
+      raidSort.value === 'oldestComment' ||
+      raidSort.value === 'recentComment'
+    ) {
+      setRaidSort(raidSortOptions.find((x) => x.value === 'name'));
     }
   };
-  const handleRaidRolesFilterChange = async (role: string) => {
+  const handleRaidRolesFilterChange = async (role: Option) => {
     setRaidRolesFilter(role);
-    if (raidSort === 'oldestComment' || raidSort === 'recentComment') {
-      setRaidSort('name');
+    if (
+      raidSort.value === 'oldestComment' ||
+      raidSort.value === 'recentComment'
+    ) {
+      setRaidSort(raidSortOptions.find((x) => x.value === 'name'));
     }
   };
 
-  const handleRaidPortfolioStatusChange = async (status: string) => {
+  const handleRaidPortfolioStatusChange = async (status: Option) => {
     setRaidPortfolioStatusFilter(status);
-    // todo; test if requires useMemo
-    if (status === 'PUBLISHED' || status === 'PENDING') {
-      setRaidStatusFilter('SHIPPED');
+    if (raidPortfolioStatusFilter.value !== 'ALL') {
+      setRaidRolesFilter(raidRolesOptions.find((x) => x.value === 'ALL'));
+      setRaidStatusFilter(raidStatusOptions.find((x) => x.value === 'SHIPPED'));
     }
   };
 
-  const handleRaidSortFilterChange = async (sortOption: raidSortKeys) => {
+  const handleRaidSortFilterChange = async (sortOption: Option) => {
     setRaidSort(sortOption);
-    if (sortOption === 'oldestComment' || sortOption === 'recentComment') {
-      setRaidStatusFilter('ACTIVE');
-      setRaidRolesFilter('ALL');
+    if (
+      sortOption.value === 'oldestComment' ||
+      sortOption.value === 'recentComment'
+    ) {
+      setRaidStatusFilter(raidStatusOptions.find((x) => x.value === 'ACTIVE'));
+      setRaidRolesFilter(raidRolesOptions.find((x) => x.value === 'ALL'));
     }
   };
 
@@ -109,127 +132,61 @@ const RaidList = () => {
       gap={[2, 4, 4, 8]}
     >
       <Flex direction='column' flexBasis='25%'>
-        <FormLabel
-          htmlFor='raidStatus'
-          maxWidth='720px'
-          fontFamily='texturina'
-          lineHeight='1.8'
-          color='white'
-          textAlign='left'
-        >
-          Raid Status
-        </FormLabel>
-        <ChakraSelect
-          width='100%'
+        <Select
           name='raidStatus'
-          value={raidStatusFilter}
-          onChange={(e) => {
-            handleRaidStatusFilterChange(e.target.value);
-          }}
-        >
-          {raidStatusOptions.map((status) => (
-            <option key={status.value} value={status.value}>
-              {status.label}
-            </option>
-          ))}
-        </ChakraSelect>
+          label='Raid Status'
+          defaultValue={raidStatusFilter}
+          options={raidStatusOptions}
+          localForm={localForm}
+          onChange={handleRaidStatusFilterChange}
+        />
       </Flex>
       <Flex direction='column' flexBasis='25%'>
-        <FormLabel
-          htmlFor='raidRoles'
-          maxWidth='720px'
-          fontFamily='texturina'
-          lineHeight='1.8'
-          color='white'
-          textAlign='left'
-        >
-          Raid Roles
-        </FormLabel>
-        <ChakraSelect
-          width='100%'
+        <Select
           name='raidRoles'
-          id='raidRoles'
-          value={raidRolesFilter}
-          onChange={(e) => {
-            handleRaidRolesFilterChange(e.target.value);
-          }}
-        >
-          {raidRolesOptions.map((role) => (
-            <option key={role.value} value={role.value}>
-              {role.label}
-            </option>
-          ))}
-        </ChakraSelect>
+          label='Raid Roles'
+          defaultValue={raidRolesFilter}
+          options={raidRolesOptions}
+          localForm={localForm}
+          onChange={handleRaidRolesFilterChange}
+        />
       </Flex>
       <Flex direction='column' flexBasis='25%'>
-        <FormLabel
-          htmlFor='raidPortfolioStatus'
-          maxWidth='720px'
-          fontFamily='texturina'
-          lineHeight='1.8'
-          color='white'
-          textAlign='left'
-        >
-          Raid Portfolio
-        </FormLabel>
-        <ChakraSelect
-          width='100%'
+        <Select
           name='raidPortfolioStatus'
-          id='raidPortfolioStatus'
-          value={raidPortfolioStatusFilter}
-          onChange={(e) => {
-            handleRaidPortfolioStatusChange(e.target.value);
-          }}
-        >
-          {raidPortfolioStatusOptions.map((status) => (
-            <option key={status.value} value={status.value}>
-              {status.label}
-            </option>
-          ))}
-        </ChakraSelect>
+          label='Raid Portfolio'
+          defaultValue={raidPortfolioStatusFilter}
+          options={raidPortfolioStatusOptions}
+          localForm={localForm}
+          onChange={handleRaidPortfolioStatusChange}
+        />
       </Flex>
       <Flex direction='column' flexBasis='25%'>
-        <FormLabel
-          htmlFor='raidSort'
-          maxWidth='720px'
-          fontFamily='texturina'
-          lineHeight='1.8'
-          color='white'
-          textAlign='left'
-        >
-          Sort
-        </FormLabel>
-        <ChakraSelect
-          width='100%'
+        <Select
           name='raidSort'
-          value={raidSort}
-          onChange={(e) => {
-            handleRaidSortFilterChange(e.target.value as raidSortKeys);
-          }}
-        >
-          {raidSortOptions.map((sortOption) => (
-            <option key={sortOption.value} value={sortOption.value}>
-              {sortOption.label}
-            </option>
-          ))}
-        </ChakraSelect>
+          label='Sort'
+          defaultValue={raidSort}
+          options={raidSortOptions}
+          localForm={localForm}
+          onChange={handleRaidSortFilterChange}
+        />
       </Flex>
     </Flex>
   );
 
   const { data, error, fetchNextPage, hasNextPage } = useRaidList({
     token,
-    raidPortfolioStatusFilterKey: raidPortfolioStatusFilter,
-    raidStatusFilterKey: raidStatusFilter,
-    raidRolesFilterKey: raidRolesFilter,
-    raidSortKey: raidSort,
+    raidStatusFilterKey: String(raidStatusFilter?.value),
+    raidRolesFilterKey: String(raidRolesFilter?.value),
+    raidSortKey: String(raidSort?.value),
+    raidPortfolioStatusFilterKey: String(raidPortfolioStatusFilter?.value),
   });
   const { data: count } = useRaidsCount({
     token,
-    raidStatusFilterKey: raidStatusFilter,
-    raidRolesFilterKey: raidRolesFilter,
-    raidSortKey: raidSort,
-    raidPortfolioStatusFilterKey: raidPortfolioStatusFilter,
+    raidStatusFilterKey: String(raidStatusFilter?.value),
+    raidRolesFilterKey: String(raidRolesFilter?.value),
+    raidSortKey: String(raidSort?.value),
+    raidPortfolioStatusFilterKey: String(raidPortfolioStatusFilter?.value),
   });
 
   const raids = _.flatten(_.get(data, 'pages'));

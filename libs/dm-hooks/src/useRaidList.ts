@@ -6,7 +6,7 @@ import {
   RAIDS_LIST_AND_LAST_UPDATE_QUERY,
   RAIDS_LIST_QUERY,
 } from '@raidguild/dm-graphql';
-import { IRaid, raidSortKeys } from '@raidguild/dm-types';
+import { IRaid } from '@raidguild/dm-types';
 import { camelize } from '@raidguild/dm-utils';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import _ from 'lodash';
@@ -14,7 +14,7 @@ import _ from 'lodash';
 const where = (
   raidStatusFilterKey: string,
   raidRolesFilterKey: string,
-  raidSortKey: raidSortKeys,
+  raidSortKey: string,
   raidPortfolioStatusKey: string
 ) => ({
   ...(raidStatusFilterKey === 'ACTIVE' && {
@@ -55,7 +55,7 @@ const where = (
   ...(raidPortfolioStatusKey === 'ALL' && {}),
 });
 
-const orderBy = (raidSortKey: raidSortKeys) => ({
+const orderBy = (raidSortKey: string) => ({
   ...(raidSortKey === 'oldestComment' && {
     updates_aggregate: {
       min: {
@@ -87,7 +87,7 @@ const orderBy = (raidSortKey: raidSortKeys) => ({
   }),
 });
 
-const latestUpdateOrderBy = (raidSortKey: raidSortKeys) => ({
+const latestUpdateOrderBy = (raidSortKey: string) => ({
   ...(raidSortKey === 'oldestComment' && {
     latest_update_created_at: 'asc_nulls_first',
   }),
@@ -97,7 +97,7 @@ const latestUpdateOrderBy = (raidSortKey: raidSortKeys) => ({
 });
 
 // return asc_nulls_first or desc_nulls_last
-// const latestUpdateOrderBy = (raidSortKey: raidSortKeys) => {
+// const latestUpdateOrderBy = (raidSortKey: string) => {
 //   if (raidSortKey === 'oldestComment') {
 //     return 'asc_nulls_first';
 //   } else if (raidSortKey === 'recentComment') {
@@ -110,7 +110,7 @@ type RaidListType = {
   raidPortfolioStatusFilterKey: string;
   raidStatusFilterKey: string;
   raidRolesFilterKey: string;
-  raidSortKey: raidSortKeys;
+  raidSortKey: string;
 };
 
 const useRaidList = ({
@@ -185,6 +185,7 @@ const useRaidList = ({
       raidStatusFilterKey,
       raidRolesFilterKey,
       raidSortKey,
+      raidPortfolioStatusFilterKey,
     ],
     queryFn: ({ pageParam = 0 }) => raidQueryResult(pageParam),
     getNextPageParam: (lastPage, allPages) =>
@@ -210,7 +211,7 @@ type RaidsCountType = {
   token: string;
   raidStatusFilterKey: string;
   raidRolesFilterKey: string;
-  raidSortKey: raidSortKeys;
+  raidSortKey: string;
   raidPortfolioStatusFilterKey: string;
 };
 
@@ -235,7 +236,12 @@ export const useRaidsCount = ({
   };
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['raidsCount', raidStatusFilterKey, raidRolesFilterKey],
+    queryKey: [
+      'raidsCount',
+      raidStatusFilterKey,
+      raidRolesFilterKey,
+      raidPortfolioStatusFilterKey,
+    ],
     queryFn: raidsCountQuery,
     enabled: Boolean(token),
   });
