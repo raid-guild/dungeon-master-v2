@@ -332,7 +332,7 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
   ];
 
   return (
-    <Card variant='filled' padding={2} minWidth='lg'>
+    <Card variant='filled' padding={2} w='100%'>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;

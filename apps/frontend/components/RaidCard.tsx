@@ -82,7 +82,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
 
   return (
     <LinkBox h='100%'>
-      <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
+      <Card variant='filled' p={3} w={['100%', null, null, '100%']}>
         <Flex
           w='100%'
           direction={{ base: 'column', md: 'row' }}
@@ -165,13 +165,13 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
           </Flex>
         </Flex>
         <Flex direction='row' justifyContent='space-between' w='100%'>
-          <Stack w='90%'>
+          <Stack w='100%'>
             <Flex
               direction='column'
               width='100%'
               alignItems='flex-start'
               justifyContent='space-between'
-              maxWidth='80%'
+              maxWidth={{ base: '100%', md: '80%' }}
               paddingY={4}
             >
               <HStack w='full'>
@@ -189,7 +189,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </Flex>
 
             <SimpleGrid
-              columns={{ base: 1, md: 3, lg: 5 }}
+              columns={{ base: 2, md: 3, lg: 5 }}
               spacing={4}
               width='100%'
             >
