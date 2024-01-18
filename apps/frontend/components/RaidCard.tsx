@@ -132,7 +132,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </HStack>
           </Stack>
           <Flex direction={{ base: 'column', md: 'row' }} align='flex-start'>
-            <HStack mr={4} mb={{ base: 4, md: 0 }}>
+            <HStack mr={4}>
               {raid && raidHunter && (
                 <>
                   <Heading size='sm' color='white' variant='shadow'>
@@ -141,16 +141,9 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                   <MemberAvatar member={raidHunter} size={10} />
                 </>
               )}
-
               {raid &&
                 (!raidCleric ? (
-                  <Heading
-                    size='sm'
-                    color='white'
-                    mr={4}
-                    mb={{ base: 4, md: 0 }}
-                    variant='shadow'
-                  >
+                  <Heading size='sm' color='white' mr={4} variant='shadow'>
                     Needs Cleric!
                   </Heading>
                 ) : (

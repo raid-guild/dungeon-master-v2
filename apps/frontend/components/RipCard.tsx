@@ -41,7 +41,7 @@ const RipCard = ({ rip }: RipProps) => {
   const latestUpdate = updates ? updates[updates.length - 1] : null;
 
   return (
-    <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
+    <Card variant='filled' p={3} w='100%'>
       <Flex
         w='100%'
         direction={{ base: 'column', md: 'row' }}
@@ -60,7 +60,7 @@ const RipCard = ({ rip }: RipProps) => {
               {_.get(rip, 'title')}
             </Heading>
           </Link>
-          <HStack>
+          <HStack my={{ base: 4, md: 0 }}>
             <RipStatusBadge status={ripStatus} />
           </HStack>
         </Stack>
