@@ -29,10 +29,10 @@ export type IVaultTransaction = {
   tokenSymbol: string;
   tokenDecimals: number;
   tokenAddress: string;
-  in: bigint;
-  out: bigint;
-  net: bigint;
-  balance: bigint;
+  in: number;
+  out: number;
+  net: number;
+  balance: number;
   priceConversion?: number;
   counterparty: string; // receiver/sender to minion vault or sender to treasury
   proposalId?: string;
