@@ -1,3 +1,21 @@
 table:
   name: raiding_raids_by_last_update
   schema: public
+select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - latest_update
+        - raid_name
+        - latest_update_created_at
+        - raid_id
+      filter: {}
+      allow_aggregations: true
+  - role: member
+    permission:
+      columns:
+        - latest_update
+        - raid_name
+        - latest_update_created_at
+        - raid_id
+      filter: {}
