@@ -14,5 +14,6 @@ LEFT JOIN LATERAL (
     ORDER BY u.created_at DESC
     LIMIT 1
 ) AS latest_update ON true
-WHERE r.status_key = 'RAIDING'
+WHERE
+  (r.status_key IN ('RAIDING', 'AWAITING', 'PREPARING'))
 ORDER BY latest_update_created_at DESC;
