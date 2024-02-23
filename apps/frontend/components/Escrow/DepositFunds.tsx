@@ -82,7 +82,7 @@ const DepositFunds = ({
   const decimals =
     paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
   const hasAmount =
-    balance > BigInt(amount) * BigInt(10) ** BigInt(decimals || 0);
+    balance >= BigInt(amount) * BigInt(10) ** BigInt(decimals || 0);
 
   const { handleDeposit, isLoading, isReady } = useDeposit({
     invoice,
