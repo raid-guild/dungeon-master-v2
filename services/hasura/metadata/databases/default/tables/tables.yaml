@@ -32,6 +32,7 @@
 - "!include public_raiding_raids_by_last_update.yaml"
 - "!include public_raids.yaml"
 - "!include public_raids_roles_required.yaml"
+- "!include public_referrer_types.yaml"
 - "!include public_related_raids.yaml"
 - "!include public_signalled_interest.yaml"
 - "!include public_skill_types.yaml"
