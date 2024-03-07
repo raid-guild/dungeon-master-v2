@@ -11,7 +11,8 @@ const { NEXTAUTH_SECRET } = process.env;
 export const CONFIG = {
   encodingAlgorithm: 'HS256',
   defaultRoles: ['user'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
-  defaultMaxAge: 30 * 60, // 30 minutes
+  defaultMaxAge: 120, // 2 minutes for testing
+  // defaultMaxAge: 30 * 60, // 30 minutes
 };
 
 // Could be swapped for different API models
@@ -100,15 +101,18 @@ export const extendSessionWithUserAndToken = ({
   user: User;
   session: Session;
   token: JWT;
-}): Session => ({
-  ...session,
-  user: {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore next-line
-    address: _.get(token, 'sub'),
-    id: _.get(token, 'user.id') as string,
-    role: _.get(token, 'role') as string,
-    roles: _.get(token, 'roles') as string[],
-  },
-  token: encodeToken(token),
-});
+}): Session => {
+  console.log('session', session);
+  return {
+    ...session,
+    user: {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore next-line
+      address: _.get(token, 'sub'),
+      id: _.get(token, 'user.id') as string,
+      role: _.get(token, 'role') as string,
+      roles: _.get(token, 'roles') as string[],
+    },
+    token: encodeToken(token),
+  };
+};
