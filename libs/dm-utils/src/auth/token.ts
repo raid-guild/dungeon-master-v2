@@ -20,23 +20,26 @@ export const createToken = ({
   token,
   maxAge,
   roles,
-}: CreateTokenParams): HasuraAuthToken => ({
-  ...token,
-  address: _.get(token, 'sub'),
-  user: {
-    id: _.get(user, 'id'),
-  },
-  role: _.first(roles ?? CONFIG.defaultRoles),
-  roles: roles ?? CONFIG.defaultRoles,
-  iat: Math.floor(Date.now() / 1000),
-  exp: Math.floor(Date.now() / 1000) + (maxAge ?? CONFIG.defaultMaxAge),
-  'https://hasura.io/jwt/claims': {
-    'x-hasura-allowed-roles': roles ?? CONFIG.defaultRoles,
-    'x-hasura-default-role': _.first(roles ?? CONFIG.defaultRoles),
-    'x-hasura-role': _.first(roles ?? CONFIG.defaultRoles),
-    'x-hasura-user-id': _.get(user, 'id'),
-  },
-});
+}: CreateTokenParams): HasuraAuthToken => {
+  console.log('createToken', { maxAge });
+  return {
+    ...token,
+    address: _.get(token, 'sub'),
+    user: {
+      id: _.get(user, 'id'),
+    },
+    role: _.first(roles ?? CONFIG.defaultRoles),
+    roles: roles ?? CONFIG.defaultRoles,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + (maxAge ?? CONFIG.defaultMaxAge),
+    'https://hasura.io/jwt/claims': {
+      'x-hasura-allowed-roles': roles ?? CONFIG.defaultRoles,
+      'x-hasura-default-role': _.first(roles ?? CONFIG.defaultRoles),
+      'x-hasura-role': _.first(roles ?? CONFIG.defaultRoles),
+      'x-hasura-user-id': _.get(user, 'id'),
+    },
+  };
+};
 
 export const encodeToken = (token: HasuraAuthToken | undefined) =>
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -51,6 +54,7 @@ export const encodeAuth = async ({
   maxAge?: number;
 }) => {
   if (_.get(token, 'exp')) return encodeToken(token);
+  console.log('encoded Auth max age', maxAge);
   return getOrCreateUser(_.get(token, 'sub'))
     .then((user) => {
       if (user === 'AUTHED_USER') {
@@ -58,14 +62,19 @@ export const encodeAuth = async ({
           createToken({
             user: { id: _.get(token, 'sub') },
             token,
-            maxAge,
+            maxAge: CONFIG.defaultMaxAge,
             roles: ['user'],
           })
         );
       }
 
       return encodeToken(
-        createToken({ user, token, maxAge, roles: ['member'] })
+        createToken({
+          user,
+          token,
+          maxAge: CONFIG.defaultMaxAge,
+          roles: ['member'],
+        })
       );
     })
     .catch((err) => {

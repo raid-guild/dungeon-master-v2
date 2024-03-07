@@ -30,7 +30,13 @@ export const authOptions: NextAuthOptions = {
     // used any because not sure how to type this
     decode: decodeAuth as any,
   },
-  callbacks: { session: extendSessionWithUserAndToken },
+  callbacks: {
+    jwt: async ({ token, user, account, profile }) => {
+      console.log('JWT CALLBACK', { token, user, account, profile });
+      return token;
+    },
+    session: extendSessionWithUserAndToken,
+  },
 };
 
 const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
