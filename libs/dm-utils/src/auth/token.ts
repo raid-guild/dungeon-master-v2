@@ -11,7 +11,7 @@ const { NEXTAUTH_SECRET } = process.env;
 export const CONFIG = {
   encodingAlgorithm: 'HS256',
   defaultRoles: ['user'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
-  defaultMaxAge: 120, // 30 minutes
+  defaultMaxAge: 30 * 60, // 30 minutes
   refreshThreshold: 300, // 5 minutes
 };
 
