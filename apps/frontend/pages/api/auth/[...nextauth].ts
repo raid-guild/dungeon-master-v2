@@ -35,7 +35,8 @@ export const authOptions: NextAuthOptions = {
       // For existing sessions, check if the token is expiring soon
       const currentTime = Math.floor(Date.now() / 1000);
       const isExpiringSoon =
-        (token.exp as number) - (currentTime as number) < 300; // Define a threshold for "expiring soon" using 5 min for now
+        (token.exp as number) - (currentTime as number) <
+        CONFIG.refreshThreshold; // Threshold for "expiring soon" 5 min
       if (isExpiringSoon) {
         // Extend the token's expiration if it's expiring soon
         return {
