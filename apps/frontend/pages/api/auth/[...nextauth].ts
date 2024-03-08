@@ -30,7 +30,26 @@ export const authOptions: NextAuthOptions = {
     // used any because not sure how to type this
     decode: decodeAuth as any,
   },
-  callbacks: { session: extendSessionWithUserAndToken },
+  callbacks: {
+    jwt: async ({ token }) => {
+      // For existing sessions, check if the token is expiring soon
+      const currentTime = Math.floor(Date.now() / 1000);
+      const isExpiringSoon =
+        (token.exp as number) - (currentTime as number) <
+        CONFIG.refreshThreshold; // Threshold for "expiring soon" 5 min
+      if (isExpiringSoon) {
+        // Extend the token's expiration if it's expiring soon
+        return {
+          ...token,
+          exp: Math.floor(Date.now() / 1000) + CONFIG.defaultMaxAge,
+          iat: Math.floor(Date.now() / 1000),
+        };
+      }
+
+      return token;
+    },
+    session: extendSessionWithUserAndToken,
+  },
 };
 
 const Auth = async (req: NextApiRequest, res: NextApiResponse) => {
