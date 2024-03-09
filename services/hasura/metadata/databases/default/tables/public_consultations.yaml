@@ -17,6 +17,9 @@ object_relationships:
   - name: project_type
     using:
       foreign_key_constraint_on: type_key
+  - name: referrer_type
+    using:
+      foreign_key_constraint_on: referrer
   - name: submission_type
     using:
       foreign_key_constraint_on: submission_type_key
