@@ -1,0 +1,10 @@
+table:
+  name: members_guild_classes
+  schema: public
+object_relationships:
+  - name: guild_class
+    using:
+      foreign_key_constraint_on: guild_class_id
+  - name: member
+    using:
+      foreign_key_constraint_on: member_id
