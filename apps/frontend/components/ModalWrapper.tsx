@@ -42,7 +42,10 @@ const ModalWrapper = ({
   return (
     <ChakraModal
       isOpen={modals[name]}
-      onClose={closeModals}
+      onClose={() => {
+        if (onClose) onClose();
+        closeModals();
+      }}
       size={size || '2xl'}
     >
       <ModalOverlay />

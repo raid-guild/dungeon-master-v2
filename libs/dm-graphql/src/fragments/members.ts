@@ -17,6 +17,11 @@ export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
     guild_class {
       guild_class
     }
+    members_guild_classes {
+      guild_class {
+        guild_class
+      }
+    }
   }
   ${CONTACT_INFOS_FRAGMENT}
 `;
