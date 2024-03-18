@@ -14,8 +14,10 @@ export type IModals = {
   raidForm: boolean;
   memberForm: boolean;
   contactUpdate: boolean;
+  retroLinkUpdate: boolean;
 };
 const defaults: IModals = {
+  retroLinkUpdate: false,
   raidStatus: false,
   raidForm: false,
   memberForm: false,

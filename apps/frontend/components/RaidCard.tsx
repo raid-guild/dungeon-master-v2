@@ -61,7 +61,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
     raid
       ? raid.consultation.consultationsContacts
       : consultation?.consultationsContacts,
-  ])[0];
+  ])?.[0];
 
   const updates = _.get(raid, 'updates');
   const latestUpdate = updates ? updates[0] : null;
@@ -69,7 +69,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const [upTo780] = useMediaQuery('(max-width: 780px)');
 
   const specLink =
-    _.chain(consultation.links)
+    _.chain(consultation?.links)
       .filter(
         (x) =>
           _.get(x, 'linkType.type') === 'SPECIFICATION' && !!_.get(x, 'link')
@@ -77,12 +77,12 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
       .map((x) => _.get(x, 'link'))
       .head()
       .value() ??
-    consultation.link ??
+    consultation?.link ??
     '';
 
   return (
     <LinkBox h='100%'>
-      <Card variant='filled' p={3} w={['95%', null, null, '100%']}>
+      <Card variant='filled' p={3} w={['100%', null, null, '100%']}>
         <Flex
           w='100%'
           direction={{ base: 'column', md: 'row' }}
@@ -132,7 +132,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </HStack>
           </Stack>
           <Flex direction={{ base: 'column', md: 'row' }} align='flex-start'>
-            <HStack mr={4} mb={{ base: 4, md: 0 }}>
+            <HStack mr={4}>
               {raid && raidHunter && (
                 <>
                   <Heading size='sm' color='white' variant='shadow'>
@@ -141,16 +141,9 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                   <MemberAvatar member={raidHunter} size={10} />
                 </>
               )}
-
               {raid &&
                 (!raidCleric ? (
-                  <Heading
-                    size='sm'
-                    color='white'
-                    mr={4}
-                    mb={{ base: 4, md: 0 }}
-                    variant='shadow'
-                  >
+                  <Heading size='sm' color='white' mr={4} variant='shadow'>
                     Needs Cleric!
                   </Heading>
                 ) : (
@@ -165,13 +158,13 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
           </Flex>
         </Flex>
         <Flex direction='row' justifyContent='space-between' w='100%'>
-          <Stack w='90%'>
+          <Stack w='100%'>
             <Flex
               direction='column'
               width='100%'
               alignItems='flex-start'
               justifyContent='space-between'
-              maxWidth='80%'
+              maxWidth={{ base: '100%', md: '80%' }}
               paddingY={4}
             >
               <HStack w='full'>
@@ -189,7 +182,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </Flex>
 
             <SimpleGrid
-              columns={{ base: 1, md: 3, lg: 5 }}
+              columns={{ base: 2, md: 3, lg: 5 }}
               spacing={4}
               width='100%'
             >
@@ -260,10 +253,12 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                 label='Client'
                 hidden={!contactToURL(raidContact)}
               />
-              <LinkExternal
-                href={`/escrow/${String(_.get(raid, 'id'))}`}
-                label='Escrow'
-              />
+              {_.get(raid, 'invoiceAddress') && (
+                <LinkExternal
+                  href={`/escrow/${String(_.get(raid, 'id'))}`}
+                  label='Escrow'
+                />
+              )}
               {_.get(raid, 'lockerHash') && (
                 <LinkExternal
                   href={`https://gnosisscan.io/tx/${_.get(raid, 'lockerHash')}`}

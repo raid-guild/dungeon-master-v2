@@ -11,6 +11,7 @@ import {
   Spacer,
   Stack,
   Tooltip,
+  useBreakpointValue,
 } from '@raidguild/design-system';
 import { useToggleInterest } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
@@ -94,6 +95,10 @@ const DashboardRaidCard = ({
 
   const action = interestExists ? 'delete' : 'insert';
 
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const signalLabel = isMobile ? 'Signal' : 'Signal Interest';
+
   return (
     <Card variant='outline' width='100%' minH='100px'>
       <Flex alignItems='center' width='100%' h='100%'>
@@ -133,7 +138,7 @@ const DashboardRaidCard = ({
             gap={2}
           >
             {interestExists && <FaCheck />}
-            {interestExists ? 'Interested' : 'Signal Interest'}
+            {interestExists ? 'Interested' : signalLabel}
           </Button>
         </Tooltip>
       </Flex>

@@ -28,7 +28,8 @@ import {
   truncateEmail,
 } from '@raidguild/dm-utils';
 import { format } from 'date-fns';
-import _ from 'lodash';
+import _, { result } from 'lodash';
+import link from 'next/link';
 import { useState } from 'react';
 
 import InfoStack from './InfoStack';
@@ -38,12 +39,23 @@ interface RaidProps {
   consultation?: IConsultation;
 }
 
-const Description = ({ description }: { description: string }) => {
+const Description = ({
+  description,
+  label,
+}: {
+  description: string;
+  label?: string;
+}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const handleToggleDesc = () => setShowFullDescription(!showFullDescription);
 
   return (
     <VStack align='flex-start'>
+      {label && (
+        <Text fontSize='xs' color='purple.200' textTransform='capitalize'>
+          {label}
+        </Text>
+      )}
       <Collapse startingHeight={25} in={showFullDescription}>
         <Text color='white' fontSize='md'>
           {description !== null
@@ -131,6 +143,57 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         extra: bio && <Bio bio={bio} />,
       };
     }
+  );
+
+  const portfolioItems = _.compact(
+    (raid?.portfolios || []).map((portfolio) => {
+      const approach = _.join(_.get(portfolio, 'approach.content'), '\n');
+      const challenge = _.join(_.get(portfolio, 'challenge.content'), '\n');
+      const description = _.get(portfolio, 'description');
+      const projectResult = _.join(_.get(portfolio, 'result.content'), '\n');
+      const category = {
+        label: 'Category',
+        details: _.get(portfolio, 'category'),
+      };
+      const repoLink = {
+        label: 'Repo Link',
+        details: 'Github',
+        link: _.get(portfolio, 'repoLink'),
+      };
+      const resultLink = {
+        label: 'Result Link',
+        details: 'View Result',
+        link: _.get(portfolio, 'resultLink'),
+      };
+      const slug = {
+        label: 'Slug',
+        details: _.get(portfolio, 'slug'),
+        link: `https://raidguild.org/portfolio/${_.get(portfolio, 'slug')}`,
+      };
+
+      const imageItem = String(_.get(portfolio, 'imageUrl')).startsWith('/')
+        ? `https://raidguild.org${_.get(portfolio, 'imageUrl')}`
+        : _.get(portfolio, 'imageUrl');
+
+      const imageUrl = {
+        label: 'Image',
+        details: 'View Image',
+        link: imageItem,
+      };
+
+      return {
+        title: `Portfolio - ${slug.details}`,
+        items: _.compact([category, slug, repoLink, resultLink, imageUrl]),
+        extra: (
+          <Stack>
+            <Description description={description} label='What We Did' />
+            <Description description={challenge} label='The Challenge' />
+            <Description description={approach} label='Our Approach' />
+            <Description description={projectResult} label='Result' />
+          </Stack>
+        ),
+      };
+    })
   );
 
   const keyLinkItems = _.compact([
@@ -265,10 +328,11 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         },
       ]),
     },
+    ...portfolioItems,
   ];
 
   return (
-    <Card variant='filled' padding={2} minWidth='lg'>
+    <Card variant='filled' padding={2} w='100%'>
       <Accordion defaultIndex={[0]} allowMultiple w='100%'>
         {_.map(panels, (panel, index) => {
           if (_.isEmpty(_.get(panel, 'items'))) return null;

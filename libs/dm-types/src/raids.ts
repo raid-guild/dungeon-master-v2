@@ -4,8 +4,8 @@ import { IConsultation } from './consultations';
 import { IMember } from './members';
 import { ILink } from './misc';
 import { IPortfolio } from './portfolios';
-import { IStatusUpdate } from './statusUpdates';
 import { ISignalInterest } from './signalInterest';
+import { IStatusUpdate } from './statusUpdates';
 
 export type raidSortKeys =
   | 'oldestComment'
@@ -54,7 +54,6 @@ export interface IRaid {
   // LINKS
   links: ILink[];
   portfolios?: IPortfolio[];
-  
 }
 
 export interface IRaidCreate {
