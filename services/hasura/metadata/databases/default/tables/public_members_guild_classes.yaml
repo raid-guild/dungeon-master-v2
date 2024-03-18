@@ -4,7 +4,7 @@ table:
 object_relationships:
   - name: guild_class
     using:
-      foreign_key_constraint_on: guild_class_id
+      foreign_key_constraint_on: guild_class_key
   - name: member
     using:
       foreign_key_constraint_on: member_id
@@ -13,40 +13,40 @@ insert_permissions:
     permission:
       check: {}
       columns:
-        - guild_class_id
+        - guild_class_key
         - id
         - member_id
-    comment: ""
+    comment: ''
 select_permissions:
   - role: cohort
     permission:
       columns:
-        - guild_class_id
+        - guild_class_key
         - id
         - member_id
       filter: {}
-    comment: ""
+    comment: ''
   - role: member
     permission:
       columns:
-        - guild_class_id
+        - guild_class_key
         - id
         - member_id
       filter: {}
-    comment: ""
+    comment: ''
 update_permissions:
   - role: cohort
     permission:
       columns: []
       filter: {}
       check: null
-    comment: ""
+    comment: ''
   - role: member
     permission:
       columns:
-        - guild_class_id
+        - guild_class_key
         - id
         - member_id
       filter: {}
       check: null
-    comment: ""
+    comment: ''

@@ -242,7 +242,7 @@ const RaidPartyButtons = ({
       'membersGuildClasses'
     );
 
-    const guildClasses = _.map(membersGuildClasses, 'guildClassId');
+    const guildClasses = _.map(membersGuildClasses, 'guildClassKey');
 
     return (
       <VStack mt={2}>

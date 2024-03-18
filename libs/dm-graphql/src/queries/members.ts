@@ -34,7 +34,7 @@ export const MEMBER_LIST_QUERY = gql`
         ...ContactInfos
       }
       members_guild_classes {
-        guild_class_id
+        guild_class_key
       }
       application {
         introduction

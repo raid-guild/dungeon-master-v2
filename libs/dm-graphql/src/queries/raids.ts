@@ -80,7 +80,7 @@ export const RAID_DETAIL_QUERY = gql`
           name
           eth_address
           members_guild_classes {
-            guild_class_id
+            guild_class_key
           }
           contact_info {
             ...ContactInfos
@@ -106,7 +106,7 @@ export const RAID_DETAIL_QUERY = gql`
         name
         id
         members_guild_classes {
-          guild_class_id
+          guild_class_key
         }
         contact_info {
           ...ContactInfos
@@ -117,7 +117,7 @@ export const RAID_DETAIL_QUERY = gql`
         name
         id
         members_guild_classes {
-          guild_class_id
+          guild_class_key
         }
         contact_info {
           ...ContactInfos
@@ -138,7 +138,7 @@ export const RAID_DETAIL_QUERY = gql`
             name
             eth_address
             members_guild_classes {
-              guild_class_id
+              guild_class_key
             }
             contact_info {
               ...ContactInfos

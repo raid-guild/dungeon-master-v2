@@ -247,7 +247,7 @@ const RoleListDivider = ({ member }: { member: IMember }) => (
     left='50%'
   >
     {_.map(
-      _.map(_.get(member, 'membersGuildClasses'), 'guildClassId'),
+      _.map(_.get(member, 'membersGuildClasses'), 'guildClassKey'),
       (role) => (
         <RoleBadge
           border='3px solid'

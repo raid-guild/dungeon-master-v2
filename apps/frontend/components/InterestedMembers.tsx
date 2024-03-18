@@ -75,7 +75,7 @@ const InterestedMembers = ({
                         {_.map(
                           _.map(
                             _.get(member, 'membersGuildClasses'),
-                            'guildClassId'
+                            'guildClassKey'
                           ),
                           (role) => GUILD_CLASS_DISPLAY[role]
                         ).join(' | ')}

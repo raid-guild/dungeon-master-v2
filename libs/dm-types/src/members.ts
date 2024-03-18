@@ -10,7 +10,7 @@ export interface IMember {
   isRaiding: boolean;
   skills: Skills[];
   membersGuildClasses: {
-    guildClassId: string;
+    guildClassKey: string;
   }[];
 
   // CONTACT
@@ -58,7 +58,7 @@ export interface IMemberUpdate {
 
   guild_classes_updates?: {
     member_id: string;
-    guild_class_id: string;
+    guild_class_key: string;
   }[];
 
   contact_info_id: string;

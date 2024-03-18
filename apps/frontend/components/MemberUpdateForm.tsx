@@ -54,7 +54,7 @@ const UpdateMemberForm = ({
     .map('skill.skill')
     .value();
 
-  const guildClasses = _.map(member['membersGuildClasses'], 'guildClassId');
+  const guildClasses = _.map(member['membersGuildClasses'], 'guildClassKey');
 
   async function onSubmit(values) {
     setSending(true);
@@ -98,7 +98,7 @@ const UpdateMemberForm = ({
       skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
       guild_classes_updates: _.map(values.guildClasses, (guildClass) => ({
         member_id: memberId,
-        guild_class_id: guildClass.value,
+        guild_class_key: guildClass.value,
       })),
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {

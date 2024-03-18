@@ -15,7 +15,7 @@ export const SLIM_MEMBER_DETAIL_FRAGMENT = gql`
       member_type
     }
     members_guild_classes {
-      guild_class_id
+      guild_class_key
     }
   }
   ${CONTACT_INFOS_FRAGMENT}
@@ -59,7 +59,7 @@ export const MEMBER_DETAIL_FRAGMENT = gql`
     }
 
     members_guild_classes {
-      guild_class_id
+      guild_class_key
     }
 
     raid_parties {
