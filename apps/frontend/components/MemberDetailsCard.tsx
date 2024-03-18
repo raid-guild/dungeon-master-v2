@@ -296,7 +296,7 @@ const MemberDetailsCard = ({
 
           <Divider my={2} />
 
-          <Flex gap={4} direction={['column', null, null, 'row']} wrap='wrap'>
+          <Flex gap={4} direction='row' wrap='wrap'>
             {_.map(memberLinks, (link) => (
               <Tooltip
                 label={_.get(link, 'tooltip')}

@@ -13,7 +13,8 @@ import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
 import { useInvoiceDetails, useSplitsMetadata } from '@raidguild/escrow-hooks';
 import { invoiceUrl } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { GetServerSidePropsContext } from 'next';
+import type { GetServerSidePropsContext } from 'next';
+import { getServerSession, SessionOptions } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useMemo } from 'react';
@@ -28,16 +29,23 @@ import ProjectInfo from '../../components/Escrow/ProjectInfo';
 import ReceiverSplits from '../../components/Escrow/ReceiverSplits';
 import Page404 from '../../components/Escrow/shared/Page404';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 const WRONG_NETWORK_MESSAGE =
   'This network is not supported: Switch to Gnosis Chain';
 const NOT_CONNECTED_MESSAGE =
   'Connect your wallet to fetch invoice information.';
 
-const Escrow = ({ raidId }: { raidId: string }) => {
+const Escrow = ({
+  raidId,
+  serverSession,
+}: {
+  raidId: string;
+  serverSession: SessionOptions;
+}) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const { data: session } = useSession();
+  const { data: session } = useSession() || { data: serverSession };
   const token = _.get(session, 'token');
 
   const { data: raid, isLoading: raidLoading } = useRaidDetail({
@@ -45,6 +53,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     token,
     roles: _.get(session, 'user.roles'),
   });
+
   const {
     data: invoice,
     isLoading: invoiceLoading,
@@ -67,7 +76,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
 
   const wrongChain = !_.includes(SUPPORTED_NETWORKS, chain?.id);
 
-  if (!token) {
+  if (!token && !invoice) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Flex direction='column' alignItems='center' w='100%' pt='150px'>
@@ -77,7 +86,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     );
   }
 
-  if (raidLoading || invoiceLoading) {
+  if ((raidLoading || invoiceLoading) && !invoice) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Flex direction='column' alignItems='center' w='100%'>
@@ -87,7 +96,7 @@ const Escrow = ({ raidId }: { raidId: string }) => {
     );
   }
 
-  if (!raid || (raid && raid.invoiceAddress && !invoice)) {
+  if (!raid || (raid && raid?.invoiceAddress && !invoice)) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Page404
@@ -176,9 +185,12 @@ export const getServerSideProps = async (
   const { raidId: raidIdParam } = _.pick(context.params, ['raidId']);
   const raidId = _.isArray(raidIdParam) ? _.first(raidIdParam) : raidIdParam;
 
+  const session = await getServerSession(context.req, context.res, authOptions);
+
   return {
     props: {
       raidId: raidId || null,
+      serverSession: session,
     },
   };
 };
