@@ -25,9 +25,7 @@ import { useAccount } from 'wagmi';
 
 import MemberAvatar from '../../components/MemberAvatar';
 import MemberDetailsCard from '../../components/MemberDetailsCard';
-import UpdateMemberForm from '../../components/MemberUpdateForm';
 import MiniRaidCard from '../../components/MiniRaidCard';
-import ModalWrapper from '../../components/ModalWrapper';
 import SiteLayout from '../../components/SiteLayout';
 import { useOverlay } from '../../contexts/OverlayContext';
 
@@ -42,12 +40,12 @@ const Member = ({ memberAddress }: Props) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const { data } = useMemberDetail({ memberAddress, token });
+  const { data, refetch } = useMemberDetail({ memberAddress, token });
   const member = _.get(data, 'member');
   const raids = _.get(data, 'raids');
 
   const localOverlay = useOverlay();
-  const { setModals, closeModals } = localOverlay;
+  const { setModals } = localOverlay;
 
   const handleShowUpdateModal = () => {
     setModals({ memberForm: true });
@@ -55,7 +53,10 @@ const Member = ({ memberAddress }: Props) => {
 
   const userProfile = _.toLower(address) === _.toLower(memberAddress);
   const memberType = _.get(member, 'memberType.memberType');
-  const roleIcon = GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')];
+  const roleIcons = _.map(
+    _.map(_.get(member, 'membersGuildClasses'), 'guildClass.guildClass'),
+    (role) => GUILD_CLASS_ICON[role]
+  ).filter((r) => r !== undefined) as string[];
 
   return (
     <>
@@ -89,9 +90,16 @@ const Member = ({ memberAddress }: Props) => {
                   {memberType}
                 </Badge>
               </VStack>
-              {roleIcon && (
-                <RoleBadge roleName={roleIcon} height='55px' width='55px' />
-              )}
+              <HStack spacing={1}>
+                {_.map(roleIcons, (roleIcon) => (
+                  <RoleBadge
+                    key={roleIcon}
+                    roleName={roleIcon}
+                    height='55px'
+                    width='55px'
+                  />
+                ))}
+              </HStack>
               {userProfile && (
                 <Button variant='outline' onClick={handleShowUpdateModal}>
                   Edit
@@ -109,6 +117,7 @@ const Member = ({ memberAddress }: Props) => {
         >
           <MemberDetailsCard
             member={member}
+            memberReload={refetch}
             application={_.get(member, 'application')}
           />
           {/* <RaidsFeed /> */}
@@ -156,20 +165,6 @@ const Member = ({ memberAddress }: Props) => {
           )}
         </Flex>
       </SiteLayout>
-      <ModalWrapper
-        name='memberForm'
-        size='xl'
-        title='Update Member Details'
-        localOverlay={localOverlay}
-      >
-        <UpdateMemberForm
-          memberId={_.get(member, 'id')}
-          memberAddress={memberAddress}
-          member={member}
-          application={_.get(member, 'application')}
-          closeModal={closeModals}
-        />
-      </ModalWrapper>
     </>
   );
 };

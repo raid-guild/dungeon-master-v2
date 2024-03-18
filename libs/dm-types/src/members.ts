@@ -44,7 +44,6 @@ export interface IMemberUpdate {
 
   member_updates?: {
     name?: string;
-    primary_class_key?: string;
     is_raiding?: boolean;
   };
 
@@ -52,6 +51,11 @@ export interface IMemberUpdate {
     skill_key: string;
     skill_type_key: string;
     member_id: string;
+  }[];
+
+  guild_classes_updates?: {
+    member_id: string;
+    guild_class_id: string;
   }[];
 
   contact_info_id: string;

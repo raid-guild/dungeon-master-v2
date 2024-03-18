@@ -1,7 +1,7 @@
 /* eslint-disable dot-notation */
 import { Box, Button, Input, Select, Stack } from '@raidguild/design-system';
 import { useMemberUpdate } from '@raidguild/dm-hooks';
-import { IApplication, IMember } from '@raidguild/dm-types';
+import { IMember } from '@raidguild/dm-types';
 import {
   GUILD_CLASS_OPTIONS,
   IS_RAIDING_OPTIONS,
@@ -13,22 +13,23 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface UpdateMemberFormProps {
-  memberId?: string;
-  memberAddress?: string;
-  closeModal?: () => void;
   member: IMember;
-  application?: IApplication;
+  memberAddress?: string;
+  memberId?: string;
+  memberReload?: () => void;
+  closeModal?: () => void;
 }
 const UpdateMemberForm = ({
-  memberId,
-  memberAddress,
   member,
-  application,
+  memberAddress,
+  memberId,
+  memberReload,
   closeModal,
 }: UpdateMemberFormProps) => {
   const [sending, setSending] = useState(false);
   const { data: session } = useSession();
   const token = _.get(session, 'token');
+
   const { mutateAsync: updateMemberStatus } = useMemberUpdate({
     token,
     memberId,
@@ -52,6 +53,11 @@ const UpdateMemberForm = ({
     .filter({ skillType: { skillType: 'SECONDARY' } })
     .map('skill.skill')
     .value();
+
+  const guildClasses = _.map(
+    member['membersGuildClasses'],
+    'guildClass.guildClass'
+  );
 
   async function onSubmit(values) {
     setSending(true);
@@ -90,11 +96,13 @@ const UpdateMemberForm = ({
     await updateMemberStatus({
       member_updates: {
         name: values.memberName ?? member.name,
-        primary_class_key:
-          values.guildClass?.value ?? member.guildClass.guildClass,
         is_raiding: values?.isRaiding?.value ?? member?.isRaiding,
       },
       skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
+      guild_classes_updates: _.map(values.guildClasses, (guildClass) => ({
+        member_id: memberId,
+        guild_class_id: guildClass.value,
+      })),
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member?.contactInfo?.email,
@@ -104,6 +112,7 @@ const UpdateMemberForm = ({
         telegram: values.telegramHandle ?? member?.contactInfo?.telegram,
       },
     });
+    memberReload();
     closeModal();
     setSending(false);
   }
@@ -191,15 +200,13 @@ const UpdateMemberForm = ({
                 />
 
                 <Select
-                  name='guildClass'
-                  label='Guild Class'
+                  name='guildClasses'
+                  label='Guild Classes'
+                  isMulti
+                  defaultValue={GUILD_CLASS_OPTIONS.filter((option) =>
+                    guildClasses.includes(option.value)
+                  )}
                   options={GUILD_CLASS_OPTIONS}
-                  defaultValue={
-                    GUILD_CLASS_OPTIONS.find(
-                      (option) =>
-                        option.value === member?.guildClass?.guildClass
-                    ) ?? null
-                  }
                   localForm={localForm}
                 />
 
