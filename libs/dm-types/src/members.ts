@@ -9,6 +9,9 @@ export interface IMember {
   name: string;
   isRaiding: boolean;
   skills: Skills[];
+  membersGuildClasses: {
+    guildClassId: string;
+  }[];
 
   // CONTACT
   email?: string;

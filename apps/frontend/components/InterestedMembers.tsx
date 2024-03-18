@@ -72,11 +72,13 @@ const InterestedMembers = ({
                         fontSize='xs'
                         textTransform='uppercase'
                       >
-                        {
-                          GUILD_CLASS_DISPLAY[
-                            _.get(member, 'guildClass.guildClass')
-                          ]
-                        }
+                        {_.map(
+                          _.map(
+                            _.get(member, 'membersGuildClasses'),
+                            'guildClassId'
+                          ),
+                          (role) => GUILD_CLASS_DISPLAY[role]
+                        ).join(' | ')}
                       </Text>
                     </Flex>
                   </HStack>

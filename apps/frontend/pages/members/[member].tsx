@@ -54,7 +54,7 @@ const Member = ({ memberAddress }: Props) => {
   const userProfile = _.toLower(address) === _.toLower(memberAddress);
   const memberType = _.get(member, 'memberType.memberType');
   const roleIcons = _.map(
-    _.map(_.get(member, 'membersGuildClasses'), 'guildClass.guildClass'),
+    _.map(_.get(member, 'membersGuildClasses'), 'guildClassId'),
     (role) => GUILD_CLASS_ICON[role]
   ).filter((r) => r !== undefined) as string[];
 

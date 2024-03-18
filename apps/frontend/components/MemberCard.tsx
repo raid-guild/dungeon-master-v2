@@ -162,18 +162,6 @@ const MemberCard = ({ application, member }: MemberProps) => {
         variant='withHeader'
         minH='350px'
         h='100%'
-        centerDivider={
-          member &&
-          _.get(member, 'guildClass.guildClass') && (
-            <RoleBadge
-              roleName={
-                GUILD_CLASS_ICON[_.get(member, 'guildClass.guildClass')]
-              }
-              width='60px'
-              height='60px'
-            />
-          )
-        }
         heading={
           <LinkOverlay as={Link} href={link}>
             <HStack
@@ -218,6 +206,7 @@ const MemberCard = ({ application, member }: MemberProps) => {
           direction='column'
           justify='space-between'
         >
+          <RoleListDivider member={member} />
           <Stack spacing={4}>
             <Divider paddingTop={2} width='100%' alignSelf='center' />
             <Text size='md' maxW='900px'>
@@ -226,7 +215,6 @@ const MemberCard = ({ application, member }: MemberProps) => {
                 : _.get(application, 'introduction')}
             </Text>
           </Stack>
-
           <Flex wrap='wrap' width='100%' maxWidth='100%'>
             {_.map(
               clearNonObjects(socials),
@@ -248,5 +236,28 @@ const MemberCard = ({ application, member }: MemberProps) => {
     </LinkBox>
   );
 };
+
+const RoleListDivider = ({ member }: { member: IMember }) => (
+  <HStack
+    justifyContent='center'
+    w='100%'
+    pos='absolute'
+    top='60px'
+    transform='translate(-50%, 0)'
+    left='50%'
+  >
+    {_.map(
+      _.map(_.get(member, 'membersGuildClasses'), 'guildClassId'),
+      (role) => (
+        <RoleBadge
+          border='3px solid'
+          roleName={GUILD_CLASS_ICON[role]}
+          width='50px'
+          height='50px'
+        />
+      )
+    )}
+  </HStack>
+);
 
 export default MemberCard;
