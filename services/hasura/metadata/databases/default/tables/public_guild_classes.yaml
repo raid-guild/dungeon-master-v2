@@ -10,12 +10,26 @@ array_relationships:
         table:
           name: members
           schema: public
+  - name: members_guild_classes
+    using:
+      foreign_key_constraint_on:
+        column: guild_class_key
+        table:
+          name: members_guild_classes
+          schema: public
   - name: portfolios_roles
     using:
       foreign_key_constraint_on:
         column: role
         table:
           name: portfolios_roles
+          schema: public
+  - name: raid_parties
+    using:
+      foreign_key_constraint_on:
+        column: raider_class_key
+        table:
+          name: raid_parties
           schema: public
   - name: raids_roles_requireds
     using:

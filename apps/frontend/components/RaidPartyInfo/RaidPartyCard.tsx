@@ -35,6 +35,7 @@ type RaidPartyCardProps = {
   | needed for raider
   */
   member?: Partial<IMember>;
+  raiderClassKey?: string;
   /*
   | needed for cleric
   */
@@ -53,6 +54,7 @@ const RaidPartyCard = ({
   raid,
   member,
   members,
+  raiderClassKey,
   roles,
   isCleric,
   isHunter,
@@ -143,7 +145,9 @@ const RaidPartyCard = ({
               fontSize='xs'
               textTransform='uppercase'
             >
-              {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
+              {isCleric
+                ? GUILD_CLASS_DISPLAY.ACCOUNT_MANAGER
+                : GUILD_CLASS_DISPLAY.BIZ_DEV}
             </Text>
           </Flex>
         </HStack>
@@ -248,7 +252,9 @@ const RaidPartyCard = ({
             {_.get(member, 'name')}
           </Text>
           <Text color='whiteAlpha.600' fontSize='xs' textTransform='uppercase'>
-            {GUILD_CLASS_DISPLAY[_.get(member, 'guildClass.guildClass')]}
+            {raiderClassKey
+              ? GUILD_CLASS_DISPLAY[raiderClassKey]
+              : 'No class selected'}
           </Text>
         </Flex>
       </HStack>

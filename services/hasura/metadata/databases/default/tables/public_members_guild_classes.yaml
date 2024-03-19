@@ -1,0 +1,52 @@
+table:
+  name: members_guild_classes
+  schema: public
+object_relationships:
+  - name: guild_class
+    using:
+      foreign_key_constraint_on: guild_class_key
+  - name: member
+    using:
+      foreign_key_constraint_on: member_id
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - guild_class_key
+        - id
+        - member_id
+    comment: ''
+select_permissions:
+  - role: cohort
+    permission:
+      columns:
+        - guild_class_key
+        - id
+        - member_id
+      filter: {}
+    comment: ''
+  - role: member
+    permission:
+      columns:
+        - guild_class_key
+        - id
+        - member_id
+      filter: {}
+    comment: ''
+update_permissions:
+  - role: cohort
+    permission:
+      columns: []
+      filter: {}
+      check: null
+    comment: ''
+  - role: member
+    permission:
+      columns:
+        - guild_class_key
+        - id
+        - member_id
+      filter: {}
+      check: null
+    comment: ''

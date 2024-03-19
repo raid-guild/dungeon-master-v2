@@ -106,6 +106,7 @@ export interface IRaidUpdate {
 export interface IRaidPartyInsert {
   raidId: string;
   memberId: string;
+  raiderClassKey: string; // ENUM
 }
 
 export interface IRoleRequiredInsert {

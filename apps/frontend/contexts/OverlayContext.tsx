@@ -14,14 +14,16 @@ export type IModals = {
   raidForm: boolean;
   memberForm: boolean;
   contactUpdate: boolean;
+  raidPartyForm: boolean;
   retroLinkUpdate: boolean;
 };
 const defaults: IModals = {
-  retroLinkUpdate: false,
   raidStatus: false,
   raidForm: false,
   memberForm: false,
   contactUpdate: false,
+  raidPartyForm: false,
+  retroLinkUpdate: false,
 };
 
 export type OverlayContextType = {

@@ -110,7 +110,7 @@ export const useSlimMemberList = ({
   >(['slimMemberList'], memberSlimListQueryResult, {
     enabled:
       !!token &&
-      (button === SIDEBAR_ACTION_STATES.raider ||
+      (button === SIDEBAR_ACTION_STATES.select ||
         button === SIDEBAR_ACTION_STATES.cleric),
   });
 

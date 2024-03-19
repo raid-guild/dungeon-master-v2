@@ -53,6 +53,13 @@ array_relationships:
         table:
           name: members
           schema: public
+  - name: members_guild_classes
+    using:
+      foreign_key_constraint_on:
+        column: member_id
+        table:
+          name: members_guild_classes
+          schema: public
   - name: members_skills
     using:
       foreign_key_constraint_on:

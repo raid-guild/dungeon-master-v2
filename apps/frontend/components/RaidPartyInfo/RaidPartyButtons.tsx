@@ -1,12 +1,12 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
+  Avatar,
   Box,
   Button,
   ChakraSelect,
   Flex,
   HStack,
-  Icon,
-  IconButton,
+  RoleBadge,
   // Option,
   Select,
   VStack,
@@ -20,6 +20,7 @@ import {
 } from '@raidguild/dm-types';
 import {
   GUILD_CLASS_DISPLAY,
+  GUILD_CLASS_ICON,
   GUILD_CLASS_OPTIONS,
   memberDisplayName,
   membersExceptRaidParty,
@@ -27,9 +28,12 @@ import {
 } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { FiPlus, FiX } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
+
+import { useOverlay } from '../../contexts/OverlayContext';
+import ModalWrapper from '../ModalWrapper';
 
 type RaidPartyButtonsProps = {
   raid?: Partial<IRaid>;
@@ -48,6 +52,9 @@ const RaidPartyButtons = ({
   button,
   setButton,
 }: RaidPartyButtonsProps) => {
+  const localOverlay = useOverlay();
+  const { setModals, closeModals } = localOverlay;
+
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const localMembers = membersExceptRaidParty(members, raidParty, cleric);
@@ -66,6 +73,7 @@ const RaidPartyButtons = ({
   const { control, handleSubmit } = localForm;
   const [selectedRoleOptions, setSelectedRoleOptions] = useState<any>(); // <Option>();
   const [raiderToAdd, setRaiderToAdd] = useState<string>();
+  const [raiderClassToAdd, setRaiderClassToAdd] = useState<string>();
 
   const { mutateAsync: updateRolesRequired } = useUpdateRolesRequired({
     token,
@@ -111,12 +119,20 @@ const RaidPartyButtons = ({
     await addRaider({
       raidId: _.get(raid, 'id'),
       memberId: raiderToAdd,
+      raiderClassKey: raiderClassToAdd,
     });
 
     setTimeout(() => {
       setRaiderToAdd(undefined);
       setButton(SIDEBAR_ACTION_STATES.none);
+      closeModals();
     }, 250);
+  };
+
+  const handleShowRaidPartyFormModal = () => {
+    setButton(SIDEBAR_ACTION_STATES.raider);
+    setRaiderToAdd(_.get(_.first(localMembers), 'id'));
+    setModals({ raidPartyForm: true });
   };
 
   const StartProcess = () => (
@@ -131,13 +147,7 @@ const RaidPartyButtons = ({
 
   const SelectRaiderOrRoleButton = () => (
     <HStack>
-      <Button
-        variant='outline'
-        onClick={() => {
-          setButton(SIDEBAR_ACTION_STATES.raider);
-          setRaiderToAdd(_.get(_.first(localMembers), 'id'));
-        }}
-      >
+      <Button variant='outline' onClick={handleShowRaidPartyFormModal}>
         Add Raider
       </Button>
       <Button
@@ -180,7 +190,7 @@ const RaidPartyButtons = ({
             />
           )}
         />
-        <HStack justify='center' gap={1} w='100%'>
+        <HStack justify='center' gap={2} mt={3} w='100%'>
           <Button
             variant='outline'
             aria-label='Clear Set Role Required for Raid'
@@ -196,23 +206,22 @@ const RaidPartyButtons = ({
     </Box>
   );
 
+  const raiderToAddDetails = useMemo(
+    () => _.find(localMembers, { id: raiderToAdd }),
+    [raiderToAdd, localMembers]
+  );
+
   // TODO handle loading a bit better
   const SelectRaider = () => (
     <Flex justify='space-between' gap={1} w='100%'>
-      <IconButton
-        variant='outline'
-        icon={<Icon as={FiX} color='primary.500' />}
-        aria-label='Clear Set Raider for Raid'
-        onClick={() => {
-          setButton(SIDEBAR_ACTION_STATES.none);
-          setRaiderToAdd(undefined);
-        }}
-      />
       {_.isEmpty(localMembers) ? (
         <Box>No Raiders Found!</Box>
       ) : (
         <ChakraSelect
-          onChange={(e) => setRaiderToAdd(e.target.value)}
+          onChange={(e) => {
+            setRaiderToAdd(e.target.value);
+            setRaiderClassToAdd(undefined);
+          }}
           value={raiderToAdd}
         >
           {_.map(localMembers, (m: IMember) => (
@@ -222,10 +231,51 @@ const RaidPartyButtons = ({
           ))}
         </ChakraSelect>
       )}
-
-      <Button onClick={submitAddRaider}>Add</Button>
     </Flex>
   );
+
+  const SelectRaiderRole = () => {
+    if (!raiderToAddDetails) return null;
+
+    const membersGuildClasses = _.get(
+      raiderToAddDetails,
+      'membersGuildClasses'
+    );
+
+    const guildClasses = _.map(membersGuildClasses, 'guildClassKey');
+
+    return (
+      <VStack mt={2}>
+        {_.map(guildClasses, (guildClass) => (
+          <HStack w='100%'>
+            <Button
+              onClick={() => {
+                setRaiderClassToAdd(guildClass);
+              }}
+              key={`raider-class-${guildClass}`}
+              w='100%'
+              variant={guildClass === raiderClassToAdd ? 'solid' : 'outline'}
+            >
+              {GUILD_CLASS_DISPLAY[guildClass]}
+            </Button>
+            <Avatar
+              h='42px'
+              icon={
+                <RoleBadge
+                  roleName={GUILD_CLASS_ICON[guildClass]}
+                  width='42px'
+                  height='42px'
+                  border='2px solid'
+                />
+              }
+              key={`raider-class-avatar-${guildClass}`}
+              w='42px'
+            />
+          </HStack>
+        ))}
+      </VStack>
+    );
+  };
 
   return (
     <VStack align='center' width='100%' marginTop={2}>
@@ -233,7 +283,26 @@ const RaidPartyButtons = ({
         button === SIDEBAR_ACTION_STATES.cleric) && <StartProcess />}
       {button === SIDEBAR_ACTION_STATES.select && <SelectRaiderOrRoleButton />}
       {button === SIDEBAR_ACTION_STATES.role && <SelectRole />}
-      {button === SIDEBAR_ACTION_STATES.raider && <SelectRaider />}
+      <ModalWrapper
+        localOverlay={localOverlay}
+        name='raidPartyForm'
+        onClose={() => {
+          setRaiderToAdd(undefined);
+          setButton(SIDEBAR_ACTION_STATES.none);
+        }}
+        size='sm'
+        title='Add Raider'
+      >
+        <SelectRaider />
+        <SelectRaiderRole />
+        <Button
+          isDisabled={!(raiderToAdd && raiderClassToAdd)}
+          mt={4}
+          onClick={submitAddRaider}
+        >
+          Add
+        </Button>
+      </ModalWrapper>
     </VStack>
   );
 };

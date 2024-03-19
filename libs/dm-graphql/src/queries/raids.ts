@@ -79,8 +79,8 @@ export const RAID_DETAIL_QUERY = gql`
           id
           name
           eth_address
-          guild_class {
-            guild_class
+          members_guild_classes {
+            guild_class_key
           }
           contact_info {
             ...ContactInfos
@@ -105,8 +105,8 @@ export const RAID_DETAIL_QUERY = gql`
         eth_address
         name
         id
-        guild_class {
-          guild_class
+        members_guild_classes {
+          guild_class_key
         }
         contact_info {
           ...ContactInfos
@@ -116,8 +116,8 @@ export const RAID_DETAIL_QUERY = gql`
         eth_address
         name
         id
-        guild_class {
-          guild_class
+        members_guild_classes {
+          guild_class_key
         }
         contact_info {
           ...ContactInfos
@@ -137,8 +137,8 @@ export const RAID_DETAIL_QUERY = gql`
             id
             name
             eth_address
-            guild_class {
-              guild_class
+            members_guild_classes {
+              guild_class_key
             }
             contact_info {
               ...ContactInfos
@@ -187,6 +187,7 @@ export const RAID_DETAIL_QUERY = gql`
       airtable_id
       v1_id
       raid_parties {
+        raider_class_key
         member {
           eth_address
           name
