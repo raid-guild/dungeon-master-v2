@@ -71,6 +71,11 @@ const UpdateMemberForm = ({
       member_id: memberId,
     }));
 
+    const newGuildClasses = _.map(values.guildClasses, (guildClass) => ({
+      member_id: memberId,
+      guild_class_key: guildClass.value,
+    }));
+
     const existingPrimarySkills = _.flatMap(primarySkills, (skill) => ({
       skill_key: skill,
       skill_type_key: 'PRIMARY',
@@ -83,12 +88,19 @@ const UpdateMemberForm = ({
       member_id: memberId,
     }));
 
+    const existingGuildClasses = _.map(guildClasses, (guildClass) => ({
+      member_id: memberId,
+      guild_class_key: guildClass,
+    }));
+
     const updatePrimarySkills =
       newPrimarySkills.length > 0 ? newPrimarySkills : existingPrimarySkills;
     const updateSecondarySkills =
       newSecondarySkills.length > 0
         ? newSecondarySkills
         : existingSecondarySkills;
+    const updateGuildClasses =
+      newGuildClasses.length > 0 ? newGuildClasses : existingGuildClasses;
 
     await updateMemberStatus({
       member_updates: {
@@ -96,10 +108,7 @@ const UpdateMemberForm = ({
         is_raiding: values?.isRaiding?.value ?? member?.isRaiding,
       },
       skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
-      guild_classes_updates: _.map(values.guildClasses, (guildClass) => ({
-        member_id: memberId,
-        guild_class_key: guildClass.value,
-      })),
+      guild_classes_updates: updateGuildClasses,
       contact_info_id: member.contactInfo.id,
       contact_info_updates: {
         email: values.emailAddress ?? member?.contactInfo?.email,

@@ -117,25 +117,25 @@ const MemberCard = ({ application, member }: MemberProps) => {
   }, [member, application]);
 
   const socials = [
-    telegram && {
+    !!telegram && {
       href: `https://t.me/${telegram}`,
       icon: <FaTelegramPlane />,
       label: telegram,
       tooltip: `Go to ${_.get(member, 'name')}'s Telegram profile`,
     },
-    github && {
+    !!github && {
       href: `https://github.com/${github}`,
       icon: <FaGithub />,
       label: github,
       tooltip: '',
     },
-    twitter && {
+    !!twitter && {
       href: `https://twitter.com/${twitter}`,
       icon: <FaTwitter />,
       label: twitter,
       tooltip: `Go to ${_.get(member, 'name')}'s Twitter profile`,
     },
-    discord && {
+    !!discord && {
       onClick: copyDiscord.onCopy,
       icon: <FaDiscord />,
       label: discord,
