@@ -16,7 +16,7 @@ insert_permissions:
         - guild_class_key
         - id
         - member_id
-    comment: ''
+    comment: ""
 select_permissions:
   - role: cohort
     permission:
@@ -25,7 +25,7 @@ select_permissions:
         - id
         - member_id
       filter: {}
-    comment: ''
+    comment: ""
   - role: member
     permission:
       columns:
@@ -33,14 +33,14 @@ select_permissions:
         - id
         - member_id
       filter: {}
-    comment: ''
+    comment: ""
 update_permissions:
   - role: cohort
     permission:
       columns: []
       filter: {}
       check: null
-    comment: ''
+    comment: ""
   - role: member
     permission:
       columns:
@@ -49,4 +49,9 @@ update_permissions:
         - member_id
       filter: {}
       check: null
-    comment: ''
+    comment: ""
+delete_permissions:
+  - role: member
+    permission:
+      filter: {}
+    comment: ""
