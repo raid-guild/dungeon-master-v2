@@ -43,7 +43,7 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
   const [sortedUpdates, setSortedUpdates] =
     useState<(IStatusUpdate & IEscrowEvent)[]>();
   const token: string = _.get(session, 'token', '');
-  const { data, error, isLoading } = useEscrowEvents(raid?.invoiceAddress);
+  const { data } = useEscrowEvents(raid?.invoiceAddress);
   const { events: escrowUpdates, totalMileStones } = data;
   const updxts = _.get(raid, 'updates', null);
   const updates = [...updxts, ...escrowUpdates];
@@ -62,7 +62,7 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
     if (!_.isEmpty(updates)) {
       setSortedUpdates(_.orderBy(updates, ['createdAt'], ['desc']));
     }
-  }, [updates, isLoading]);
+  }, [updates?.length]);
 
   const showUpdateBox = () => {
     setAddUpdate(true);
