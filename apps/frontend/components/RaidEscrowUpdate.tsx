@@ -43,7 +43,7 @@ export const RaidEscrowUpdate = (props: IEscrowEvent) => {
           </Text>
           <HStack spacing={1} color='gray.100'>
             <Text fontSize='sm'>
-              Updated by Smart Invoice @
+              Updated by Smart Invoice @{` `}
               {createdAt && format(new Date(createdAt), 'Pp')}
             </Text>
           </HStack>
