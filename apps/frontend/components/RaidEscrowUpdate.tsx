@@ -36,10 +36,10 @@ export const RaidEscrowUpdate = (props: IEscrowEvent) => {
             maxWidth={['95%', null, null, null]}
           >
             {type === 'release'
-              ? `$${amount} released for milestone ${
+              ? `🔥 🔥 🔥 $${amount} released for milestone ${
                   Number(milestone) + 1 + '/' + totalMileStones
                 }`
-              : `$${amount} deposited to invoice`}
+              : `💰💰💰 $${amount} deposited to invoice`}
           </Text>
           <HStack spacing={1} color='gray.100'>
             <Text fontSize='sm'>
