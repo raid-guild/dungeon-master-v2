@@ -1,61 +1,57 @@
-import { Address } from 'viem';
+import { Address, parseEther } from 'viem';
 import useInvoiceDetails from './useInvoiceDetails';
 import _ from 'lodash';
-
-interface escrowEvent {
-  amount: number;
-  txHash: Address;
-  timestamp: number;
-  sender?: Address;
-  milestone?: number;
-  type: 'release' | 'deposit' | 'lock' | 'other';
-}
+import { formatUnits } from 'viem';
+import { commify } from '@raidguild/dm-utils';
 
 const useEscrowEvents = (invoiceAddress: Address) => {
   const {
     data: invoice,
-    isLoading: invoiceLoading,
-    error: invoiceError,
+    isLoading,
+    error,
   } = useInvoiceDetails({
-    invoiceAddress: invoiceAddress,
-    chainId: 100, // chain?.id, // ! support multiple chains
+    invoiceAddress,
+    chainId: 100,
   });
 
-  const { currentMilestone } = _.pick(invoice, 'currentMilestone');
-  const { numMileStones: totalMileStones } = _.pick(invoice, 'numMileStones');
-  const { releases } = _.pick(invoice, 'releases');
-  const { deposits } = _.pick(invoice, 'deposits');
-  const { createdAt } = _.pick(invoice, 'createdAt');
-
-  // get  {amount, sender, timestamp, txHash } from deposits
-  // use lodash
-  const depositEvents = _.map(
-    deposits,
-    ({ txHash, amount, sender, timestamp }) =>
-      ({
-        txHash,
-        amount,
-        sender,
-        type: 'deposit',
-        timestamp,
-      } as escrowEvent)
-  );
-
-  const releaseEvents = _.map(
+  const {
+    currentMilestone,
+    numMilestones: totalMileStones,
     releases,
-    ({ txHash, amount, milestone, timestamp }) =>
-      ({
-        txHash,
-        amount,
-        milestone,
-        type: 'release',
-        timestamp,
-      } as escrowEvent)
-  );
+    deposits,
+    createdAt,
+  } = _.pick(invoice, [
+    'currentMilestone',
+    'numMilestones',
+    'releases',
+    'deposits',
+    'createdAt',
+  ]);
+
+  const mapToEscrowEvent = (type) => (event: any) => {
+    const createdAt = new Date(event.timestamp * 1000).toISOString();
+    const amount = `${commify(
+      formatUnits(parseEther(event?.amount)) * 10 ** 4
+    )}`;
+
+    return {
+      createdAt,
+      amount,
+      ..._.pick(event, ['txHash', 'sender', 'milestone']),
+      type,
+    };
+  };
+
+  const depositEvents = _.map(deposits, mapToEscrowEvent('deposit'));
+  const releaseEvents = _.map(releases, mapToEscrowEvent('release'));
 
   const events = [...depositEvents, ...releaseEvents];
 
-  return { events };
+  return {
+    data: { events, totalMileStones, currentMilestone, createdAt },
+    isLoading,
+    error,
+  };
 };
 
 export default useEscrowEvents;
