@@ -12,6 +12,7 @@ export const CONFIG = {
   encodingAlgorithm: 'HS256',
   defaultRoles: ['user'], // match HASURA_GRAPHQL_UNAUTHORIZED_ROLE
   defaultMaxAge: 30 * 60, // 30 minutes
+  refreshThreshold: 300, // 5 minutes
 };
 
 // Could be swapped for different API models
@@ -48,7 +49,7 @@ export const encodeAuth = async ({
   maxAge,
 }: {
   token?: HasuraAuthToken;
-  maxAge?: number;
+  maxAge?: number; // Throwing away default token age (30 days) and using our value of 30 minutes
 }) => {
   if (_.get(token, 'exp')) return encodeToken(token);
   return getOrCreateUser(_.get(token, 'sub'))
@@ -58,14 +59,19 @@ export const encodeAuth = async ({
           createToken({
             user: { id: _.get(token, 'sub') },
             token,
-            maxAge,
+            maxAge: CONFIG.defaultMaxAge,
             roles: ['user'],
           })
         );
       }
 
       return encodeToken(
-        createToken({ user, token, maxAge, roles: ['member'] })
+        createToken({
+          user,
+          token,
+          maxAge: CONFIG.defaultMaxAge,
+          roles: ['member'],
+        })
       );
     })
     .catch((err) => {

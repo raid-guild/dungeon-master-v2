@@ -45,7 +45,7 @@ const useMemberDetail = ({
     };
   };
 
-  const { isLoading, isFetching, isError, error, data } = useQuery<
+  const { isLoading, isFetching, isError, error, data, refetch } = useQuery<
     { member: IMember; raids: { active: IRaid[]; past: IRaid[] } },
     Error
   >({
@@ -54,7 +54,7 @@ const useMemberDetail = ({
     enabled: Boolean(token) && Boolean(memberAddress),
   });
 
-  return { isLoading, isFetching, isError, error, data };
+  return { isLoading, isFetching, isError, error, data, refetch };
 };
 
 export default useMemberDetail;

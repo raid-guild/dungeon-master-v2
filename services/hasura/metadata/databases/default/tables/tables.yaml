@@ -22,6 +22,7 @@
 - "!include public_links.yaml"
 - "!include public_member_types.yaml"
 - "!include public_members.yaml"
+- "!include public_members_guild_classes.yaml"
 - "!include public_members_skills.yaml"
 - "!include public_portfolios.yaml"
 - "!include public_portfolios_roles.yaml"

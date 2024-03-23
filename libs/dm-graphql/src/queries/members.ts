@@ -33,8 +33,8 @@ export const MEMBER_LIST_QUERY = gql`
       contact_info {
         ...ContactInfos
       }
-      guild_class {
-        guild_class
+      members_guild_classes {
+        guild_class_key
       }
       application {
         introduction

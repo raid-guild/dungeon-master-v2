@@ -8,10 +8,10 @@ export interface IMember {
   id: string;
   name: string;
   isRaiding: boolean;
-  guildClass: {
-    guildClass: string;
-  };
   skills: Skills[];
+  membersGuildClasses: {
+    guildClassKey: string;
+  }[];
 
   // CONTACT
   email?: string;
@@ -47,8 +47,7 @@ export interface IMemberUpdate {
 
   member_updates?: {
     name?: string;
-    primary_class_key?: string;
-    is_raiding?: boolean; 
+    is_raiding?: boolean;
   };
 
   skills_updates?: {
@@ -57,7 +56,12 @@ export interface IMemberUpdate {
     member_id: string;
   }[];
 
-  contact_info_id: string; 
+  guild_classes_updates?: {
+    member_id: string;
+    guild_class_key: string;
+  }[];
+
+  contact_info_id: string;
 
   contact_info_updates?: {
     email?: string;

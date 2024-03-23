@@ -14,12 +14,13 @@ export const useRaidPartyAdd = ({ token }: { token: string }) => {
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, memberId }: IRaidPartyInsert) => {
+    async ({ raidId, memberId, raiderClassKey }: IRaidPartyInsert) => {
       if (!raidId || !token) return null;
       return client({ token }).request(RAID_PARTY_INSERT_MUTATION, {
         raid_parties: {
           raid_id: raidId,
           member_id: memberId,
+          raider_class_key: raiderClassKey,
         },
       });
     },
@@ -42,7 +43,7 @@ export const useRaidPartyAdd = ({ token }: { token: string }) => {
           isClosable: true,
         });
       },
-      onError: (error) => {
+      onError: () => {
         toast.error({
           title: 'Unable to Update Raid',
           duration: 3000,
@@ -60,7 +61,7 @@ export const useRaidPartyRemove = ({ token }: { token: string }) => {
   const toast = useToast();
 
   const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, memberId }: IRaidPartyInsert) => {
+    async ({ raidId, memberId }: Omit<IRaidPartyInsert, 'raiderClassKey'>) => {
       if (!raidId || !token) return null;
 
       return client({ token }).request(RAID_PARTY_DELETE_MUTATION, {
@@ -86,7 +87,7 @@ export const useRaidPartyRemove = ({ token }: { token: string }) => {
           isClosable: true,
         });
       },
-      onError: (error) => {
+      onError: () => {
         toast.error({
           title: 'Unable to Update Raid',
           duration: 3000,

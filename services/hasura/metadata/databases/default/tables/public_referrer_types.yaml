@@ -1,15 +1,12 @@
 table:
   name: referrer_types
   schema: public
-is_enum: true
 array_relationships:
   - name: consultations
     using:
-      manual_configuration:
-        column_mapping:
-          referrer_type: referrer
-        insertion_order: null
-        remote_table:
+      foreign_key_constraint_on:
+        column: referrer
+        table:
           name: consultations
           schema: public
 select_permissions:
@@ -20,18 +17,6 @@ select_permissions:
       filter: {}
     comment: ""
   - role: member
-    permission:
-      columns:
-        - referrer_type
-      filter: {}
-    comment: ""
-  - role: public
-    permission:
-      columns:
-        - referrer_type
-      filter: {}
-    comment: ""
-  - role: user
     permission:
       columns:
         - referrer_type

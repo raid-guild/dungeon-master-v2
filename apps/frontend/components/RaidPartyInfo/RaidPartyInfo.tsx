@@ -1,11 +1,4 @@
-import {
-  Card,
-  Divider,
-  Flex,
-  Heading,
-  Stack,
-  Text,
-} from '@raidguild/design-system';
+import { Card, Divider, Flex, Heading, Stack } from '@raidguild/design-system';
 import { useSlimMemberList } from '@raidguild/dm-hooks';
 import { IMember, IRaid } from '@raidguild/dm-types';
 import { SIDEBAR_ACTION_STATES } from '@raidguild/dm-utils';
@@ -35,7 +28,7 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
   const localRoles = _.map(_.get(raid, 'raidsRolesRequired'), 'role');
   const cleric = _.get(raid, 'cleric');
   const hunter = _.get(raid, 'hunter');
-  const raidParty = _.map(_.get(raid, 'raidParties'), 'member');
+  const raidParty = _.get(raid, 'raidParties');
 
   return (
     <Stack spacing={3}>
@@ -78,13 +71,20 @@ const RaidPartyInfo = ({ raid }: RaidInfoProps) => {
                 <Heading color='white' size='sm'>
                   Raiders
                 </Heading>
-                {_.map(raidParty, (member: Partial<IMember>) => (
-                  <RaidPartyCard
-                    raid={raid}
-                    member={member}
-                    key={_.get(member, 'id')}
-                  />
-                ))}
+                {_.map(
+                  raidParty,
+                  (raider: {
+                    member: Partial<IMember>;
+                    raiderClassKey: string;
+                  }) => (
+                    <RaidPartyCard
+                      raid={raid}
+                      member={raider.member}
+                      raiderClassKey={raider.raiderClassKey}
+                      key={_.get(raider.member, 'id')}
+                    />
+                  )
+                )}
               </Stack>
             )}
             {!_.isEmpty(localRoles) && (

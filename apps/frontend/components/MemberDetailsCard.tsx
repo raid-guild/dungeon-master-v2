@@ -29,19 +29,21 @@ import UpdateMemberForm from './MemberUpdateForm';
 import ModalWrapper from './ModalWrapper';
 
 interface MemberProps {
-  member?: IMember;
   application?: IApplication;
-  width?: string;
   height?: string;
+  member?: IMember;
+  memberReload?: () => void;
   showHeader?: boolean;
+  width?: string;
 }
 
 const MemberDetailsCard = ({
-  member,
   application,
-  width,
   height,
+  member,
+  memberReload,
   showHeader = false,
+  width,
 }: MemberProps) => {
   const toast = useToast();
   const copyDiscord = useClipboard(
@@ -195,10 +197,10 @@ const MemberDetailsCard = ({
         localOverlay={localOverlay}
       >
         <UpdateMemberForm
-          memberId={_.get(member, 'id')}
-          memberAddress={memberAddress}
           member={member}
-          application={_.get(member, 'application')}
+          memberAddress={memberAddress}
+          memberId={_.get(member, 'id')}
+          memberReload={memberReload}
           closeModal={closeModals}
         />
       </ModalWrapper>
@@ -294,7 +296,7 @@ const MemberDetailsCard = ({
 
           <Divider my={2} />
 
-          <Flex gap={4} direction={['column', null, null, 'row']} wrap='wrap'>
+          <Flex gap={4} direction='row' wrap='wrap'>
             {_.map(memberLinks, (link) => (
               <Tooltip
                 label={_.get(link, 'tooltip')}
