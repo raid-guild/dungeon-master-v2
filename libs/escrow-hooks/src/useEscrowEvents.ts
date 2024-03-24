@@ -19,36 +19,42 @@ const useEscrowEvents = (invoiceAddress: Address) => {
     numMilestones: totalMileStones,
     releases,
     deposits,
-    createdAt,
   } = _.pick(invoice, [
     'currentMilestone',
     'numMilestones',
     'releases',
     'deposits',
-    'createdAt',
   ]);
 
-  const mapToEscrowEvent = (type) => (event: any) => {
-    const createdAt = new Date(event.timestamp * 1000).toISOString();
-    const amount = `${commify(
-      formatUnits(parseEther(event?.amount)) * 10 ** 4
-    )}`;
-
-    return {
-      createdAt,
-      amount,
-      ..._.pick(event, ['txHash', 'sender', 'milestone']),
-      type,
+  const mapToEscrowEvent =
+    (type: 'deposit' | 'release') =>
+    (event: {
+      txHash?: string;
+      sender?: Address;
+      timestamp?: number;
+      amount?: string | number | undefined;
+    }) => {
+      const createdAt = new Date(event.timestamp * 1000).toISOString();
+      const amount = event?.amount
+        ? commify((parseFloat(String(event?.amount)) / 10 ** 18).toFixed(2))
+        : null;
+      return {
+        createdAt,
+        amount,
+        ..._.pick(event, ['txHash', 'sender', 'milestone']),
+        type,
+      };
     };
-  };
 
   const depositEvents = _.map(deposits, mapToEscrowEvent('deposit'));
   const releaseEvents = _.map(releases, mapToEscrowEvent('release'));
 
   const events = [...depositEvents, ...releaseEvents];
 
+  console.log(events);
+
   return {
-    data: { events, totalMileStones, currentMilestone, createdAt },
+    data: { events, totalMileStones, currentMilestone },
     isLoading,
     error,
   };
