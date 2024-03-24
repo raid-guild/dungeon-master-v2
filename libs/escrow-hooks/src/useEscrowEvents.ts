@@ -51,8 +51,6 @@ const useEscrowEvents = (invoiceAddress: Address) => {
 
   const events = [...depositEvents, ...releaseEvents];
 
-  console.log(events);
-
   return {
     data: { events, totalMileStones, currentMilestone },
     isLoading,
