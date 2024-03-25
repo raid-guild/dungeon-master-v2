@@ -11,3 +11,4 @@ export { default as useSplitEarnings } from './useSplitEarnings';
 export { default as useSplitsMetadata } from './useSplitsMetadata';
 export { default as useTokenBalance } from './useTokenBalance';
 export { default as useWithdraw } from './useWithdraw';
+export { default as useEscrowEvents } from './useEscrowEvents';

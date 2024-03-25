@@ -19,7 +19,7 @@ import {
   useMediaQuery,
 } from '@raidguild/design-system';
 import { useUpdateCreate } from '@raidguild/dm-hooks';
-import { IRaid, IStatusUpdate } from '@raidguild/dm-types';
+import { IRaid, IStatusUpdate, IEscrowEvent } from '@raidguild/dm-types';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -27,20 +27,26 @@ import { useForm } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 
 import RaidUpdate from './RaidUpdates';
+import { useEscrowEvents } from '@raidguild/escrow-hooks';
+import { RaidEscrowUpdate } from './RaidEscrowUpdate';
 
 interface UpdatesProps {
   raid: IRaid;
 }
 
 const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
-  const updates = _.get(raid, 'updates', null);
   const { data: session } = useSession();
   const localForm = useForm();
   const { handleSubmit, setValue } = localForm;
   const [addUpdate, setAddUpdate] = useState<boolean>(false);
   const [expanded, setExpanded] = useState(false);
-  const [sortedUpdates, setSortedUpdates] = useState<IStatusUpdate[]>();
+  const [sortedUpdates, setSortedUpdates] =
+    useState<(IStatusUpdate & IEscrowEvent)[]>();
   const token: string = _.get(session, 'token', '');
+  const { data } = useEscrowEvents(raid?.invoiceAddress);
+  const { events: escrowUpdates, totalMileStones } = data;
+  const updxts = _.get(raid, 'updates', null);
+  const updates = [...updxts, ...escrowUpdates];
 
   const { mutateAsync } = useUpdateCreate({
     token,
@@ -56,7 +62,7 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
     if (!_.isEmpty(updates)) {
       setSortedUpdates(_.orderBy(updates, ['createdAt'], ['desc']));
     }
-  }, [updates]);
+  }, [updates?.length]);
 
   const showUpdateBox = () => {
     setAddUpdate(true);
@@ -87,6 +93,7 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
           <Heading size='md' color='white'>
             Status Updates
           </Heading>
+
           <Box>
             {addUpdate ? (
               <HStack>
@@ -132,15 +139,27 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
       {updatesCount > 0 &&
         sortedUpdates
           ?.slice(0, updatesCount > 4 ? 1 : updatesCount)
-          .map((c: IStatusUpdate) => (
-            <Stack as='ul' width='100%' key={c.createdAt}>
-              <RaidUpdate
-                // id={c.id}
-                update={c.update}
-                member={c.member}
-                createdAt={c.createdAt}
-                // modifiedAt={c.modifiedAt}
-              />
+          .map((c: IStatusUpdate & IEscrowEvent) => (
+            <Stack as='ul' width='100%' key={c?.createdAt}>
+              {c?.member ? (
+                <RaidUpdate
+                  // id={c.id}
+                  update={c?.update}
+                  member={c?.member}
+                  createdAt={c?.createdAt}
+                  // modifiedAt={c.modifiedAt}
+                />
+              ) : (
+                <RaidEscrowUpdate
+                  type={c?.type}
+                  createdAt={c?.createdAt}
+                  milestone={c?.milestone}
+                  amount={c?.amount}
+                  sender={c?.sender}
+                  txHash={c?.txHash}
+                  totalMileStones={totalMileStones}
+                />
+              )}
             </Stack>
           ))}
       {updatesCount > 4 && (
@@ -159,17 +178,31 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
               </AccordionButton>
             </h2>
             <AccordionPanel padding={0}>
-              {sortedUpdates?.slice(1).map((c) => (
-                <Stack as='ul' width='100%' key={c.createdAt}>
-                  <RaidUpdate
-                    // id={c.id}
-                    update={c.update}
-                    member={c.member}
-                    createdAt={c.createdAt}
-                    // modifiedAt={c.modifiedAt}
-                  />
-                </Stack>
-              ))}
+              {sortedUpdates
+                ?.slice(1)
+                .map((c: IStatusUpdate & IEscrowEvent) => (
+                  <Stack as='ul' width='100%' key={c?.createdAt}>
+                    {c?.member ? (
+                      <RaidUpdate
+                        // id={c.id}
+                        update={c?.update}
+                        member={c?.member}
+                        createdAt={c?.createdAt}
+                        // modifiedAt={c.modifiedAt}
+                      />
+                    ) : (
+                      <RaidEscrowUpdate
+                        type={c?.type}
+                        createdAt={c?.createdAt}
+                        milestone={c?.milestone}
+                        amount={c?.amount}
+                        sender={c?.sender}
+                        txHash={c?.txHash}
+                        totalMileStones={totalMileStones}
+                      />
+                    )}
+                  </Stack>
+                ))}
             </AccordionPanel>
           </AccordionItem>
         </Accordion>

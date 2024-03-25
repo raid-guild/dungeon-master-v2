@@ -101,6 +101,8 @@ insert_permissions:
         - description
         - link
         - name
+        - other_referrer
+        - referrer
         - specs_key
         - submission_hash
         - submission_type_key
@@ -163,6 +165,8 @@ select_permissions:
         - description
         - link
         - name
+        - other_referrer
+        - referrer
         - specs_key
         - submission_hash
         - submission_type_key
@@ -173,7 +177,6 @@ select_permissions:
         - id
       filter: {}
       allow_aggregations: true
-    comment: ""
 update_permissions:
   - role: member
     permission:
@@ -187,6 +190,8 @@ update_permissions:
         - description
         - link
         - name
+        - other_referrer
+        - referrer
         - specs_key
         - submission_hash
         - submission_type_key
@@ -196,8 +201,7 @@ update_permissions:
         - updated_at
         - id
       filter: {}
-      check: null
-    comment: ""
+      check: {}
 event_triggers:
   - name: consultation_submission
     definition:

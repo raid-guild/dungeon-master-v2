@@ -1,29 +1,24 @@
-import { Divider, Flex, HStack, Text } from '@raidguild/design-system';
-import { format } from 'date-fns';
-import React from 'react';
+import { Flex, Text, HStack, Divider } from '@raidguild/design-system';
+import format from 'date-fns/format';
+import { IEscrowEvent } from '@raidguild/dm-types';
 
-interface RaidUpdateProps {
-  // id?: string;
-  update: string;
-  member: {
-    name: string;
-  };
-  createdAt: string;
-  // modifiedAt?: string;
-}
+export const RaidEscrowUpdate = (props: IEscrowEvent) => {
+  const {
+    createdAt,
+    type,
+    milestone,
+    amount,
+    sender,
+    txHash,
+    totalMileStones,
+  } = props;
 
-const RaidUpdate: React.FC<RaidUpdateProps> = ({
-  // id,
-  update,
-  member,
-  createdAt,
-}: RaidUpdateProps) => {
   return (
     <>
       <Flex
         direction='row'
         width='100%'
-        alignItems='space-between' /* Changed 'space-apart' to 'space-between' */
+        alignItems='space-between'
         justifyContent='space-between'
         marginY={2}
       >
@@ -40,12 +35,15 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
             fontSize='md'
             maxWidth={['95%', null, null, null]}
           >
-            {update}
+            {type === 'release'
+              ? `🔥 🔥 🔥 $${amount} released for milestone ${
+                  Number(milestone) + 1 + '/' + totalMileStones
+                }`
+              : `💰💰💰 $${amount} deposited to invoice`}
           </Text>
           <HStack spacing={1} color='gray.100'>
-            <Text fontSize='sm'>{member.name} @</Text>{' '}
-            {/* Changed 'smaller' to 'sm' */}
             <Text fontSize='sm'>
+              Updated by Smart Invoice @{` `}
               {createdAt && format(new Date(createdAt), 'Pp')}
             </Text>
           </HStack>
@@ -55,5 +53,3 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
     </>
   );
 };
-
-export default RaidUpdate;
