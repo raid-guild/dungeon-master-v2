@@ -212,52 +212,123 @@ export const Accounting = () => {
 
           <TabPanels>
             <TabPanel>
-              <Flex
-                alignItems='right'
-                justifyContent='right'
-                marginBlock='20px'
+              <Tabs
+                align='start'
+                colorScheme='whiteAlpha'
+                variant='unstyled'
+                defaultIndex={0}
               >
-                <Button
-                  onClick={() => onExportCsv('balances')}
-                  size='sm'
-                  fontWeight='normal'
+                <Flex
+                  alignItems='right'
+                  justifyContent='space-between'
+                  marginBlock='20px'
                 >
-                  Export Balances
-                </Button>
-              </Flex>
-              <BalancesTable data={balancesWithPrices} />
+                  <TabList>
+                    <Tab>
+                      <Heading size='sm'>V3 (current)</Heading>
+                    </Tab>
+                    <Tab>
+                      <Heading size='sm'>V2</Heading>
+                    </Tab>
+                  </TabList>
+                  <Button
+                    onClick={() => onExportCsv('balances')}
+                    size='sm'
+                    fontWeight='normal'
+                  >
+                    Export Balances
+                  </Button>
+                </Flex>
+
+                <TabPanels>
+                  <TabPanel>
+                    <BalancesTable data={balancesWithPrices} />
+                  </TabPanel>
+                  <TabPanel>
+                    <div>This is the placeholder for v3 balances data.</div>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
             </TabPanel>
             <TabPanel>
-              <Flex
-                alignItems='right'
-                justifyContent='right'
-                marginBlock='20px'
+              <Tabs
+                align='start'
+                colorScheme='whiteAlpha'
+                variant='unstyled'
+                defaultIndex={0}
               >
-                <Button
-                  onClick={() => onExportCsv('transactions')}
-                  size='sm'
-                  fontWeight='normal'
+                <Flex
+                  alignItems='right'
+                  justifyContent='space-between'
+                  marginBlock='20px'
                 >
-                  Export Transactions
-                </Button>
-              </Flex>
-              <TransactionsTable data={transactionsWithPricesAndMembers} />
+                  <TabList>
+                    <Tab>
+                      <Heading size='sm'>V3 (current)</Heading>
+                    </Tab>
+                    <Tab>
+                      <Heading size='sm'>V2</Heading>
+                    </Tab>
+                  </TabList>
+                  <Button
+                    onClick={() => onExportCsv('transactions')}
+                    size='sm'
+                    fontWeight='normal'
+                  >
+                    Export Transactions
+                  </Button>
+                </Flex>
+
+                <TabPanels>
+                  <TabPanel>
+                    <TransactionsTable
+                      data={transactionsWithPricesAndMembers}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <div>This is the placeholder for v3 transactions data.</div>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
             </TabPanel>
             <TabPanel>
-              <Flex
-                alignItems='right'
-                justifyContent='right'
-                marginBlock='20px'
+              <Tabs
+                align='start'
+                colorScheme='whiteAlpha'
+                variant='unstyled'
+                defaultIndex={0}
               >
-                <Button
-                  onClick={() => onExportCsv('spoils')}
-                  size='sm'
-                  fontWeight='normal'
+                <Flex
+                  alignItems='right'
+                  justifyContent='space-between'
+                  marginBlock='20px'
                 >
-                  Export Spoils
-                </Button>
-              </Flex>
-              <SpoilsTable data={spoils} />
+                  <TabList>
+                    <Tab>
+                      <Heading size='sm'>V3 (current)</Heading>
+                    </Tab>
+                    <Tab>
+                      <Heading size='sm'>V2</Heading>
+                    </Tab>
+                  </TabList>
+                  <Button
+                    onClick={() => onExportCsv('spoils')}
+                    size='sm'
+                    fontWeight='normal'
+                  >
+                    Export Spoils
+                  </Button>
+                </Flex>
+
+                <TabPanels>
+                  <TabPanel>
+                    <SpoilsTable data={spoils} />
+                  </TabPanel>
+                  <TabPanel>
+                    <div>This is the placeholder for v3 spoils data.</div>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
             </TabPanel>
           </TabPanels>
         </Tabs>
