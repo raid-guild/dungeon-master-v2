@@ -11,6 +11,7 @@ import {
 } from '@raidguild/design-system';
 import {
   useAccounting,
+  useAccountingV2,
   useFormattedData,
   useMemberList,
 } from '@raidguild/dm-hooks';
@@ -29,7 +30,11 @@ import TransactionsTable from '../components/TransactionsTable';
 export const Accounting = () => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
-  const { data, loading, error } = useAccounting({
+  const {
+    data: dataFromMolochV2,
+    loading,
+    error,
+  } = useAccountingV2({
     token,
   });
   const { data: memberData } = useMemberList({
@@ -37,7 +42,7 @@ export const Accounting = () => {
     limit: 1000,
   });
 
-  const { balances, spoils, transactions, tokenPrices } = data;
+  const { balances, spoils, transactions, tokenPrices } = dataFromMolochV2;
 
   const {
     members,
