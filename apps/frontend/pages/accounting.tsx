@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-computed-key */
 import {
   Button,
   Flex,
@@ -10,7 +9,6 @@ import {
   Tabs,
 } from '@raidguild/design-system';
 import {
-  useAccounting,
   useAccountingV2,
   useFormattedData,
   useMemberList,
