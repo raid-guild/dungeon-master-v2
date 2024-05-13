@@ -15,6 +15,7 @@ export { useContacts } from './useContacts';
 export { default as useContactUpdate } from './useContactUpdate';
 export { default as useDashboardList } from './useDashboardList';
 export { default as useDefaultTitle } from './useDefaultTitle';
+export { default as useFormattedData } from './useFormattedData';
 export * from './useLinks';
 export { default as useLinksUpdate } from './useLinksUpdate';
 export { default as useMemberCreate } from './useMemberCreate';

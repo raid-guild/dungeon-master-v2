@@ -9,22 +9,17 @@ import {
   TabPanels,
   Tabs,
 } from '@raidguild/design-system';
-import { useAccounting, useMemberList } from '@raidguild/dm-hooks';
 import {
-  IMember,
-  ITokenBalanceLineItem,
-  IVaultTransaction,
-} from '@raidguild/dm-types';
-import {
-  exportToCsv,
-  formatDate,
-  REGEX_ETH_ADDRESS,
-} from '@raidguild/dm-utils';
+  useAccounting,
+  useFormattedData,
+  useMemberList,
+} from '@raidguild/dm-hooks';
+import { exportToCsv } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import Papa from 'papaparse';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import BalancesTable from '../components/BalancesTable';
 import SiteLayout from '../components/SiteLayout';
@@ -44,66 +39,12 @@ export const Accounting = () => {
 
   const { balances, spoils, transactions, tokenPrices } = data;
 
-  const members = useMemo(() => {
-    const memberArray = _.flatten(
-      _.get(memberData, 'pages')
-    ) as unknown as IMember[];
-    return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
-  }, [memberData]);
-
-  const withPrices = useCallback(
-    <T extends ITokenBalanceLineItem | IVaultTransaction>(items: T[]) =>
-      items.map((t) => {
-        const formattedDate = formatDate(t.date);
-        const tokenSymbol = t.tokenSymbol?.toLowerCase();
-        if (
-          tokenPrices[tokenSymbol] &&
-          tokenPrices[tokenSymbol][formattedDate]
-        ) {
-          return {
-            ...t,
-            priceConversion: tokenPrices[tokenSymbol][formattedDate],
-          };
-        }
-        if (tokenSymbol.includes('xdai')) {
-          return {
-            ...t,
-            priceConversion: 1,
-          };
-        }
-        return t;
-      }),
-    [tokenPrices]
-  );
-
-  const balancesWithPrices = useMemo(
-    () => withPrices(balances),
-    [balances, withPrices]
-  );
-
-  const transactionsWithPrices = useMemo(
-    () => withPrices(transactions),
-    [transactions, withPrices]
-  );
-
-  const transactionsWithPricesAndMembers = useMemo(
-    () =>
-      transactionsWithPrices.map((t) => {
-        const ethAddress = t.proposalApplicant.toLowerCase();
-        const m = members[ethAddress];
-        const memberLink = m?.ethAddress.match(REGEX_ETH_ADDRESS)
-          ? `/members/${ethAddress}`
-          : undefined;
-
-        return {
-          ...t,
-          memberLink,
-          memberName: m?.name,
-          memberEnsName: m?.ensName,
-        };
-      }),
-    [transactionsWithPrices, members]
-  );
+  const {
+    members,
+    balancesWithPrices,
+    transactionsWithPrices,
+    transactionsWithPricesAndMembers,
+  } = useFormattedData(memberData, balances, transactions, tokenPrices);
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {
