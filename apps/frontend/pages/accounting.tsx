@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import {
   Button,
   Flex,
@@ -9,6 +10,7 @@ import {
   Tabs,
 } from '@raidguild/design-system';
 import {
+  useAccountingV3,
   useAccountingV2,
   useFormattedData,
   useMemberList,
@@ -35,6 +37,7 @@ export const Accounting = () => {
   } = useAccountingV2({
     token,
   });
+  const { data: dataFromMolochV3 } = useAccountingV3();
   const { data: memberData } = useMemberList({
     token,
     limit: 1000,
