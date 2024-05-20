@@ -11,13 +11,13 @@ const transformTokenBalances = (tokenBalanceRes, safeAddress: string) => {
   return { safeAddress, tokenBalances: tokenBalanceRes, fiatTotal };
 };
 
-const listTokenBalances = async (safeAddress: string) => {
+const listTokenBalances = async ({ safeAddress }) => {
   try {
-    const res = await fetch(`${API_URL}/safes/${safeAddress}/balances/usd/`);
+    const res = await fetch(`${API_URL}/safes/${safeAddress}/balances/`);
     const data = await res.json();
     return { data: transformTokenBalances(data, safeAddress) };
   } catch (err) {
-    return { error: 'Error fetching token balances. Please try again.' };
+    return { error: `Error fetching token balances. Please try again. ${err}` };
   }
 };
 
@@ -25,15 +25,15 @@ const useAccountingV3 = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  console.log(data, 'data')
   useEffect(() => {
     const fetchData = async () => {
       const checksum = getAddress('0x181ebdb03cb4b54f4020622f1b0eacd67a8c63ac');
-      const response = await listTokenBalances(checksum);
-
+      const response = await listTokenBalances({ safeAddress: checksum });
       if (response.error) {
         setError(response.error);
       } else {
+        console.log(response.data);
         setData(response.data);
       }
 
