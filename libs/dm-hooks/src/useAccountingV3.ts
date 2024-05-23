@@ -21,6 +21,18 @@ const listTokenBalances = async ({ safeAddress }) => {
   }
 };
 
+const getSafeTransactionProposals = async ({ safeAddress }) => {
+  try {
+    const res = await fetch(`${API_URL}/safes/${safeAddress}/all-transactions/`);
+    const txData = await res.json();
+    console.log(txData, 'txData')
+    return { txData };
+  } catch (err) {
+    return { error: `Error fetching safe transactions. Please try again. ${err}` };
+  }
+
+}
+
 const useAccountingV3 = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,12 +41,13 @@ const useAccountingV3 = () => {
   useEffect(() => {
     const fetchData = async () => {
       const checksum = getAddress('0x181ebdb03cb4b54f4020622f1b0eacd67a8c63ac');
+      const txResponse = await getSafeTransactionProposals({ safeAddress: checksum });
       const response = await listTokenBalances({ safeAddress: checksum });
       if (response.error) {
         setError(response.error);
       } else {
         console.log(response.data);
-        setData(response.data);
+        setData({tokens: response.data, transactions: txResponse.txData});
       }
 
       setLoading(false);
