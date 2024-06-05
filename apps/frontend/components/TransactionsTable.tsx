@@ -21,7 +21,7 @@ const columnHelper = createColumnHelper<any>();
 
 const columns = [
   columnHelper.accessor('date', {
-    cell: (info) => info.getValue().toLocaleString(),
+    cell: (info) => info.getValue()?.toLocaleString(),
     header: 'Date',
     meta: {
       dataType: 'datetime',

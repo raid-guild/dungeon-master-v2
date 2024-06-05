@@ -8,12 +8,14 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tr,
 } from '@raidguild/design-system';
 import {
   useAccountingV3,
   useAccountingV2,
   useFormattedData,
   useMemberList,
+  useFormattedDataV3,
 } from '@raidguild/dm-hooks';
 import { exportToCsv } from '@raidguild/dm-utils';
 import _ from 'lodash';
@@ -37,7 +39,16 @@ export const Accounting = () => {
   } = useAccountingV2({
     token,
   });
+  console.log('dataFromMolochV2', dataFromMolochV2);
   const { data: dataFromMolochV3 } = useAccountingV3();
+  console.log('dataFromMolochV3', dataFromMolochV3);
+  // const {
+  //   balances: balancesV3,
+  //   spoils: spoilsV3,
+  //   transactions: transactionsV3,
+  //   tokenPrices: tokenPricesV3,
+  // } = dataFromMolochV3;
+
   const { data: memberData } = useMemberList({
     token,
     limit: 1000,
@@ -51,38 +62,58 @@ export const Accounting = () => {
     transactionsWithPrices,
     transactionsWithPricesAndMembers,
   } = useFormattedData(memberData, balances, transactions, tokenPrices);
+  console.log('balancesWithPrices', balancesWithPrices);
+  console.log(
+    'transactionsWithPricesAndMembers',
+    transactionsWithPricesAndMembers
+  );
+
+  const {
+    balancesWithPrices: balancesWithPricesV3,
+    transactionsWithPrices: transactionsWithPricesV3,
+    transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV3,
+  } = useFormattedDataV3({
+    balances: dataFromMolochV3?.tokens?.tokenBalances || [],
+    transactions: dataFromMolochV3?.transactions?.results || [],
+    tokenPrices: {},
+    members,
+  });
+  console.log(
+    'transactionsWithPricesAndMembersV3',
+    transactionsWithPricesAndMembersV3
+  );
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {
       let csvString = '';
       if (type === 'transactions') {
         const formattedTransactions = transactionsWithPrices.map((t) => ({
-          ['Date']: t.date,
-          ['Tx Explorer Link']: t.txExplorerLink,
-          ['Elapsed Days']: t.elapsedDays,
-          ['Type']: t.type,
-          ['Applicant']: t.proposalApplicant,
-          ['Applicant Member']:
+          Date: t.date,
+          'Tx Explorer Link': t.txExplorerLink,
+          'Elapsed Days': t.elapsedDays,
+          Type: t.type,
+          Applicant: t.proposalApplicant,
+          'Applicant Member':
             members[t.proposalApplicant.toLowerCase()]?.name || '-',
-          ['Shares']: t.proposalShares,
-          ['Loot']: t.proposalLoot,
-          ['Title']: t.proposalTitle,
-          ['Counterparty']: t.counterparty,
-          ['Counterparty Member']:
+          Shares: t.proposalShares,
+          Loot: t.proposalLoot,
+          Title: t.proposalTitle,
+          Counterparty: t.counterparty,
+          'Counterparty Member':
             members[t.counterparty.toLowerCase()]?.name || '-',
-          ['Token Symbol']: t.tokenSymbol,
-          ['Token Decimals']: t.tokenDecimals,
-          ['Token Address']: t.tokenAddress,
-          ['Inflow']: t.in,
-          ['Inflow USD']: t.priceConversion
+          'Token Symbol': t.tokenSymbol,
+          'Token Decimals': t.tokenDecimals,
+          'Token Address': t.tokenAddress,
+          Inflow: t.in,
+          'Inflow USD': t.priceConversion
             ? `$${(t.in * t.priceConversion).toLocaleString()}`
             : '$-',
-          ['Outflow']: t.out,
-          ['Outflow USD']: t.priceConversion
+          Outflow: t.out,
+          'Outflow USD': t.priceConversion
             ? `$${(t.out * t.priceConversion).toLocaleString()}`
             : '$-',
-          ['Balance']: t.balance,
-          ['Balance USD']: t.priceConversion
+          Balance: t.balance,
+          'Balance USD': t.priceConversion
             ? `$${(t.balance * t.priceConversion).toLocaleString()}`
             : '$-',
         }));
@@ -90,22 +121,22 @@ export const Accounting = () => {
       } else if (type === 'balances') {
         if (type === 'balances') {
           const formattedBalances = balancesWithPrices.map((b) => ({
-            ['Token']: b.tokenSymbol,
-            ['Tx Explorer Link']: b.tokenExplorerLink,
-            ['Inflow']: b.inflow.tokenValue,
-            ['Inflow USD']: b.priceConversion
+            Token: b.tokenSymbol,
+            'Tx Explorer Link': b.tokenExplorerLink,
+            Inflow: b.inflow.tokenValue,
+            'Inflow USD': b.priceConversion
               ? `$${(
                   Number(b.inflow.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
-            ['Outflow']: b.outflow.tokenValue,
-            ['Outflow USD']: b.priceConversion
+            Outflow: b.outflow.tokenValue,
+            'Outflow USD': b.priceConversion
               ? `$${(
                   Number(b.outflow.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
-            ['Balance']: b.closing.tokenValue,
-            ['Balance USD']: b.priceConversion
+            Balance: b.closing.tokenValue,
+            'Balance USD': b.priceConversion
               ? `$${(
                   Number(b.closing.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
@@ -115,12 +146,12 @@ export const Accounting = () => {
         }
       } else if (type === 'spoils') {
         const formattedSpoils = spoils.map((s) => ({
-          ['Date']: s.date,
-          ['Raid']: s.raidName,
+          Date: s.date,
+          Raid: s.raidName,
           // TODO: Get this dynamically from the subgraph
-          ['Token Symbol']: 'wxDAI',
-          ['To DAO Treasury']: `$${s.parentShare.toLocaleString()}`,
-          ['To Raid Party']: `$${s.childShare.toLocaleString()}`,
+          'Token Symbol': 'wxDAI',
+          'To DAO Treasury': `$${s.parentShare.toLocaleString()}`,
+          'To Raid Party': `$${s.childShare.toLocaleString()}`,
         }));
         csvString = Papa.unparse(formattedSpoils);
       }
@@ -189,10 +220,10 @@ export const Accounting = () => {
 
                 <TabPanels>
                   <TabPanel>
-                    <BalancesTable data={balancesWithPrices} />
+                    <BalancesTable data={balancesWithPricesV3} />
                   </TabPanel>
                   <TabPanel>
-                    <div>This is the placeholder for v3 balances data.</div>
+                    <BalancesTable data={balancesWithPrices} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>
@@ -229,11 +260,13 @@ export const Accounting = () => {
                 <TabPanels>
                   <TabPanel>
                     <TransactionsTable
-                      data={transactionsWithPricesAndMembers}
+                      data={transactionsWithPricesAndMembersV3}
                     />
                   </TabPanel>
                   <TabPanel>
-                    <div>This is the placeholder for v3 transactions data.</div>
+                    <TransactionsTable
+                      data={transactionsWithPricesAndMembers}
+                    />
                   </TabPanel>
                 </TabPanels>
               </Tabs>
