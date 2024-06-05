@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import { GraphQLClient } from 'graphql-request';
 import _ from 'lodash';
@@ -41,12 +42,27 @@ const listTokenBalances = async ({ safeAddress }) => {
 
 const getSafeTransactionProposals = async ({ safeAddress }) => {
   try {
-    // need to fetch all transactions (default limit is 20)
-    const res = await fetch(
-      `${API_URL}/safes/${safeAddress}/all-transactions/?limit=1000`
-    );
-    const txData = await res.json();
-    return { txData };
+    const limit = 100;
+    let offset = 0;
+    let allTxData = [];
+
+    let hasNext = true;
+    while (hasNext) {
+      const res = await fetch(
+        `${API_URL}/safes/${safeAddress}/all-transactions/?limit=${limit}&offset=${offset}`
+      );
+      const txData = await res.json();
+
+      allTxData = [...allTxData, ...txData.results];
+
+      if (txData.next) {
+        offset += limit;
+      } else {
+        hasNext = false;
+      }
+    }
+
+    return { txData: allTxData };
   } catch (err) {
     return {
       error: `Error fetching safe transactions. Please try again. ${err}`,
@@ -67,10 +83,11 @@ const useAccountingV3 = () => {
       const txResponse = await getSafeTransactionProposals({
         safeAddress: checksum,
       });
+      console.log('txResponse', txResponse);
       const tokenBalances = await listTokenBalances({ safeAddress: checksum });
       const proposals = [];
-      console.log('txResponse?.txData?.results', txResponse?.txData?.results);
-      txResponse?.txData?.results?.forEach(async (tx) => {
+      console.log('txResponse?.txData?.results', txResponse?.txData);
+      txResponse?.txData?.forEach(async (tx) => {
         try {
           const proposal: { proposals: any[] } = await v3client.request(`
           {
