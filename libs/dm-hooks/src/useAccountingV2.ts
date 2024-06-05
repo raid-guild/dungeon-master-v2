@@ -400,6 +400,11 @@ export const useAccountingV2 = ({ token }: { token: string }) => {
         const formattedData = await formatBalancesAsTransactions(
           data.pages[0].transactions
         );
+        console.log('data.pages[0].balances', data.pages[0].balances);
+        console.log(
+          'calculatedTokenBalances.getBalances()',
+          calculatedTokenBalances.getBalances()
+        );
         const tokenBalances =
           await mapMolochTokenBalancesToTokenBalanceLineItem(
             data.pages[0].balances,

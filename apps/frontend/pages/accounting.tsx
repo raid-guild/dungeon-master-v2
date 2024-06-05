@@ -58,15 +58,12 @@ export const Accounting = () => {
 
   const {
     members,
-    balancesWithPrices,
+    balancesWithPrices: balancesWithPricesV2,
     transactionsWithPrices,
     transactionsWithPricesAndMembers,
   } = useFormattedData(memberData, balances, transactions, tokenPrices);
-  console.log('balancesWithPrices', balancesWithPrices);
-  console.log(
-    'transactionsWithPricesAndMembers',
-    transactionsWithPricesAndMembers
-  );
+
+  console.log('balancesWithPricesV2', balancesWithPricesV2);
 
   const {
     balancesWithPrices: balancesWithPricesV3,
@@ -78,10 +75,8 @@ export const Accounting = () => {
     tokenPrices: {},
     members,
   });
-  console.log(
-    'transactionsWithPricesAndMembersV3',
-    transactionsWithPricesAndMembersV3
-  );
+
+  console.log('balancesWithPricesV3', balancesWithPricesV3);
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {
@@ -120,7 +115,7 @@ export const Accounting = () => {
         csvString = Papa.unparse(formattedTransactions);
       } else if (type === 'balances') {
         if (type === 'balances') {
-          const formattedBalances = balancesWithPrices.map((b) => ({
+          const formattedBalances = balancesWithPricesV2.map((b) => ({
             Token: b.tokenSymbol,
             'Tx Explorer Link': b.tokenExplorerLink,
             Inflow: b.inflow.tokenValue,
@@ -157,7 +152,7 @@ export const Accounting = () => {
       }
       exportToCsv(csvString, `raidguild-treasury-${type}`);
     },
-    [balancesWithPrices, members, spoils, transactionsWithPrices]
+    [balancesWithPricesV2, members, spoils, transactionsWithPrices]
   );
 
   return (
@@ -223,7 +218,7 @@ export const Accounting = () => {
                     <BalancesTable data={balancesWithPricesV3} />
                   </TabPanel>
                   <TabPanel>
-                    <BalancesTable data={balancesWithPrices} />
+                    <BalancesTable data={balancesWithPricesV2} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>

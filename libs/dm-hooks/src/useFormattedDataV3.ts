@@ -1,11 +1,43 @@
+/* eslint-disable no-param-reassign */
 import {
   IMappedTokenPrice,
   IMember,
   ITokenBalanceLineItem,
   IVaultTransaction,
 } from '@raidguild/dm-types';
-import { formatDate, REGEX_ETH_ADDRESS } from '@raidguild/dm-utils';
+import {
+  formatDate,
+  formatUnitsAsNumber,
+  REGEX_ETH_ADDRESS,
+} from '@raidguild/dm-utils';
 import { useCallback, useMemo } from 'react';
+
+function calculateTokenFlows(transactions) {
+  console.log('transactions', transactions);
+  return transactions?.reduce((tokenFlows, transaction) => {
+    const safeAddress = '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC';
+
+    transaction.transfers.forEach((transfer) => {
+      const tokenAddress = transfer.tokenInfo?.address;
+      const amount = parseFloat(transfer.value);
+
+      if (!tokenFlows[tokenAddress]) {
+        tokenFlows[tokenAddress] = {
+          inflow: 0,
+          outflow: 0,
+        };
+      }
+
+      if (transfer.to === safeAddress) {
+        tokenFlows[tokenAddress].inflow += amount;
+      } else if (transfer.from === safeAddress) {
+        tokenFlows[tokenAddress].outflow += amount;
+      }
+    });
+
+    return tokenFlows;
+  }, {});
+}
 
 const useFormattedDataV3 = ({
   balances,
@@ -19,6 +51,15 @@ const useFormattedDataV3 = ({
   members: Record<string, IMember>;
 }) => {
   console.log('balances', balances);
+  console.log('tokenPrices', tokenPrices);
+
+  const flows = useMemo(
+    () => calculateTokenFlows(transactions),
+    [transactions]
+  );
+
+  console.log('flows', flows);
+
   const withPrices = useCallback(
     // fix type
     (items: any[]) =>
@@ -26,22 +67,47 @@ const useFormattedDataV3 = ({
         if (!t) return t;
         const formattedDate = formatDate(t.date);
         const tokenSymbol = t.tokenSymbol?.toLowerCase();
+        const balance = {
+          inflow: {
+            tokenValue: formatUnitsAsNumber(
+              flows[t.tokenAddress]?.inflow || BigInt(0),
+              t.token?.decimals
+            ),
+          },
+          outflow: {
+            tokenValue: formatUnitsAsNumber(
+              flows[t.tokenAddress]?.outflow || BigInt(0),
+              t.token?.decimals
+            ),
+          },
+          closing: {
+            tokenValue: formatUnitsAsNumber(
+              t.balance || BigInt(0),
+              t.token?.decimals
+            ),
+          },
+        };
         if (
           tokenPrices[tokenSymbol] &&
           tokenPrices[tokenSymbol][formattedDate]
         ) {
           return {
             ...t,
+            ...balance,
             priceConversion: tokenPrices[tokenSymbol][formattedDate],
           };
         }
         if (tokenSymbol?.includes('xdai')) {
           return {
             ...t,
+            ...balance,
             priceConversion: 1,
           };
         }
-        return t;
+        return {
+          ...t,
+          ...balance,
+        };
       }),
     [tokenPrices]
   );

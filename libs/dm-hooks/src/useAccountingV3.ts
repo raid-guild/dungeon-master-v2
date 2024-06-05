@@ -41,8 +41,9 @@ const listTokenBalances = async ({ safeAddress }) => {
 
 const getSafeTransactionProposals = async ({ safeAddress }) => {
   try {
+    // need to fetch all transactions (default limit is 20)
     const res = await fetch(
-      `${API_URL}/safes/${safeAddress}/all-transactions/`
+      `${API_URL}/safes/${safeAddress}/all-transactions/?limit=1000`
     );
     const txData = await res.json();
     return { txData };
