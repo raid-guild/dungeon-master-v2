@@ -13,18 +13,17 @@ import {
 import { useCallback, useMemo } from 'react';
 
 function calculateTokenFlows(transactions) {
-  console.log('transactions', transactions);
   return transactions?.reduce((tokenFlows, transaction) => {
     const safeAddress = '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC';
 
     transaction.transfers.forEach((transfer) => {
       const tokenAddress = transfer.tokenInfo?.address;
-      const amount = parseFloat(transfer.value);
+      const amount = BigInt(transfer.value || 0);
 
       if (!tokenFlows[tokenAddress]) {
         tokenFlows[tokenAddress] = {
-          inflow: 0,
-          outflow: 0,
+          inflow: BigInt(0),
+          outflow: BigInt(0),
         };
       }
 
@@ -50,15 +49,10 @@ const useFormattedDataV3 = ({
   tokenPrices: IMappedTokenPrice;
   members: Record<string, IMember>;
 }) => {
-  console.log('balances', balances);
-  console.log('tokenPrices', tokenPrices);
-
   const flows = useMemo(
     () => calculateTokenFlows(transactions),
     [transactions]
   );
-
-  console.log('flows', flows);
 
   const withPrices = useCallback(
     // fix type
@@ -116,7 +110,6 @@ const useFormattedDataV3 = ({
     () => withPrices(balances),
     [balances, withPrices]
   );
-  console.log('balancesWithPrices', balancesWithPrices);
 
   const transactionsWithPrices = useMemo(
     () =>
