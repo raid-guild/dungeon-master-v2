@@ -22,8 +22,6 @@ const useFormattedData = (
     return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
   }, [memberData]);
 
-  console.log('tokenPrices', tokenPrices);
-
   const withPrices = useCallback(
     <T extends ITokenBalanceLineItem | IVaultTransaction>(items: T[]) =>
       items.map((t) => {
