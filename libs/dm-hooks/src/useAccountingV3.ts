@@ -1,8 +1,8 @@
 /* eslint-disable no-await-in-loop */
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { GraphQLClient } from 'graphql-request';
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
 import { getAddress } from 'viem';
 
 const graphUrl = (chainId: number = 4) =>
@@ -18,7 +18,6 @@ export const v3client = new GraphQLClient(
 const API_URL = 'https://safe-transaction-gnosis-chain.safe.global/api/v1';
 
 const transformTokenBalances = (tokenBalanceRes, safeAddress: string) => {
-  console.log('tokenBalanceRes', tokenBalanceRes);
   const fiatTotal = tokenBalanceRes.reduce(
     (sum: number, balance) => sum + Number(balance.balance),
     0
@@ -71,74 +70,76 @@ const getSafeTransactionProposals = async ({ safeAddress }) => {
 };
 
 const useAccountingV3 = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [members, setMembers] = useState(null);
+  const checksum = getAddress('0x181ebdb03cb4b54f4020622f1b0eacd67a8c63ac');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const checksum = getAddress('0x181ebdb03cb4b54f4020622f1b0eacd67a8c63ac');
-      console.log('checksum', checksum);
-      const txResponse = await getSafeTransactionProposals({
-        safeAddress: checksum,
-      });
-      console.log('txResponse', txResponse);
-      const tokenBalances = await listTokenBalances({ safeAddress: checksum });
-      const proposals = [];
-      console.log('txResponse?.txData?.results', txResponse?.txData);
-      txResponse?.txData?.forEach(async (tx) => {
-        try {
-          const proposal: { proposals: any[] } = await v3client.request(`
+  const { data: tokenBalances, error: tokenBalancesError } = useQuery(
+    ['tokenBalances', checksum],
+    () => listTokenBalances({ safeAddress: checksum })
+  );
+
+  const { data: txResponse, error: txResponseError } = useQuery(
+    ['transactions', checksum],
+    () => getSafeTransactionProposals({ safeAddress: checksum })
+  );
+
+  const proposalQueries =
+    txResponse?.txData?.map((tx) => ({
+      queryKey: ['proposal', tx.transactionHash],
+      queryFn: async () => {
+        const proposal: { proposals: any[] } = await v3client.request(`
+        {
+          proposals(where: { processTxHash: "${tx.transactionHash}"}) {
+            id
+            createdAt
+            createdBy
+            proposedBy
+            processTxHash
+            proposalType
+            description
+          }
+        }
+      `);
+        return proposal?.proposals[0];
+      },
+    })) || [];
+
+  const proposalsInfo = useQueries({ queries: proposalQueries });
+
+  const memberQueries =
+    proposalsInfo
+      ?.filter((proposalQuery) => proposalQuery.data)
+      ?.map((proposalQuery) => ({
+        queryKey: ['member', proposalQuery.data?.proposedBy],
+        queryFn: async () => {
+          const m: { members: any[] } = await v3client.request(`
           {
-            proposals(where: { processTxHash: "${tx.transactionHash}"}) {
+            members(where: { memberAddress: "${proposalQuery.data?.proposedBy}" }) {
               id
               createdAt
-              createdBy
-              proposedBy
-              processTxHash
-              proposalType
-              description
+              memberAddress
+              shares
+              loot
+              delegatingTo
+              delegateShares
             }
           }
         `);
-          const m: { members: any[] } = await v3client.request(`
-          members(where: { memberAddress: ${proposal?.proposals[0].proposedBy} }) {
-            id
-            createdAt
-            memberAddress
-            shares
-            loot
-            delegatingTo
-            delegateShares
-          }
-          `);
-          console.log('m', m);
-          setMembers(m.members[0]);
-          proposals.push({ proposal: proposal?.proposals[0] });
-        } catch {
-          console.log('error');
-        }
-      });
-      if (tokenBalances.error) {
-        setError(tokenBalances.error);
-      } else {
-        console.log(tokenBalances.data);
-        setData({
-          tokens: tokenBalances.data,
-          transactions: txResponse.txData,
-          proposalsInfo: proposals,
-          members,
-        });
-      }
+          return m.members[0];
+        },
+      })) || [];
 
-      setLoading(false);
-    };
+  const members = useQueries({ queries: memberQueries });
 
-    fetchData();
-  }, []);
+  const error = tokenBalancesError || txResponseError;
 
-  return { data, loading, error };
+  const data = {
+    tokens: tokenBalances?.data,
+    transactions: txResponse?.txData,
+    proposalsInfo: proposalsInfo?.map((query) => query.data),
+    members: members?.map((query) => query.data),
+  };
+
+  return { data, error };
 };
 
 export default useAccountingV3;
