@@ -8,7 +8,6 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Tr,
 } from '@raidguild/design-system';
 import {
   useAccountingV3,
@@ -54,11 +53,8 @@ export const Accounting = () => {
     transactionsWithPrices,
     transactionsWithPricesAndMembers,
   } = useFormattedData(memberData, balances, transactions, tokenPrices);
-  console.log(
-    'transactionsWithPricesAndMembers',
-    transactionsWithPricesAndMembers
-  );
 
+  console.log('dataFromMolochV3', dataFromMolochV3);
   const {
     balancesWithPrices: balancesWithPricesV3,
     transactionsWithPrices: transactionsWithPricesV3,
@@ -67,7 +63,8 @@ export const Accounting = () => {
     balances: dataFromMolochV3?.tokens?.tokenBalances || [],
     transactions: dataFromMolochV3?.transactions || [],
     tokenPrices: {},
-    members,
+    proposalsInfo: dataFromMolochV3?.proposalsInfo || {},
+    memberData,
   });
   console.log(
     'transactionsWithPricesAndMembersV3',

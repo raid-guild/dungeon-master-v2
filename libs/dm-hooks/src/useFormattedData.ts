@@ -56,7 +56,6 @@ const useFormattedData = (
     () => withPrices(transactions),
     [transactions, withPrices]
   );
-  console.log('transactionsWithPrices', transactionsWithPrices);
 
   const transactionsWithPricesAndMembers = useMemo(
     () =>

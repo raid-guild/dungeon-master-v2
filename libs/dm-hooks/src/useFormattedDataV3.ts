@@ -8,8 +8,11 @@ import {
 import {
   formatDate,
   formatUnitsAsNumber,
+  GUILD_GNOSIS_DAO_ADDRESS,
   REGEX_ETH_ADDRESS,
 } from '@raidguild/dm-utils';
+import { InfiniteData } from '@tanstack/react-query';
+import _ from 'lodash';
 import { useCallback, useMemo } from 'react';
 
 class CalculateTokenBalances {
@@ -95,17 +98,27 @@ const useFormattedDataV3 = ({
   balances,
   transactions,
   tokenPrices,
-  members,
+  memberData,
+  proposalsInfo,
 }: {
   balances: ITokenBalanceLineItem[];
   transactions: IVaultTransaction[];
   tokenPrices: IMappedTokenPrice;
-  members: Record<string, IMember>;
+  memberData: InfiniteData<IMember[][]>;
+  proposalsInfo: any;
 }) => {
   const flows = useMemo(
     () => calculateTokenFlows(transactions),
     [transactions]
   );
+
+  const members = useMemo(() => {
+    const memberArray = _.flatten(
+      _.get(memberData, 'pages')
+    ) as unknown as IMember[];
+    return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
+  }, [memberData]);
+  console.log('members', members);
 
   const withPrices = useCallback(
     (items: any[]) =>
@@ -162,6 +175,7 @@ const useFormattedDataV3 = ({
     () => withPrices(balances),
     [balances, withPrices]
   );
+  console.log('proposalsInfo', proposalsInfo);
 
   const transactionsWithPrices = useMemo(() => {
     const tokenBalances = new CalculateTokenBalances();
@@ -197,27 +211,36 @@ const useFormattedDataV3 = ({
           tokenBalances.incrementInflow(tokenAddress, inAmount);
           tokenBalances.incrementOutflow(tokenAddress, outAmount);
 
+          const proposal = proposalsInfo[t.txHash];
+          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`;
+          const proposalLink = proposal
+            ? `https://admin.daohaus.club/#/molochV3/0x64/${proposal.id.replace(
+                /-/g,
+                '/'
+              )}`
+            : '';
+
           return {
             balance: formatUnitsAsNumber(
               tokenBalances.getBalance(tokenAddress),
               tokenDecimals
             ),
-            counterparty: transfer?.to,
+            counterparty: transfer?.to, // gotta check
             date: new Date(t.executionDate),
             elapsedDays: undefined,
             in: formatUnitsAsNumber(inAmount, tokenDecimals),
             net: formatUnitsAsNumber(inAmount - outAmount, tokenDecimals),
             out: formatUnitsAsNumber(outAmount, tokenDecimals),
-            proposalApplicant: '',
-            proposalId: '',
-            proposalLink: '',
+            proposalApplicant: proposal?.proposedBy,
+            proposalId: proposal?.id,
+            txExplorerLink,
+            proposalLink,
             proposalLoot: undefined,
             proposalShares: undefined,
-            proposalTitle: '',
+            proposalTitle: proposal?.title,
             tokenAddress,
             tokenDecimals,
             tokenSymbol,
-            txExplorerLink: `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`,
             type: t.txType,
           };
         })
@@ -228,7 +251,7 @@ const useFormattedDataV3 = ({
   const transactionsWithPricesAndMembers = useMemo(
     () =>
       transactionsWithPrices.map((t) => {
-        const ethAddress = t.proposalApplicant?.toLowerCase();
+        const ethAddress = t.counterparty?.toLowerCase();
         const m = members[ethAddress];
         const memberLink = m?.ethAddress?.match(REGEX_ETH_ADDRESS)
           ? `/members/${ethAddress}`

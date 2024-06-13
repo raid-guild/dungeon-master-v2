@@ -96,6 +96,8 @@ const useAccountingV3 = () => {
             processTxHash
             proposalType
             description
+            title
+            txHash
           }
         }
       `);
@@ -104,6 +106,7 @@ const useAccountingV3 = () => {
     })) || [];
 
   const proposalsInfo = useQueries({ queries: proposalQueries });
+  console.log('proposalsInfo', proposalsInfo);
 
   const memberQueries =
     proposalsInfo
@@ -132,10 +135,24 @@ const useAccountingV3 = () => {
 
   const error = tokenBalancesError || txResponseError;
 
+  const proposalsInfoData = proposalsInfo
+    ?.filter((query) => query.data !== undefined)
+    ?.map((query) => query.data);
+  console.log('proposalsInfoData', proposalsInfoData);
+
+  const transformProposals = (proposalsInfoData || []).reduce(
+    (acc, proposal) => {
+      const { txHash, ...rest } = proposal;
+      acc[txHash] = rest;
+      return acc;
+    },
+    {}
+  );
+
   const data = {
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,
-    proposalsInfo: proposalsInfo?.map((query) => query.data),
+    proposalsInfo: transformProposals,
     members: members?.map((query) => query.data),
   };
 
