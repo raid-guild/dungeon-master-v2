@@ -82,13 +82,16 @@ const useAccountingV3 = () => {
     () => getSafeTransactionProposals({ safeAddress: checksum })
   );
 
+  console.log('txResponse?.txData', txResponse?.txData);
   const proposalQueries =
-    txResponse?.txData?.map((tx) => ({
-      queryKey: ['proposal', tx.transactionHash],
-      queryFn: async () => {
-        const proposal: { proposals: any[] } = await v3client.request(`
+    txResponse?.txData?.map((tx) => {
+      const txHash = tx.transactionHash || tx.txHash;
+      return {
+        queryKey: ['proposal', txHash],
+        queryFn: async () => {
+          const proposal: { proposals: any[] } = await v3client.request(`
         {
-          proposals(where: { processTxHash: "${tx.transactionHash}"}) {
+          proposals(where: { processTxHash: "${txHash}"}) {
             id
             createdAt
             createdBy
@@ -101,12 +104,17 @@ const useAccountingV3 = () => {
           }
         }
       `);
-        return proposal?.proposals[0];
-      },
-    })) || [];
+          return proposal?.proposals[0];
+        },
+      };
+    }) || [];
 
   const proposalsInfo = useQueries({ queries: proposalQueries });
-  console.log('proposalsInfo', proposalsInfo);
+
+  console.log(
+    'proposalsInfo',
+    proposalsInfo.map((query) => query.data)
+  );
 
   const memberQueries =
     proposalsInfo
@@ -138,12 +146,11 @@ const useAccountingV3 = () => {
   const proposalsInfoData = proposalsInfo
     ?.filter((query) => query.data !== undefined)
     ?.map((query) => query.data);
-  console.log('proposalsInfoData', proposalsInfoData);
 
   const transformProposals = (proposalsInfoData || []).reduce(
     (acc, proposal) => {
-      const { txHash, ...rest } = proposal;
-      acc[txHash] = rest;
+      const { processTxHash, ...rest } = proposal;
+      acc[processTxHash] = rest;
       return acc;
     },
     {}

@@ -175,7 +175,6 @@ const useFormattedDataV3 = ({
     () => withPrices(balances),
     [balances, withPrices]
   );
-  console.log('proposalsInfo', proposalsInfo);
 
   const transactionsWithPrices = useMemo(() => {
     const tokenBalances = new CalculateTokenBalances();
@@ -183,10 +182,10 @@ const useFormattedDataV3 = ({
     return withPrices(transactions)
       .sort((a, b) => a.executionDate.localeCompare(b.executionDate))
       .flatMap((t) =>
-        t.transfers.map((transfer) => {
+        t.transfers?.map((transfer) => {
           const tokenSymbol =
             transfer?.type === 'ETHER_TRANSFER'
-              ? 'ETH'
+              ? 'XDAI'
               : transfer?.tokenInfo?.symbol || '';
           const tokenDecimals =
             transfer?.type === 'ETHER_TRANSFER'
@@ -194,7 +193,7 @@ const useFormattedDataV3 = ({
               : transfer?.tokenInfo?.decimals || 0;
           const tokenAddress =
             transfer?.type === 'ETHER_TRANSFER'
-              ? 'ETH'
+              ? 'XDAI'
               : transfer?.tokenAddress || '';
 
           const inAmount =
@@ -211,7 +210,8 @@ const useFormattedDataV3 = ({
           tokenBalances.incrementInflow(tokenAddress, inAmount);
           tokenBalances.incrementOutflow(tokenAddress, outAmount);
 
-          const proposal = proposalsInfo[t.txHash];
+          const txHash = t.transactionHash || t.txHash;
+          const proposal = proposalsInfo[txHash];
           const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`;
           const proposalLink = proposal
             ? `https://admin.daohaus.club/#/molochV3/0x64/${proposal.id.replace(
