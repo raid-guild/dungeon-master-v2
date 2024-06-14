@@ -8,7 +8,6 @@ import {
 import {
   formatDate,
   formatUnitsAsNumber,
-  GUILD_GNOSIS_DAO_ADDRESS,
   REGEX_ETH_ADDRESS,
 } from '@raidguild/dm-utils';
 import { InfiniteData } from '@tanstack/react-query';
@@ -118,7 +117,6 @@ const useFormattedDataV3 = ({
     ) as unknown as IMember[];
     return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
   }, [memberData]);
-  console.log('members', members);
 
   const withPrices = useCallback(
     (items: any[]) =>
@@ -220,6 +218,14 @@ const useFormattedDataV3 = ({
               )}`
             : '';
 
+          let txType = 'proposal';
+          if (!proposal) {
+            txType =
+              transfer.to === '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC'
+                ? 'spoils'
+                : 'ragequit';
+          }
+
           return {
             balance: formatUnitsAsNumber(
               tokenBalances.getBalance(tokenAddress),
@@ -241,12 +247,12 @@ const useFormattedDataV3 = ({
             tokenAddress,
             tokenDecimals,
             tokenSymbol,
-            type: t.txType,
+            type: txType,
           };
         })
       )
       .reverse();
-  }, [transactions, withPrices]);
+  }, [transactions, withPrices, proposalsInfo]);
 
   const transactionsWithPricesAndMembers = useMemo(
     () =>
