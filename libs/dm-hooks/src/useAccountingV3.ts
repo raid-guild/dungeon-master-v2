@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+import { GNOSIS_SAFE_ADDRESS } from '@raidguild/dm-utils';
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { GraphQLClient } from 'graphql-request';
@@ -6,7 +7,10 @@ import _ from 'lodash';
 import { getAddress } from 'viem';
 
 const graphUrl = (chainId: number = 4) =>
-  `https://api.thegraph.com/subgraphs/name/${NETWORK_CONFIG[chainId].SUBGRAPH}`;
+  `https://api.thegraph.com/subgraphs/name/${_.get(NETWORK_CONFIG, [
+    chainId,
+    'SUBGRAPH',
+  ])}`;
 
 export const SUPPORTED_NETWORKS = _.map(_.keys(NETWORK_CONFIG), _.toNumber);
 
@@ -18,14 +22,15 @@ export const v3client = new GraphQLClient(
 const API_URL = 'https://safe-transaction-gnosis-chain.safe.global/api/v1';
 
 const transformTokenBalances = (tokenBalanceRes, safeAddress: string) => {
-  const fiatTotal = tokenBalanceRes.reduce(
+  const fiatTotal = _.reduce(
+    tokenBalanceRes,
     (sum: number, balance) => sum + Number(balance.balance),
     0
   );
   return { safeAddress, tokenBalances: tokenBalanceRes, fiatTotal };
 };
 
-const listTokenBalances = async ({ safeAddress }) => {
+const listTokenBalances = async ({ safeAddress }: { safeAddress: string }) => {
   try {
     const res = await fetch(`${API_URL}/safes/${safeAddress}/balances/`);
     const data = await res.json();
@@ -39,7 +44,11 @@ const listTokenBalances = async ({ safeAddress }) => {
   }
 };
 
-const getSafeTransactionProposals = async ({ safeAddress }) => {
+const getSafeTransactionProposals = async ({
+  safeAddress,
+}: {
+  safeAddress: string;
+}) => {
   try {
     const limit = 100;
     let offset = 0;
@@ -51,14 +60,10 @@ const getSafeTransactionProposals = async ({ safeAddress }) => {
         `${API_URL}/safes/${safeAddress}/all-transactions/?limit=${limit}&offset=${offset}`
       );
       const txData = await res.json();
+      allTxData = _.concat(allTxData, txData.results);
 
-      allTxData = [...allTxData, ...txData.results];
-
-      if (txData.next) {
-        offset += limit;
-      } else {
-        hasNext = false;
-      }
+      hasNext = !!txData.next;
+      if (hasNext) offset += limit;
     }
 
     return { txData: allTxData };
@@ -70,7 +75,7 @@ const getSafeTransactionProposals = async ({ safeAddress }) => {
 };
 
 const useAccountingV3 = () => {
-  const checksum = getAddress('0x181ebdb03cb4b54f4020622f1b0eacd67a8c63ac');
+  const checksum = getAddress(GNOSIS_SAFE_ADDRESS);
 
   const { data: tokenBalances, error: tokenBalancesError } = useQuery(
     ['tokenBalances', checksum],
@@ -82,85 +87,63 @@ const useAccountingV3 = () => {
     () => getSafeTransactionProposals({ safeAddress: checksum })
   );
 
-  console.log('txResponse?.txData', txResponse?.txData);
   const proposalQueries =
-    txResponse?.txData?.map((tx) => {
+    _.map(txResponse?.txData, (tx) => {
       const txHash = tx.transactionHash || tx.txHash;
       return {
         queryKey: ['proposal', txHash],
         queryFn: async () => {
-          const proposal: { proposals: any[] } = await v3client.request(`
-        {
-          proposals(where: { processTxHash: "${txHash}"}) {
-            id
-            createdAt
-            createdBy
-            proposedBy
-            processTxHash
-            proposalType
-            description
-            title
-            txHash
+          try {
+            const proposal: { proposals: any[] } = await v3client.request(`
+            {
+              proposals(where: { processTxHash: "${txHash}"}) {
+                id
+                createdAt
+                createdBy
+                proposedBy
+                processTxHash
+                proposalType
+                description
+                title
+                txHash
+              }
+            }
+          `);
+            if (!_.size(proposal.proposals)) {
+              return null;
+            }
+            return _.first(proposal.proposals) || null;
+          } catch (error) {
+            return null;
           }
-        }
-      `);
-          return proposal?.proposals[0];
+        },
+        onError: (error) => {
+          console.error(
+            `Error in query proposal with txHash: ${txHash}`,
+            error
+          );
         },
       };
     }) || [];
 
   const proposalsInfo = useQueries({ queries: proposalQueries });
 
-  console.log(
-    'proposalsInfo',
-    proposalsInfo.map((query) => query.data)
-  );
-
-  const memberQueries =
-    proposalsInfo
-      ?.filter((proposalQuery) => proposalQuery.data)
-      ?.map((proposalQuery) => ({
-        queryKey: ['member', proposalQuery.data?.proposedBy],
-        queryFn: async () => {
-          const m: { members: any[] } = await v3client.request(`
-          {
-            members(where: { memberAddress: "${proposalQuery.data?.proposedBy}" }) {
-              id
-              createdAt
-              memberAddress
-              shares
-              loot
-              delegatingTo
-              delegateShares
-            }
-          }
-        `);
-          return m.members[0];
-        },
-      })) || [];
-
-  const members = useQueries({ queries: memberQueries });
-
   const error = tokenBalancesError || txResponseError;
 
-  const proposalsInfoData = proposalsInfo
-    ?.filter((query) => query.data !== undefined)
-    ?.map((query) => query.data);
-
-  const transformProposals = (proposalsInfoData || []).reduce(
-    (acc, proposal) => {
+  const transformProposals = _.chain(proposalsInfo)
+    .filter((query) => query.data)
+    .map((query) => query.data)
+    .reduce((acc, proposal) => {
       const { processTxHash, ...rest } = proposal;
       acc[processTxHash] = rest;
       return acc;
-    },
-    {}
-  );
+    }, {})
+    .value();
 
   const data = {
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,
     proposalsInfo: transformProposals,
-    members: members?.map((query) => query.data),
   };
 
   return { data, error };

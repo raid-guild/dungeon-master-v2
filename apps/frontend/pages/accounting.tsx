@@ -54,10 +54,9 @@ export const Accounting = () => {
     transactionsWithPricesAndMembers,
   } = useFormattedData(memberData, balances, transactions, tokenPrices);
 
-  console.log('dataFromMolochV3', dataFromMolochV3);
   const {
     balancesWithPrices: balancesWithPricesV3,
-    transactionsWithPrices: transactionsWithPricesV3,
+    transactionsWithPrices: transactionsWithPricesV3, // used for export
     transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV3,
   } = useFormattedDataV3({
     balances: dataFromMolochV3?.tokens?.tokenBalances || [],
@@ -66,10 +65,6 @@ export const Accounting = () => {
     proposalsInfo: dataFromMolochV3?.proposalsInfo || {},
     memberData,
   });
-  console.log(
-    'transactionsWithPricesAndMembersV3',
-    transactionsWithPricesAndMembersV3
-  );
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {

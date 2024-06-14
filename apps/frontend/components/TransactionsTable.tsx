@@ -1,5 +1,5 @@
 import { Link, Tooltip } from '@raidguild/design-system';
-import { IVaultTransaction } from '@raidguild/dm-types';
+import { IVaultTransaction, IVaultTransactionV2 } from '@raidguild/dm-types';
 import {
   formatNumber,
   minMaxDateFilter,
@@ -14,7 +14,7 @@ import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 
 interface TransactionsTableProps {
-  data: IVaultTransaction[];
+  data: IVaultTransaction[] | IVaultTransactionV2[];
 }
 
 const columnHelper = createColumnHelper<any>();

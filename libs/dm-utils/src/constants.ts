@@ -293,6 +293,8 @@ export const GUILD_CLASS_DISPLAY = {
 export const GUILD_GNOSIS_DAO_ADDRESS =
   '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
 
+export const GNOSIS_SAFE_ADDRESS = '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC';
+
 export const SIDEBAR_ACTION_STATES = {
   none: 'NONE',
   select: 'SELECT',

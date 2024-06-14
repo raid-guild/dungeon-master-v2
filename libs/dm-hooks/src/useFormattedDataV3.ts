@@ -3,33 +3,27 @@ import {
   IMappedTokenPrice,
   IMember,
   ITokenBalanceLineItem,
-  IVaultTransaction,
+  IVaultTransactionV2,
 } from '@raidguild/dm-types';
 import {
   formatDate,
   formatUnitsAsNumber,
+  GNOSIS_SAFE_ADDRESS,
   REGEX_ETH_ADDRESS,
 } from '@raidguild/dm-utils';
 import { InfiniteData } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useCallback, useMemo } from 'react';
 
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
 class CalculateTokenBalances {
   calculatedTokenBalances: Record<
     string,
     { inflow: bigint; outflow: bigint; balance: bigint }
-  >;
+  > = {};
 
-  constructor() {
-    this.calculatedTokenBalances = {};
-  }
-
-  getBalance(tokenAddress: string) {
-    this.initTokenBalance(tokenAddress);
-    return this.calculatedTokenBalances[tokenAddress].balance;
-  }
-
-  initTokenBalance(tokenAddress: string) {
+  private initTokenBalance(tokenAddress: string) {
     if (!(tokenAddress in this.calculatedTokenBalances)) {
       this.calculatedTokenBalances[tokenAddress] = {
         inflow: BigInt(0),
@@ -42,21 +36,20 @@ class CalculateTokenBalances {
   incrementInflow(tokenAddress: string, inValue: bigint) {
     this.initTokenBalance(tokenAddress);
     const tokenStats = this.calculatedTokenBalances[tokenAddress];
-    this.calculatedTokenBalances[tokenAddress] = {
-      ...tokenStats,
-      inflow: tokenStats.inflow + inValue,
-      balance: tokenStats.balance + inValue,
-    };
+    tokenStats.inflow += inValue;
+    tokenStats.balance += inValue;
   }
 
   incrementOutflow(tokenAddress: string, outValue: bigint) {
     this.initTokenBalance(tokenAddress);
     const tokenStats = this.calculatedTokenBalances[tokenAddress];
-    this.calculatedTokenBalances[tokenAddress] = {
-      ...tokenStats,
-      outflow: tokenStats.outflow + outValue,
-      balance: tokenStats.balance - outValue,
-    };
+    tokenStats.outflow += outValue;
+    tokenStats.balance -= outValue;
+  }
+
+  getBalance(tokenAddress: string) {
+    this.initTokenBalance(tokenAddress);
+    return this.calculatedTokenBalances[tokenAddress].balance;
   }
 
   getBalances() {
@@ -64,27 +57,20 @@ class CalculateTokenBalances {
   }
 }
 
-function calculateTokenFlows(transactions) {
+function calculateTokenFlows(transactions: IVaultTransactionV2[]) {
   const tokenBalances = new CalculateTokenBalances();
 
-  // Sort transactions by executionDate in ascending order
-  const sortedTransactions = transactions.sort((a, b) =>
-    a.executionDate.localeCompare(b.executionDate)
-  );
-
-  sortedTransactions.forEach((transaction) => {
-    const safeAddress = '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC';
-
-    transaction.transfers.forEach((transfer) => {
+  _.sortBy(transactions, 'executionDate').forEach((transaction) => {
+    _.forEach(transaction?.transfers, (transfer) => {
       const tokenAddress =
         transfer.type === 'ETHER_TRANSFER'
           ? 'ETH'
-          : transfer.tokenInfo?.address;
+          : transfer.tokenInfo?.address || '';
       const amount = BigInt(transfer.value || 0);
 
-      if (transfer.to === safeAddress) {
+      if (transfer.to === GNOSIS_SAFE_ADDRESS) {
         tokenBalances.incrementInflow(tokenAddress, amount);
-      } else if (transfer.from === safeAddress) {
+      } else if (transfer.from === GNOSIS_SAFE_ADDRESS) {
         tokenBalances.incrementOutflow(tokenAddress, amount);
       }
     });
@@ -101,10 +87,10 @@ const useFormattedDataV3 = ({
   proposalsInfo,
 }: {
   balances: ITokenBalanceLineItem[];
-  transactions: IVaultTransaction[];
+  transactions: IVaultTransactionV2[];
   tokenPrices: IMappedTokenPrice;
   memberData: InfiniteData<IMember[][]>;
-  proposalsInfo: any;
+  proposalsInfo: Record<string, any>;
 }) => {
   const flows = useMemo(
     () => calculateTokenFlows(transactions),
@@ -120,50 +106,38 @@ const useFormattedDataV3 = ({
 
   const withPrices = useCallback(
     (items: any[]) =>
-      (items || []).map((t) => {
+      _.map(items, (t) => {
         if (!t) return t;
         const formattedDate = formatDate(t.date);
-        const tokenSymbol = t.tokenSymbol?.toLowerCase();
+        const tokenSymbol = _.lowerCase(t.tokenSymbol);
         const balance = {
           inflow: {
             tokenValue: formatUnitsAsNumber(
-              flows[t.tokenAddress]?.inflow || BigInt(0),
-              t.token?.decimals
+              _.get(flows, [t.tokenAddress, 'inflow'], BigInt(0)),
+              _.get(t, ['token', 'decimals'])
             ),
           },
           outflow: {
             tokenValue: formatUnitsAsNumber(
-              flows[t.tokenAddress]?.outflow || BigInt(0),
-              t.token?.decimals
+              _.get(flows, [t.tokenAddress, 'outflow'], BigInt(0)),
+              _.get(t, ['token', 'decimals'])
             ),
           },
           closing: {
             tokenValue: formatUnitsAsNumber(
-              flows[t.tokenAddress]?.balance || BigInt(0),
-              t.token?.decimals
+              _.get(flows, [t.tokenAddress, 'balance'], BigInt(0)),
+              _.get(t, ['token', 'decimals'])
             ),
           },
         };
-        if (
-          tokenPrices[tokenSymbol] &&
-          tokenPrices[tokenSymbol][formattedDate]
-        ) {
-          return {
-            ...t,
-            ...balance,
-            priceConversion: tokenPrices[tokenSymbol][formattedDate],
-          };
-        }
-        if (tokenSymbol?.includes('xdai')) {
-          return {
-            ...t,
-            ...balance,
-            priceConversion: 1,
-          };
-        }
+
+        const priceConversion =
+          _.get(tokenPrices, [tokenSymbol, formattedDate]) ||
+          (_.includes(tokenSymbol, 'xdai') ? 1 : undefined);
         return {
           ...t,
           ...balance,
+          priceConversion,
         };
       }),
     [tokenPrices, flows]
@@ -177,73 +151,79 @@ const useFormattedDataV3 = ({
   const transactionsWithPrices = useMemo(() => {
     const tokenBalances = new CalculateTokenBalances();
 
-    return withPrices(transactions)
-      .sort((a, b) => a.executionDate.localeCompare(b.executionDate))
+    return _.chain(withPrices(transactions))
+      .sortBy('executionDate')
       .flatMap((t) =>
-        t.transfers?.map((transfer) => {
+        _.map(t.transfers, (transfer) => {
           const tokenSymbol =
-            transfer?.type === 'ETHER_TRANSFER'
+            transfer.type === 'ETHER_TRANSFER'
               ? 'XDAI'
-              : transfer?.tokenInfo?.symbol || '';
+              : _.get(transfer, 'tokenInfo.symbol', '');
           const tokenDecimals =
-            transfer?.type === 'ETHER_TRANSFER'
+            transfer.type === 'ETHER_TRANSFER'
               ? 18
-              : transfer?.tokenInfo?.decimals || 0;
+              : _.get(transfer, 'tokenInfo.decimals', 0);
           const tokenAddress =
-            transfer?.type === 'ETHER_TRANSFER'
+            transfer.type === 'ETHER_TRANSFER'
               ? 'XDAI'
-              : transfer?.tokenAddress || '';
+              : _.get(transfer, 'tokenAddress', '');
 
           const inAmount =
-            transfer?.to === '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC' &&
-            transfer?.value !== null
+            transfer.to === GNOSIS_SAFE_ADDRESS && transfer.value !== null
               ? BigInt(transfer.value)
               : BigInt(0);
           const outAmount =
-            transfer?.from === '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC' &&
-            transfer?.value !== null
+            transfer.from === GNOSIS_SAFE_ADDRESS && transfer.value !== null
               ? BigInt(transfer.value)
               : BigInt(0);
 
           tokenBalances.incrementInflow(tokenAddress, inAmount);
           tokenBalances.incrementOutflow(tokenAddress, outAmount);
 
-          const txHash = t.transactionHash || t.txHash;
+          const txHash = _.get(t, 'transactionHash', t.txHash);
           const proposal = proposalsInfo[txHash];
           const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`;
           const proposalLink = proposal
-            ? `https://admin.daohaus.club/#/molochV3/0x64/${proposal.id.replace(
+            ? `https://admin.daohaus.club/#/molochV3/0x64/${_.replace(
+                proposal.id,
                 /-/g,
                 '/'
               )}`
             : '';
-
-          let txType = 'proposal';
-          if (!proposal) {
-            txType =
-              transfer.to === '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC'
-                ? 'spoils'
-                : 'ragequit';
+          let txType;
+          if (proposal) {
+            txType = 'proposal';
+          } else if (transfer.to === GNOSIS_SAFE_ADDRESS) {
+            txType = 'spoils';
+          } else {
+            txType = 'ragequit';
           }
 
+          const net = formatUnitsAsNumber(inAmount - outAmount, tokenDecimals);
+
+          const elapsedDays =
+            net > 0
+              ? Math.floor(
+                  (Date.now() - t.executionDate) / MILLISECONDS_PER_DAY
+                )
+              : undefined;
+
           return {
+            elapsedDays,
+            date: new Date(t.executionDate),
             balance: formatUnitsAsNumber(
               tokenBalances.getBalance(tokenAddress),
               tokenDecimals
             ),
-            counterparty: transfer?.to, // gotta check
-            date: new Date(t.executionDate),
-            elapsedDays: undefined,
+            counterparty: transfer.to,
             in: formatUnitsAsNumber(inAmount, tokenDecimals),
-            net: formatUnitsAsNumber(inAmount - outAmount, tokenDecimals),
             out: formatUnitsAsNumber(outAmount, tokenDecimals),
-            proposalApplicant: proposal?.proposedBy,
-            proposalId: proposal?.id,
+            net,
+            proposalApplicant: _.get(proposal, 'proposedBy'),
+            proposalId: _.get(proposal, 'id'),
             txExplorerLink,
             proposalLink,
-            proposalLoot: undefined,
-            proposalShares: undefined,
-            proposalTitle: proposal?.title,
+            proposalTitle: _.get(proposal, 'title'),
             tokenAddress,
             tokenDecimals,
             tokenSymbol,
@@ -251,23 +231,24 @@ const useFormattedDataV3 = ({
           };
         })
       )
-      .reverse();
+      .reverse()
+      .value();
   }, [transactions, withPrices, proposalsInfo]);
 
   const transactionsWithPricesAndMembers = useMemo(
     () =>
-      transactionsWithPrices.map((t) => {
-        const ethAddress = t.counterparty?.toLowerCase();
-        const m = members[ethAddress];
-        const memberLink = m?.ethAddress?.match(REGEX_ETH_ADDRESS)
+      _.map(transactionsWithPrices, (t) => {
+        const ethAddress = _.get(t, 'counterparty').toLowerCase();
+        const member = _.get(members, ethAddress);
+        const memberLink = _.get(member, 'ethAddress')?.match(REGEX_ETH_ADDRESS)
           ? `/members/${ethAddress}`
           : undefined;
 
         return {
           ...t,
           memberLink,
-          memberEnsName: m?.ensName,
-          memberName: m?.name,
+          memberEnsName: _.get(member, 'ensName'),
+          memberName: _.get(member, 'name'),
         };
       }),
     [transactionsWithPrices, members]
