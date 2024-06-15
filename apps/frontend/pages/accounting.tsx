@@ -21,7 +21,7 @@ import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import Papa from 'papaparse';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import BalancesTable from '../components/BalancesTable';
 import SiteLayout from '../components/SiteLayout';
@@ -30,6 +30,9 @@ import TransactionsTable from '../components/TransactionsTable';
 
 export const Accounting = () => {
   const { data: session } = useSession();
+  const [isV3, setIsV3] = useState(true);
+  console.log('isV3', isV3);
+
   const token = _.get(session, 'token');
   const {
     data: dataFromMolochV2,
@@ -70,7 +73,9 @@ export const Accounting = () => {
     (type: 'transactions' | 'balances' | 'spoils') => {
       let csvString = '';
       if (type === 'transactions') {
-        const formattedTransactions = transactionsWithPrices.map((t) => ({
+        const formattedTransactions = (
+          isV3 ? transactionsWithPricesV3 : transactionsWithPrices
+        ).map((t) => ({
           Date: t.date,
           'Tx Explorer Link': t.txExplorerLink,
           'Elapsed Days': t.elapsedDays,
@@ -103,7 +108,9 @@ export const Accounting = () => {
         csvString = Papa.unparse(formattedTransactions);
       } else if (type === 'balances') {
         if (type === 'balances') {
-          const formattedBalances = balancesWithPricesV2.map((b) => ({
+          const formattedBalances = (
+            isV3 ? balancesWithPricesV3 : balancesWithPricesV2
+          ).map((b) => ({
             Token: b.tokenSymbol,
             'Tx Explorer Link': b.tokenExplorerLink,
             Inflow: b.inflow.tokenValue,
@@ -140,7 +147,15 @@ export const Accounting = () => {
       }
       exportToCsv(csvString, `raidguild-treasury-${type}`);
     },
-    [balancesWithPricesV2, members, spoils, transactionsWithPrices]
+    [
+      balancesWithPricesV2,
+      balancesWithPricesV3,
+      isV3,
+      members,
+      spoils,
+      transactionsWithPrices,
+      transactionsWithPricesV3,
+    ]
   );
 
   return (
@@ -178,6 +193,10 @@ export const Accounting = () => {
                 colorScheme='whiteAlpha'
                 variant='unstyled'
                 defaultIndex={0}
+                onChange={(index) => {
+                  if (index === 0) setIsV3(true);
+                  else setIsV3(false);
+                }}
               >
                 <Flex
                   alignItems='right'
@@ -217,6 +236,10 @@ export const Accounting = () => {
                 colorScheme='whiteAlpha'
                 variant='unstyled'
                 defaultIndex={0}
+                onChange={(index) => {
+                  if (index === 0) setIsV3(true);
+                  else setIsV3(false);
+                }}
               >
                 <Flex
                   alignItems='right'

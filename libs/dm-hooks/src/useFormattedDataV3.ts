@@ -109,7 +109,7 @@ const useFormattedDataV3 = ({
       _.map(items, (t) => {
         if (!t) return t;
         const formattedDate = formatDate(t.date);
-        const tokenSymbol = _.lowerCase(t.tokenSymbol);
+        const tokenSymbol = _.lowerCase(t.token?.symbol);
         const balance = {
           inflow: {
             tokenValue: formatUnitsAsNumber(
@@ -134,10 +134,14 @@ const useFormattedDataV3 = ({
         const priceConversion =
           _.get(tokenPrices, [tokenSymbol, formattedDate]) ||
           (_.includes(tokenSymbol, 'xdai') ? 1 : undefined);
+
         return {
           ...t,
           ...balance,
+          tokenSymbol,
           priceConversion,
+          date: new Date(),
+          tokenExplorerLink: `https://blockscout.com/xdai/mainnet/address/${t.tokenAddress}`,
         };
       }),
     [tokenPrices, flows]
@@ -180,9 +184,9 @@ const useFormattedDataV3 = ({
           tokenBalances.incrementInflow(tokenAddress, inAmount);
           tokenBalances.incrementOutflow(tokenAddress, outAmount);
 
+          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`;
           const txHash = _.get(t, 'transactionHash', t.txHash);
           const proposal = proposalsInfo[txHash];
-          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`;
           const proposalLink = proposal
             ? `https://admin.daohaus.club/#/molochV3/0x64/${_.replace(
                 proposal.id,
@@ -219,11 +223,13 @@ const useFormattedDataV3 = ({
             in: formatUnitsAsNumber(inAmount, tokenDecimals),
             out: formatUnitsAsNumber(outAmount, tokenDecimals),
             net,
-            proposalApplicant: _.get(proposal, 'proposedBy'),
+            proposalApplicant: _.get(proposal, 'createdBy', ''),
             proposalId: _.get(proposal, 'id'),
             txExplorerLink,
             proposalLink,
             proposalTitle: _.get(proposal, 'title'),
+            proposalShares: undefined, // ??
+            proposalLoot: undefined, // ??
             tokenAddress,
             tokenDecimals,
             tokenSymbol,
