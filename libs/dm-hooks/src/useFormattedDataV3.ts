@@ -120,6 +120,7 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
         };
 
         const priceConversion = _.includes(tokenSymbol, 'xdai') ? 1 : undefined;
+        console.log('priceConversion', priceConversion);
 
         return {
           ...t,
@@ -158,6 +159,10 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
             transfer.type === 'ETHER_TRANSFER'
               ? 'XDAI'
               : _.get(transfer, 'tokenAddress', '');
+
+          const priceConversion = _.includes(tokenSymbol.toLowerCase(), 'xdai')
+            ? 1
+            : undefined;
 
           const inAmount =
             transfer.to === GNOSIS_SAFE_ADDRESS && transfer.value !== null
@@ -226,6 +231,7 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
             tokenAddress,
             tokenDecimals,
             tokenSymbol,
+            priceConversion,
             type: txType,
           };
         })
