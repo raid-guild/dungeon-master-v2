@@ -4,7 +4,7 @@ import { RankingInfo, rankings } from '@tanstack/match-sorter-utils';
 import { CellContext } from '@tanstack/react-table';
 import { formatUnits } from 'viem';
 
-const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;
+import { DAY_MILLISECONDS } from './constants';
 
 export const exportToCsv = (csvString: string, fileName: string) => {
   const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });

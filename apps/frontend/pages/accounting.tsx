@@ -10,7 +10,6 @@ import {
   Tabs,
 } from '@raidguild/design-system';
 import {
-  useAccountingV3,
   useAccountingV2,
   useFormattedData,
   useMemberList,
@@ -31,7 +30,6 @@ import TransactionsTable from '../components/TransactionsTable';
 export const Accounting = () => {
   const { data: session } = useSession();
   const [isV3, setIsV3] = useState(true);
-  console.log('isV3', isV3);
 
   const token = _.get(session, 'token');
   const {
@@ -41,7 +39,6 @@ export const Accounting = () => {
   } = useAccountingV2({
     token,
   });
-  const { data: dataFromMolochV3 } = useAccountingV3();
 
   const { data: memberData } = useMemberList({
     token,
@@ -59,15 +56,9 @@ export const Accounting = () => {
 
   const {
     balancesWithPrices: balancesWithPricesV3,
-    transactionsWithPrices: transactionsWithPricesV3, // used for export
+    transactionsWithPrices: transactionsWithPricesV3,
     transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV3,
-  } = useFormattedDataV3({
-    balances: dataFromMolochV3?.tokens?.tokenBalances || [],
-    transactions: dataFromMolochV3?.transactions || [],
-    tokenPrices: {},
-    proposalsInfo: dataFromMolochV3?.proposalsInfo || {},
-    memberData,
-  });
+  } = useFormattedDataV3(memberData);
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {

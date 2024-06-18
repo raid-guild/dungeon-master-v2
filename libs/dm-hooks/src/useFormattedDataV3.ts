@@ -1,12 +1,7 @@
 /* eslint-disable no-param-reassign */
+import { IMember, IVaultTransactionV2 } from '@raidguild/dm-types';
 import {
-  IMappedTokenPrice,
-  IMember,
-  ITokenBalanceLineItem,
-  IVaultTransactionV2,
-} from '@raidguild/dm-types';
-import {
-  formatDate,
+  DAY_MILLISECONDS,
   formatUnitsAsNumber,
   GNOSIS_SAFE_ADDRESS,
   REGEX_ETH_ADDRESS,
@@ -15,7 +10,7 @@ import { InfiniteData } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useCallback, useMemo } from 'react';
 
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+import useAccountingV3 from './useAccountingV3';
 
 class CalculateTokenBalances {
   calculatedTokenBalances: Record<
@@ -79,19 +74,13 @@ function calculateTokenFlows(transactions: IVaultTransactionV2[]) {
   return tokenBalances.getBalances();
 }
 
-const useFormattedDataV3 = ({
-  balances,
-  transactions,
-  tokenPrices,
-  memberData,
-  proposalsInfo,
-}: {
-  balances: ITokenBalanceLineItem[];
-  transactions: IVaultTransactionV2[];
-  tokenPrices: IMappedTokenPrice;
-  memberData: InfiniteData<IMember[][]>;
-  proposalsInfo: Record<string, any>;
-}) => {
+const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
+  const { data: dataFromMolochV3 } = useAccountingV3();
+  const balances = dataFromMolochV3?.tokens?.tokenBalances || [];
+  const transactions = dataFromMolochV3?.transactions || [];
+  const proposalsInfo = dataFromMolochV3?.proposalsInfo || {};
+  const rageQuits = dataFromMolochV3?.rageQuits || [];
+
   const flows = useMemo(
     () => calculateTokenFlows(transactions),
     [transactions]
@@ -108,7 +97,6 @@ const useFormattedDataV3 = ({
     (items: any[]) =>
       _.map(items, (t) => {
         if (!t) return t;
-        const formattedDate = formatDate(t.date);
         const tokenSymbol = _.lowerCase(t.token?.symbol);
         const balance = {
           inflow: {
@@ -131,9 +119,7 @@ const useFormattedDataV3 = ({
           },
         };
 
-        const priceConversion =
-          _.get(tokenPrices, [tokenSymbol, formattedDate]) ||
-          (_.includes(tokenSymbol, 'xdai') ? 1 : undefined);
+        const priceConversion = _.includes(tokenSymbol, 'xdai') ? 1 : undefined;
 
         return {
           ...t,
@@ -144,7 +130,7 @@ const useFormattedDataV3 = ({
           tokenExplorerLink: `https://blockscout.com/xdai/mainnet/address/${t.tokenAddress}`,
         };
       }),
-    [tokenPrices, flows]
+    [flows]
   );
 
   const balancesWithPrices = useMemo(
@@ -154,6 +140,7 @@ const useFormattedDataV3 = ({
 
   const transactionsWithPrices = useMemo(() => {
     const tokenBalances = new CalculateTokenBalances();
+    const rageQuitsMap = _.keyBy(rageQuits, 'txHash');
 
     return _.chain(withPrices(transactions))
       .sortBy('executionDate')
@@ -208,8 +195,14 @@ const useFormattedDataV3 = ({
           const elapsedDays =
             net > 0
               ? Math.floor(
-                  (Date.now() - t.executionDate) / MILLISECONDS_PER_DAY
+                  (Date.now() - new Date(t.executionDate).getTime()) /
+                    DAY_MILLISECONDS
                 )
+              : undefined;
+
+          const proposalShares =
+            transfer.from === GNOSIS_SAFE_ADDRESS
+              ? _.get(rageQuitsMap, [t.txHash, 'shares'], undefined)
               : undefined;
 
           return {
@@ -228,8 +221,8 @@ const useFormattedDataV3 = ({
             txExplorerLink,
             proposalLink,
             proposalTitle: _.get(proposal, 'title'),
-            proposalShares: undefined, // ??
-            proposalLoot: undefined, // ??
+            proposalShares,
+            proposalLoot: undefined,
             tokenAddress,
             tokenDecimals,
             tokenSymbol,

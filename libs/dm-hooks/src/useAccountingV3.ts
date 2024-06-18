@@ -15,9 +15,6 @@ const graphUrl = (chainId: number = 4) =>
 export const SUPPORTED_NETWORKS = _.map(_.keys(NETWORK_CONFIG), _.toNumber);
 
 export const client = (chainId: number) => new GraphQLClient(graphUrl(chainId));
-export const v3client = new GraphQLClient(
-  'https://api.thegraph.com/subgraphs/name/hausdao/daohaus-v3-gnosis'
-);
 
 const API_URL = 'https://safe-transaction-gnosis-chain.safe.global/api/v1';
 
@@ -74,8 +71,29 @@ const getSafeTransactionProposals = async ({
   }
 };
 
+const getRageQuits = async (v3client) => {
+  try {
+    const rageQuits: { rageQuits: any[] } = await v3client.request(`
+      {
+        rageQuits(where: { dao: "${GNOSIS_SAFE_ADDRESS}" }) { 
+          shares
+          txHash
+        }
+      }
+    `);
+
+    return rageQuits.rageQuits;
+  } catch (error) {
+    return null;
+  }
+};
+
 const useAccountingV3 = () => {
   const checksum = getAddress(GNOSIS_SAFE_ADDRESS);
+
+  const v3client = new GraphQLClient(
+    `https://gateway-arbitrum.network.thegraph.com/api/${process.env.NEXT_PUBLIC_THE_GRAPH_API_KEY}/subgraphs/id/6x9FK3iuhVFaH9sZ39m8bKB5eckax8sjxooBPNKWWK8r`
+  );
 
   const { data: tokenBalances, error: tokenBalancesError } = useQuery(
     ['tokenBalances', checksum],
@@ -85,6 +103,11 @@ const useAccountingV3 = () => {
   const { data: txResponse, error: txResponseError } = useQuery(
     ['transactions', checksum],
     () => getSafeTransactionProposals({ safeAddress: checksum })
+  );
+
+  const { data: rageQuitsData, error: rageQuitsError } = useQuery(
+    ['rageQuits'],
+    () => getRageQuits(v3client)
   );
 
   const proposalQueries =
@@ -128,7 +151,7 @@ const useAccountingV3 = () => {
 
   const proposalsInfo = useQueries({ queries: proposalQueries });
 
-  const error = tokenBalancesError || txResponseError;
+  const error = tokenBalancesError || txResponseError || rageQuitsError;
 
   const transformProposals = _.chain(proposalsInfo)
     .filter((query) => query.data)
@@ -143,6 +166,7 @@ const useAccountingV3 = () => {
   const data = {
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,
+    rageQuits: rageQuitsData || [],
     proposalsInfo: transformProposals,
   };
 
