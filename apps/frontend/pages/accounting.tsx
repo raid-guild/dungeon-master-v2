@@ -50,8 +50,8 @@ export const Accounting = () => {
   const {
     members,
     balancesWithPrices: balancesWithPricesV2,
-    transactionsWithPrices,
-    transactionsWithPricesAndMembers,
+    transactionsWithPrices: transactionsWithPricesV2,
+    transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV2,
   } = useFormattedData(memberData, balances, transactions, tokenPrices);
 
   const {
@@ -65,7 +65,7 @@ export const Accounting = () => {
       let csvString = '';
       if (type === 'transactions') {
         const formattedTransactions = (
-          isV3 ? transactionsWithPricesV3 : transactionsWithPrices
+          isV3 ? transactionsWithPricesV3 : transactionsWithPricesV2
         ).map((t) => ({
           Date: t.date,
           'Tx Explorer Link': t.txExplorerLink,
@@ -144,7 +144,7 @@ export const Accounting = () => {
       isV3,
       members,
       spoils,
-      transactionsWithPrices,
+      transactionsWithPricesV2,
       transactionsWithPricesV3,
     ]
   );
@@ -156,7 +156,8 @@ export const Accounting = () => {
       <SiteLayout
         isLoading={loading}
         data={[
-          ...transactionsWithPricesAndMembers,
+          ...transactionsWithPricesAndMembersV2,
+          ...transactionsWithPricesAndMembersV3,
           ...balances,
           ...Object.values(tokenPrices),
         ]}
@@ -262,7 +263,7 @@ export const Accounting = () => {
                   </TabPanel>
                   <TabPanel>
                     <TransactionsTable
-                      data={transactionsWithPricesAndMembers}
+                      data={transactionsWithPricesAndMembersV2}
                     />
                   </TabPanel>
                 </TabPanels>
