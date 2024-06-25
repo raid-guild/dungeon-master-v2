@@ -179,3 +179,68 @@ export type IMappedTokenPrice = {
     [key: string]: number;
   };
 };
+
+export type ITokenBalanceV3 = {
+  balance: string;
+  token: {
+    decimals: number;
+    logoUri: string;
+    name: string;
+    symbol: string;
+  };
+  tokenAddress: string;
+};
+
+export type TransferV3 = {
+  blockNumber: number;
+  executionDate: string;
+  from: string;
+  to: string;
+  tokenAddress: string;
+  tokenId: null | string;
+  tokenInfo: {
+    address: string;
+    decimals: number;
+    logoUri: string;
+    name: string;
+    symbol: string;
+    trusted: boolean;
+    type: string;
+  };
+  transactionHash: string;
+  transferId: string;
+  type: string;
+  value: string;
+};
+
+export type ITokenBalanceLineItemV3 = (ITokenBalanceV3 | TransferV3) & {
+  id: string;
+  tokenExplorerLink: string;
+  inflow: {
+    tokenValue: bigint;
+  };
+  outflow: {
+    tokenValue: bigint;
+  };
+  closing: {
+    tokenValue: bigint;
+  };
+  priceConversion?: number;
+};
+
+export type Proposal = {
+  id: string;
+  createdAt: string;
+  createdBy: string;
+  proposedBy: string;
+  processTxHash: string;
+  proposalType: string;
+  description: string;
+  title: string;
+  txHash: string;
+};
+
+export interface RageQuit {
+  shares: string;
+  txHash: string;
+}

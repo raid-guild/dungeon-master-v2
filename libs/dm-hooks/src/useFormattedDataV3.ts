@@ -1,5 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { IMember, IVaultTransactionV2 } from '@raidguild/dm-types';
+import {
+  IMember,
+  ITokenBalanceLineItemV3,
+  IVaultTransactionV2,
+} from '@raidguild/dm-types';
 import {
   DAY_MILLISECONDS,
   formatUnitsAsNumber,
@@ -94,10 +98,13 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
   }, [memberData]);
 
   const withPrices = useCallback(
-    (items: any[]) =>
+    <T extends ITokenBalanceLineItemV3>(items: T[]) =>
       _.map(items, (t) => {
         if (!t) return t;
-        const tokenSymbol = _.lowerCase(t.token?.symbol);
+
+        const tokenSymbol = _.lowerCase(
+          'token' in t ? t.token.symbol : t.tokenInfo?.symbol
+        );
         const balance = {
           inflow: {
             tokenValue: formatUnitsAsNumber(
@@ -119,13 +126,13 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
           },
         };
 
+        // todo get priceConversion for non-stable tokens
         const priceConversion = _.includes(tokenSymbol, 'xdai') ? 1 : undefined;
-        console.log('priceConversion', priceConversion);
 
         return {
           ...t,
           ...balance,
-          tokenSymbol,
+          tokenSymbol: 'lalsdasd',
           priceConversion,
           date: new Date(),
           tokenExplorerLink: `https://blockscout.com/xdai/mainnet/address/${t.tokenAddress}`,

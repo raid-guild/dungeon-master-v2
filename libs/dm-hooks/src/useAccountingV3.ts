@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+import { Proposal, RageQuit } from '@raidguild/dm-types';
 import { GNOSIS_SAFE_ADDRESS } from '@raidguild/dm-utils';
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
@@ -71,9 +72,9 @@ const getSafeTransactionProposals = async ({
   }
 };
 
-const getRageQuits = async (v3client) => {
+const getRageQuits = async (v3client: GraphQLClient): Promise<RageQuit[]> => {
   try {
-    const rageQuits: { rageQuits: any[] } = await v3client.request(`
+    const rageQuits: { rageQuits: RageQuit[] } = await v3client.request(`
       {
         rageQuits(where: { dao: "${GNOSIS_SAFE_ADDRESS}" }) { 
           shares
@@ -84,7 +85,7 @@ const getRageQuits = async (v3client) => {
 
     return rageQuits.rageQuits;
   } catch (error) {
-    return null;
+    return [];
   }
 };
 
@@ -115,9 +116,9 @@ const useAccountingV3 = () => {
       const txHash = tx.transactionHash || tx.txHash;
       return {
         queryKey: ['proposal', txHash],
-        queryFn: async () => {
+        queryFn: async (): Promise<Proposal | null> => {
           try {
-            const proposal: { proposals: any[] } = await v3client.request(`
+            const proposal: { proposals: Proposal[] } = await v3client.request(`
             {
               proposals(where: { processTxHash: "${txHash}"}) {
                 id
@@ -140,7 +141,7 @@ const useAccountingV3 = () => {
             return null;
           }
         },
-        onError: (error) => {
+        onError: (error: Error) => {
           console.error(
             `Error in query proposal with txHash: ${txHash}`,
             error
@@ -152,16 +153,14 @@ const useAccountingV3 = () => {
   const proposalsInfo = useQueries({ queries: proposalQueries });
 
   const error = tokenBalancesError || txResponseError || rageQuitsError;
-
-  const transformProposals = _.chain(proposalsInfo)
+  const transformProposals = proposalsInfo
     .filter((query) => query.data)
-    .map((query) => query.data)
+    .map((query) => query.data as Proposal)
     .reduce((acc, proposal) => {
       const { processTxHash, ...rest } = proposal;
       acc[processTxHash] = rest;
       return acc;
-    }, {})
-    .value();
+    }, {} as Record<string, Omit<Proposal, 'processTxHash'>>);
 
   const data = {
     tokens: tokenBalances?.data,

@@ -11,7 +11,7 @@ import {
 } from '@raidguild/design-system';
 import {
   useAccountingV2,
-  useFormattedData,
+  useFormattedDataV2,
   useMemberList,
   useFormattedDataV3,
 } from '@raidguild/dm-hooks';
@@ -52,7 +52,7 @@ export const Accounting = () => {
     balancesWithPrices: balancesWithPricesV2,
     transactionsWithPrices: transactionsWithPricesV2,
     transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV2,
-  } = useFormattedData(memberData, balances, transactions, tokenPrices);
+  } = useFormattedDataV2(memberData, balances, transactions, tokenPrices);
 
   const {
     balancesWithPrices: balancesWithPricesV3,
