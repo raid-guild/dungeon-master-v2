@@ -132,7 +132,7 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
         return {
           ...t,
           ...balance,
-          tokenSymbol: 'lalsdasd',
+          tokenSymbol,
           priceConversion,
           date: new Date(),
           tokenExplorerLink: `https://blockscout.com/xdai/mainnet/address/${t.tokenAddress}`,
