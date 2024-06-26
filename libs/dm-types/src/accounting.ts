@@ -46,6 +46,61 @@ export type IVaultTransaction = {
   escrowLink?: string;
 };
 
+interface Transfer {
+  blockNumber: number;
+  executionDate: string;
+  from: string;
+  to: string;
+  tokenAddress: string;
+  tokenId: string | null;
+  tokenInfo: {
+    address: string;
+    decimals: number;
+    logoUri: string;
+    name: string;
+    symbol: string;
+    trusted: boolean;
+    type: string;
+  };
+  transactionHash: string;
+  transferId: string;
+  type: string;
+  value: string;
+}
+
+interface EthereumTransaction {
+  blockNumber: number;
+  data: string;
+  executionDate: string;
+  from: string;
+  to: string;
+  transfers: Transfer[];
+  txHash: string;
+  txType: 'ETHEREUM_TRANSACTION';
+}
+
+interface ModuleTransaction {
+  blockNumber: number;
+  created: string;
+  data: string;
+  dataDecoded: {
+    method: string;
+    parameters: Array<{ name: string; type: string; value: string }>;
+  };
+  executionDate: string;
+  isSuccessful: boolean;
+  module: string;
+  moduleTransactionId: string;
+  operation: number;
+  safe: string;
+  to: string;
+  transactionHash: string;
+  transfers: Transfer[];
+  txType: 'MODULE_TRANSACTION';
+}
+
+export type IVaultTransactionV2 = EthereumTransaction | ModuleTransaction;
+
 export type ICalculatedTokenBalances = {
   [tokenAddress: string]: {
     in: bigint;
@@ -124,3 +179,68 @@ export type IMappedTokenPrice = {
     [key: string]: number;
   };
 };
+
+export type ITokenBalanceV3 = {
+  balance: string;
+  token: {
+    decimals: number;
+    logoUri: string;
+    name: string;
+    symbol: string;
+  };
+  tokenAddress: string;
+};
+
+export type TransferV3 = {
+  blockNumber: number;
+  executionDate: string;
+  from: string;
+  to: string;
+  tokenAddress: string;
+  tokenId: null | string;
+  tokenInfo: {
+    address: string;
+    decimals: number;
+    logoUri: string;
+    name: string;
+    symbol: string;
+    trusted: boolean;
+    type: string;
+  };
+  transactionHash: string;
+  transferId: string;
+  type: string;
+  value: string;
+};
+
+export type ITokenBalanceLineItemV3 = (ITokenBalanceV3 | TransferV3) & {
+  id: string;
+  tokenExplorerLink: string;
+  inflow: {
+    tokenValue: bigint;
+  };
+  outflow: {
+    tokenValue: bigint;
+  };
+  closing: {
+    tokenValue: bigint;
+  };
+  priceConversion?: number;
+};
+
+export type Proposal = {
+  id: string;
+  createdAt: string;
+  createdBy: string;
+  proposedBy: string;
+  processTxHash: string;
+  proposalType: string;
+  description: string;
+  title: string;
+  txHash: string;
+};
+
+export interface RageQuit {
+  shares: string;
+  txHash: string;
+}

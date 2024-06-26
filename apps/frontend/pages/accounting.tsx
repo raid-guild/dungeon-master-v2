@@ -10,17 +10,17 @@ import {
   Tabs,
 } from '@raidguild/design-system';
 import {
-  useAccountingV3,
   useAccountingV2,
-  useFormattedData,
+  useFormattedDataV2,
   useMemberList,
+  useFormattedDataV3,
 } from '@raidguild/dm-hooks';
 import { exportToCsv } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import Papa from 'papaparse';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import BalancesTable from '../components/BalancesTable';
 import SiteLayout from '../components/SiteLayout';
@@ -29,6 +29,8 @@ import TransactionsTable from '../components/TransactionsTable';
 
 export const Accounting = () => {
   const { data: session } = useSession();
+  const [isV3, setIsV3] = useState(true);
+
   const token = _.get(session, 'token');
   const {
     data: dataFromMolochV2,
@@ -37,7 +39,7 @@ export const Accounting = () => {
   } = useAccountingV2({
     token,
   });
-  const { data: dataFromMolochV3 } = useAccountingV3();
+
   const { data: memberData } = useMemberList({
     token,
     limit: 1000,
@@ -47,65 +49,75 @@ export const Accounting = () => {
 
   const {
     members,
-    balancesWithPrices,
-    transactionsWithPrices,
-    transactionsWithPricesAndMembers,
-  } = useFormattedData(memberData, balances, transactions, tokenPrices);
+    balancesWithPrices: balancesWithPricesV2,
+    transactionsWithPrices: transactionsWithPricesV2,
+    transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV2,
+  } = useFormattedDataV2(memberData, balances, transactions, tokenPrices);
+
+  const {
+    balancesWithPrices: balancesWithPricesV3,
+    transactionsWithPrices: transactionsWithPricesV3,
+    transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV3,
+  } = useFormattedDataV3(memberData);
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {
       let csvString = '';
       if (type === 'transactions') {
-        const formattedTransactions = transactionsWithPrices.map((t) => ({
-          ['Date']: t.date,
-          ['Tx Explorer Link']: t.txExplorerLink,
-          ['Elapsed Days']: t.elapsedDays,
-          ['Type']: t.type,
-          ['Applicant']: t.proposalApplicant,
-          ['Applicant Member']:
+        const formattedTransactions = (
+          isV3 ? transactionsWithPricesV3 : transactionsWithPricesV2
+        ).map((t) => ({
+          Date: t.date,
+          'Tx Explorer Link': t.txExplorerLink,
+          'Elapsed Days': t.elapsedDays,
+          Type: t.type,
+          Applicant: t.proposalApplicant,
+          'Applicant Member':
             members[t.proposalApplicant.toLowerCase()]?.name || '-',
-          ['Shares']: t.proposalShares,
-          ['Loot']: t.proposalLoot,
-          ['Title']: t.proposalTitle,
-          ['Counterparty']: t.counterparty,
-          ['Counterparty Member']:
+          Shares: t.proposalShares,
+          Loot: t.proposalLoot,
+          Title: t.proposalTitle,
+          Counterparty: t.counterparty,
+          'Counterparty Member':
             members[t.counterparty.toLowerCase()]?.name || '-',
-          ['Token Symbol']: t.tokenSymbol,
-          ['Token Decimals']: t.tokenDecimals,
-          ['Token Address']: t.tokenAddress,
-          ['Inflow']: t.in,
-          ['Inflow USD']: t.priceConversion
+          'Token Symbol': t.tokenSymbol,
+          'Token Decimals': t.tokenDecimals,
+          'Token Address': t.tokenAddress,
+          Inflow: t.in,
+          'Inflow USD': t.priceConversion
             ? `$${(t.in * t.priceConversion).toLocaleString()}`
             : '$-',
-          ['Outflow']: t.out,
-          ['Outflow USD']: t.priceConversion
+          Outflow: t.out,
+          'Outflow USD': t.priceConversion
             ? `$${(t.out * t.priceConversion).toLocaleString()}`
             : '$-',
-          ['Balance']: t.balance,
-          ['Balance USD']: t.priceConversion
+          Balance: t.balance,
+          'Balance USD': t.priceConversion
             ? `$${(t.balance * t.priceConversion).toLocaleString()}`
             : '$-',
         }));
         csvString = Papa.unparse(formattedTransactions);
       } else if (type === 'balances') {
         if (type === 'balances') {
-          const formattedBalances = balancesWithPrices.map((b) => ({
-            ['Token']: b.tokenSymbol,
-            ['Tx Explorer Link']: b.tokenExplorerLink,
-            ['Inflow']: b.inflow.tokenValue,
-            ['Inflow USD']: b.priceConversion
+          const formattedBalances = (
+            isV3 ? balancesWithPricesV3 : balancesWithPricesV2
+          ).map((b) => ({
+            Token: b.tokenSymbol,
+            'Tx Explorer Link': b.tokenExplorerLink,
+            Inflow: b.inflow.tokenValue,
+            'Inflow USD': b.priceConversion
               ? `$${(
                   Number(b.inflow.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
-            ['Outflow']: b.outflow.tokenValue,
-            ['Outflow USD']: b.priceConversion
+            Outflow: b.outflow.tokenValue,
+            'Outflow USD': b.priceConversion
               ? `$${(
                   Number(b.outflow.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
               : '$-',
-            ['Balance']: b.closing.tokenValue,
-            ['Balance USD']: b.priceConversion
+            Balance: b.closing.tokenValue,
+            'Balance USD': b.priceConversion
               ? `$${(
                   Number(b.closing.tokenValue) * b.priceConversion
                 ).toLocaleString()}`
@@ -115,18 +127,26 @@ export const Accounting = () => {
         }
       } else if (type === 'spoils') {
         const formattedSpoils = spoils.map((s) => ({
-          ['Date']: s.date,
-          ['Raid']: s.raidName,
+          Date: s.date,
+          Raid: s.raidName,
           // TODO: Get this dynamically from the subgraph
-          ['Token Symbol']: 'wxDAI',
-          ['To DAO Treasury']: `$${s.parentShare.toLocaleString()}`,
-          ['To Raid Party']: `$${s.childShare.toLocaleString()}`,
+          'Token Symbol': 'wxDAI',
+          'To DAO Treasury': `$${s.parentShare.toLocaleString()}`,
+          'To Raid Party': `$${s.childShare.toLocaleString()}`,
         }));
         csvString = Papa.unparse(formattedSpoils);
       }
       exportToCsv(csvString, `raidguild-treasury-${type}`);
     },
-    [balancesWithPrices, members, spoils, transactionsWithPrices]
+    [
+      balancesWithPricesV2,
+      balancesWithPricesV3,
+      isV3,
+      members,
+      spoils,
+      transactionsWithPricesV2,
+      transactionsWithPricesV3,
+    ]
   );
 
   return (
@@ -136,7 +156,8 @@ export const Accounting = () => {
       <SiteLayout
         isLoading={loading}
         data={[
-          ...transactionsWithPricesAndMembers,
+          ...transactionsWithPricesAndMembersV2,
+          ...transactionsWithPricesAndMembersV3,
           ...balances,
           ...Object.values(tokenPrices),
         ]}
@@ -164,6 +185,10 @@ export const Accounting = () => {
                 colorScheme='whiteAlpha'
                 variant='unstyled'
                 defaultIndex={0}
+                onChange={(index) => {
+                  if (index === 0) setIsV3(true);
+                  else setIsV3(false);
+                }}
               >
                 <Flex
                   alignItems='right'
@@ -189,10 +214,10 @@ export const Accounting = () => {
 
                 <TabPanels>
                   <TabPanel>
-                    <BalancesTable data={balancesWithPrices} />
+                    <BalancesTable data={balancesWithPricesV3} />
                   </TabPanel>
                   <TabPanel>
-                    <div>This is the placeholder for v3 balances data.</div>
+                    <BalancesTable data={balancesWithPricesV2} />
                   </TabPanel>
                 </TabPanels>
               </Tabs>
@@ -203,6 +228,10 @@ export const Accounting = () => {
                 colorScheme='whiteAlpha'
                 variant='unstyled'
                 defaultIndex={0}
+                onChange={(index) => {
+                  if (index === 0) setIsV3(true);
+                  else setIsV3(false);
+                }}
               >
                 <Flex
                   alignItems='right'
@@ -229,11 +258,13 @@ export const Accounting = () => {
                 <TabPanels>
                   <TabPanel>
                     <TransactionsTable
-                      data={transactionsWithPricesAndMembers}
+                      data={transactionsWithPricesAndMembersV3}
                     />
                   </TabPanel>
                   <TabPanel>
-                    <div>This is the placeholder for v3 transactions data.</div>
+                    <TransactionsTable
+                      data={transactionsWithPricesAndMembersV2}
+                    />
                   </TabPanel>
                 </TabPanels>
               </Tabs>
