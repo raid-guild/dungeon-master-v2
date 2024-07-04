@@ -60,7 +60,7 @@ interface NetworkConfig {
 
 export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
   100: {
-    SUBGRAPH: 'smart-invoice-gnosis/v0.0.1',
+    SUBGRAPH: 'scottrepreneur/smart-invoice-gnosis',
     INVOICE_FACTORY: _.toLower(
       '0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'
     ) as Hex,
@@ -95,7 +95,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     },
   },
   1: {
-    SUBGRAPH: 'smart-invoice/v0.0.1',
+    SUBGRAPH: 'psparacino/v1-mainnet-smart-invoices',
     INVOICE_FACTORY: _.toLower(
       '0x5E14cF595e18F91170009946205f8BBa21b323ca'
     ) as Hex,
@@ -124,7 +124,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     },
   },
   5: {
-    SUBGRAPH: 'geovgy/v1-goerli-smart-invoice', // TODO: remove goerli- replace with sepolia?
+    SUBGRAPH: 'geovgy/v1-goerli-smart-invoice',
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
     ) as Hex,
