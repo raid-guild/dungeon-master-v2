@@ -12,22 +12,21 @@ export const getInvoice = async (chainId: number, address: string) => {
   if (!isAddress(address)) return null;
 
   try {
-    const promises = [
-      client(chainId).request(V2_INVOICE_QUERY, {
-        address: _.toLower(address),
-      }),
-      v1Client.request(INVOICE_QUERY, {
-        address: _.toLower(address),
-      }),
-    ];
-
-    const result = await Promise.all(promises);
-    const invoice = _.first(_.compact(_.map(result, 'invoice')));
-
+    const result = await client(chainId).request(V2_INVOICE_QUERY, {
+      address: _.toLower(address),
+    });
+    const invoice = _.get(result, 'invoice');
     return invoice || null;
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error(err);
-    return null;
+    // try v1 client
+    // TODO: FIX V1 CLIENT
+    console.log('trying v1 client', err);
+    const result = v1Client.request(INVOICE_QUERY, {
+      address: _.toLower(address),
+    });
+
+    const invoice = _.first(_.compact(_.map(result as any, 'invoice'))); // NOT SURE IF IT WORKS ANYMORE, NEED V1 CLIENT SUBGRAPH MIGRATED TO STUDIO URL
+    return invoice || null;
   }
 };
