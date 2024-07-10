@@ -96,20 +96,30 @@ const useAccountingV3 = () => {
     `https://gateway-arbitrum.network.thegraph.com/api/${process.env.NEXT_PUBLIC_THE_GRAPH_API_KEY}/subgraphs/id/6x9FK3iuhVFaH9sZ39m8bKB5eckax8sjxooBPNKWWK8r`
   );
 
-  const { data: tokenBalances, error: tokenBalancesError } = useQuery(
-    ['tokenBalances', checksum],
-    () => listTokenBalances({ safeAddress: checksum })
+  const {
+    data: tokenBalances,
+    error: tokenBalancesError,
+    isLoading: tokenBalancesLoading,
+    isError: tokenBalancesIsError,
+  } = useQuery(['tokenBalances', checksum], () =>
+    listTokenBalances({ safeAddress: checksum })
   );
 
-  const { data: txResponse, error: txResponseError } = useQuery(
-    ['transactions', checksum],
-    () => getSafeTransactionProposals({ safeAddress: checksum })
+  const {
+    data: txResponse,
+    error: txResponseError,
+    isLoading: txResponseLoading,
+    isError: txResponseIsError,
+  } = useQuery(['transactions', checksum], () =>
+    getSafeTransactionProposals({ safeAddress: checksum })
   );
 
-  const { data: rageQuitsData, error: rageQuitsError } = useQuery(
-    ['rageQuits'],
-    () => getRageQuits(v3client)
-  );
+  const {
+    data: rageQuitsData,
+    error: rageQuitsError,
+    isLoading: rageQuitsDataLoading,
+    isError: rageQuitsIsError,
+  } = useQuery(['rageQuits'], () => getRageQuits(v3client));
 
   const proposalQueries =
     _.map(txResponse?.txData, (tx) => {
@@ -153,6 +163,9 @@ const useAccountingV3 = () => {
   const proposalsInfo = useQueries({ queries: proposalQueries });
 
   const error = tokenBalancesError || txResponseError || rageQuitsError;
+  const isError = tokenBalancesIsError || txResponseIsError || rageQuitsIsError;
+  const loading =
+    tokenBalancesLoading || txResponseLoading || rageQuitsDataLoading;
   const transformProposals = proposalsInfo
     .filter((query) => query.data)
     .map((query) => query.data as Proposal)
@@ -169,7 +182,7 @@ const useAccountingV3 = () => {
     proposalsInfo: transformProposals,
   };
 
-  return { data, error };
+  return { data, error, isError, loading };
 };
 
 export default useAccountingV3;

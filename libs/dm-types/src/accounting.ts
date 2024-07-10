@@ -216,6 +216,7 @@ export type TransferV3 = {
 export type ITokenBalanceLineItemV3 = (ITokenBalanceV3 | TransferV3) & {
   id: string;
   tokenExplorerLink: string;
+  tokenSymbol: string;
   inflow: {
     tokenValue: bigint;
   };

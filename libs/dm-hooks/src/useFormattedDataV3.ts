@@ -267,6 +267,7 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
   );
 
   return {
+    members,
     balancesWithPrices,
     transactionsWithPrices,
     transactionsWithPricesAndMembers,
