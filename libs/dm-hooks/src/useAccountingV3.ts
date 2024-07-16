@@ -1,10 +1,30 @@
 /* eslint-disable no-await-in-loop */
-import { Proposal, RageQuit } from '@raidguild/dm-types';
-import { GNOSIS_SAFE_ADDRESS } from '@raidguild/dm-utils';
+import {
+  client as dmGraphQlClient,
+  TRANSACTIONS_QUERY,
+} from '@raidguild/dm-graphql';
+import {
+  IAccountingRaid,
+  IMolochStatsBalance,
+  ISmartEscrow,
+  ISmartEscrowWithdrawal,
+  ISpoils,
+  ITokenBalance,
+  ITokenPrice,
+  Proposal,
+  RageQuit,
+} from '@raidguild/dm-types';
+import {
+  camelize,
+  formatUnitsAsNumber,
+  GNOSIS_SAFE_ADDRESS,
+  GUILD_GNOSIS_DAO_ADDRESS,
+} from '@raidguild/dm-utils';
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
 import { GraphQLClient } from 'graphql-request';
 import _ from 'lodash';
+import { useSession } from 'next-auth/react';
 import { getAddress } from 'viem';
 
 const graphUrl = (chainId: number = 4) =>
@@ -89,12 +109,136 @@ const getRageQuits = async (v3client: GraphQLClient): Promise<RageQuit[]> => {
   }
 };
 
+const getSmartInvoice = async (v3ClientInvoices: GraphQLClient) => {
+  try {
+    const invoices = await v3ClientInvoices.request(`
+        {
+          invoices (where: { provider: "${GUILD_GNOSIS_DAO_ADDRESS}" }) {
+            token
+            releases {
+              timestamp
+              amount
+            }
+          }
+        }
+    `);
+    return invoices;
+  } catch (error) {
+    console.error('Error fetching smart invoices', error);
+    return [];
+  }
+};
+
+const formatSpoils = async (
+  smartEscrows: ISmartEscrow[],
+  raids: IAccountingRaid[]
+): Promise<ISpoils[]> => {
+  const withdrawals: ISmartEscrowWithdrawal[] = [];
+  await Promise.all(
+    smartEscrows.map(async (escrow) => {
+      await Promise.all(
+        escrow.withdraws.map(async (withdrawal) => {
+          withdrawals.push({
+            ...withdrawal,
+            escrowId: escrow.id,
+          });
+        })
+      );
+    })
+  );
+
+  const spoils: ISpoils[] = [];
+  await Promise.all(
+    withdrawals.map(async (withdrawal) => {
+      const Raid = raids.find(
+        (raid) => raid.invoiceAddress === withdrawal.escrowId
+      );
+      if (!Raid) return;
+
+      // TODO: The is a temporary way of removing non-wxDai spoils from the list
+      const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
+      if (withdrawal.token !== wxDAI) return;
+      spoils.push({
+        raidLink: `/raids/${Raid.id}`,
+        raidName: Raid.name,
+        // TODO: This will probably always be wxDAI, but we should update subgraph to index decimals and token symbol
+        childShare: formatUnitsAsNumber(withdrawal.childShare, 18),
+        parentShare: formatUnitsAsNumber(withdrawal.parentShare, 18),
+        priceConversion: 1,
+        date: new Date(Number(withdrawal.timestamp) * 1000),
+        tokenSymbol: 'wxDAI',
+      });
+    })
+  );
+  return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
+};
+
 const useAccountingV3 = () => {
+  const { data: session } = useSession();
+  const token = _.get(session, 'token') as string;
+
   const checksum = getAddress(GNOSIS_SAFE_ADDRESS);
 
   const v3client = new GraphQLClient(
     `https://gateway-arbitrum.network.thegraph.com/api/${process.env.NEXT_PUBLIC_THE_GRAPH_API_KEY}/subgraphs/id/6x9FK3iuhVFaH9sZ39m8bKB5eckax8sjxooBPNKWWK8r`
   );
+
+  const v3ClientInvoices = new GraphQLClient(
+    `https://api.studio.thegraph.com/proxy/78711/smart-invoice-gnosis/v0.0.1/`
+  );
+
+  const limit = 100;
+
+  const accountingQueryResult = async (pageParam: number) => {
+    // TODO handle filters
+    const response = await dmGraphQlClient({ token }).request(
+      TRANSACTIONS_QUERY,
+      {
+        first: limit,
+        skip: pageParam * limit,
+        molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
+        contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
+        escrowParentAddress: GUILD_GNOSIS_DAO_ADDRESS,
+      }
+    );
+
+    return {
+      transactions: camelize(_.get(response, 'daohaus_stats_xdai.balances')),
+      balances: camelize(_.get(response, 'daohaus_xdai.moloch.tokenBalances')),
+      smartEscrows: camelize(
+        _.get(response, 'gnosis_smart_escrows.wrappedInvoices')
+      ),
+      raids: camelize(_.get(response, 'raids')),
+      historicalPrices: camelize(_.get(response, 'treasury_token_history')),
+      currentPrices: camelize(_.get(response, 'current_token_prices')),
+    };
+  };
+
+  const {
+    status,
+    isError: accountingIsError,
+    isLoading: accountingIsLoading,
+    error: accountingDataError,
+    data: accountingData,
+  } = useInfiniteQuery<
+    {
+      transactions: Array<IMolochStatsBalance>;
+      balances: Array<ITokenBalance>;
+      smartEscrows: Array<ISmartEscrow>;
+      raids: Array<IAccountingRaid>;
+      historicalPrices: Array<ITokenPrice>;
+      currentPrices: Array<ITokenPrice>;
+    },
+    Error
+  >(['accounting'], ({ pageParam = 0 }) => accountingQueryResult(pageParam), {
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit),
+    enabled: Boolean(token),
+  });
+
+  console.log('accountingData', status);
 
   const {
     data: tokenBalances,
@@ -120,6 +264,15 @@ const useAccountingV3 = () => {
     isLoading: rageQuitsDataLoading,
     isError: rageQuitsIsError,
   } = useQuery(['rageQuits'], () => getRageQuits(v3client));
+
+  const {
+    data: smartInvoiceData,
+    error: smartInvoiceError,
+    isLoading: smartInvoiceLoading,
+    isError: smartInvoiceIsError,
+  } = useQuery(['smartInvoice', checksum], () =>
+    getSmartInvoice(v3ClientInvoices)
+  );
 
   const proposalQueries =
     _.map(txResponse?.txData, (tx) => {
@@ -176,6 +329,7 @@ const useAccountingV3 = () => {
     }, {} as Record<string, Omit<Proposal, 'processTxHash'>>);
 
   const data = {
+    smartInvoice: smartInvoiceData || [],
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,
     rageQuits: rageQuitsData || [],
