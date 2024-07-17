@@ -114,7 +114,7 @@ const getSmartInvoice = async (
   v3ClientInvoices: GraphQLClient
 ): Promise<Invoice[]> => {
   try {
-    const invoices: { data: Invoice[] } = await v3ClientInvoices.request(`
+    const invoices: Invoice[] = await v3ClientInvoices.request(`
         {
           invoices (where: { provider: "${GUILD_GNOSIS_DAO_ADDRESS}" }) {
             token
@@ -125,10 +125,34 @@ const getSmartInvoice = async (
           }
         }
     `);
-    return invoices.data;
+    return invoices;
   } catch (error) {
     return [];
   }
+};
+
+const accountingQueryResult = async (pageParam: number, token: string) => {
+  const response = await dmGraphQlClient({ token }).request(
+    TRANSACTIONS_QUERY_V3
+    // {
+    //   first: 100,
+    //   skip: pageParam * 100,
+    //   molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
+    //   contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
+    //   escrowParentAddress: GUILD_GNOSIS_DAO_ADDRESS,
+    // }
+  );
+
+  return {
+    // transactions: camelize(_.get(response, 'daohaus_stats_xdai.balances')),
+    // balances: camelize(_.get(response, 'daohaus_xdai.moloch.tokenBalances')),
+    // smartEscrows: camelize(
+    //   _.get(response, 'gnosis_smart_escrows.wrappedInvoices')
+    // ),
+    raids: camelize(_.get(response, 'raids')),
+    historicalPrices: camelize(_.get(response, 'treasury_token_history')),
+    currentPrices: camelize(_.get(response, 'current_token_prices')),
+  };
 };
 
 const formatSpoils = async (
@@ -182,27 +206,51 @@ const useAccountingV3 = () => {
     `https://api.studio.thegraph.com/proxy/78711/smart-invoice-gnosis/v0.0.1/`
   );
 
-  const accountingQueryResult = async () => {
-    const response = await dmGraphQlClient({ token }).request(
-      TRANSACTIONS_QUERY_V3
-    );
-
-    return {
-      raids: camelize(_.get(response, 'raids')),
-    };
-  };
-
   const {
     isError: accountingIsError,
     isLoading: accountingIsLoading,
     error: accountingDataError,
     data: accountingData,
-  } = useQuery<
+  } = useInfiniteQuery<
     {
       raids: Array<IAccountingRaid>;
+      historicalPrices: Array<ITokenPrice>;
+      currentPrices: Array<ITokenPrice>;
     },
     Error
-  >(['accountingRaids'], () => accountingQueryResult());
+  >(
+    ['accounting'],
+    ({ pageParam = 0 }) => accountingQueryResult(pageParam, token),
+    {
+      getNextPageParam: (lastPage, allPages) =>
+        _.isEmpty(lastPage)
+          ? undefined
+          : _.divide(_.size(_.flatten(allPages)), 100),
+      enabled: Boolean(token),
+    }
+  );
+
+  // const accountingQueryResult = async () => {
+  //   const response = await dmGraphQlClient({ token }).request(
+  //     TRANSACTIONS_QUERY_V3
+  //   );
+
+  //   return {
+  //     raids: camelize(_.get(response, 'raids')),
+  //   };
+  // };
+
+  // const {
+  //   isError: accountingIsError,
+  //   isLoading: accountingIsLoading,
+  //   error: accountingDataError,
+  //   data: accountingData,
+  // } = useQuery<
+  //   {
+  //     raids: Array<IAccountingRaid>;
+  //   },
+  //   Error
+  // >(['accountingRaids'], () => accountingQueryResult());
 
   console.log('accountingData', accountingData);
 
@@ -236,9 +284,9 @@ const useAccountingV3 = () => {
     error: smartInvoiceError,
     isLoading: smartInvoiceLoading,
     isError: smartInvoiceIsError,
-  } = useQuery(['smartInvoice', checksum], () =>
-    getSmartInvoice(v3ClientInvoices)
-  );
+  } = useQuery(['smartInvoice'], () => getSmartInvoice(v3ClientInvoices));
+
+  console.log('smartInvoiceData', smartInvoiceData);
 
   const proposalQueries =
     _.map(txResponse?.txData, (tx) => {
@@ -299,7 +347,7 @@ const useAccountingV3 = () => {
     transactions: txResponse?.txData,
     rageQuits: rageQuitsData || [],
     proposalsInfo: transformProposals,
-    spoils: formatSpoils(accountingData?.raids, smartInvoiceData || []),
+    // spoils: formatSpoils(accountingData?.raids, smartInvoiceData || []),
   };
 
   return { data, error, isError, loading };
