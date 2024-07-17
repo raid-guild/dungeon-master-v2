@@ -245,3 +245,11 @@ export interface RageQuit {
   shares: string;
   txHash: string;
 }
+
+export interface Invoice {
+  token: string;
+  releases: {
+    timestamp: string;
+    amount: string;
+  }[];
+}

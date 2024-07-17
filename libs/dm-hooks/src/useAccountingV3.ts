@@ -1,11 +1,12 @@
 /* eslint-disable no-await-in-loop */
 import {
   client as dmGraphQlClient,
-  TRANSACTIONS_QUERY,
+  TRANSACTIONS_QUERY_V3,
 } from '@raidguild/dm-graphql';
 import {
   IAccountingRaid,
   IMolochStatsBalance,
+  Invoice,
   ISmartEscrow,
   ISmartEscrowWithdrawal,
   ISpoils,
@@ -109,9 +110,11 @@ const getRageQuits = async (v3client: GraphQLClient): Promise<RageQuit[]> => {
   }
 };
 
-const getSmartInvoice = async (v3ClientInvoices: GraphQLClient) => {
+const getSmartInvoice = async (
+  v3ClientInvoices: GraphQLClient
+): Promise<Invoice[]> => {
   try {
-    const invoices = await v3ClientInvoices.request(`
+    const invoices: { data: Invoice[] } = await v3ClientInvoices.request(`
         {
           invoices (where: { provider: "${GUILD_GNOSIS_DAO_ADDRESS}" }) {
             token
@@ -122,54 +125,46 @@ const getSmartInvoice = async (v3ClientInvoices: GraphQLClient) => {
           }
         }
     `);
-    return invoices;
+    return invoices.data;
   } catch (error) {
-    console.error('Error fetching smart invoices', error);
     return [];
   }
 };
 
 const formatSpoils = async (
-  smartEscrows: ISmartEscrow[],
-  raids: IAccountingRaid[]
+  raids: IAccountingRaid[],
+  invoices: Invoice[]
 ): Promise<ISpoils[]> => {
-  const withdrawals: ISmartEscrowWithdrawal[] = [];
-  await Promise.all(
-    smartEscrows.map(async (escrow) => {
-      await Promise.all(
-        escrow.withdraws.map(async (withdrawal) => {
-          withdrawals.push({
-            ...withdrawal,
-            escrowId: escrow.id,
-          });
-        })
-      );
-    })
+  const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
+  const filteredInvoices = invoices.filter(
+    (invoice) => invoice.token === wxDAI
   );
 
-  const spoils: ISpoils[] = [];
-  await Promise.all(
-    withdrawals.map(async (withdrawal) => {
-      const Raid = raids.find(
-        (raid) => raid.invoiceAddress === withdrawal.escrowId
-      );
-      if (!Raid) return;
+  const spoils = filteredInvoices.map((invoice) => {
+    const totalReleased = invoice.releases.reduce(
+      (acc, release) => acc + parseFloat(release.amount),
+      0
+    );
+    const latestTimestamp = Math.max(
+      ...invoice.releases.map((release) =>
+        new Date(release.timestamp).getTime()
+      )
+    );
+    const spoilsAmount = totalReleased * 0.1;
+    const childShare = totalReleased - spoilsAmount;
+    const Raid = raids.find((raid) => raid.invoiceAddress === invoice.token);
 
-      // TODO: The is a temporary way of removing non-wxDai spoils from the list
-      const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
-      if (withdrawal.token !== wxDAI) return;
-      spoils.push({
-        raidLink: `/raids/${Raid.id}`,
-        raidName: Raid.name,
-        // TODO: This will probably always be wxDAI, but we should update subgraph to index decimals and token symbol
-        childShare: formatUnitsAsNumber(withdrawal.childShare, 18),
-        parentShare: formatUnitsAsNumber(withdrawal.parentShare, 18),
-        priceConversion: 1,
-        date: new Date(Number(withdrawal.timestamp) * 1000),
-        tokenSymbol: 'wxDAI',
-      });
-    })
-  );
+    return {
+      raidLink: `/raids/${Raid.id}`,
+      raidName: Raid?.name || '',
+      childShare,
+      parentShare: spoilsAmount,
+      priceConversion: 1,
+      date: new Date(latestTimestamp),
+      tokenSymbol: 'wxDAI',
+    };
+  });
+
   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
 
@@ -187,58 +182,29 @@ const useAccountingV3 = () => {
     `https://api.studio.thegraph.com/proxy/78711/smart-invoice-gnosis/v0.0.1/`
   );
 
-  const limit = 100;
-
-  const accountingQueryResult = async (pageParam: number) => {
-    // TODO handle filters
+  const accountingQueryResult = async () => {
     const response = await dmGraphQlClient({ token }).request(
-      TRANSACTIONS_QUERY,
-      {
-        first: limit,
-        skip: pageParam * limit,
-        molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
-        contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
-        escrowParentAddress: GUILD_GNOSIS_DAO_ADDRESS,
-      }
+      TRANSACTIONS_QUERY_V3
     );
 
     return {
-      transactions: camelize(_.get(response, 'daohaus_stats_xdai.balances')),
-      balances: camelize(_.get(response, 'daohaus_xdai.moloch.tokenBalances')),
-      smartEscrows: camelize(
-        _.get(response, 'gnosis_smart_escrows.wrappedInvoices')
-      ),
       raids: camelize(_.get(response, 'raids')),
-      historicalPrices: camelize(_.get(response, 'treasury_token_history')),
-      currentPrices: camelize(_.get(response, 'current_token_prices')),
     };
   };
 
   const {
-    status,
     isError: accountingIsError,
     isLoading: accountingIsLoading,
     error: accountingDataError,
     data: accountingData,
-  } = useInfiniteQuery<
+  } = useQuery<
     {
-      transactions: Array<IMolochStatsBalance>;
-      balances: Array<ITokenBalance>;
-      smartEscrows: Array<ISmartEscrow>;
       raids: Array<IAccountingRaid>;
-      historicalPrices: Array<ITokenPrice>;
-      currentPrices: Array<ITokenPrice>;
     },
     Error
-  >(['accounting'], ({ pageParam = 0 }) => accountingQueryResult(pageParam), {
-    getNextPageParam: (lastPage, allPages) =>
-      _.isEmpty(lastPage)
-        ? undefined
-        : _.divide(_.size(_.flatten(allPages)), limit),
-    enabled: Boolean(token),
-  });
+  >(['accountingRaids'], () => accountingQueryResult());
 
-  console.log('accountingData', status);
+  console.log('accountingData', accountingData);
 
   const {
     data: tokenBalances,
@@ -314,7 +280,6 @@ const useAccountingV3 = () => {
     }) || [];
 
   const proposalsInfo = useQueries({ queries: proposalQueries });
-
   const error = tokenBalancesError || txResponseError || rageQuitsError;
   const isError = tokenBalancesIsError || txResponseIsError || rageQuitsIsError;
   const loading =
@@ -334,6 +299,7 @@ const useAccountingV3 = () => {
     transactions: txResponse?.txData,
     rageQuits: rageQuitsData || [],
     proposalsInfo: transformProposals,
+    spoils: formatSpoils(accountingData?.raids, smartInvoiceData || []),
   };
 
   return { data, error, isError, loading };
