@@ -248,6 +248,7 @@ export interface RageQuit {
 
 export interface Invoice {
   token: string;
+  address?: string;
   releases: {
     timestamp: string;
     amount: string;

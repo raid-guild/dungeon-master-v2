@@ -89,14 +89,5 @@ export const TRANSACTIONS_QUERY_V3 = gql`
       invoice_address
       name
     }
-    treasury_token_history {
-      date
-      price_usd
-      symbol
-    }
-    current_token_prices {
-      price_usd
-      symbol
-    }
   }
 `;
