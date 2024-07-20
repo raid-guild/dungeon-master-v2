@@ -14,7 +14,7 @@ import {
   camelize,
   formatUnitsAsNumber,
   GNOSIS_SAFE_ADDRESS,
-  GUILD_GNOSIS_DAO_ADDRESS,
+  GUILD_GNOSIS_DAO_ADDRESS_V3,
 } from '@raidguild/dm-utils';
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
@@ -112,7 +112,7 @@ const getSmartInvoice = async (
   try {
     const invoices: { invoices: Invoice[] } = await v3ClientInvoices.request(`
         {
-          invoices (where: { provider: "${GUILD_GNOSIS_DAO_ADDRESS}" }) {
+          invoices (where: { provider: "${GUILD_GNOSIS_DAO_ADDRESS_V3}" }) {
             token
             address
             releases {
@@ -151,75 +151,40 @@ const formatSpoils = async (
     (invoice) => invoice.token === wxDAI
   );
 
-  const spoils = filteredInvoices.map((invoice) => {
-    const totalReleased = invoice.releases.reduce(
-      (acc, release) => acc + parseFloat(release.amount),
-      0
-    );
-    const latestTimestamp = Math.max(
-      ...invoice.releases.map((release) =>
-        new Date(release.timestamp).getTime()
-      )
-    );
-    const spoilsAmount = totalReleased * 0.1;
-    const childShare = totalReleased - spoilsAmount;
-    const Raid = raids.find((raid) => raid.invoiceAddress === invoice.address);
-    console.log('Raid', Raid);
+  const spoils = raids
+    .map((raid) => {
+      const invoice = filteredInvoices.find(
+        (inv) =>
+          inv.address?.toLowerCase() === raid.invoiceAddress?.toLowerCase()
+      );
 
-    return {
-      raidLink: `/raids/${Raid?.id}`,
-      raidName: Raid?.name || '',
-      childShare,
-      parentShare: spoilsAmount,
-      priceConversion: 1,
-      date: new Date(latestTimestamp),
-      tokenSymbol: 'wxDAI',
-    };
-  });
+      if (!invoice) return null;
+
+      const totalReleased = invoice.releases.reduce(
+        (acc, release) => acc + formatUnitsAsNumber(release.amount, 18),
+        0
+      );
+
+      const latestTimestamp = Math.max(
+        ...invoice.releases.map((release) => Number(release.timestamp))
+      );
+
+      const spoilsAmount = totalReleased * 0.1;
+      const childShare = totalReleased - spoilsAmount;
+
+      return {
+        raidLink: `/raids/${raid.id}`,
+        raidName: raid.name,
+        childShare,
+        parentShare: spoilsAmount,
+        priceConversion: 1,
+        date: new Date(latestTimestamp * 1000),
+        tokenSymbol: 'wxDAI',
+      };
+    })
+    .filter((spoil) => spoil !== null);
   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
-
-// const formatSpoilsV2 = async (
-//   raids: IAccountingRaid[],
-//   invoices: Invoice[]
-// ): Promise<ISpoils[]> => {
-//   const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
-//   const filteredInvoices = invoices.filter(
-//     (invoice) => invoice.token === wxDAI
-//   );
-
-//   // Assuming an asynchronous operation is needed inside the map
-//   const spoilsPromises = filteredInvoices.map(async (invoice) => {
-//     const totalReleased = invoice.releases.reduce(
-//       (acc, release) => acc + parseFloat(release.amount),
-//       0
-//     );
-//     const latestTimestamp = Math.max(
-//       ...invoice.releases.map((release) =>
-//         new Date(release.timestamp).getTime()
-//       )
-//     );
-//     const spoilsAmount = totalReleased * 0.1;
-//     const childShare = totalReleased - spoilsAmount;
-
-//     const Raid = raids.find((raid) => raid.invoiceAddress === invoice.token);
-//     // if (!Raid) return;
-
-//     return {
-//       raidLink: `/raids/${Raid?.id}`,
-//       raidName: Raid?.name || '',
-//       childShare,
-//       parentShare: spoilsAmount,
-//       priceConversion: 1,
-//       date: new Date(latestTimestamp),
-//       tokenSymbol: 'wxDAI',
-//     };
-//   });
-
-//   const spoils = await Promise.all(spoilsPromises);
-
-//   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
-// };
 
 const useAccountingV3 = () => {
   const [spoils, setSpoils] = useState<ISpoils[]>([]);
@@ -375,6 +340,7 @@ const useAccountingV3 = () => {
     }, {} as Record<string, Omit<Proposal, 'processTxHash'>>);
 
   const data = {
+    spoils: spoils || [],
     smartInvoice: smartInvoiceData || [],
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,

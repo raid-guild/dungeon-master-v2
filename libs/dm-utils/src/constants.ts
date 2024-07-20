@@ -290,8 +290,11 @@ export const GUILD_CLASS_DISPLAY = {
   ACCOUNT_MANAGER: 'Cleric (Client Manager)',
 };
 
-export const GUILD_GNOSIS_DAO_ADDRESS =
+export const GUILD_GNOSIS_DAO_ADDRESS_V2 =
   '0xfe1084bc16427e5eb7f13fc19bcd4e641f7d571f';
+
+export const GUILD_GNOSIS_DAO_ADDRESS_V3 =
+  '0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986';
 
 export const GNOSIS_SAFE_ADDRESS = '0x181eBDB03cb4b54F4020622F1B0EAcd67A8C63aC';
 

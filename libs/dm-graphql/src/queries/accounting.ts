@@ -84,10 +84,14 @@ export const TRANSACTIONS_QUERY = gql`
 
 export const TRANSACTIONS_QUERY_V3 = gql`
   query AccountingQuery {
-    raids {
+    raids(
+      where: { invoice_address: { _is_null: false } }
+      order_by: { created_at: desc }
+    ) {
       id
       invoice_address
       name
+      created_at
     }
   }
 `;

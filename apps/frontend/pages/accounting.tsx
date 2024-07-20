@@ -10,8 +10,6 @@ import {
   Tabs,
 } from '@raidguild/design-system';
 import {
-  useAccountingV2,
-  useFormattedDataV2,
   useMemberList,
   useFormattedDataV3,
   useAccountingV3,
@@ -46,7 +44,7 @@ export const Accounting = () => {
     limit: 1000,
   });
 
-  const { loading, isError, error } = useAccountingV3();
+  const { data, loading, isError, error } = useAccountingV3();
 
   // const { balances, spoils, transactions, tokenPrices } = dataFromMolochV2;
 
@@ -304,7 +302,9 @@ export const Accounting = () => {
                 </Flex>
 
                 <TabPanels>
-                  <TabPanel>{/* <SpoilsTable data={spoils} /> */}</TabPanel>
+                  <TabPanel>
+                    <SpoilsTable data={data.spoils} />
+                  </TabPanel>
                   <TabPanel>
                     <div>This is the placeholder for v3 spoils data.</div>
                   </TabPanel>

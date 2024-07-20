@@ -251,6 +251,6 @@ export interface Invoice {
   address?: string;
   releases: {
     timestamp: string;
-    amount: string;
+    amount: bigint;
   }[];
 }
