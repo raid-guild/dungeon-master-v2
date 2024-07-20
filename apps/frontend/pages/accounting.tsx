@@ -44,18 +44,10 @@ export const Accounting = () => {
     limit: 1000,
   });
 
-  const { data, loading, isError, error } = useAccountingV3();
-
-  // const { balances, spoils, transactions, tokenPrices } = dataFromMolochV2;
-
-  // const {
-  //   members,
-  //   balancesWithPrices: balancesWithPricesV2,
-  //   transactionsWithPrices: transactionsWithPricesV2,
-  //   transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV2,
-  // } = useFormattedDataV2(memberData, balances, transactions, tokenPrices);
+  const { loading, isError, error } = useAccountingV3();
 
   const {
+    formattedSpoils: formattedSpoilsV3,
     members,
     balancesWithPrices: balancesWithPricesV3,
     transactionsWithPrices: transactionsWithPricesV3,
@@ -303,7 +295,7 @@ export const Accounting = () => {
 
                 <TabPanels>
                   <TabPanel>
-                    <SpoilsTable data={data.spoils} />
+                    <SpoilsTable data={formattedSpoilsV3} />
                   </TabPanel>
                   <TabPanel>
                     <div>This is the placeholder for v3 spoils data.</div>

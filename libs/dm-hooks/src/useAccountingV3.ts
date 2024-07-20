@@ -6,13 +6,11 @@ import {
 import {
   IAccountingRaid,
   Invoice,
-  ISpoils,
   Proposal,
   RageQuit,
 } from '@raidguild/dm-types';
 import {
   camelize,
-  formatUnitsAsNumber,
   GNOSIS_SAFE_ADDRESS,
   GUILD_GNOSIS_DAO_ADDRESS_V3,
 } from '@raidguild/dm-utils';
@@ -21,7 +19,6 @@ import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
 import { GraphQLClient } from 'graphql-request';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 import { getAddress } from 'viem';
 
 const graphUrl = (chainId: number = 4) =>
@@ -129,7 +126,7 @@ const getSmartInvoice = async (
   }
 };
 
-const accountingQueryResult = async (token: string) => {
+const raidsQueryResult = async (token: string) => {
   const response = await dmGraphQlClient({ token }).request(
     TRANSACTIONS_QUERY_V3
   );
@@ -139,56 +136,7 @@ const accountingQueryResult = async (token: string) => {
   };
 };
 
-const formatSpoils = async (
-  Raids: IAccountingRaid[],
-  Invoices: Invoice[]
-): Promise<ISpoils[]> => {
-  const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
-  const [raids, invoices] = await Promise.all([Raids, Invoices]);
-  console.log('raids', raids);
-
-  const filteredInvoices = invoices.filter(
-    (invoice) => invoice.token === wxDAI
-  );
-
-  const spoils = raids
-    .map((raid) => {
-      const invoice = filteredInvoices.find(
-        (inv) =>
-          inv.address?.toLowerCase() === raid.invoiceAddress?.toLowerCase()
-      );
-
-      if (!invoice) return null;
-
-      const totalReleased = invoice.releases.reduce(
-        (acc, release) => acc + formatUnitsAsNumber(release.amount, 18),
-        0
-      );
-
-      const latestTimestamp = Math.max(
-        ...invoice.releases.map((release) => Number(release.timestamp))
-      );
-
-      const spoilsAmount = totalReleased * 0.1;
-      const childShare = totalReleased - spoilsAmount;
-
-      return {
-        raidLink: `/raids/${raid.id}`,
-        raidName: raid.name,
-        childShare,
-        parentShare: spoilsAmount,
-        priceConversion: 1,
-        date: new Date(latestTimestamp * 1000),
-        tokenSymbol: 'wxDAI',
-      };
-    })
-    .filter((spoil) => spoil !== null);
-  return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
-};
-
 const useAccountingV3 = () => {
-  const [spoils, setSpoils] = useState<ISpoils[]>([]);
-
   const { data: session } = useSession();
   const token = _.get(session, 'token') as string;
 
@@ -203,24 +151,22 @@ const useAccountingV3 = () => {
   );
 
   const {
-    isError: accountingIsError,
-    isLoading: accountingIsLoading,
-    error: accountingDataError,
-    data: accountingData,
+    isError: raidsIsError,
+    isLoading: raidsIsLoading,
+    error: raidsError,
+    data: raidsData,
   } = useInfiniteQuery<
     {
       raids: Array<IAccountingRaid>;
     },
     Error
-  >(['accounting'], () => accountingQueryResult(token), {
+  >(['raidsV3'], () => raidsQueryResult(token), {
     getNextPageParam: (lastPage, allPages) =>
       _.isEmpty(lastPage)
         ? undefined
         : _.divide(_.size(_.flatten(allPages)), 100),
     enabled: Boolean(token),
   });
-
-  console.log('accountingData', accountingData);
 
   const {
     data: tokenBalances,
@@ -253,8 +199,6 @@ const useAccountingV3 = () => {
     isLoading: smartInvoiceLoading,
     isError: smartInvoiceIsError,
   } = useQuery(['smartInvoice'], () => getSmartInvoice(v3ClientInvoices));
-
-  console.log('smartInvoiceData', smartInvoiceData);
 
   const proposalQueries =
     _.map(txResponse?.txData, (tx) => {
@@ -295,41 +239,25 @@ const useAccountingV3 = () => {
       };
     }) || [];
 
-  useEffect(() => {
-    (async () => {
-      if (!accountingIsLoading && !smartInvoiceLoading) {
-        const FormattedSpoils = await formatSpoils(
-          accountingData?.pages[0].raids,
-          smartInvoiceData
-        );
-
-        setSpoils(FormattedSpoils);
-      } else if (!accountingIsError && !smartInvoiceIsError) {
-        // eslint-disable-next-line no-console
-        console.error(
-          'accounting data fetching failed with: ',
-          accountingDataError
-        );
-        console.error(
-          'invoices data fetching failed with: ',
-          smartInvoiceError
-        );
-      }
-    })();
-  }, [
-    accountingData,
-    smartInvoiceData,
-    accountingIsError,
-    smartInvoiceIsError,
-  ]);
-
-  console.log('spoils', spoils);
-
   const proposalsInfo = useQueries({ queries: proposalQueries });
-  const error = tokenBalancesError || txResponseError || rageQuitsError;
-  const isError = tokenBalancesIsError || txResponseIsError || rageQuitsIsError;
+  const error =
+    tokenBalancesError ||
+    txResponseError ||
+    rageQuitsError ||
+    smartInvoiceError ||
+    raidsError;
+  const isError =
+    tokenBalancesIsError ||
+    txResponseIsError ||
+    rageQuitsIsError ||
+    smartInvoiceIsError ||
+    raidsIsError;
   const loading =
-    tokenBalancesLoading || txResponseLoading || rageQuitsDataLoading;
+    tokenBalancesLoading ||
+    txResponseLoading ||
+    rageQuitsDataLoading ||
+    smartInvoiceLoading ||
+    raidsIsLoading;
   const transformProposals = proposalsInfo
     .filter((query) => query.data)
     .map((query) => query.data as Proposal)
@@ -340,8 +268,8 @@ const useAccountingV3 = () => {
     }, {} as Record<string, Omit<Proposal, 'processTxHash'>>);
 
   const data = {
-    spoils: spoils || [],
-    smartInvoice: smartInvoiceData || [],
+    raids: raidsData?.pages[0].raids,
+    smartInvoice: smartInvoiceData,
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,
     rageQuits: rageQuitsData || [],
