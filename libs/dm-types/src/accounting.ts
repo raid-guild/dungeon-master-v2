@@ -216,6 +216,7 @@ export type TransferV3 = {
 export type ITokenBalanceLineItemV3 = (ITokenBalanceV3 | TransferV3) & {
   id: string;
   tokenExplorerLink: string;
+  tokenSymbol: string;
   inflow: {
     tokenValue: bigint;
   };
@@ -243,4 +244,13 @@ export type Proposal = {
 export interface RageQuit {
   shares: string;
   txHash: string;
+}
+
+export interface Invoice {
+  token: string;
+  address?: string;
+  releases: {
+    timestamp: string;
+    amount: bigint;
+  }[];
 }

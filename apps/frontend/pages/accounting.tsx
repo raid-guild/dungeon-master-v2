@@ -10,18 +10,17 @@ import {
   Tabs,
 } from '@raidguild/design-system';
 import {
-  useAccountingV2,
-  useFormattedDataV2,
   useMemberList,
-  useFormattedDataV3,
+  useFormattedAccountingV3,
+  useAccountingV3,
 } from '@raidguild/dm-hooks';
 import { exportToCsv } from '@raidguild/dm-utils';
-import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import Papa from 'papaparse';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
+import _ from 'lodash';
 import BalancesTable from '../components/BalancesTable';
 import SiteLayout from '../components/SiteLayout';
 import SpoilsTable from '../components/SpoilsTable';
@@ -29,44 +28,29 @@ import TransactionsTable from '../components/TransactionsTable';
 
 export const Accounting = () => {
   const { data: session } = useSession();
-  const [isV3, setIsV3] = useState(true);
 
   const token = _.get(session, 'token');
-  const {
-    data: dataFromMolochV2,
-    loading,
-    error,
-  } = useAccountingV2({
-    token,
-  });
 
   const { data: memberData } = useMemberList({
     token,
     limit: 1000,
   });
 
-  const { balances, spoils, transactions, tokenPrices } = dataFromMolochV2;
+  const { loading, isError, error } = useAccountingV3();
 
   const {
+    formattedSpoils: formattedSpoilsV3,
     members,
-    balancesWithPrices: balancesWithPricesV2,
-    transactionsWithPrices: transactionsWithPricesV2,
-    transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV2,
-  } = useFormattedDataV2(memberData, balances, transactions, tokenPrices);
-
-  const {
     balancesWithPrices: balancesWithPricesV3,
     transactionsWithPrices: transactionsWithPricesV3,
     transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV3,
-  } = useFormattedDataV3(memberData);
+  } = useFormattedAccountingV3(memberData);
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {
       let csvString = '';
       if (type === 'transactions') {
-        const formattedTransactions = (
-          isV3 ? transactionsWithPricesV3 : transactionsWithPricesV2
-        ).map((t) => ({
+        const formattedTransactions = transactionsWithPricesV3.map((t) => ({
           Date: t.date,
           'Tx Explorer Link': t.txExplorerLink,
           'Elapsed Days': t.elapsedDays,
@@ -99,9 +83,7 @@ export const Accounting = () => {
         csvString = Papa.unparse(formattedTransactions);
       } else if (type === 'balances') {
         if (type === 'balances') {
-          const formattedBalances = (
-            isV3 ? balancesWithPricesV3 : balancesWithPricesV2
-          ).map((b) => ({
+          const formattedBalances = balancesWithPricesV3.map((b) => ({
             Token: b.tokenSymbol,
             'Tx Explorer Link': b.tokenExplorerLink,
             Inflow: b.inflow.tokenValue,
@@ -126,7 +108,7 @@ export const Accounting = () => {
           csvString = Papa.unparse(formattedBalances);
         }
       } else if (type === 'spoils') {
-        const formattedSpoils = spoils.map((s) => ({
+        const formattedSpoils = formattedSpoilsV3.map((s) => ({
           Date: s.date,
           Raid: s.raidName,
           // TODO: Get this dynamically from the subgraph
@@ -138,15 +120,7 @@ export const Accounting = () => {
       }
       exportToCsv(csvString, `raidguild-treasury-${type}`);
     },
-    [
-      balancesWithPricesV2,
-      balancesWithPricesV3,
-      isV3,
-      members,
-      spoils,
-      transactionsWithPricesV2,
-      transactionsWithPricesV3,
-    ]
+    [balancesWithPricesV3, members, formattedSpoilsV3, transactionsWithPricesV3]
   );
 
   return (
@@ -156,14 +130,14 @@ export const Accounting = () => {
       <SiteLayout
         isLoading={loading}
         data={[
-          ...transactionsWithPricesAndMembersV2,
+          ...transactionsWithPricesV3,
           ...transactionsWithPricesAndMembersV3,
-          ...balances,
-          ...Object.values(tokenPrices),
+          ...balancesWithPricesV3,
+          // ...Object.values(tokenPrices),
         ]}
         subheader={<Heading>Accounting</Heading>}
         emptyDataPhrase='No transactions'
-        error={error}
+        error={error && isError}
       >
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
@@ -180,133 +154,52 @@ export const Accounting = () => {
 
           <TabPanels>
             <TabPanel>
-              <Tabs
-                align='start'
-                colorScheme='whiteAlpha'
-                variant='unstyled'
-                defaultIndex={0}
-                onChange={(index) => {
-                  if (index === 0) setIsV3(true);
-                  else setIsV3(false);
-                }}
+              <Flex
+                alignItems='right'
+                justifyContent='right'
+                marginBlock='20px'
               >
-                <Flex
-                  alignItems='right'
-                  justifyContent='space-between'
-                  marginBlock='20px'
+                <Button
+                  onClick={() => onExportCsv('balances')}
+                  size='sm'
+                  fontWeight='normal'
                 >
-                  <TabList>
-                    <Tab>
-                      <Heading size='sm'>V3 (current)</Heading>
-                    </Tab>
-                    <Tab>
-                      <Heading size='sm'>V2</Heading>
-                    </Tab>
-                  </TabList>
-                  <Button
-                    onClick={() => onExportCsv('balances')}
-                    size='sm'
-                    fontWeight='normal'
-                  >
-                    Export Balances
-                  </Button>
-                </Flex>
-
-                <TabPanels>
-                  <TabPanel>
-                    <BalancesTable data={balancesWithPricesV3} />
-                  </TabPanel>
-                  <TabPanel>
-                    <BalancesTable data={balancesWithPricesV2} />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                  Export Balances
+                </Button>
+              </Flex>
+              <BalancesTable data={balancesWithPricesV3} />
             </TabPanel>
             <TabPanel>
-              <Tabs
-                align='start'
-                colorScheme='whiteAlpha'
-                variant='unstyled'
-                defaultIndex={0}
-                onChange={(index) => {
-                  if (index === 0) setIsV3(true);
-                  else setIsV3(false);
-                }}
+              <Flex
+                alignItems='right'
+                justifyContent='right'
+                marginBlock='20px'
               >
-                <Flex
-                  alignItems='right'
-                  justifyContent='space-between'
-                  marginBlock='20px'
+                <Button
+                  onClick={() => onExportCsv('transactions')}
+                  size='sm'
+                  fontWeight='normal'
                 >
-                  <TabList>
-                    <Tab>
-                      <Heading size='sm'>V3 (current)</Heading>
-                    </Tab>
-                    <Tab>
-                      <Heading size='sm'>V2</Heading>
-                    </Tab>
-                  </TabList>
-                  <Button
-                    onClick={() => onExportCsv('transactions')}
-                    size='sm'
-                    fontWeight='normal'
-                  >
-                    Export Transactions
-                  </Button>
-                </Flex>
-
-                <TabPanels>
-                  <TabPanel>
-                    <TransactionsTable
-                      data={transactionsWithPricesAndMembersV3}
-                    />
-                  </TabPanel>
-                  <TabPanel>
-                    <TransactionsTable
-                      data={transactionsWithPricesAndMembersV2}
-                    />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                  Export Transactions
+                </Button>
+              </Flex>
+              <TransactionsTable data={transactionsWithPricesV3} />
             </TabPanel>
             <TabPanel>
-              <Tabs
-                align='start'
-                colorScheme='whiteAlpha'
-                variant='unstyled'
-                defaultIndex={0}
+              <Flex
+                alignItems='right'
+                justifyContent='right'
+                marginBlock='20px'
               >
-                <Flex
-                  alignItems='right'
-                  justifyContent='space-between'
-                  marginBlock='20px'
+                <Button
+                  onClick={() => onExportCsv('spoils')}
+                  size='sm'
+                  fontWeight='normal'
                 >
-                  <TabList>
-                    <Tab>
-                      <Heading size='sm'>V3 (current)</Heading>
-                    </Tab>
-                    <Tab>
-                      <Heading size='sm'>V2</Heading>
-                    </Tab>
-                  </TabList>
-                  <Button
-                    onClick={() => onExportCsv('spoils')}
-                    size='sm'
-                    fontWeight='normal'
-                  >
-                    Export Spoils
-                  </Button>
-                </Flex>
-
-                <TabPanels>
-                  <TabPanel>
-                    <SpoilsTable data={spoils} />
-                  </TabPanel>
-                  <TabPanel>
-                    <div>This is the placeholder for v3 spoils data.</div>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                  Export Spoils
+                </Button>
+              </Flex>
+              <SpoilsTable data={formattedSpoilsV3} />
             </TabPanel>
           </TabPanels>
         </Tabs>

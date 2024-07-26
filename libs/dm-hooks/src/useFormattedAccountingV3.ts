@@ -1,6 +1,9 @@
 /* eslint-disable no-param-reassign */
 import {
+  IAccountingRaid,
   IMember,
+  Invoice,
+  ISpoils,
   ITokenBalanceLineItemV3,
   IVaultTransactionV2,
 } from '@raidguild/dm-types';
@@ -12,7 +15,7 @@ import {
 } from '@raidguild/dm-utils';
 import { InfiniteData } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import useAccountingV3 from './useAccountingV3';
 
@@ -78,12 +81,61 @@ function calculateTokenFlows(transactions: IVaultTransactionV2[]) {
   return tokenBalances.getBalances();
 }
 
-const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
+const formatSpoils = async (
+  Raids: IAccountingRaid[],
+  Invoices: Invoice[]
+): Promise<ISpoils[]> => {
+  const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
+  const [raids, invoices] = await Promise.all([Raids, Invoices]);
+
+  const filteredInvoices = invoices.filter(
+    (invoice) => invoice.token === wxDAI
+  );
+
+  const spoils = raids
+    .map((raid) => {
+      const invoice = filteredInvoices.find(
+        (inv) =>
+          inv.address?.toLowerCase() === raid.invoiceAddress?.toLowerCase()
+      );
+
+      if (!invoice) return null;
+
+      const totalReleased = invoice.releases.reduce(
+        (acc, release) => acc + formatUnitsAsNumber(release.amount, 18),
+        0
+      );
+
+      const latestTimestamp = Math.max(
+        ...invoice.releases.map((release) => Number(release.timestamp))
+      );
+
+      const spoilsAmount = totalReleased * 0.1;
+      const childShare = totalReleased - spoilsAmount;
+
+      return {
+        raidLink: `/raids/${raid.id}`,
+        raidName: raid.name,
+        childShare,
+        parentShare: spoilsAmount,
+        priceConversion: 1,
+        date: new Date(latestTimestamp * 1000),
+        tokenSymbol: 'wxDAI',
+      };
+    })
+    .filter((spoil) => spoil !== null);
+  return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
+};
+
+const useFormattedAccountingV3 = (memberData: InfiniteData<IMember[][]>) => {
+  const [formattedSpoils, setFormattedSpoils] = useState<ISpoils[]>([]);
   const { data: dataFromMolochV3 } = useAccountingV3();
   const balances = dataFromMolochV3?.tokens?.tokenBalances || [];
   const transactions = dataFromMolochV3?.transactions || [];
   const proposalsInfo = dataFromMolochV3?.proposalsInfo || {};
   const rageQuits = dataFromMolochV3?.rageQuits || [];
+  const raids = dataFromMolochV3?.raids || [];
+  const invoices = dataFromMolochV3?.smartInvoice || [];
 
   const flows = useMemo(
     () => calculateTokenFlows(transactions),
@@ -96,6 +148,13 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
     ) as unknown as IMember[];
     return _.keyBy(memberArray, (m: IMember) => m.ethAddress?.toLowerCase());
   }, [memberData]);
+
+  useMemo(() => {
+    (async () => {
+      const spoils = await formatSpoils(raids, invoices);
+      setFormattedSpoils(spoils);
+    })();
+  }, [raids, invoices]);
 
   const withPrices = useCallback(
     <T extends ITokenBalanceLineItemV3>(items: T[]) =>
@@ -267,10 +326,12 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
   );
 
   return {
+    members,
+    formattedSpoils,
     balancesWithPrices,
     transactionsWithPrices,
     transactionsWithPricesAndMembers,
   };
 };
 
-export default useFormattedDataV3;
+export default useFormattedAccountingV3;

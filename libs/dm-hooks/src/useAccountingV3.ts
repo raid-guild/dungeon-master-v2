@@ -1,10 +1,24 @@
 /* eslint-disable no-await-in-loop */
-import { Proposal, RageQuit } from '@raidguild/dm-types';
-import { GNOSIS_SAFE_ADDRESS } from '@raidguild/dm-utils';
+import {
+  client as dmGraphQlClient,
+  TRANSACTIONS_QUERY_V3,
+} from '@raidguild/dm-graphql';
+import {
+  IAccountingRaid,
+  Invoice,
+  Proposal,
+  RageQuit,
+} from '@raidguild/dm-types';
+import {
+  camelize,
+  GNOSIS_SAFE_ADDRESS,
+  GUILD_GNOSIS_DAO_ADDRESS_V3,
+} from '@raidguild/dm-utils';
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
 import { GraphQLClient } from 'graphql-request';
 import _ from 'lodash';
+import { useSession } from 'next-auth/react';
 import { getAddress } from 'viem';
 
 const graphUrl = (chainId: number = 4) =>
@@ -89,27 +103,102 @@ const getRageQuits = async (v3client: GraphQLClient): Promise<RageQuit[]> => {
   }
 };
 
+const getSmartInvoice = async (
+  v3ClientInvoices: GraphQLClient
+): Promise<Invoice[]> => {
+  try {
+    const invoices: { invoices: Invoice[] } = await v3ClientInvoices.request(`
+        {
+          invoices (where: { provider: "${GUILD_GNOSIS_DAO_ADDRESS_V3}" }) {
+            token
+            address
+            releases {
+              timestamp
+              amount
+            }
+          }
+        }
+    `);
+
+    return invoices.invoices;
+  } catch (error) {
+    return [];
+  }
+};
+
+const raidsQueryResult = async (token: string) => {
+  const response = await dmGraphQlClient({ token }).request(
+    TRANSACTIONS_QUERY_V3
+  );
+
+  return {
+    raids: camelize(_.get(response, 'raids')),
+  };
+};
+
 const useAccountingV3 = () => {
+  const { data: session } = useSession();
+  const token = _.get(session, 'token') as string;
+
   const checksum = getAddress(GNOSIS_SAFE_ADDRESS);
 
   const v3client = new GraphQLClient(
     `https://gateway-arbitrum.network.thegraph.com/api/${process.env.NEXT_PUBLIC_THE_GRAPH_API_KEY}/subgraphs/id/6x9FK3iuhVFaH9sZ39m8bKB5eckax8sjxooBPNKWWK8r`
   );
 
-  const { data: tokenBalances, error: tokenBalancesError } = useQuery(
-    ['tokenBalances', checksum],
-    () => listTokenBalances({ safeAddress: checksum })
+  const v3ClientInvoices = new GraphQLClient(
+    `https://api.studio.thegraph.com/proxy/78711/smart-invoice-gnosis/v0.0.1/`
   );
 
-  const { data: txResponse, error: txResponseError } = useQuery(
-    ['transactions', checksum],
-    () => getSafeTransactionProposals({ safeAddress: checksum })
+  const {
+    isError: raidsIsError,
+    isLoading: raidsIsLoading,
+    error: raidsError,
+    data: raidsData,
+  } = useInfiniteQuery<
+    {
+      raids: Array<IAccountingRaid>;
+    },
+    Error
+  >(['raidsV3'], () => raidsQueryResult(token), {
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), 100),
+    enabled: Boolean(token),
+  });
+
+  const {
+    data: tokenBalances,
+    error: tokenBalancesError,
+    isLoading: tokenBalancesLoading,
+    isError: tokenBalancesIsError,
+  } = useQuery(['tokenBalances', checksum], () =>
+    listTokenBalances({ safeAddress: checksum })
   );
 
-  const { data: rageQuitsData, error: rageQuitsError } = useQuery(
-    ['rageQuits'],
-    () => getRageQuits(v3client)
+  const {
+    data: txResponse,
+    error: txResponseError,
+    isLoading: txResponseLoading,
+    isError: txResponseIsError,
+  } = useQuery(['transactions', checksum], () =>
+    getSafeTransactionProposals({ safeAddress: checksum })
   );
+
+  const {
+    data: rageQuitsData,
+    error: rageQuitsError,
+    isLoading: rageQuitsDataLoading,
+    isError: rageQuitsIsError,
+  } = useQuery(['rageQuits'], () => getRageQuits(v3client));
+
+  const {
+    data: smartInvoiceData,
+    error: smartInvoiceError,
+    isLoading: smartInvoiceLoading,
+    isError: smartInvoiceIsError,
+  } = useQuery(['smartInvoice'], () => getSmartInvoice(v3ClientInvoices));
 
   const proposalQueries =
     _.map(txResponse?.txData, (tx) => {
@@ -151,8 +240,24 @@ const useAccountingV3 = () => {
     }) || [];
 
   const proposalsInfo = useQueries({ queries: proposalQueries });
-
-  const error = tokenBalancesError || txResponseError || rageQuitsError;
+  const error =
+    tokenBalancesError ||
+    txResponseError ||
+    rageQuitsError ||
+    smartInvoiceError ||
+    raidsError;
+  const isError =
+    tokenBalancesIsError ||
+    txResponseIsError ||
+    rageQuitsIsError ||
+    smartInvoiceIsError ||
+    raidsIsError;
+  const loading =
+    tokenBalancesLoading ||
+    txResponseLoading ||
+    rageQuitsDataLoading ||
+    smartInvoiceLoading ||
+    raidsIsLoading;
   const transformProposals = proposalsInfo
     .filter((query) => query.data)
     .map((query) => query.data as Proposal)
@@ -163,13 +268,15 @@ const useAccountingV3 = () => {
     }, {} as Record<string, Omit<Proposal, 'processTxHash'>>);
 
   const data = {
+    raids: raidsData?.pages[0].raids,
+    smartInvoice: smartInvoiceData,
     tokens: tokenBalances?.data,
     transactions: txResponse?.txData,
     rageQuits: rageQuitsData || [],
     proposalsInfo: transformProposals,
   };
 
-  return { data, error };
+  return { data, error, isError, loading };
 };
 
 export default useAccountingV3;
