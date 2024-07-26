@@ -87,7 +87,6 @@ const formatSpoils = async (
 ): Promise<ISpoils[]> => {
   const wxDAI = '0xe91d153e0b41518a2ce8dd3d7944fa863463a97d';
   const [raids, invoices] = await Promise.all([Raids, Invoices]);
-  console.log('raids', raids);
 
   const filteredInvoices = invoices.filter(
     (invoice) => invoice.token === wxDAI
@@ -128,7 +127,7 @@ const formatSpoils = async (
   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
 
-const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
+const useFormattedAccountingV3 = (memberData: InfiniteData<IMember[][]>) => {
   const [formattedSpoils, setFormattedSpoils] = useState<ISpoils[]>([]);
   const { data: dataFromMolochV3 } = useAccountingV3();
   const balances = dataFromMolochV3?.tokens?.tokenBalances || [];
@@ -335,4 +334,4 @@ const useFormattedDataV3 = (memberData: InfiniteData<IMember[][]>) => {
   };
 };
 
-export default useFormattedDataV3;
+export default useFormattedAccountingV3;

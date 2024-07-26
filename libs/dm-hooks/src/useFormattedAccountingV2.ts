@@ -9,7 +9,7 @@ import { InfiniteData } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useCallback, useMemo } from 'react';
 
-const useFormattedDataV2 = (
+const useFormattedAccountingV2 = (
   memberData: InfiniteData<IMember[][]>,
   balances: ITokenBalanceLineItem[],
   transactions: IVaultTransaction[],
@@ -84,4 +84,4 @@ const useFormattedDataV2 = (
   };
 };
 
-export default useFormattedDataV2;
+export default useFormattedAccountingV2;

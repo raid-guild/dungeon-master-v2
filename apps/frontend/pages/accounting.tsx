@@ -11,7 +11,7 @@ import {
 } from '@raidguild/design-system';
 import {
   useMemberList,
-  useFormattedDataV3,
+  useFormattedAccountingV3,
   useAccountingV3,
 } from '@raidguild/dm-hooks';
 import { exportToCsv } from '@raidguild/dm-utils';
@@ -44,7 +44,7 @@ export const Accounting = () => {
     balancesWithPrices: balancesWithPricesV3,
     transactionsWithPrices: transactionsWithPricesV3,
     transactionsWithPricesAndMembers: transactionsWithPricesAndMembersV3,
-  } = useFormattedDataV3(memberData);
+  } = useFormattedAccountingV3(memberData);
 
   const onExportCsv = useCallback(
     (type: 'transactions' | 'balances' | 'spoils') => {
