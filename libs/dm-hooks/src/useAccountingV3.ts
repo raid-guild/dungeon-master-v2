@@ -33,15 +33,6 @@ export const client = (chainId: number) => new GraphQLClient(graphUrl(chainId));
 
 const API_URL = 'https://safe-transaction-gnosis-chain.safe.global/api/v1';
 
-const transformTokenBalances = (tokenBalanceRes, safeAddress: string) => {
-  const fiatTotal = _.reduce(
-    tokenBalanceRes,
-    (sum: number, balance) => sum + Number(balance.balance),
-    0
-  );
-  return { safeAddress, tokenBalances: tokenBalanceRes, fiatTotal };
-};
-
 const listTokenBalances = async ({ safeAddress }: { safeAddress: string }) => {
   try {
     const res = await fetch(`${API_URL}/safes/${safeAddress}/balances/`);
@@ -49,7 +40,7 @@ const listTokenBalances = async ({ safeAddress }: { safeAddress: string }) => {
     const filteredTokenBalanceRes = _.filter(data, 'tokenAddress');
 
     return {
-      data: transformTokenBalances(filteredTokenBalanceRes, safeAddress),
+      data: { safeAddress, tokenBalances: filteredTokenBalanceRes },
     };
   } catch (err) {
     return { error: `Error fetching token balances. Please try again. ${err}` };

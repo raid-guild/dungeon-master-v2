@@ -158,45 +158,56 @@ const useFormattedAccountingV3 = (memberData: InfiniteData<IMember[][]>) => {
 
   const withPrices = useCallback(
     <T extends ITokenBalanceLineItemV3>(items: T[]) =>
-      _.map(items, (t) => {
-        if (!t) return t;
+      _.map(
+        [
+          ...items,
+          { token: { decimals: 18, symbol: 'XDAI' }, tokenAddress: 'ETH' },
+        ],
+        (t) => {
+          if (!t) return t;
 
-        const tokenSymbol = _.lowerCase(
-          'token' in t ? t.token.symbol : t.tokenInfo?.symbol
-        );
-        const balance = {
-          inflow: {
-            tokenValue: formatUnitsAsNumber(
-              _.get(flows, [t.tokenAddress, 'inflow'], BigInt(0)),
-              _.get(t, ['token', 'decimals'])
-            ),
-          },
-          outflow: {
-            tokenValue: formatUnitsAsNumber(
-              _.get(flows, [t.tokenAddress, 'outflow'], BigInt(0)),
-              _.get(t, ['token', 'decimals'])
-            ),
-          },
-          closing: {
-            tokenValue: formatUnitsAsNumber(
-              _.get(flows, [t.tokenAddress, 'balance'], BigInt(0)),
-              _.get(t, ['token', 'decimals'])
-            ),
-          },
-        };
+          const tokenSymbol = _.lowerCase(
+            'token' in t ? t.token.symbol : t.tokenInfo?.symbol
+          );
+          const balance = {
+            inflow: {
+              tokenValue: formatUnitsAsNumber(
+                _.get(flows, [t.tokenAddress, 'inflow'], BigInt(0)),
+                _.get(t, ['token', 'decimals'])
+              ),
+            },
+            outflow: {
+              tokenValue: formatUnitsAsNumber(
+                _.get(flows, [t.tokenAddress, 'outflow'], BigInt(0)),
+                _.get(t, ['token', 'decimals'])
+              ),
+            },
+            closing: {
+              tokenValue: formatUnitsAsNumber(
+                _.get(flows, [t.tokenAddress, 'balance'], BigInt(0)),
+                _.get(t, ['token', 'decimals'])
+              ),
+            },
+          };
 
-        // todo get priceConversion for non-stable tokens
-        const priceConversion = _.includes(tokenSymbol, 'xdai') ? 1 : undefined;
+          // TODO: get priceConversion for non-stable tokens
+          const priceConversion = _.includes(tokenSymbol, 'xdai')
+            ? 1
+            : undefined;
 
-        return {
-          ...t,
-          ...balance,
-          tokenSymbol,
-          priceConversion,
-          date: new Date(),
-          tokenExplorerLink: `https://blockscout.com/xdai/mainnet/address/${t.tokenAddress}`,
-        };
-      }),
+          return {
+            ...t,
+            ...balance,
+            tokenSymbol,
+            priceConversion,
+            date: new Date(),
+            tokenExplorerLink:
+              t.tokenAddress === 'ETH'
+                ? 'https://docs.gnosischain.com/about/tokens/xdai'
+                : `https://blockscout.com/xdai/mainnet/address/${t.tokenAddress}`,
+          };
+        }
+      ),
     [flows]
   );
 
@@ -242,8 +253,8 @@ const useFormattedAccountingV3 = (memberData: InfiniteData<IMember[][]>) => {
           tokenBalances.incrementInflow(tokenAddress, inAmount);
           tokenBalances.incrementOutflow(tokenAddress, outAmount);
 
-          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${t.txHash}`;
           const txHash = _.get(t, 'transactionHash', t.txHash);
+          const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${txHash}`;
           const proposal = proposalsInfo[txHash];
           const proposalLink = proposal
             ? `https://admin.daohaus.club/#/molochV3/0x64/${_.replace(
@@ -252,8 +263,10 @@ const useFormattedAccountingV3 = (memberData: InfiniteData<IMember[][]>) => {
                 '/'
               )}`
             : '';
-          let txType;
-          if (proposal) {
+          let txType: string;
+          if (proposal?.proposalType === 'TOKENS_FOR_SHARES') {
+            txType = 'membership';
+          } else if (proposal) {
             txType = 'proposal';
           } else if (transfer.to === GNOSIS_SAFE_ADDRESS) {
             txType = 'spoils';
@@ -273,7 +286,7 @@ const useFormattedAccountingV3 = (memberData: InfiniteData<IMember[][]>) => {
 
           const proposalShares =
             transfer.from === GNOSIS_SAFE_ADDRESS
-              ? _.get(rageQuitsMap, [t.txHash, 'shares'], undefined)
+              ? _.get(rageQuitsMap, [txHash, 'shares'], undefined)
               : undefined;
 
           return {
