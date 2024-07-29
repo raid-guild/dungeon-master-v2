@@ -19,7 +19,7 @@ interface SiteLayoutProps {
   data?: any;
   subheader?: ReactNode;
   emptyDataPhrase?: string;
-  error?: Error;
+  error?: Error | boolean;
   isLoading?: boolean;
   minHeight?: string;
 }
@@ -157,7 +157,10 @@ const SiteLayout = ({
         minHeight={minHeight}
       >
         <Flex w='100%' justify='center' pt={40}>
-          <Heading size='md'>Error loading data: {error.message}</Heading>
+          <Heading size='md'>
+            Error loading data
+            {typeof error === 'object' && `: ${error.message}`}
+          </Heading>
         </Flex>
       </GeneralLayout>
     );

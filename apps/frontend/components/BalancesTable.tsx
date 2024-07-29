@@ -1,5 +1,8 @@
 import { Link, Tooltip } from '@raidguild/design-system';
-import { ITokenBalanceLineItem } from '@raidguild/dm-types';
+import {
+  ITokenBalanceLineItem,
+  ITokenBalanceLineItemV3,
+} from '@raidguild/dm-types';
 import { minMaxNumberFilter, sortNumeric } from '@raidguild/dm-utils';
 // @ts-expect-error - no types from RT
 import { createColumnHelper } from '@tanstack/react-table';
@@ -8,10 +11,12 @@ import DataTable from './DataTable';
 import TokenWithUsdValue from './TokenWithUsdValue';
 
 interface BalancesTableProps {
-  data: ITokenBalanceLineItem[];
+  data: ITokenBalanceLineItem[] | ITokenBalanceLineItemV3[];
 }
 
-const columnHelper = createColumnHelper<ITokenBalanceLineItem>();
+const columnHelper = createColumnHelper<
+  ITokenBalanceLineItem | ITokenBalanceLineItemV3
+>();
 
 const columns = [
   columnHelper.accessor('tokenExplorerLink', {

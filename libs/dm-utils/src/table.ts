@@ -4,7 +4,7 @@ import { RankingInfo, rankings } from '@tanstack/match-sorter-utils';
 import { CellContext } from '@tanstack/react-table';
 import { formatUnits } from 'viem';
 
-const DAY_MILLISECONDS = 1000 * 60 * 60 * 24;
+import { DAY_MILLISECONDS } from './constants';
 
 export const exportToCsv = (csvString: string, fileName: string) => {
   const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
@@ -16,7 +16,7 @@ export const exportToCsv = (csvString: string, fileName: string) => {
   link.remove();
 };
 
-export const formatDate = (date: Date) => date.toISOString().split('T')[0];
+export const formatDate = (date: Date) => date?.toISOString().split('T')[0];
 
 export const formatUnitsAsNumber = (value: bigint, decimals: number) =>
   Number(formatUnits(value, decimals));
@@ -90,7 +90,7 @@ export const minMaxDateFilter = <TRow>(
 ) => {
   const min = Date.parse(columnFilter?.[0]);
   const max = Date.parse(columnFilter?.[1]) + DAY_MILLISECONDS;
-  const value = (row.getValue(columnId) as Date).getTime();
+  const value = (row.getValue(columnId) as Date)?.getTime();
 
   // Rank the item
   const itemRank = rankValue(value, min, max);
