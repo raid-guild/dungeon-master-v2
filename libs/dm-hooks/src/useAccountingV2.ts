@@ -19,7 +19,7 @@ import {
   camelize,
   formatDate,
   formatUnitsAsNumber,
-  GUILD_GNOSIS_DAO_ADDRESS,
+  GUILD_GNOSIS_DAO_ADDRESS_V2,
 } from '@raidguild/dm-utils';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import _ from 'lodash';
@@ -197,7 +197,7 @@ const formatBalancesAsTransactions = async (
 
           const txExplorerLink = `https://blockscout.com/xdai/mainnet/tx/${molochStatBalance.transactionHash}`;
           const proposalLink = molochStatBalance.proposalDetail
-            ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS}/proposals/${molochStatBalance.proposalDetail.proposalId}`
+            ? `https://app.daohaus.club/dao/0x64/${GUILD_GNOSIS_DAO_ADDRESS_V2}/proposals/${molochStatBalance.proposalDetail.proposalId}`
             : '';
           const epochTimeAtIngressMs =
             Number(molochStatBalance.timestamp) * 1000;
@@ -343,7 +343,7 @@ const formatSpoils = async (
   return spoils.sort((a, b) => b.date.getTime() - a.date.getTime());
 };
 
-export const useAccounting = ({ token }: { token: string }) => {
+export const useAccountingV2 = ({ token }: { token: string }) => {
   const [transactions, setTransactions] = useState<Array<IVaultTransaction>>(
     []
   );
@@ -358,9 +358,9 @@ export const useAccounting = ({ token }: { token: string }) => {
     const response = await client({ token }).request(TRANSACTIONS_QUERY, {
       first: limit,
       skip: pageParam * limit,
-      molochAddress: GUILD_GNOSIS_DAO_ADDRESS,
-      contractAddr: GUILD_GNOSIS_DAO_ADDRESS,
-      escrowParentAddress: GUILD_GNOSIS_DAO_ADDRESS,
+      molochAddress: GUILD_GNOSIS_DAO_ADDRESS_V2,
+      contractAddr: GUILD_GNOSIS_DAO_ADDRESS_V2,
+      escrowParentAddress: GUILD_GNOSIS_DAO_ADDRESS_V2,
     });
 
     return {
@@ -453,4 +453,4 @@ export const useAccounting = ({ token }: { token: string }) => {
   };
 };
 
-export default useAccounting;
+export default useAccountingV2;
