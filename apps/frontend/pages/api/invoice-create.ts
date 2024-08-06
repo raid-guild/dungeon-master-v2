@@ -1,4 +1,8 @@
-import { client, UPDATE_INVOICE_ADDRESS_QUERY } from '@raidguild/dm-graphql';
+import {
+  client,
+  INSERT_INVOICE_MUTATION,
+  UPDATE_INVOICE_ID_QUERY,
+} from '@raidguild/dm-graphql';
 import _ from 'lodash';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
@@ -19,16 +23,40 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json('Unauthorized');
   }
 
-  const { raidId, invoiceAddress } = _.pick(body, ['raidId', 'invoiceAddress']);
+  const { chainId, raidId, invoiceAddress } = _.pick(body, [
+    'chainId',
+    'raidId',
+    'invoiceAddress',
+  ]);
 
   try {
-    // TODO move to helper
-    const result: any = await client({}).request(UPDATE_INVOICE_ADDRESS_QUERY, {
-      raidId,
-      invoiceAddress: _.toLower(invoiceAddress),
-    });
+    const invoiceInsertResult: any = await client({}).request(
+      INSERT_INVOICE_MUTATION,
+      {
+        invoice: {
+          chain_id: chainId,
+          invoice_address: _.toLower(invoiceAddress),
+        },
+      }
+    );
 
-    return res.status(201).json(result?.update_raids_by_pk?.returning);
+    if (!invoiceInsertResult?.insert_invoices_one) {
+      return res.status(500).json('Failed to create invoice');
+    }
+
+    // TODO move to helper
+    const raidUpdateResult: any = await client({}).request(
+      UPDATE_INVOICE_ID_QUERY,
+      {
+        raidId,
+        invoiceId: invoiceInsertResult.insert_invoices_one.id,
+        invoiceAddress: _.toLower(invoiceAddress),
+      }
+    );
+
+    return res
+      .status(201)
+      .json(raidUpdateResult?.update_raids_by_pk?.returning);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err);

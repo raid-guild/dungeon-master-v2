@@ -143,7 +143,7 @@ const useRegister = ({
       console.log('success', tx);
       // TODO parse invoice address
       const smartInvoiceId = _.get(tx, 'events[0].args.invoice');
-      await updateRaidInvoice(raidId, smartInvoiceId);
+      await updateRaidInvoice(chainId, raidId, smartInvoiceId);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console

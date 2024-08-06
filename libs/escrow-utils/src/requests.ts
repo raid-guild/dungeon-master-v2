@@ -14,10 +14,12 @@ export const validateRaidId = async (raidId: string) => {
 };
 
 export const updateRaidInvoice = async (
+  chainId: number,
   raidId: string,
   invoiceAddress: string
 ) => {
   const { data } = await axios.post(`/api/invoice-create`, {
+    chainId,
     raidId,
     invoiceAddress,
   });

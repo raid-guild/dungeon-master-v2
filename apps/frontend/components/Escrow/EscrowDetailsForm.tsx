@@ -175,9 +175,9 @@ const EscrowDetailsForm = ({
             label='Arbitration Provider'
             value={
               localDaoSplit
-                ? NETWORK_CONFIG[
-                    _.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS')))
-                  ]?.name
+                ? Object.keys(NETWORK_CONFIG[chainId].RESOLVERS).map(
+                    (key) => NETWORK_CONFIG[chainId].RESOLVERS[key]?.name
+                  )[0]
                 : 'RaidGuild DAO'
             }
             localForm={localForm}

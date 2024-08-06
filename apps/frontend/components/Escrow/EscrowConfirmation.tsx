@@ -153,9 +153,9 @@ const EscrowConfirmation = ({
     {
       label: 'Arbitration Provider',
       value: daoSplit ? (
-        NETWORK_CONFIG[
-          _.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS')))
-        ]?.name
+        Object.keys(NETWORK_CONFIG[chainId].RESOLVERS).map(
+          (key) => NETWORK_CONFIG[chainId].RESOLVERS[key]?.name
+        )[0]
       ) : (
         <Tooltip
           label='No DAO split'

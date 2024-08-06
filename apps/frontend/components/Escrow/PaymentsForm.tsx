@@ -30,7 +30,7 @@ const tokens = (chainId: number) => {
     return ['WETH', 'WXDAI'];
   }
   if (chainId === 10) {
-    return ['USDC (native)'];
+    return ['USDC'];
   }
   if (chainId === 1) {
     return ['WETH', 'DAI'];
