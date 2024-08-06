@@ -46,7 +46,11 @@ const ActionButtons = ({ chainId, raid }: { chainId: number; raid: IRaid }) => (
       </Link>
     ) : (
       <>
-        <Link href={`/escrow/new?raidId=${raid?.id}`} passHref key='register'>
+        <Link
+          href={`/escrow/new?chainId=${chainId}&raidId=${raid?.id}`}
+          key='register'
+          passHref
+        >
           <Button
             variant='outline'
             isDisabled={!raid || !!raid?.invoiceAddress}
