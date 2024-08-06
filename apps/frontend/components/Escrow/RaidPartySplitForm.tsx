@@ -15,7 +15,7 @@ import {
   Text,
   Tooltip,
 } from '@raidguild/design-system';
-import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
+import { unsupportedNetwork } from '@raidguild/escrow-gql';
 import { Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
@@ -31,9 +31,6 @@ interface RaidPartySplitFormProps {
   updateStep: () => void;
   backStep: () => void;
 }
-
-const unsupportedNetwork = (chainId: number) =>
-  !_.includes(SUPPORTED_NETWORKS, chainId);
 
 const schema = Yup.object().shape({
   ownersAndAllocations: Yup.array().of(

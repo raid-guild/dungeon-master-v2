@@ -82,18 +82,24 @@ const NewEscrow = () => {
               textAlign='center'
             >
               <AlertIcon boxSize='40px' />
-              <Text>
-                Please switch to the{' '}
-                <Text
-                  as='span'
-                  color='red'
-                  onClick={() => switchNetwork(chainIdParam)}
-                  _hover={{ cursor: 'pointer', textDecor: 'underline' }}
-                >
-                  {chainsMap(chainIdParam)?.name || 'correct'}
-                </Text>{' '}
-                network to register an escrow.
-              </Text>
+              {chainsMap(chainIdParam)?.name ? (
+                <Text>
+                  Please switch to the{' '}
+                  <Text
+                    as='span'
+                    color='red'
+                    onClick={() => switchNetwork(chainIdParam)}
+                    _hover={{ cursor: 'pointer', textDecor: 'underline' }}
+                  >
+                    {chainsMap(chainIdParam).name}
+                  </Text>{' '}
+                  network to register an escrow.
+                </Text>
+              ) : (
+                <Text>
+                  Please switch to the correct network to register an escrow.
+                </Text>
+              )}
             </Alert>
           </Stack>
         </SiteLayout>

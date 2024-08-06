@@ -12,7 +12,11 @@ import {
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { unsupportedNetwork } from '@raidguild/escrow-gql';
-import { GANGGANG_MULTISIG, Invoice } from '@raidguild/escrow-utils';
+import {
+  GANGGANG_MULTISIG,
+  Invoice,
+  NETWORK_CONFIG,
+} from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -169,7 +173,13 @@ const EscrowDetailsForm = ({
           <Input
             name='resolver'
             label='Arbitration Provider'
-            value={localDaoSplit ? 'LexDAO' : 'RaidGuild DAO'}
+            value={
+              localDaoSplit
+                ? NETWORK_CONFIG[
+                    _.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS')))
+                  ]?.name
+                : 'RaidGuild DAO'
+            }
             localForm={localForm}
             isDisabled
           />

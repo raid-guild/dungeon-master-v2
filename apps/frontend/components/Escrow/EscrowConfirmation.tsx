@@ -9,7 +9,7 @@ import {
 import { IRaid } from '@raidguild/dm-types';
 import { commify } from '@raidguild/dm-utils';
 import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
-import { GANGGANG_MULTISIG } from '@raidguild/escrow-utils';
+import { GANGGANG_MULTISIG, NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -153,7 +153,9 @@ const EscrowConfirmation = ({
     {
       label: 'Arbitration Provider',
       value: daoSplit ? (
-        'LexDAO'
+        NETWORK_CONFIG[
+          _.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS')))
+        ]?.name
       ) : (
         <Tooltip
           label='No DAO split'
