@@ -18,6 +18,7 @@
 - "!include public_delivery_priorities.yaml"
 - "!include public_guild_classes.yaml"
 - "!include public_guild_services.yaml"
+- "!include public_invoices.yaml"
 - "!include public_link_types.yaml"
 - "!include public_links.yaml"
 - "!include public_member_types.yaml"

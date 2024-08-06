@@ -11,6 +11,9 @@ object_relationships:
   - name: hunter
     using:
       foreign_key_constraint_on: hunter_id
+  - name: invoice
+    using:
+      foreign_key_constraint_on: invoice_id
   - name: raid_category
     using:
       foreign_key_constraint_on: category_key

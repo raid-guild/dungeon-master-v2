@@ -11,16 +11,13 @@ import {
   Stack,
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
-import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
+import { unsupportedNetwork } from '@raidguild/escrow-gql';
 import { GANGGANG_MULTISIG, Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 import * as Yup from 'yup';
-
-const unsupportedNetwork = (chainId: number) =>
-  !_.includes(SUPPORTED_NETWORKS, chainId);
 
 export const sevenDaysFromNow = () => {
   const localDate = new Date();
