@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Card,
   CardBody,
@@ -8,6 +10,7 @@ import {
   HStack,
   Image,
   Input,
+  Link as ChakraLink,
   Stack,
   Text,
 } from '@raidguild/design-system';
@@ -85,6 +88,55 @@ export const Escrow = () => {
         subheader={<Heading>Escrow</Heading>}
         minHeight={[null, null, '100vh']}
       >
+        {chainId === 1 && (
+          <Alert
+            flexDirection='column'
+            gap={6}
+            mb='4'
+            p={8}
+            status='warning'
+            textAlign='center'
+          >
+            <AlertIcon boxSize='40px' />
+            <Text>
+              You are currently on the Mainnet chain. Please note that all
+              escrows created here get released to a pre-existing RaidGuild
+              multi-sig, rather than the DAO.
+            </Text>
+          </Alert>
+        )}
+        {chainId === 10 && (
+          <Alert
+            flexDirection='column'
+            gap={6}
+            mb='4'
+            p={8}
+            status='warning'
+            textAlign='center'
+          >
+            <AlertIcon boxSize='40px' />
+            <Text>
+              You are currently on the Optimism chain. All escrows created here
+              are released to the RaidGuild&apos;s Optimism DAO, which is a
+              completely separate entity from the RaidGuild&apos;s Gnosis DAO.
+              By creating an escrow here, you will be required to only use
+              native USDC, and may be required to KYC. All spoils will go
+              towards supporting the RaidGuild&apos;s Optimism DAO effort. To
+              read more about this effort, please visit the{' '}
+              <ChakraLink
+                color='red'
+                isExternal
+                href='https://handbook.raidguild.org/docs/raids/escrow/how-does-it-work'
+                _hover={{
+                  textDecoration: 'underline',
+                }}
+              >
+                handbook
+              </ChakraLink>
+              .
+            </Text>
+          </Alert>
+        )}
         <Flex justify='center' width='100%'>
           {unsupportedNetwork(chainId) ? (
             <Card variant='filled'>
