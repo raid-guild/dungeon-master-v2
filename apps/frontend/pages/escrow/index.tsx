@@ -38,9 +38,13 @@ import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 
 // 7b733a60-03b7-472e-8157-c40563c1adaf
 
-const ActionButtons = ({ raid }: { raid: IRaid }) => (
+const ActionButtons = ({ chainId, raid }: { chainId: number; raid: IRaid }) => (
   <HStack>
-    {raid ? (
+    {!raid && chainId !== 10 ? (
+      <Link href='/escrow/new'>
+        <Button variant='outline'>I don&apos;t have one</Button>
+      </Link>
+    ) : (
       <>
         <Link href={`/escrow/new?raidId=${raid?.id}`} passHref key='register'>
           <Button
@@ -56,10 +60,6 @@ const ActionButtons = ({ raid }: { raid: IRaid }) => (
           </Button>
         </Link>
       </>
-    ) : (
-      <Link href='/escrow/new'>
-        <Button variant='outline'>I don&apos;t have one</Button>
-      </Link>
     )}
   </HStack>
 );
@@ -189,7 +189,7 @@ export const Escrow = () => {
               <CardFooter w='100%'>
                 <Flex justify='flex-end' w='100%'>
                   <Stack>
-                    <ActionButtons raid={raid} />
+                    <ActionButtons chainId={chainId} raid={raid} />
                     {raidId && !isLoading && (
                       <Text color={raid ? 'green.500' : 'red.500'} mb='2'>
                         {raid ? 'Raid ID is valid!' : 'Raid not found'}
