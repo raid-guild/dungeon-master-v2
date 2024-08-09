@@ -44,6 +44,26 @@ if (process.env.NODE_ENV === 'development') {
   chainsList[31337] = hardhat;
 }
 export const chainsMap = (chainId: number) => chainsList[chainId];
+export const chainIdToIconMap = (chainId: number) => {
+  switch (chainId) {
+    case optimism.id:
+      return '/icons/optimism.png';
+    case gnosis.id:
+      return '/icons/gnosis-light.png';
+    default:
+      return '';
+  }
+};
+export const networkToIdMap = (network: string) => {
+  switch (network) {
+    case 'optimism':
+      return optimism.id;
+    case 'gnosis':
+      return gnosis.id;
+    default:
+      return 0;
+  }
+};
 
 const data = configureChains(
   _.map(orderedChains, (id: number) => chainsMap(id)),

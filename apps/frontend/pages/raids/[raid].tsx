@@ -1,6 +1,14 @@
-import { Box, Flex, Heading, Stack, Text } from '@raidguild/design-system';
+import {
+  Box,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  Stack,
+  Text,
+} from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
-import { displayDate } from '@raidguild/dm-utils';
+import { chainIdToIconMap, displayDate } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { GetServerSidePropsContext } from 'next';
 import { useSession } from 'next-auth/react';
@@ -60,9 +68,14 @@ const Raid = ({ raidId }: { raidId: string }) => {
             align='center'
           >
             {startOrEnd && <Box w='15%' />}
-
-            <Heading size='lg'>{_.get(raid, 'name')}</Heading>
-
+            <HStack spacing={4}>
+              <Heading size='lg'>{_.get(raid, 'name')}</Heading>
+              <Image
+                alt={chainIdToIconMap(raid.invoice.chainId) ?? 'Chain icon'}
+                boxSize='28px'
+                src={chainIdToIconMap(raid.invoice.chainId)}
+              />
+            </HStack>
             <RaidDate
               startDate={_.get(raid, 'startDate')}
               endDate={_.get(raid, 'endDate')}

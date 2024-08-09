@@ -10,7 +10,7 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
-import { chainsMap } from '@raidguild/dm-utils';
+import { chainIdToIconMap, chainsMap } from '@raidguild/dm-utils';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -19,7 +19,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Hex } from 'viem';
 import { useChainId, useSwitchNetwork } from 'wagmi';
-import { optimism } from 'wagmi/chains';
+import { gnosis, optimism } from 'wagmi/chains';
 
 import Link from '../../components/ChakraNextLink';
 import EscrowConfirmation from '../../components/Escrow/EscrowConfirmation';
@@ -88,8 +88,8 @@ const NewEscrow = () => {
               >
                 <HStack spacing={2} align='center'>
                   <Image
-                    alt={optimism.name ?? 'Chain icon'}
-                    src='/icons/gnosis-light.png'
+                    alt={gnosis.name ?? 'Chain icon'}
+                    src={chainIdToIconMap(gnosis.id)}
                     boxSize='20px'
                   />
                   <Text>Gnosis</Text>
@@ -103,7 +103,7 @@ const NewEscrow = () => {
                 <HStack spacing={2} align='center'>
                   <Image
                     alt={optimism.name ?? 'Chain icon'}
-                    src='/icons/optimism.png'
+                    src={chainIdToIconMap(optimism.id)}
                     boxSize='25px'
                   />
                   <Text>Optimism</Text>

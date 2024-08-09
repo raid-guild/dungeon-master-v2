@@ -22,7 +22,10 @@ export interface IRaid {
   raidName: string;
   status: string;
   category: string;
-  invoiceAddress: Hex;
+  invoice: {
+    chainId: number;
+    invoiceAddress: Hex;
+  };
 
   // RELATIONSHIPS
   rolesRequired: {

@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Card,
   Flex,
   Heading,
@@ -9,7 +11,7 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { useRaidDetail } from '@raidguild/dm-hooks';
-import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
+import { chainsMap } from '@raidguild/dm-utils';
 import { useInvoiceDetails, useSplitsMetadata } from '@raidguild/escrow-hooks';
 import { invoiceUrl } from '@raidguild/escrow-utils';
 import _ from 'lodash';
@@ -19,7 +21,7 @@ import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useMemo } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
 
 import ChakraNextLink from '../../components/ChakraNextLink';
 import InvoiceButtonManager from '../../components/Escrow/InvoiceButtonManager';
@@ -31,8 +33,6 @@ import Page404 from '../../components/Escrow/shared/Page404';
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 import { authOptions } from '../api/auth/[...nextauth]';
 
-const WRONG_NETWORK_MESSAGE =
-  'This network is not supported: Switch to Gnosis Chain';
 const NOT_CONNECTED_MESSAGE =
   'Connect your wallet to fetch invoice information.';
 
@@ -45,6 +45,7 @@ const Escrow = ({
 }) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
   const { data: session } = useSession() || { data: serverSession };
   const token = _.get(session, 'token');
 
@@ -59,8 +60,8 @@ const Escrow = ({
     isLoading: invoiceLoading,
     error: invoiceError,
   } = useInvoiceDetails({
-    invoiceAddress: raid?.invoiceAddress,
-    chainId: 100, // chain?.id, // ! support multiple chains
+    invoiceAddress: raid?.invoice.invoiceAddress,
+    chainId: raid?.invoice.chainId,
   });
 
   const initialSplit = useMemo(
@@ -73,8 +74,6 @@ const Escrow = ({
       splits: initialSplit,
       chainId: chain?.id,
     });
-
-  const wrongChain = !_.includes(SUPPORTED_NETWORKS, chain?.id);
 
   if (!token && !invoice) {
     return (
@@ -96,13 +95,51 @@ const Escrow = ({
     );
   }
 
-  if (!raid || (raid && raid?.invoiceAddress && !invoice)) {
+  if (!raid || (raid && raid?.invoice.invoiceAddress && !invoice)) {
     return (
       <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
         <Page404
           heading='Invoice not found!'
           primaryLink={{ link: '/escrow', label: 'Back to escrow' }}
         />
+      </SiteLayoutPublic>
+    );
+  }
+
+  if (raid.invoice.chainId !== chain?.id) {
+    return (
+      <SiteLayoutPublic subheader={<Heading>Escrow</Heading>}>
+        <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
+          {raid && <ProjectInfo raid={raid} />}
+          <Alert
+            flexDirection='column'
+            gap={6}
+            mb='4'
+            p={8}
+            status='error'
+            textAlign='center'
+          >
+            <AlertIcon boxSize='40px' />
+            {chainsMap(raid.invoice.chainId)?.name ? (
+              <Text>
+                Please switch to the{' '}
+                <Text
+                  as='span'
+                  color='red'
+                  onClick={() => switchNetwork(raid.invoice.chainId)}
+                  _hover={{ cursor: 'pointer', textDecor: 'underline' }}
+                >
+                  {chainsMap(raid.invoice.chainId).name}
+                </Text>{' '}
+                network to register an escrow.
+              </Text>
+            ) : (
+              <Text>
+                Please switch to the correct network to register an escrow.
+              </Text>
+            )}
+          </Alert>
+        </Stack>
       </SiteLayoutPublic>
     );
   }
@@ -119,7 +156,6 @@ const Escrow = ({
         )}
 
         {invoiceError && <Text variant='textOne'>Error fetching invoice</Text>}
-        {wrongChain && <Text variant='textOne'>{WRONG_NETWORK_MESSAGE}</Text>}
 
         {invoice && (
           <Flex
@@ -145,6 +181,7 @@ const Escrow = ({
                   />
                   <Flex justify='flex-end'>
                     <ChakraNextLink
+                      isExternal
                       href={invoiceUrl(chain?.id || 100, invoice?.id)}
                     >
                       <HStack>

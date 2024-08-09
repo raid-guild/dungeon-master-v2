@@ -1,12 +1,16 @@
 import { Hex } from 'viem';
 
 export interface Invoice {
+  network: string;
   address: Hex;
   // onchain
   client: Hex;
   provider: Hex;
   providerReceiver?: Hex;
   token: Hex;
+  tokenMetadata: {
+    decimals: number;
+  };
   isLocked: boolean;
   disputes: any[]; // Dispute[];
   resolutions: any[]; // Resolution[];
