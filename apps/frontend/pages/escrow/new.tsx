@@ -1,7 +1,10 @@
 import {
   Alert,
   AlertIcon,
+  Button,
   Heading,
+  HStack,
+  Image,
   Spinner,
   Stack,
   Text,
@@ -16,6 +19,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Hex } from 'viem';
 import { useChainId, useSwitchNetwork } from 'wagmi';
+import { optimism } from 'wagmi/chains';
 
 import Link from '../../components/ChakraNextLink';
 import EscrowConfirmation from '../../components/Escrow/EscrowConfirmation';
@@ -64,6 +68,53 @@ const NewEscrow = () => {
   useEffect(() => {
     setStep(raidId ? 1 : 0);
   }, [raidId]);
+
+  if (Number.isNaN(chainIdParam)) {
+    return (
+      <>
+        <NextSeo title='Escrow' />
+
+        <SiteLayout subheader={<Heading>Register a new escrow</Heading>}>
+          <Stack mt='6' w='70%' minW='650px' minH='450px' spacing={6}>
+            {raid && <ProjectInfo raid={raid} />}
+            <Text mt={8} textAlign='center'>
+              Pick one of RaidGuild&apos;s supported networks.
+            </Text>
+            <HStack justifyContent='center' w='100%'>
+              <Button
+                onClick={() =>
+                  router.push(`/escrow/new?raidId=${raidId}&chainId=100`)
+                }
+              >
+                <HStack spacing={2} align='center'>
+                  <Image
+                    alt={optimism.name ?? 'Chain icon'}
+                    src='/icons/gnosis-light.png'
+                    boxSize='20px'
+                  />
+                  <Text>Gnosis</Text>
+                </HStack>
+              </Button>
+              <Button
+                onClick={() =>
+                  router.push(`/escrow/new?raidId=${raidId}&chainId=10`)
+                }
+              >
+                <HStack spacing={2} align='center'>
+                  <Image
+                    alt={optimism.name ?? 'Chain icon'}
+                    src='/icons/optimism.png'
+                    boxSize='25px'
+                  />
+                  <Text>Optimism</Text>
+                </HStack>
+              </Button>
+            </HStack>
+          </Stack>
+        </SiteLayout>
+      </>
+    );
+  }
 
   if (chainId !== chainIdParam) {
     return (
