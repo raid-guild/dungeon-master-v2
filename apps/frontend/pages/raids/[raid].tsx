@@ -70,11 +70,13 @@ const Raid = ({ raidId }: { raidId: string }) => {
             {startOrEnd && <Box w='15%' />}
             <HStack spacing={4}>
               <Heading size='lg'>{_.get(raid, 'name')}</Heading>
-              <Image
-                alt={chainIdToIconMap(raid.invoice.chainId) ?? 'Chain icon'}
-                boxSize='28px'
-                src={chainIdToIconMap(raid.invoice.chainId)}
-              />
+              {raid?.invoice && (
+                <Image
+                  alt={chainIdToIconMap(raid.invoice.chainId) ?? 'Chain icon'}
+                  boxSize='28px'
+                  src={chainIdToIconMap(raid.invoice.chainId)}
+                />
+              )}
             </HStack>
             <RaidDate
               startDate={_.get(raid, 'startDate')}

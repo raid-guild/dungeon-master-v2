@@ -60,8 +60,8 @@ const Escrow = ({
     isLoading: invoiceLoading,
     error: invoiceError,
   } = useInvoiceDetails({
-    invoiceAddress: raid?.invoice.invoiceAddress,
-    chainId: raid?.invoice.chainId,
+    invoiceAddress: raid?.invoice?.invoiceAddress,
+    chainId: raid?.invoice?.chainId,
   });
 
   const initialSplit = useMemo(

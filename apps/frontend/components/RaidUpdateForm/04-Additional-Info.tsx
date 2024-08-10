@@ -17,7 +17,7 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
   closeModal,
   raid,
 }: AdditionalInfoUpdateProps) => {
-  const { escrowIndex, lockerHash, invoiceAddress, id } = raid;
+  const { escrowIndex, lockerHash, invoice, id } = raid;
 
   const { data: session } = useSession();
   const token = _.get(session, 'token');
@@ -42,7 +42,10 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
       raid_updates: {
         escrow_index: values.escrowIndex ?? escrowIndex,
         locker_hash: values.lockerHash ?? lockerHash,
-        invoice_address: values.invoiceAddress ?? invoiceAddress,
+        invoice: {
+          chain_id: invoice?.chainId,
+          invoice_address: values.invoiceAddress ?? invoice?.invoiceAddress,
+        },
       },
     });
     closeModal();
@@ -82,7 +85,7 @@ const AdditionalInfoUpdateForm: React.FC<AdditionalInfoUpdateProps> = ({
         />
         <Input
           name='invoiceAddress'
-          defaultValue={invoiceAddress ?? ''}
+          defaultValue={invoice.invoiceAddress ?? ''}
           aria-label='invoiceAddress'
           placeholder='invoiceAddress'
           rounded='base'

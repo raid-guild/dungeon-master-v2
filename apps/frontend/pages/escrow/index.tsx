@@ -53,13 +53,13 @@ const ActionButtons = ({ chainId, raid }: { chainId: number; raid: IRaid }) => (
         >
           <Button
             variant='outline'
-            isDisabled={!raid || !!raid?.invoiceAddress}
+            isDisabled={!raid || !!raid?.invoice?.invoiceAddress}
           >
             Register Escrow
           </Button>
         </Link>
         <Link href={`/escrow/${raid?.id}`} passHref key='view'>
-          <Button variant='outline' isDisabled={!raid?.invoiceAddress}>
+          <Button variant='outline' isDisabled={!raid?.invoice?.invoiceAddress}>
             View Escrow
           </Button>
         </Link>

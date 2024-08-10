@@ -12,12 +12,14 @@ import TOKEN_ABI from './contracts/Token.json';
 const useDeposit = ({
   invoice,
   amount,
+  decimals,
   hasAmount,
   paymentType,
   onSuccess,
 }: {
   invoice: Invoice;
   amount: string;
+  decimals: number;
   hasAmount: boolean;
   paymentType: string;
   onSuccess?: (tx: ContractFunctionResult) => void;
@@ -25,7 +27,7 @@ const useDeposit = ({
   const chainId = useChainId();
 
   const token = invoice?.token;
-  const depositAmount = amount && parseUnits(amount, 18);
+  const depositAmount = amount && parseUnits(amount, decimals);
 
   const {
     config,

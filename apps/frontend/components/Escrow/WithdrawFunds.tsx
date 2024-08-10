@@ -53,10 +53,10 @@ const WithdrawFunds = ({
           fontSize='1rem'
           fontWeight='bold'
           textAlign='center'
-        >{`${formatUnits(balance, 18)} ${parseTokenAddress(
-          chainId,
-          invoice?.token
-        )}`}</Text>
+        >{`${formatUnits(
+          balance,
+          invoice?.tokenMetadata.decimals
+        )} ${parseTokenAddress(chainId, invoice?.token)}`}</Text>
       </VStack>
       {/* {transaction && (
         <Text color='white' textAlign='center' fontSize='sm'>

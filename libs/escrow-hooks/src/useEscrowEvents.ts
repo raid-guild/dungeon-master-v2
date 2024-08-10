@@ -1,17 +1,17 @@
-import { Address, parseEther } from 'viem';
-import useInvoiceDetails from './useInvoiceDetails';
-import _ from 'lodash';
-import { formatUnits } from 'viem';
 import { commify } from '@raidguild/dm-utils';
+import _ from 'lodash';
+import { Address, formatUnits } from 'viem';
 
-const useEscrowEvents = (invoiceAddress: Address) => {
+import useInvoiceDetails from './useInvoiceDetails';
+
+const useEscrowEvents = (invoiceAddress: Address, chainId: number) => {
   const {
     data: invoice,
     isLoading,
     error,
   } = useInvoiceDetails({
     invoiceAddress,
-    chainId: 100,
+    chainId,
   });
 
   const {
@@ -36,7 +36,11 @@ const useEscrowEvents = (invoiceAddress: Address) => {
     }) => {
       const createdAt = new Date(event.timestamp * 1000).toISOString();
       const amount = event?.amount
-        ? commify((parseFloat(String(event?.amount)) / 10 ** 18).toFixed(2))
+        ? commify(
+            Number(
+              formatUnits(BigInt(event.amount), invoice?.tokenMetadata.decimals)
+            ).toFixed(2)
+          )
         : null;
       return {
         createdAt,
