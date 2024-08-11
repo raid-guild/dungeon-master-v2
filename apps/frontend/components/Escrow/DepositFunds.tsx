@@ -81,12 +81,12 @@ const DepositFunds = ({
       : tokenBalance?.formatted;
   const decimals =
     paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
-  const hasAmount =
-    balance >= BigInt(amount) * BigInt(10) ** BigInt(decimals || 0);
+  const hasAmount = balance >= parseUnits(amount, decimals);
 
   const { handleDeposit, isLoading, isReady } = useDeposit({
     invoice,
     amount,
+    decimals,
     hasAmount, // (+ gas)
     paymentType: paymentType?.value,
   });
@@ -112,9 +112,12 @@ const DepositFunds = ({
 
     setValue(
       'checked',
-      depositedMilestones(BigInt(deposited) + parseUnits(amount, 18), amounts)
+      depositedMilestones(
+        BigInt(deposited) + parseUnits(amount, decimals),
+        amounts
+      )
     );
-  }, [amount, deposited, amounts, setValue]);
+  }, [amount, amounts, decimals, deposited, setValue]);
 
   return (
     <VStack w='100%' spacing='1rem'>
@@ -136,7 +139,7 @@ const DepositFunds = ({
       </Text>
       <VStack spacing='0.5rem' align='center'>
         {_.map(amounts, (a: number, i: number) => (
-          <HStack>
+          <HStack key={`milestone-${i}`}>
             <Checkbox
               mx='auto'
               key={i.toString()}
@@ -156,7 +159,7 @@ const DepositFunds = ({
                     ? totAmount - BigInt(deposited)
                     : BigInt(0);
 
-                setValue('amount', formatUnits(newAmount, 18));
+                setValue('amount', formatUnits(newAmount, decimals));
               }}
               color='yellow.300'
               border='none'
@@ -166,7 +169,7 @@ const DepositFunds = ({
             >
               <Text>
                 Payment #{i + 1} -{'  '}
-                {commify(formatUnits(BigInt(a), 18))}{' '}
+                {commify(formatUnits(BigInt(a), decimals))}{' '}
                 {parseTokenAddress(chainId, token)}
               </Text>
             </Checkbox>
@@ -224,7 +227,7 @@ const DepositFunds = ({
             )}
           </Flex>
         </Flex>
-        {BigInt(amount) * BigInt(10) ** BigInt(decimals || 0) > due && (
+        {parseUnits(amount, decimals) > due && (
           <Alert bg='purple.900' borderRadius='md' mt={4}>
             <AlertIcon color='primary.300' />
             <AlertTitle fontSize='sm'>
@@ -245,7 +248,7 @@ const DepositFunds = ({
             <Text fontWeight='bold'>Total Deposited</Text>
             <Text>
               {`${commify(
-                formatUnits(BigInt(deposited), 18)
+                formatUnits(BigInt(deposited), decimals)
               )} ${parseTokenAddress(chainId, token)}`}
             </Text>
           </VStack>
@@ -254,7 +257,7 @@ const DepositFunds = ({
           <VStack>
             <Text fontWeight='bold'>Total Due</Text>
             <Text>
-              {`${formatUnits(BigInt(due), 18)} ${parseTokenAddress(
+              {`${formatUnits(BigInt(due), decimals)} ${parseTokenAddress(
                 chainId,
                 token
               )}`}
@@ -266,7 +269,7 @@ const DepositFunds = ({
             <Text fontWeight='bold'>Your Balance</Text>
             <Text>
               {`${_.toNumber(displayBalance).toFixed(2)} ${
-                paymentType === 0
+                paymentType?.value === PAYMENT_TYPES.TOKEN
                   ? parseTokenAddress(chainId, token)
                   : TOKEN_DATA.nativeSymbol
               }`}

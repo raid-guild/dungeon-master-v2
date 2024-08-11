@@ -2,7 +2,7 @@
 import { NETWORK_CONFIG, ProjectDetails } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { encodeAbiParameters, Hex, isAddress, parseEther } from 'viem';
+import { encodeAbiParameters, Hex, isAddress, parseUnits } from 'viem';
 import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { WriteContractResult } from 'wagmi/dist/actions';
 
@@ -46,9 +46,19 @@ const useEscrowZap = ({
     separateOwnersAndAllocations(ownersAndAllocations);
   const saltNonce = Math.floor(new Date().getTime() / 1000);
 
+  const tokenAddress = _.get(
+    NETWORK_CONFIG[chainId],
+    `TOKENS.${token}.address`
+  );
+
+  const tokenDecimals = _.get(
+    NETWORK_CONFIG[chainId],
+    `TOKENS.${token}.decimals`
+  );
+
   const milestoneAmounts = _.map(
-    milestones,
-    (a: { value: string }) => a.value && parseEther(a.value) // TODO handle token decimals
+    NETWORK_CONFIG[chainId] ? milestones : [],
+    (a: { value: string }) => a.value && parseUnits(a.value, tokenDecimals)
   );
 
   const { data: details, isLoading: detailsLoading } = useDetailsPin({
@@ -56,10 +66,6 @@ const useEscrowZap = ({
   });
   console.log('details', details);
 
-  const tokenAddress = _.get(
-    NETWORK_CONFIG[chainId],
-    `TOKENS.${token}.address`
-  );
   // TODO other chains
   const resolver = daoSplit
     ? (_.first(_.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))) as Hex)

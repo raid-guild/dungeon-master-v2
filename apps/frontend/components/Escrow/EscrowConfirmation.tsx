@@ -7,9 +7,9 @@ import {
   Tooltip,
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
-import { commify } from '@raidguild/dm-utils';
+import { chainsMap, commify } from '@raidguild/dm-utils';
 import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
-import { GANGGANG_MULTISIG } from '@raidguild/escrow-utils';
+import { GANGGANG_MULTISIG, NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -153,7 +153,9 @@ const EscrowConfirmation = ({
     {
       label: 'Arbitration Provider',
       value: daoSplit ? (
-        'LexDAO'
+        Object.keys(NETWORK_CONFIG[chainId].RESOLVERS).map(
+          (key) => NETWORK_CONFIG[chainId].RESOLVERS[key]?.name
+        )[0]
       ) : (
         <Tooltip
           label='No DAO split'
@@ -180,6 +182,14 @@ const EscrowConfirmation = ({
     <Card as={Flex} variant='filled' direction='column' minWidth='50%'>
       <Stack spacing={6} w='100%'>
         <Stack>
+          <Flex justify='space-between'>
+            <Text fontWeight='bold' variant='textOne'>
+              Chain
+            </Text>
+            <Text variant='textOne' color='yellow.500'>
+              {chainsMap(chainId)?.name}
+            </Text>
+          </Flex>
           {_.map(_.compact(invoiceDetails), ({ label, value }) => (
             <Flex justify='space-between' key={label}>
               <Text fontWeight='bold' variant='textOne'>

@@ -131,11 +131,25 @@ export const RAID_PARTY_DELETE_MUTATION = gql`
   ${RAID_PARTY_FRAGMENT}
 `;
 
-export const UPDATE_INVOICE_ADDRESS_QUERY = gql`
-  mutation MyMutation($invoiceAddress: String!, $raidId: uuid!) {
+export const INSERT_INVOICE_MUTATION = gql`
+  mutation InsertInvoiceMutation($invoice: invoices_insert_input!) {
+    insert_invoices_one(object: $invoice) {
+      id
+      chain_id
+      invoice_address
+    }
+  }
+`;
+
+export const UPDATE_INVOICE_ID_QUERY = gql`
+  mutation RaidInvoiceIdMutation(
+    $invoiceAddress: String!
+    $invoiceId: uuid!
+    $raidId: uuid!
+  ) {
     update_raids(
       where: { id: { _eq: $raidId } }
-      _set: { invoice_address: $invoiceAddress }
+      _set: { invoice_address: $invoiceAddress, invoice_id: $invoiceId }
     ) {
       returning {
         ...RaidDetail

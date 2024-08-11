@@ -24,6 +24,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
     released,
     total,
     token,
+    tokenMetadata: { decimals },
     address: invoiceAddress,
     isLocked,
     disputes,
@@ -73,7 +74,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
         >
           <Text variant='textOne'>Total Project Amount</Text>
           <Text variant='textOne'>
-            {commify(formatUnits(BigInt(total), 18))}{' '}
+            {commify(formatUnits(BigInt(total), decimals))}{' '}
             {parseTokenAddress(chainId, token)}
           </Text>
         </HStack>
@@ -151,10 +152,9 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                   variant='textOne'
                   textAlign='right'
                   fontWeight='500'
-                >{`${commify(formatUnits(BigInt(amt), 18))} ${parseTokenAddress(
-                  chainId,
-                  invoice.token
-                )}`}</Text>
+                >{`${commify(
+                  formatUnits(BigInt(amt), decimals)
+                )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
               </HStack>
             </Flex>
           ))}
@@ -164,21 +164,21 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
         <HStack mt='1rem' mb='.2rem' justifyContent='space-between'>
           <Text variant='textOne'>Total Deposited</Text>
           <Text variant='textOne'>
-            {commify(formatUnits(deposited, 18))}{' '}
+            {commify(formatUnits(deposited, decimals))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <HStack justifyContent='space-between' mb='.2rem'>
           <Text variant='textOne'>Total Released</Text>
           <Text variant='textOne'>
-            {commify(formatUnits(BigInt(released), 18))}{' '}
+            {commify(formatUnits(BigInt(released), decimals))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
         <HStack justifyContent='space-between'>
           <Text variant='textOne'>Remaining Amount Due</Text>
           <Text variant='textOne'>
-            {commify(formatUnits(due, 18))}{' '}
+            {commify(formatUnits(due, decimals))}{' '}
             {parseTokenAddress(chainId, invoice.token)}
           </Text>
         </HStack>
@@ -198,7 +198,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                 <Text>Remaining Balance</Text>
                 <Text textAlign='right'>{`${formatUnits(
                   balance,
-                  18
+                  decimals
                 )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>{' '}
               </>
             ) : (
@@ -208,7 +208,10 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                   {!isReleasable && 'Total Due Today'}
                 </Text>
                 <Text textAlign='right'>{`${commify(
-                  formatUnits(isReleasable ? amount : amount - balance, 18)
+                  formatUnits(
+                    isReleasable ? amount : amount - balance,
+                    decimals
+                  )
                 )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
               </>
             )}
@@ -227,7 +230,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
               <Text>Amount Locked</Text>
               <Text textAlign='right'>{`${formatUnits(
                 balance,
-                18
+                decimals
               )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
             </Flex>
             <Text fontFamily='texturina' color='purpleLight'>
@@ -261,7 +264,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                   resolution.resolutionFee
                   ? resolution.resolutionFee
                   : 0,
-                18
+                decimals
               )} ${parseTokenAddress(chainId, invoice.token)}`}</Text>
             </Flex>
             <Flex
@@ -292,7 +295,7 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                   <Text textAlign='right' color='purpleLight'>
                     {`${formatUnits(
                       BigInt(resolution.resolutionFee),
-                      18
+                      decimals
                     )} ${parseTokenAddress(chainId, invoice.token)} to `}
                     <AccountLink address={resolver} chainId={chainId} />
                   </Text>
@@ -300,14 +303,14 @@ const InvoicePaymentDetails = ({ invoice }: { invoice: Invoice }) => {
                 <Text textAlign='right' color='purpleLight'>
                   {`${formatUnits(
                     BigInt(resolution.clientAward),
-                    18
+                    decimals
                   )} ${parseTokenAddress(chainId, invoice.token)} to `}
                   <AccountLink address={client} chainId={chainId} />
                 </Text>
                 <Text textAlign='right' color='purpleLight'>
                   {`${formatUnits(
                     BigInt(resolution.providerAward),
-                    18
+                    decimals
                   )} ${parseTokenAddress(chainId, invoice.token)} to `}
                   <AccountLink address={invoice.provider} chainId={chainId} />
                 </Text>

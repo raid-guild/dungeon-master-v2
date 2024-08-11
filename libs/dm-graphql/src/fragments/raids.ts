@@ -102,7 +102,10 @@ export const RAID_SLIM_DETAIL_FRAGMENT = gql`
   fragment RaidDetails on raids {
     id
     v1_id
-    invoice_address
+    invoice {
+      chain_id
+      invoice_address
+    }
     name
     start_date
     end_date

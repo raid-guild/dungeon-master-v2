@@ -2,7 +2,6 @@ import {
   Button,
   Flex,
   Heading,
-  Image,
   Link,
   Spinner,
   Text,
@@ -25,7 +24,6 @@ import { useForm } from 'react-hook-form';
 import { formatUnits, Hex } from 'viem';
 import { useChainId } from 'wagmi';
 
-import LockImage from '../../assets/lock.svg';
 import AccountLink from './shared/AccountLink';
 
 const parseTokenAddress = (chainId: number, address: Hex) => {
@@ -54,12 +52,12 @@ const LockFunds = ({
 
   const fee = formatUnits(
     resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
-    18
+    invoice.tokenMetadata.decimals
   );
   const feeDisplay = `${fee} ${parseTokenAddress(chainId, token)}`;
 
   const disputeReason = useDebounce(watch('disputeReason'), 250);
-  const amount = formatUnits(BigInt(balance), 18);
+  const amount = formatUnits(BigInt(balance), invoice.tokenMetadata.decimals);
 
   // const onSuccess = () => {
   //   // handle tx success
@@ -175,10 +173,10 @@ const LockFunds = ({
         textTransform='uppercase'
         variant='solid'
       >
-        {`Lock ${formatUnits(BigInt(balance), 18)} ${parseTokenAddress(
-          chainId,
-          token
-        )}`}
+        {`Lock ${formatUnits(
+          BigInt(balance),
+          invoice.tokenMetadata.decimals
+        )} ${parseTokenAddress(chainId, token)}`}
       </Button>
       {isKnownResolver(chainId, resolver) && (
         <Link

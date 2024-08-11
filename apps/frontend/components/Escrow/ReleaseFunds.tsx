@@ -60,8 +60,8 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
 
   //     if (isSubscribed && !!inv) {
   //       if (
-  //         utils.formatUnits(inv.released, 18) >
-  //         utils.formatUnits(invoice.released, 18)
+  //         utils.formatUnits(inv.released, invoice.tokenMetadata.decimals) >
+  //         utils.formatUnits(invoice.released, invoice.tokenMetadata.decimals)
   //       ) {
   //         isSubscribed = false;
   //         clearInterval(interval);
@@ -106,7 +106,7 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
           textAlign='center'
         >{`${formatUnits(
           getReleaseAmount(currentMilestone, amounts, balance),
-          18
+          invoice.tokenMetadata.decimals
         )} ${parseTokenAddress(chainId, token)}`}</Text>
       </VStack>
       {/* {transaction && (

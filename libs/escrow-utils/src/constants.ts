@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Hex } from 'viem';
 
+import KlerosLogo from './assets/kleros-logo.png';
 import LexDAOLogo from './assets/lex-dao.png';
 
 export const IPFS_ENDPOINT = 'https://ipfs.infura.io';
@@ -20,8 +21,6 @@ export const RAIDGUILD_MULTISIG = {
 };
 
 export const GANGGANG_MULTISIG = {
-  5: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  10: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   100: '0xCFFF4a6EB44bA088EEa89A84Dd113eCfDEDA9641',
 };
 
@@ -59,6 +58,65 @@ interface NetworkConfig {
 }
 
 export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
+  1: {
+    SUBGRAPH: 'smart-invoice/v0.0.1',
+    INVOICE_FACTORY: _.toLower(
+      '0x5E14cF595e18F91170009946205f8BBa21b323ca'
+    ) as Hex,
+    WRAPPED_NATIVE_TOKEN: _.toLower(
+      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+    ) as Hex,
+    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
+    DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
+    TOKENS: {
+      WETH: {
+        decimals: 18,
+        address: _.toLower('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') as Hex,
+      },
+      DAI: {
+        decimals: 18,
+        address: _.toLower('0x6B175474E89094C44Da98b954EedeAC495271d0F') as Hex,
+      },
+    },
+    RESOLVERS: {
+      [_.toLower('0x01b92e2c0d06325089c6fd53c98a214f5c75b2ac')]: {
+        name: 'LexDAO',
+        logoUrl: LexDAOLogo,
+        termsUrl:
+          'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
+      },
+    },
+  },
+  10: {
+    SUBGRAPH: 'smart-invoice-optimism/v0.0.1',
+    WRAPPED_NATIVE_TOKEN: _.toLower(
+      '0x4200000000000000000000000000000000000006'
+    ) as Hex,
+    INVOICE_FACTORY: _.toLower(
+      '0xF9822818143948237A60A1a1CEFC85D6F1b929Df'
+    ) as Hex,
+    ZAP_ADDRESS: _.toLower('0xd5a159a1D70888047DF151B757157eb9A03e7075') as Hex,
+    DAO_ADDRESS: _.toLower('0xf4f65a5c6590fbc15b3869510e5f1e7114041c53') as Hex,
+    TREASURY_ADDRESS: _.toLower(
+      '0x96fba732dca8d89ce78c01613c09a3c0c4d7ddb2'
+    ) as Hex,
+    SPOILS_MANAGER: _.toLower(
+      '0x9aFA71188fC0cd4445AbC4e671B466C2ea405130'
+    ) as Hex,
+    TOKENS: {
+      USDC: {
+        decimals: 6,
+        address: _.toLower('0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85') as Hex,
+      },
+    },
+    RESOLVERS: {
+      [_.toLower('0x18542245cA523DFF96AF766047fE9423E0BED3C0')]: {
+        name: 'Kleros',
+        logoUrl: KlerosLogo,
+        termsUrl: 'https://kleros.io',
+      },
+    },
+  },
   100: {
     SUBGRAPH: 'smart-invoice-gnosis/v0.0.1',
     INVOICE_FACTORY: _.toLower(
@@ -94,84 +152,22 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
       },
     },
   },
-  1: {
-    SUBGRAPH: 'smart-invoice/v0.0.1',
-    INVOICE_FACTORY: _.toLower(
-      '0x5E14cF595e18F91170009946205f8BBa21b323ca'
-    ) as Hex,
-    WRAPPED_NATIVE_TOKEN: _.toLower(
-      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
-    ) as Hex,
-    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
-    DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
-    TOKENS: {
-      WETH: {
-        decimals: 18,
-        address: _.toLower('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') as Hex,
-      },
-      DAI: {
-        decimals: 18,
-        address: _.toLower('0x6B175474E89094C44Da98b954EedeAC495271d0F') as Hex,
-      },
-    },
-    RESOLVERS: {
-      [_.toLower('0x01b92e2c0d06325089c6fd53c98a214f5c75b2ac')]: {
-        name: 'LexDAO',
-        logoUrl: LexDAOLogo,
-        termsUrl:
-          'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
-      },
-    },
-  },
-  5: {
-    SUBGRAPH: 'geovgy/v1-goerli-smart-invoice', // TODO: remove goerli- replace with sepolia?
-    WRAPPED_NATIVE_TOKEN: _.toLower(
-      '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
-    ) as Hex,
-    INVOICE_FACTORY: _.toLower(
-      '0x546adED0B0179d550e87cf909939a1207Fd26fB7'
-    ) as Hex,
-    ZAP_ADDRESS: _.toLower('0xDF8A3D4277423887591C5F69CAf6FF148F394f68') as Hex,
-    DAO_ADDRESS: _.toLower('0xf02fd4286917270cb94fbc13a0f4e1ed76f7e986') as Hex,
-    TOKENS: {
-      WETH: {
-        decimals: 18,
-        address: _.toLower('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6') as Hex,
-      },
-      DAI: {
-        decimals: 18,
-        address: _.toLower('0x3af6b2f907f0c55f279e0ed65751984e6cdc4a42') as Hex,
-      },
-      TEST: {
-        decimals: 18,
-        address: _.toLower('0x982e00B16c313E979C0947b85230907Fce45d50e') as Hex,
-      },
-    },
-    RESOLVERS: {
-      [_.toLower('0x1206b51217271FC3ffCa57d0678121983ce0390E')]: {
-        name: 'LexDAO',
-        logoUrl: LexDAOLogo,
-        termsUrl:
-          'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
-      },
-    },
-  },
 };
 
 export const nativeSymbols: { [key: number]: string } = {
   1: 'ETH',
-  5: 'ETH',
+  10: 'ETH',
   100: 'xDAI',
 };
 
 export const wrappedNativeToken: { [key: number]: Hex } = {
   1: NETWORK_CONFIG[1].WRAPPED_NATIVE_TOKEN,
-  5: NETWORK_CONFIG[5].WRAPPED_NATIVE_TOKEN,
+  10: NETWORK_CONFIG[10].WRAPPED_NATIVE_TOKEN,
   100: NETWORK_CONFIG[100].WRAPPED_NATIVE_TOKEN,
 };
 
 export const tokenInfo: { [key: number]: Tokens } = {
   1: NETWORK_CONFIG[1].TOKENS,
-  5: NETWORK_CONFIG[5].TOKENS,
+  10: NETWORK_CONFIG[10].TOKENS,
   100: NETWORK_CONFIG[100].TOKENS,
 };

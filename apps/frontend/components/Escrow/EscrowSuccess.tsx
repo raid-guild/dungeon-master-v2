@@ -47,8 +47,8 @@ const EscrowSuccess = ({ raidId, txHash }: { raidId: string; txHash: Hex }) => {
     setAddresses(decodedAddresses);
     // update raid record with new invoice address
     if (!raidId) return;
-    updateRaidInvoice(raidId, _.nth(decodedAddresses, 3));
-  }, [txData, raidId]);
+    updateRaidInvoice(chainId, raidId, _.nth(decodedAddresses, 3));
+  }, [chainId, txData, raidId]);
 
   // const { onCopy } = useClipboard(
   //   `https://${window.location.hostname}/escrow/${raidId}`
