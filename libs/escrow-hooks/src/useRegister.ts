@@ -51,12 +51,17 @@ const useRegister = ({
     NETWORK_CONFIG[chainId],
     'WRAPPED_NATIVE_TOKEN'
   );
+  const tokenDecimals = _.get(
+    NETWORK_CONFIG[chainId],
+    `TOKENS.${token}.decimals`
+  );
+
   const factoryAddress = _.get(NETWORK_CONFIG[chainId], 'INVOICE_FACTORY');
   const terminationTime = BigInt(Math.floor(safetyValveDate.getTime() / 1000));
 
   // TODO handle token decimals
   const paymentsInWei = _.map(milestones, ({ value }: { value: string }) =>
-    parseUnits(value, 18)
+    parseUnits(value, tokenDecimals)
   );
 
   const resolverType = 0; // 0 for individual, 1 for erc-792 arbitrator
@@ -143,7 +148,7 @@ const useRegister = ({
       console.log('success', tx);
       // TODO parse invoice address
       const smartInvoiceId = _.get(tx, 'events[0].args.invoice');
-      await updateRaidInvoice(raidId, smartInvoiceId);
+      await updateRaidInvoice(chainId, raidId, smartInvoiceId);
     },
     onError: (error) => {
       // eslint-disable-next-line no-console

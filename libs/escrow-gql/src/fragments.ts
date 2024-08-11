@@ -7,6 +7,9 @@ export const INVOICE_DETAILS_FRAGMENT = gql`
     address
     network
     token
+    tokenMetadata {
+      decimals
+    }
     client
     provider
     resolverType

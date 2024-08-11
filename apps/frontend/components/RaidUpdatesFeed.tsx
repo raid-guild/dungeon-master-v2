@@ -19,16 +19,16 @@ import {
   useMediaQuery,
 } from '@raidguild/design-system';
 import { useUpdateCreate } from '@raidguild/dm-hooks';
-import { IRaid, IStatusUpdate, IEscrowEvent } from '@raidguild/dm-types';
+import { IEscrowEvent, IRaid, IStatusUpdate } from '@raidguild/dm-types';
+import { useEscrowEvents } from '@raidguild/escrow-hooks';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaPlus } from 'react-icons/fa';
 
-import RaidUpdate from './RaidUpdates';
-import { useEscrowEvents } from '@raidguild/escrow-hooks';
 import { RaidEscrowUpdate } from './RaidEscrowUpdate';
+import RaidUpdate from './RaidUpdates';
 
 interface UpdatesProps {
   raid: IRaid;
@@ -43,7 +43,10 @@ const RaidUpdatesFeed = ({ raid }: UpdatesProps) => {
   const [sortedUpdates, setSortedUpdates] =
     useState<(IStatusUpdate & IEscrowEvent)[]>();
   const token: string = _.get(session, 'token', '');
-  const { data } = useEscrowEvents(raid?.invoiceAddress);
+  const { data } = useEscrowEvents(
+    raid?.invoice?.invoiceAddress,
+    raid?.invoice?.chainId
+  );
   const { events: escrowUpdates, totalMileStones } = data;
   const updxts = _.get(raid, 'updates', null);
   const updates = [...updxts, ...escrowUpdates];

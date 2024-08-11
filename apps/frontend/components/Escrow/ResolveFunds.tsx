@@ -41,10 +41,17 @@ const ResolveFunds = ({
     if (resolutionRate === 0 || balance === BigInt(0)) {
       return 0;
     }
-    return _.toNumber(formatUnits(balance / BigInt(resolutionRate), 18));
-  }, [balance, resolutionRate]);
+    return _.toNumber(
+      formatUnits(
+        balance / BigInt(resolutionRate),
+        invoice.tokenMetadata.decimals
+      )
+    );
+  }, [balance, invoice, resolutionRate]);
 
-  const availableFunds = _.toNumber(formatUnits(balance, 18)) - resolverAward;
+  const availableFunds =
+    _.toNumber(formatUnits(balance, invoice.tokenMetadata.decimals)) -
+    resolverAward;
 
   const clientAward = watch('clientAward');
   const providerAward = watch('providerAward');
@@ -52,15 +59,17 @@ const ResolveFunds = ({
 
   const awards = useMemo(
     () => ({
-      client: clientAward ? parseUnits(_.toString(clientAward), 18) : BigInt(0),
+      client: clientAward
+        ? parseUnits(_.toString(clientAward), invoice.tokenMetadata.decimals)
+        : BigInt(0),
       provider: providerAward
-        ? parseUnits(_.toString(providerAward), 18)
+        ? parseUnits(_.toString(providerAward), invoice.tokenMetadata.decimals)
         : BigInt(0),
       resolver: resolverAward
-        ? parseUnits(_.toString(resolverAward), 18)
+        ? parseUnits(_.toString(resolverAward), invoice.tokenMetadata.decimals)
         : BigInt(0),
     }),
-    [clientAward, providerAward, resolverAward]
+    [clientAward, invoice, providerAward, resolverAward]
   );
 
   const { writeAsync: resolve, isLoading } = useResolve({
@@ -104,7 +113,7 @@ const ResolveFunds = ({
           {isLocked
             ? `You’ll need to distribute the total balance of ${formatUnits(
                 balance,
-                18
+                invoice.tokenMetadata.decimals
               )} ${parseTokenAddress(
                 chainId,
                 token
@@ -140,7 +149,7 @@ const ResolveFunds = ({
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {`You’ll need to distribute the total balance of ${formatUnits(
           balance,
-          18
+          invoice.tokenMetadata.decimals
         )} ${parseTokenAddress(
           chainId,
           token

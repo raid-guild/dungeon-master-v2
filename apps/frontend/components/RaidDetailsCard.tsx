@@ -316,13 +316,13 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         },
         {
           label: 'Escrow',
-          details: _.get(raid, 'invoiceAddress')
-            ? truncateAddress(_.get(raid, 'invoiceAddress'))
+          details: _.get(raid, 'invoice.invoiceAddress')
+            ? truncateAddress(_.get(raid, 'invoice.invoiceAddress'))
             : 'Create Escrow',
-          fullDetails: _.get(raid, 'invoiceAddress')
-            ? _.get(raid, 'invoiceAddress')
+          fullDetails: _.get(raid, 'invoice.invoiceAddress')
+            ? _.get(raid, 'invoice.invoiceAddress')
             : undefined,
-          link: _.get(raid, 'invoiceAddress')
+          link: _.get(raid, 'invoice.invoiceAddress')
             ? `/escrow/${raid?.id}`
             : `/escrow/new${raid?.id ? `?raidId=${raid?.id}` : ''}`,
         },
@@ -383,19 +383,19 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         })}
 
         {/* {consultation?.servicesReq?.length > 0 && (
-                <VStack align="flex-start">
-                  <Text color="white" fontSize="sm">
-                    Services Required
-                  </Text>
-                  <UnorderedList paddingLeft={4}>
-                    {consultation?.servicesReq?.map((service) => (
-                      <ListItem color="gray.100" key={service}>
-                        {service}
-                      </ListItem>
-                    ))}
-                  </UnorderedList>
-                </VStack>
-              )} */}
+          <VStack align="flex-start">
+            <Text color="white" fontSize="sm">
+              Services Required
+            </Text>
+            <UnorderedList paddingLeft={4}>
+              {consultation?.servicesReq?.map((service) => (
+                <ListItem color="gray.100" key={service}>
+                  {service}
+                </ListItem>
+              ))}
+            </UnorderedList>
+          </VStack>
+        )} */}
       </Accordion>
     </Card>
   );

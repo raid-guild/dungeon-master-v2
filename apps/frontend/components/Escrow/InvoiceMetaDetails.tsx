@@ -1,4 +1,16 @@
-import { Flex, HStack, Stack, Text, Tooltip } from '@raidguild/design-system';
+import {
+  Flex,
+  HStack,
+  Image,
+  Stack,
+  Text,
+  Tooltip,
+} from '@raidguild/design-system';
+import {
+  chainIdToIconMap,
+  chainsMap,
+  networkToIdMap,
+} from '@raidguild/dm-utils';
 import { getResolverInfo, Invoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
@@ -46,6 +58,19 @@ const InvoiceMetaDetails = ({
 
   return (
     <Stack mt='2rem' w='100%'>
+      <Flex justifyContent='space-between' fontSize='sm'>
+        <Text fontFamily='texturina' fontWeight='bold'>
+          Chain:
+        </Text>
+        <HStack>
+          <Text>{chainsMap(networkToIdMap(invoice.network)).name}</Text>
+          <Image
+            alt={invoice.network}
+            boxSize='18px'
+            src={chainIdToIconMap(networkToIdMap(invoice.network))}
+          />
+        </HStack>
+      </Flex>
       <Flex justifyContent='space-between' fontSize='sm'>
         <Text fontWeight='bold' fontFamily='texturina'>
           Safety Valve Date:

@@ -253,7 +253,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
                 label='Client'
                 hidden={!contactToURL(raidContact)}
               />
-              {_.get(raid, 'invoiceAddress') && (
+              {_.get(raid, 'invoice.invoiceAddress') && (
                 <LinkExternal
                   href={`/escrow/${String(_.get(raid, 'id'))}`}
                   label='Escrow'

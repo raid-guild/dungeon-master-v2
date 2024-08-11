@@ -29,6 +29,9 @@ const tokens = (chainId: number) => {
   if (chainId === 100) {
     return ['WETH', 'WXDAI'];
   }
+  if (chainId === 10) {
+    return ['USDC'];
+  }
   if (chainId === 1) {
     return ['WETH', 'DAI'];
   }

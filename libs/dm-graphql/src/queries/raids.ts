@@ -182,7 +182,10 @@ export const RAID_DETAIL_QUERY = gql`
         }
       }
       locker_hash
-      invoice_address
+      invoice {
+        chain_id
+        invoice_address
+      }
       escrow_index
       airtable_id
       v1_id

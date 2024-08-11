@@ -5,11 +5,13 @@ import _ from 'lodash';
 const STUDIO_ID = '78711';
 const STUDIO_URL = `https://api.studio.thegraph.com/query/${STUDIO_ID}`;
 
-
 const graphUrl = (chainId: number = 4) =>
   `${STUDIO_URL}/${NETWORK_CONFIG[chainId].SUBGRAPH}`;
 
 export const SUPPORTED_NETWORKS = _.map(_.keys(NETWORK_CONFIG), _.toNumber);
+
+export const unsupportedNetwork = (chainId: number) =>
+  !_.includes(SUPPORTED_NETWORKS, chainId);
 
 export const client = (chainId: number) => new GraphQLClient(graphUrl(chainId));
 

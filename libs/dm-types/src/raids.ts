@@ -22,7 +22,10 @@ export interface IRaid {
   raidName: string;
   status: string;
   category: string;
-  invoiceAddress: Hex;
+  invoice?: {
+    chainId: number;
+    invoiceAddress: Hex;
+  };
 
   // RELATIONSHIPS
   rolesRequired: {
@@ -74,7 +77,10 @@ export interface IRaidUpdate {
     cleric_id?: string;
     escrow_index?: string;
     locker_hash?: string;
-    invoice_address?: string;
+    invoice?: {
+      chain_id: number;
+      invoice_address: Hex;
+    };
     raids_roles_required?: {
       role: string; // ENUM
     }[];

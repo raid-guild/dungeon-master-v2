@@ -11,16 +11,17 @@ import {
   Stack,
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
-import { SUPPORTED_NETWORKS } from '@raidguild/escrow-gql';
-import { GANGGANG_MULTISIG, Invoice } from '@raidguild/escrow-utils';
+import { unsupportedNetwork } from '@raidguild/escrow-gql';
+import {
+  GANGGANG_MULTISIG,
+  Invoice,
+  NETWORK_CONFIG,
+} from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import { useChainId } from 'wagmi';
 import * as Yup from 'yup';
-
-const unsupportedNetwork = (chainId: number) =>
-  !_.includes(SUPPORTED_NETWORKS, chainId);
 
 export const sevenDaysFromNow = () => {
   const localDate = new Date();
@@ -172,7 +173,13 @@ const EscrowDetailsForm = ({
           <Input
             name='resolver'
             label='Arbitration Provider'
-            value={localDaoSplit ? 'LexDAO' : 'RaidGuild DAO'}
+            value={
+              localDaoSplit
+                ? Object.keys(NETWORK_CONFIG[chainId].RESOLVERS).map(
+                    (key) => NETWORK_CONFIG[chainId].RESOLVERS[key]?.name
+                  )[0]
+                : 'RaidGuild DAO'
+            }
             localForm={localForm}
             isDisabled
           />
