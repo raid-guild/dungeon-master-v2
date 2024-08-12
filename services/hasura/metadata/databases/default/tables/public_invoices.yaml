@@ -19,7 +19,7 @@ insert_permissions:
         - created_at
         - updated_at
         - id
-    comment: ""
+    comment: ''
 select_permissions:
   - role: member
     permission:
@@ -30,7 +30,7 @@ select_permissions:
         - updated_at
         - id
       filter: {}
-    comment: ""
+    comment: ''
 update_permissions:
   - role: member
     permission:
@@ -42,4 +42,4 @@ update_permissions:
         - id
       filter: {}
       check: null
-    comment: ""
+    comment: ''
