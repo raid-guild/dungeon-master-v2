@@ -9,3 +9,37 @@ array_relationships:
         table:
           name: raids
           schema: public
+insert_permissions:
+  - role: member
+    permission:
+      check: {}
+      columns:
+        - chain_id
+        - invoice_address
+        - created_at
+        - updated_at
+        - id
+    comment: ''
+select_permissions:
+  - role: member
+    permission:
+      columns:
+        - chain_id
+        - invoice_address
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+    comment: ''
+update_permissions:
+  - role: member
+    permission:
+      columns:
+        - chain_id
+        - invoice_address
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+      check: null
+    comment: ''
