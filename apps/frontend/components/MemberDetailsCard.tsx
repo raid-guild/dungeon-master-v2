@@ -24,6 +24,7 @@ import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 import { useAccount } from 'wagmi';
 
 import { useOverlay } from '../contexts/OverlayContext';
+import Description from './Description';
 import MemberAvatar from './MemberAvatar';
 import UpdateMemberForm from './MemberUpdateForm';
 import ModalWrapper from './ModalWrapper';
@@ -34,6 +35,7 @@ interface MemberProps {
   member?: IMember;
   showHeader?: boolean;
   width?: string;
+  minHeight?: string;
 }
 
 const MemberDetailsCard = ({
@@ -42,7 +44,9 @@ const MemberDetailsCard = ({
   member,
   showHeader = false,
   width,
+  minHeight,
 }: MemberProps) => {
+  console.log('minHeight', minHeight);
   const toast = useToast();
   const copyDiscord = useClipboard(
     _.get(
@@ -187,6 +191,7 @@ const MemberDetailsCard = ({
       minW={[null, null, null, '500px']}
       w={['100%', null, null, width ?? '60%']}
       h={height ?? 'max-content'}
+      minHeight={minHeight}
     >
       <ModalWrapper
         name='memberForm'
@@ -201,7 +206,13 @@ const MemberDetailsCard = ({
           closeModal={closeModals}
         />
       </ModalWrapper>
-      <Card variant='filled' w='100%' h={height ?? 'max-content'} p={4}>
+      <Card
+        variant='filled'
+        w='100%'
+        h={height ?? 'max-content'}
+        p={4}
+        minHeight={minHeight}
+      >
         {showHeader && (
           <>
             <Flex w='100%' justifyContent='space-between'>
@@ -287,7 +298,7 @@ const MemberDetailsCard = ({
           {_.get(application, 'introduction') && (
             <>
               <Divider color='gray.200' />
-              <Text size='md'>{_.get(application, 'introduction')}</Text>
+              <Description description={_.get(application, 'introduction')} />
             </>
           )}
 
