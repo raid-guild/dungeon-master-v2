@@ -198,6 +198,7 @@ const MemberDetailsCard = ({
       >
         <UpdateMemberForm
           member={member}
+          introduction={application?.introduction}
           memberAddress={memberAddress}
           memberId={_.get(member, 'id')}
           memberReload={memberReload}
