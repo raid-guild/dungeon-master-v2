@@ -285,10 +285,14 @@ const MemberDetailsCard = ({
             </Flex>
           ))}
 
-          {_.get(application, 'introduction') && (
+          {(_.get(member, 'description') ||
+            _.get(application, 'introduction')) && (
             <>
               <Divider color='gray.200' />
-              <Text size='md'>{_.get(application, 'introduction')}</Text>
+              <Text size='md'>
+                {_.get(member, 'description') ||
+                  _.get(application, 'introduction')}
+              </Text>
             </>
           )}
 
