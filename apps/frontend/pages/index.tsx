@@ -95,7 +95,7 @@ const Home = () => {
             w='100%'
             gap={4}
           >
-            <Card variant='filled' w='full' h='650px' p={2}>
+            <Card variant='filled' w='full' h='auto' p={2}>
               <Tabs w='full' variant='default' h='full'>
                 <TabList>
                   <Tab>
@@ -186,7 +186,6 @@ const Home = () => {
               member={member}
               application={_.get(member, 'application')}
               width='500px'
-              height='650px'
               showHeader
             />
           </Flex>
