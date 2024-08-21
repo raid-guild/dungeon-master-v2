@@ -40,7 +40,7 @@ const Member = ({ memberAddress }: Props) => {
   const { data: session } = useSession();
   const token = _.get(session, 'token');
 
-  const { data, refetch } = useMemberDetail({ memberAddress, token });
+  const { data } = useMemberDetail({ memberAddress, token });
   const member = _.get(data, 'member');
   const raids = _.get(data, 'raids');
 
@@ -117,7 +117,6 @@ const Member = ({ memberAddress }: Props) => {
         >
           <MemberDetailsCard
             member={member}
-            memberReload={refetch}
             application={_.get(member, 'application')}
           />
           {/* <RaidsFeed /> */}

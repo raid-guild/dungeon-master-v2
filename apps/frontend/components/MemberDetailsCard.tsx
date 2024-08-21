@@ -32,7 +32,6 @@ interface MemberProps {
   application?: IApplication;
   height?: string;
   member?: IMember;
-  memberReload?: () => void;
   showHeader?: boolean;
   width?: string;
 }
@@ -41,7 +40,6 @@ const MemberDetailsCard = ({
   application,
   height,
   member,
-  memberReload,
   showHeader = false,
   width,
 }: MemberProps) => {
@@ -200,7 +198,6 @@ const MemberDetailsCard = ({
           member={member}
           memberAddress={memberAddress}
           memberId={_.get(member, 'id')}
-          memberReload={memberReload}
           closeModal={closeModals}
         />
       </ModalWrapper>
