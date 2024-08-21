@@ -46,7 +46,6 @@ const MemberDetailsCard = ({
   width,
   minHeight,
 }: MemberProps) => {
-  console.log('minHeight', minHeight);
   const toast = useToast();
   const copyDiscord = useClipboard(
     _.get(
