@@ -200,6 +200,7 @@ const MemberDetailsCard = ({
       >
         <UpdateMemberForm
           member={member}
+          introduction={application?.introduction}
           memberAddress={memberAddress}
           memberId={_.get(member, 'id')}
           closeModal={closeModals}
@@ -294,10 +295,16 @@ const MemberDetailsCard = ({
             </Flex>
           ))}
 
-          {_.get(application, 'introduction') && (
+          {(_.get(member, 'description') ||
+            _.get(application, 'introduction')) && (
             <>
               <Divider color='gray.200' />
-              <Description description={_.get(application, 'introduction')} />
+              <Description
+                description={
+                  _.get(member, 'description') ||
+                  _.get(application, 'introduction')
+                }
+              />
             </>
           )}
 

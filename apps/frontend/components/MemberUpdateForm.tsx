@@ -1,5 +1,12 @@
 /* eslint-disable dot-notation */
-import { Box, Button, Input, Select, Stack } from '@raidguild/design-system';
+import {
+  Box,
+  Button,
+  Input,
+  Select,
+  Stack,
+  Textarea,
+} from '@raidguild/design-system';
 import { useMemberDetail, useMemberUpdate } from '@raidguild/dm-hooks';
 import { IMember } from '@raidguild/dm-types';
 import {
@@ -14,12 +21,14 @@ import { useForm } from 'react-hook-form';
 
 interface UpdateMemberFormProps {
   member: IMember;
+  introduction?: string;
   memberAddress?: string;
   memberId?: string;
   closeModal?: () => void;
 }
 const UpdateMemberForm = ({
   member,
+  introduction,
   memberAddress,
   memberId,
   closeModal,
@@ -106,6 +115,7 @@ const UpdateMemberForm = ({
       member_updates: {
         name: values.memberName ?? member.name,
         is_raiding: values?.isRaiding?.value ?? member?.isRaiding,
+        description: values.description ?? member?.description,
       },
       skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
       guild_classes_updates: updateGuildClasses,
@@ -248,6 +258,15 @@ const UpdateMemberForm = ({
                     ) || { value: false, label: 'Not Raiding' }) as any
                   }
                   options={IS_RAIDING_OPTIONS as any[]} // Option[]}
+                  localForm={localForm}
+                />
+
+                <Textarea
+                  name='description'
+                  defaultValue={member?.description || introduction || ''}
+                  aria-label='Enter your description'
+                  placeholder='Tell us about yourself'
+                  label='Member Description'
                   localForm={localForm}
                 />
 
