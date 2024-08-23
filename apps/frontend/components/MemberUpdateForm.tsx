@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import { Box, Button, Input, Select, Stack } from '@raidguild/design-system';
-import { useMemberUpdate } from '@raidguild/dm-hooks';
+import { useMemberDetail, useMemberUpdate } from '@raidguild/dm-hooks';
 import { IMember } from '@raidguild/dm-types';
 import {
   GUILD_CLASS_OPTIONS,
@@ -16,14 +16,12 @@ interface UpdateMemberFormProps {
   member: IMember;
   memberAddress?: string;
   memberId?: string;
-  memberReload?: () => void;
   closeModal?: () => void;
 }
 const UpdateMemberForm = ({
   member,
   memberAddress,
   memberId,
-  memberReload,
   closeModal,
 }: UpdateMemberFormProps) => {
   const [sending, setSending] = useState(false);
@@ -35,6 +33,8 @@ const UpdateMemberForm = ({
     memberId,
     memberAddress,
   });
+
+  const { refetch } = useMemberDetail({ memberAddress, token });
 
   const localForm = useForm({
     mode: 'all',
@@ -118,7 +118,8 @@ const UpdateMemberForm = ({
         telegram: values.telegramHandle ?? member?.contactInfo?.telegram,
       },
     });
-    memberReload();
+
+    await refetch();
     closeModal();
     setSending(false);
   }
