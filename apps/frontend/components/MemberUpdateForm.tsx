@@ -1,6 +1,13 @@
 /* eslint-disable dot-notation */
-import { Box, Button, Input, Select, Stack } from '@raidguild/design-system';
-import { useMemberUpdate } from '@raidguild/dm-hooks';
+import {
+  Box,
+  Button,
+  Input,
+  Select,
+  Stack,
+  Textarea,
+} from '@raidguild/design-system';
+import { useMemberDetail, useMemberUpdate } from '@raidguild/dm-hooks';
 import { IMember } from '@raidguild/dm-types';
 import {
   GUILD_CLASS_OPTIONS,
@@ -14,16 +21,16 @@ import { useForm } from 'react-hook-form';
 
 interface UpdateMemberFormProps {
   member: IMember;
+  introduction?: string;
   memberAddress?: string;
   memberId?: string;
-  memberReload?: () => void;
   closeModal?: () => void;
 }
 const UpdateMemberForm = ({
   member,
+  introduction,
   memberAddress,
   memberId,
-  memberReload,
   closeModal,
 }: UpdateMemberFormProps) => {
   const [sending, setSending] = useState(false);
@@ -35,6 +42,8 @@ const UpdateMemberForm = ({
     memberId,
     memberAddress,
   });
+
+  const { refetch } = useMemberDetail({ memberAddress, token });
 
   const localForm = useForm({
     mode: 'all',
@@ -106,6 +115,7 @@ const UpdateMemberForm = ({
       member_updates: {
         name: values.memberName ?? member.name,
         is_raiding: values?.isRaiding?.value ?? member?.isRaiding,
+        description: values.description ?? member?.description,
       },
       skills_updates: [...updatePrimarySkills, ...updateSecondarySkills],
       guild_classes_updates: updateGuildClasses,
@@ -118,7 +128,8 @@ const UpdateMemberForm = ({
         telegram: values.telegramHandle ?? member?.contactInfo?.telegram,
       },
     });
-    memberReload();
+
+    await refetch();
     closeModal();
     setSending(false);
   }
@@ -247,6 +258,15 @@ const UpdateMemberForm = ({
                     ) || { value: false, label: 'Not Raiding' }) as any
                   }
                   options={IS_RAIDING_OPTIONS as any[]} // Option[]}
+                  localForm={localForm}
+                />
+
+                <Textarea
+                  name='description'
+                  defaultValue={member?.description || introduction || ''}
+                  aria-label='Enter your description'
+                  placeholder='Tell us about yourself'
+                  label='Member Description'
                   localForm={localForm}
                 />
 

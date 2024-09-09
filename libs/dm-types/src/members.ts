@@ -8,6 +8,7 @@ export interface IMember {
   id: string;
   name: string;
   isRaiding: boolean;
+  description?: string;
   skills: Skills[];
   membersGuildClasses: {
     guildClassKey: string;
@@ -48,6 +49,7 @@ export interface IMemberUpdate {
   member_updates?: {
     name?: string;
     is_raiding?: boolean;
+    description?: string;
   };
 
   skills_updates?: {

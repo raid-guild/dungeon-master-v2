@@ -39,6 +39,7 @@ export const MEMBER_DETAIL_FRAGMENT = gql`
     name
     eth_address
     is_raiding
+    description
     ...MemberEnum
 
     contact_info {
