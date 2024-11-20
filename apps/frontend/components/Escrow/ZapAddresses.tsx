@@ -1,7 +1,7 @@
 import { Card, Heading, Stack, Text } from '@raidguild/design-system';
 import React from 'react';
 import { Hex, zeroAddress } from 'viem';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 import Link from '../ChakraNextLink';
 
@@ -16,7 +16,7 @@ const ZapAddresses = ({
   addresses: Hex[];
   raidId: string;
 }) => {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   if (!addresses) return null;
   const [safe, projectTeamSplit, daoSplit, escrow] = addresses || [];

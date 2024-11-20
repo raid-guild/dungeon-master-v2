@@ -1,10 +1,10 @@
 import { Invoice, PAYMENT_TYPES } from '@raidguild/escrow-utils';
-import { ContractFunctionResult, parseUnits } from 'viem';
+import { parseUnits, WriteContractReturnType } from 'viem';
 import {
   useChainId,
-  useContractWrite,
-  usePrepareContractWrite,
   useSendTransaction,
+  useSimulateContract,
+  useWriteContract,
 } from 'wagmi';
 
 import TOKEN_ABI from './contracts/Token.json';
@@ -22,7 +22,7 @@ const useDeposit = ({
   decimals: number;
   hasAmount: boolean;
   paymentType: string;
-  onSuccess?: (tx: ContractFunctionResult) => void;
+  onSuccess?: (tx: WriteContractReturnType) => void;
 }) => {
   const chainId = useChainId();
 
@@ -30,10 +30,10 @@ const useDeposit = ({
   const depositAmount = amount && parseUnits(amount, decimals);
 
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     chainId,
     address: token,
     abi: TOKEN_ABI,
@@ -43,47 +43,48 @@ const useDeposit = ({
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPaused: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: async (tx) => {
-      console.log('deposit tx', tx);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: async (tx) => {
+        console.log('deposit tx', tx);
 
-      // TODO catch success
-      onSuccess?.(tx);
+        // TODO catch success
+        onSuccess?.(tx);
 
-      // wait for tx
-      // update invoice
-      // close modal
-    },
-    onError: async (error) => {
-      // eslint-disable-next-line no-console
-      console.log('deposit error', error);
+        // wait for tx
+        // update invoice
+        // close modal
+      },
+      onError: async (error) => {
+        // eslint-disable-next-line no-console
+        console.log('deposit error', error);
+      },
     },
   });
 
-  const { isLoading: sendLoading, sendTransactionAsync } = useSendTransaction({
-    to: invoice?.address,
-    value: depositAmount,
-    enabled: !!amount && paymentType === PAYMENT_TYPES.NATIVE,
-  });
+  const { isPending: sendLoading, sendTransactionAsync } = useSendTransaction();
 
   const handleDeposit = async () => {
     if (paymentType === PAYMENT_TYPES.NATIVE) {
-      const result = await sendTransactionAsync();
+      const result = await sendTransactionAsync({
+        to: invoice?.address,
+        value: depositAmount,
+        enabled: !!amount && paymentType === PAYMENT_TYPES.NATIVE,
+      });
       return result;
     }
 
-    const result = await writeAsync?.();
+    const result = await writeContractAsync(data.request);
     return result;
   };
 
   return {
-    writeAsync,
+    writeAsync: () => writeContractAsync(data.request),
     handleDeposit,
-    isReady: paymentType === PAYMENT_TYPES.NATIVE ? true : !!writeAsync,
+    isReady: paymentType === PAYMENT_TYPES.NATIVE ? true : !!writeContractAsync,
     isLoading: prepareLoading || writeLoading || sendLoading,
     writeError,
     prepareError,

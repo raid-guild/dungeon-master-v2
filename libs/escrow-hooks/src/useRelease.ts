@@ -1,7 +1,7 @@
 import { Invoice } from '@raidguild/escrow-utils';
+import { WriteContractReturnType } from '@wagmi/core';
 import _ from 'lodash';
-import { ContractFunctionResult } from 'viem';
-import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useChainId, useSimulateContract, useWriteContract } from 'wagmi';
 
 import INVOICE_ABI from './contracts/Invoice.json';
 
@@ -12,17 +12,17 @@ const useRelease = ({
 }: {
   invoice: Invoice;
   milestone?: number;
-  onSuccess: (tx: ContractFunctionResult) => void;
+  onSuccess: (tx: WriteContractReturnType) => void;
 }) => {
   const chainId = useChainId();
 
   const specifyMilestones = _.isNumber(milestone);
 
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     chainId,
     address: invoice?.address,
     abi: INVOICE_ABI,
@@ -32,26 +32,27 @@ const useRelease = ({
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: async (tx) => {
-      onSuccess(tx);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: async (tx) => {
+        onSuccess(tx);
 
-      // handle success
-      // close modal
-      // update invoice with new balances
-    },
-    onError: async (error) => {
-      // eslint-disable-next-line no-console
-      console.log('release error', error);
+        // handle success
+        // close modal
+        // update invoice with new balances
+      },
+      onError: async (error) => {
+        // eslint-disable-next-line no-console
+        console.log('release error', error);
+      },
     },
   });
 
   return {
-    writeAsync,
+    writeAsync: () => writeContractAsync(data.request),
     isLoading: prepareLoading || writeLoading,
     prepareError,
     writeError,

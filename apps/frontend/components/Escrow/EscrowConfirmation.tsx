@@ -10,12 +10,12 @@ import { IRaid } from '@raidguild/dm-types';
 import { chainsMap, commify } from '@raidguild/dm-utils';
 import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
 import { GANGGANG_MULTISIG, NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import { WriteContractReturnType } from '@wagmi/core';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Hex, zeroAddress } from 'viem';
 import { useChainId } from 'wagmi';
-import { WriteContractResult } from 'wagmi/dist/actions';
 
 import AccountLink from './shared/AccountLink';
 
@@ -98,7 +98,7 @@ const EscrowConfirmation = ({
     projectTeamSplit: raidPartySplit,
     daoSplit,
     enabled: !canRegisterDirectly,
-    onSuccess: (tx: WriteContractResult) => setTxHash(tx?.hash),
+    onSuccess: (tx: WriteContractReturnType) => setTxHash(tx),
   });
 
   const createInvoice = async () => {

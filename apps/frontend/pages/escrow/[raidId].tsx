@@ -21,7 +21,7 @@ import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useMemo } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 
 import ChakraNextLink from '../../components/ChakraNextLink';
 import InvoiceButtonManager from '../../components/Escrow/InvoiceButtonManager';
@@ -43,9 +43,8 @@ const Escrow = ({
   raidId: string;
   serverSession: SessionOptions;
 }) => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { address, chain } = useAccount();
+  const { switchChain } = useSwitchChain();
   const { data: session } = useSession() || { data: serverSession };
   const token = _.get(session, 'token');
 
@@ -126,7 +125,7 @@ const Escrow = ({
                 <Text
                   as='span'
                   color='red'
-                  onClick={() => switchNetwork(raid.invoice.chainId)}
+                  onClick={() => switchChain({ chainId: raid.invoice.chainId })}
                   _hover={{ cursor: 'pointer', textDecor: 'underline' }}
                 >
                   {chainsMap(raid.invoice.chainId).name}

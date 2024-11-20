@@ -385,7 +385,11 @@ export const useAccountingV2 = ({ token }: { token: string }) => {
       currentPrices: Array<ITokenPrice>;
     },
     Error
-  >(['accounting'], ({ pageParam = 0 }) => accountingQueryResult(pageParam), {
+  >({
+    queryKey: ['accounting'],
+    queryFn: ({ pageParam }) =>
+      accountingQueryResult(pageParam as unknown as number),
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       _.isEmpty(lastPage)
         ? undefined
@@ -449,7 +453,7 @@ export const useAccountingV2 = ({ token }: { token: string }) => {
       spoils,
       tokenPrices,
     },
-    loading: status === 'loading',
+    loading: status === 'pending',
   };
 };
 

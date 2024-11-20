@@ -1,14 +1,14 @@
 import { Invoice } from '@raidguild/escrow-utils';
-import { useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useSimulateContract, useWriteContract } from 'wagmi';
 
 import INVOICE_ABI from './contracts/Invoice.json';
 
 const useWithdraw = ({ invoice }: { invoice: Invoice }) => {
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     address: invoice.address,
     functionName: 'withdraw',
     abi: INVOICE_ABI,
@@ -17,26 +17,27 @@ const useWithdraw = ({ invoice }: { invoice: Invoice }) => {
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: () => {
-      console.log('success');
+  } = useWriteContract({
+    mutation: {
+      onSuccess: () => {
+        console.log('success');
 
-      // handle success
-      // close modal
-      // update invoice with status
-    },
-    onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.log('error', error);
+        // handle success
+        // close modal
+        // update invoice with status
+      },
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log('error', error);
+      },
     },
   });
 
   return {
-    writeAsync,
+    writeAsync: () => writeContractAsync(data.request),
     isLoading: prepareLoading || writeLoading,
     prepareError,
     writeError,

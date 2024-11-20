@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import { Chain, configureChains } from 'wagmi';
+import { Chain } from 'viem';
 import {
   arbitrum,
   gnosis,
@@ -9,39 +8,52 @@ import {
   optimism,
   polygon,
   sepolia,
-} from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { publicProvider } from 'wagmi/providers/public';
+} from 'viem/chains';
 
-const customGnosis = {
-  ...gnosis,
-  hasIcon: true,
-  iconUrl: '/icons/gnosis-light.png',
-  iconBackground: 'none',
-};
-
-const orderedChains = [
-  1, // mainnet
-  100, // customGnosis
-  137, // polygon
-  42151, // arbitrum
-  10, // optimism
-  5, // goerli
-  11155111, // sepolia
+const chains: Chain[] = [
+  mainnet,
+  gnosis,
+  polygon,
+  arbitrum,
+  optimism,
+  sepolia,
+  goerli,
 ];
 
-const chainsList: { [key: number]: Chain } = {
-  100: customGnosis,
+export const chainsList: { [key: number]: Chain } = {
+  100: gnosis,
   137: polygon,
   42151: arbitrum,
   10: optimism,
   1: mainnet,
-  5: goerli,
   11155111: sepolia,
+  5: goerli,
 };
+
+export const SUPPORTED_CHAIN_IDS = chains.map((chain) => chain.id);
+export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];
+export type SupportedChain = (typeof chains)[number];
+export const SUPPORTED_CHAINS = chains as [SupportedChain, ...SupportedChain[]];
+
+export const infuraNetworkName: Partial<Record<SupportedChainId, string>> = {
+  [mainnet.id]: 'mainnet',
+  [polygon.id]: 'polygon-mainnet',
+  [arbitrum.id]: 'arbitrum-mainnet',
+  [optimism.id]: 'optimism-mainnet',
+  [sepolia.id]: 'sepolia',
+};
+
+export const alchemyNetworkName: Partial<Record<SupportedChainId, string>> = {
+  [mainnet.id]: 'eth-mainnet',
+  [polygon.id]: 'polygon-mainnet',
+  [arbitrum.id]: 'arb-mainnet',
+  [optimism.id]: 'opt-mainnet',
+  [sepolia.id]: 'eth-sepolia',
+  [gnosis.id]: 'gnosis-mainnet',
+};
+
 if (process.env.NODE_ENV === 'development') {
-  chainsList[31337] = hardhat;
+  chains.push(hardhat);
 }
 export const chainsMap = (chainId: number) => chainsList[chainId];
 export const chainIdToIconMap = (chainId: number) => {
@@ -65,17 +77,6 @@ export const networkToIdMap = (network: string) => {
   }
 };
 
-const data = configureChains(
-  _.map(orderedChains, (id: number) => chainsMap(id)),
-  [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string }),
-    infuraProvider({ apiKey: process.env.NEXT_PUBLIC_RPC_KEY as string }),
-    publicProvider(),
-  ]
-);
-
-const { chains, publicClient } = _.pick(data, ['chains', 'publicClient']);
-
 export const getExplorerUrl = (chainId: number) =>
   chainsMap(chainId)?.blockExplorers?.etherscan?.url ||
   chainsMap(chainId)?.blockExplorers?.default?.url;
@@ -85,5 +86,3 @@ export const getTxLink = (chainId: number, hash: string) =>
 
 export const getAddressLink = (chainId: number, hash: string) =>
   `${getExplorerUrl(chainId)}/address/${hash}`;
-
-export { chains, publicClient };

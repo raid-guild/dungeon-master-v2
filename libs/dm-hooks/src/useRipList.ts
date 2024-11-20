@@ -92,7 +92,8 @@ const useRipList = ({ ripStatusFilterKey, ripSortKey }: RipListType) => {
     isFetchingNextPage,
   } = useInfiniteQuery<Array<IRip>, Error>({
     queryKey: ['ripsList', ripStatusFilterKey, ripSortKey],
-    queryFn: ({ pageParam = 0 }) => ripQueryResult(pageParam),
+    queryFn: ({ pageParam }) => ripQueryResult(pageParam as unknown as number),
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       _.isEmpty(lastPage)
         ? undefined

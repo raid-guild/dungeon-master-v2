@@ -1,5 +1,5 @@
 import { Invoice } from '@raidguild/escrow-utils';
-import { useBalance, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useBalance, useSimulateContract, useWriteContract } from 'wagmi';
 
 import INVOICE_ABI from './contracts/Invoice.json';
 
@@ -34,10 +34,10 @@ const useResolve = ({
     balance.value === clientAward + providerAward + resolverAward;
 
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     address: invoice.address,
     functionName: 'resolve',
     abi: INVOICE_ABI,
@@ -51,22 +51,23 @@ const useResolve = ({
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: () => {
-      // TODO handle success
-    },
-    onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.log('error', error);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: () => {
+        // TODO handle success
+      },
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log('error', error);
+      },
     },
   });
 
   return {
-    writeAsync,
+    writeAsync: () => writeContractAsync(data.request),
     isLoading: prepareLoading || writeLoading,
     prepareError,
     writeError,
