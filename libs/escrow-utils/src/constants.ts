@@ -88,7 +88,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     },
   },
   10: {
-    SUBGRAPH: 'smart-invoice-optimism/v0.0.2',
+    SUBGRAPH: 'smart-invoice-optimism/v0.0.3',
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0x4200000000000000000000000000000000000006'
     ) as Hex,
