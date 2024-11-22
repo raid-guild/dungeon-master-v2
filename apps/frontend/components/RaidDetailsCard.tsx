@@ -28,55 +28,16 @@ import {
   truncateEmail,
 } from '@raidguild/dm-utils';
 import { format } from 'date-fns';
-import _, { result } from 'lodash';
-import link from 'next/link';
+import _ from 'lodash';
 import { useState } from 'react';
 
+import Description from './Description';
 import InfoStack from './InfoStack';
 
 interface RaidProps {
   raid?: IRaid;
   consultation?: IConsultation;
 }
-
-const Description = ({
-  description,
-  label,
-}: {
-  description: string;
-  label?: string;
-}) => {
-  const [showFullDescription, setShowFullDescription] = useState(false);
-  const handleToggleDesc = () => setShowFullDescription(!showFullDescription);
-
-  return (
-    <VStack align='flex-start'>
-      {label && (
-        <Text fontSize='xs' color='purple.200' textTransform='capitalize'>
-          {label}
-        </Text>
-      )}
-      <Collapse startingHeight={25} in={showFullDescription}>
-        <Text color='white' fontSize='md'>
-          {description !== null
-            ? description
-            : 'There is no project description.'}
-        </Text>
-      </Collapse>
-      {description !== null && description?.length > 100 && (
-        <Button
-          onClick={handleToggleDesc}
-          color='gray.400'
-          size='sm'
-          fontWeight='normal'
-          variant='link'
-        >
-          {showFullDescription === true ? 'Show Less' : 'Show More'}
-        </Button>
-      )}
-    </VStack>
-  );
-};
 
 const Bio = ({ bio }: { bio: string }) => {
   const [showFullBio, setShowFullBio] = useState(false);
@@ -186,10 +147,26 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
         items: _.compact([category, slug, repoLink, resultLink, imageUrl]),
         extra: (
           <Stack>
-            <Description description={description} label='What We Did' />
-            <Description description={challenge} label='The Challenge' />
-            <Description description={approach} label='Our Approach' />
-            <Description description={projectResult} label='Result' />
+            <Description
+              description={description || 'There is no project description.'}
+              label='What We Did'
+              startingHeight={25}
+            />
+            <Description
+              description={challenge || 'There is no challenge description.'}
+              label='The Challenge'
+              startingHeight={25}
+            />
+            <Description
+              description={approach || 'There is no approach description.'}
+              label='Our Approach'
+              startingHeight={25}
+            />
+            <Description
+              description={projectResult || 'There is no result description.'}
+              label='Result'
+              startingHeight={25}
+            />
           </Stack>
         ),
       };
@@ -286,7 +263,12 @@ const RaidDetailsCard = ({ raid, consultation }: RaidProps) => {
           ),
         },
       ]),
-      extra: <Description description={_.get(consultation, 'description')} />,
+      extra: (
+        <Description
+          description={_.get(consultation, 'description')}
+          startingHeight={25}
+        />
+      ),
     },
     {
       title: 'Key Links',

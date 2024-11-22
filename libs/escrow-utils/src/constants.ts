@@ -59,7 +59,7 @@ interface NetworkConfig {
 
 export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
   1: {
-    SUBGRAPH: 'smart-invoice/v0.0.1',
+    SUBGRAPH: 'smart-invoice/v0.0.3',
     INVOICE_FACTORY: _.toLower(
       '0x5E14cF595e18F91170009946205f8BBa21b323ca'
     ) as Hex,
@@ -88,7 +88,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     },
   },
   10: {
-    SUBGRAPH: 'smart-invoice-optimism/v0.0.2',
+    SUBGRAPH: 'smart-invoice-optimism/v0.0.3',
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0x4200000000000000000000000000000000000006'
     ) as Hex,
@@ -118,7 +118,7 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     },
   },
   100: {
-    SUBGRAPH: 'smart-invoice-gnosis/v0.0.4',
+    SUBGRAPH: 'smart-invoice-gnosis/v0.0.5',
     INVOICE_FACTORY: _.toLower(
       '0xdDd96D43b0B2Ca179DCefA58e71798d0ce56c9c8'
     ) as Hex,

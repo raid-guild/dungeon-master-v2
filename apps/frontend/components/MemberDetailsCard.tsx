@@ -24,6 +24,7 @@ import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 import { useAccount } from 'wagmi';
 
 import { useOverlay } from '../contexts/OverlayContext';
+import Description from './Description';
 import MemberAvatar from './MemberAvatar';
 import UpdateMemberForm from './MemberUpdateForm';
 import ModalWrapper from './ModalWrapper';
@@ -32,18 +33,18 @@ interface MemberProps {
   application?: IApplication;
   height?: string;
   member?: IMember;
-  memberReload?: () => void;
   showHeader?: boolean;
   width?: string;
+  minHeight?: string;
 }
 
 const MemberDetailsCard = ({
   application,
   height,
   member,
-  memberReload,
   showHeader = false,
   width,
+  minHeight,
 }: MemberProps) => {
   const toast = useToast();
   const copyDiscord = useClipboard(
@@ -189,6 +190,7 @@ const MemberDetailsCard = ({
       minW={[null, null, null, '500px']}
       w={['100%', null, null, width ?? '60%']}
       h={height ?? 'max-content'}
+      minHeight={minHeight}
     >
       <ModalWrapper
         name='memberForm'
@@ -198,13 +200,19 @@ const MemberDetailsCard = ({
       >
         <UpdateMemberForm
           member={member}
+          introduction={application?.introduction}
           memberAddress={memberAddress}
           memberId={_.get(member, 'id')}
-          memberReload={memberReload}
           closeModal={closeModals}
         />
       </ModalWrapper>
-      <Card variant='filled' w='100%' h={height ?? 'max-content'} p={4}>
+      <Card
+        variant='filled'
+        w='100%'
+        h={height ?? 'max-content'}
+        p={4}
+        minHeight={minHeight}
+      >
         {showHeader && (
           <>
             <Flex w='100%' justifyContent='space-between'>
@@ -287,10 +295,16 @@ const MemberDetailsCard = ({
             </Flex>
           ))}
 
-          {_.get(application, 'introduction') && (
+          {(_.get(member, 'description') ||
+            _.get(application, 'introduction')) && (
             <>
               <Divider color='gray.200' />
-              <Text size='md'>{_.get(application, 'introduction')}</Text>
+              <Description
+                description={
+                  _.get(member, 'description') ||
+                  _.get(application, 'introduction')
+                }
+              />
             </>
           )}
 

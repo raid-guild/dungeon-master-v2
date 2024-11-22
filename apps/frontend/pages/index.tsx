@@ -186,7 +186,7 @@ const Home = () => {
               member={member}
               application={_.get(member, 'application')}
               width='500px'
-              height='650px'
+              minHeight='650px'
               showHeader
             />
           </Flex>

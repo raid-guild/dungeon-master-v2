@@ -14,12 +14,14 @@ import {
   GNOSIS_SAFE_ADDRESS,
   GUILD_GNOSIS_DAO_ADDRESS_V3,
 } from '@raidguild/dm-utils';
+import { client as getEscrowClient } from '@raidguild/escrow-gql';
 import { NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import { useInfiniteQuery, useQueries, useQuery } from '@tanstack/react-query';
 import { GraphQLClient } from 'graphql-request';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { getAddress } from 'viem';
+import { gnosis } from 'viem/chains';
 
 const graphUrl = (chainId: number = 4) =>
   `https://api.thegraph.com/subgraphs/name/${_.get(NETWORK_CONFIG, [
@@ -137,9 +139,7 @@ const useAccountingV3 = () => {
     `https://gateway-arbitrum.network.thegraph.com/api/${process.env.NEXT_PUBLIC_THE_GRAPH_API_KEY}/subgraphs/id/6x9FK3iuhVFaH9sZ39m8bKB5eckax8sjxooBPNKWWK8r`
   );
 
-  const v3ClientInvoices = new GraphQLClient(
-    `https://api.studio.thegraph.com/proxy/78711/smart-invoice-gnosis/v0.0.1/`
-  );
+  const v3ClientInvoices = getEscrowClient(gnosis.id);
 
   const {
     isError: raidsIsError,
