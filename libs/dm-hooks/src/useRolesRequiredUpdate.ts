@@ -18,8 +18,8 @@ export const useAddRolesRequired = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, role }: IRoleRequiredInsert) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({ raidId, role }: IRoleRequiredInsert) => {
       if (!raidId || !token) return null;
 
       return client({ token }).request(ROLES_REQUIRED_INSERT_MUTATION, {
@@ -29,85 +29,86 @@ export const useAddRolesRequired = ({ token }: { token: string }) => {
         },
       });
     },
-    {
-      onSuccess: (data) => {
-        const raid = camelize(
-          _.get(data, 'insert_raids_roles_required.returning.0.raid')
-        );
-        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
-        queryClient.invalidateQueries(['raidList']); // invalidate the raidList
-        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
-        // TODO setButton
-        // TODO clear roleToAdd
+    onSuccess: (data) => {
+      const raid = camelize(
+        _.get(data, 'insert_raids_roles_required.returning.0.raid')
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(raid, 'id')],
+      }); // invalidate raidDetail with id from the successful mutation response
+      queryClient.invalidateQueries({ queryKey: ['raidList'] }); // invalidate the raidList
+      queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
+      // TODO setButton
+      // TODO clear roleToAdd
 
-        toast.success({
-          title: 'Role Added',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: (error) => {
-        toast.error({
-          title: 'Unable to Update Raid',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
+      toast.success({
+        title: 'Role Added',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast.error({
+        title: 'Unable to Update Raid',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export const useRemoveRolesRequired = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ where }: { where: IRoleRemoveMany }) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({ where }: { where: IRoleRemoveMany }) => {
       if (!where) return null;
 
       return client({ token }).request(ROLES_REQUIRED_DELETE_MUTATION, {
         where,
       });
     },
-    {
-      onSuccess: (data) => {
-        const raid = camelize(
-          _.get(data, 'delete_raids_roles_required.returning.0.raid')
-        );
-        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
-        queryClient.invalidateQueries(['raidList']); // invalidate the raidList
 
-        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
-        // TODO setButton
-        // TODO clear roleToAdd
+    onSuccess: (data) => {
+      const raid = camelize(
+        _.get(data, 'delete_raids_roles_required.returning.0.raid')
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(raid, 'id')],
+      }); // invalidate raidDetail with id from the successful mutation response
+      queryClient.invalidateQueries({ queryKey: ['raidList'] }); // invalidate the raidList
 
-        toast.success({
-          title: 'Role(s) Removed',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: (error) => {
-        toast.error({
-          title: 'Unable to Update Raid',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
+      queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
+      // TODO setButton
+      // TODO clear roleToAdd
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+      toast.success({
+        title: 'Role(s) Removed',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast.error({
+        title: 'Unable to Update Raid',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export const useUpdateRolesRequired = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({
       insertRoles,
       where,
     }: {
@@ -120,32 +121,32 @@ export const useUpdateRolesRequired = ({ token }: { token: string }) => {
         insertRoles,
         where,
       }),
-    {
-      onSuccess: (data) => {
-        const raid = camelize(
-          _.get(data, 'delete_raids_roles_required.returning.0.raid')
-        );
-        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
-        queryClient.invalidateQueries(['raidList']); // invalidate the raidList
-        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
-        // TODO setButton
-        // TODO clear roleToAdd
+    onSuccess: (data) => {
+      const raid = camelize(
+        _.get(data, 'delete_raids_roles_required.returning.0.raid')
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(raid, 'id')],
+      }); // invalidate raidDetail with id from the successful mutation response
+      queryClient.invalidateQueries({ queryKey: ['raidList'] }); // invalidate the raidList
+      queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
+      // TODO setButton
+      // TODO clear roleToAdd
 
-        toast.success({
-          title: 'Roles Updated',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: (error) => {
-        toast.error({
-          title: 'Unable to Update Raid',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
+      toast.success({
+        title: 'Roles Updated',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast.error({
+        title: 'Unable to Update Raid',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+  return { mutateAsync, isPending, isError, isSuccess };
 };

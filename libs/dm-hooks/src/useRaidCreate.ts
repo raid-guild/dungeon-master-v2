@@ -11,8 +11,8 @@ const useRaidCreate = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: IRaidCreate) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({ ...args }: IRaidCreate) => {
       if (!token) return null;
       const result = await client({ token }).request(RAID_CREATE_MUTATION, {
         raid: {
@@ -22,36 +22,36 @@ const useRaidCreate = ({ token }: { token: string }) => {
 
       return result;
     },
-    {
-      onSuccess: (data) => {
-        const raid = camelize(_.get(data, 'insert_raids_one'));
+    onSuccess: (data) => {
+      const raid = camelize(_.get(data, 'insert_raids_one'));
 
-        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]);
-        queryClient.invalidateQueries(['raidList']);
-        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(raid, 'id')],
+      });
+      queryClient.invalidateQueries({ queryKey: ['raidList'] });
+      queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
 
-        router.push(`/raids/${_.get(raid, 'id')}`);
+      router.push(`/raids/${_.get(raid, 'id')}`);
 
-        setTimeout(() => {
-          toast.success({
-            title: 'Raid Created',
-            iconName: 'crown',
-            duration: 3000,
-            isClosable: true,
-          });
-        }, 1000);
-      },
-      onError: (error) => {
-        toast.error({
-          title: 'Unable to create Raid',
-          iconName: 'alert',
+      setTimeout(() => {
+        toast.success({
+          title: 'Raid Created',
+          iconName: 'crown',
           duration: 3000,
           isClosable: true,
         });
-      },
-    }
-  );
-  return { mutateAsync, isLoading, isError, isSuccess };
+      }, 1000);
+    },
+    onError: (error) => {
+      toast.error({
+        title: 'Unable to create Raid',
+        iconName: 'alert',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export default useRaidCreate;

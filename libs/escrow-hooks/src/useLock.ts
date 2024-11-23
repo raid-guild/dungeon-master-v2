@@ -1,13 +1,14 @@
+import { wagmiConfig } from '@raidguild/dm-utils';
 import { Invoice } from '@raidguild/escrow-utils';
+import { waitForTransactionReceipt } from '@wagmi/core';
 import _ from 'lodash';
 import { useState } from 'react';
 import { Hex } from 'viem';
 import {
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
 } from 'wagmi';
-import { waitForTransaction } from 'wagmi/actions';
 
 import INVOICE_ABI from './contracts/Invoice.json';
 
@@ -32,13 +33,13 @@ const useLock = ({
   //   amount: balance.toString(),
   // });
 
-  const { data: txResult } = useWaitForTransaction({ hash: txHash });
+  const { data: txResult } = useWaitForTransactionReceipt({ hash: txHash });
 
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     address: invoice.address as Hex,
     functionName: 'lock',
     abi: INVOICE_ABI,
@@ -47,29 +48,31 @@ const useLock = ({
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: async (data) => {
-      console.log('success', data);
-      const { hash } = _.pick(data, 'hash');
-      setTxHash(hash);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: async (hash) => {
+        console.log('success', hash);
+        setTxHash(hash);
 
-      const result = await waitForTransaction({ hash });
+        const result = await waitForTransactionReceipt(wagmiConfig, {
+          hash,
+        });
 
-      // handle success
-      // close modal
-      // update invoice with status
-    },
-    onError: (error) => {
-      console.log('error', error);
+        // handle success
+        // close modal
+        // update invoice with status
+      },
+      onError: (error) => {
+        console.log('error', error);
+      },
     },
   });
 
   return {
-    writeAsync,
+    writeAsync: () => writeContractAsync(data.request),
     isLoading: prepareLoading || writeLoading,
     txHash,
     writeLoading,

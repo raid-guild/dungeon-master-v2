@@ -94,7 +94,7 @@ const DepositFunds = ({
   const depositHandler = async () => {
     const result = await handleDeposit();
     if (!result) return;
-    setTransaction(result.hash);
+    setTransaction(result);
   };
   const paymentTypeOptions = [
     { value: PAYMENT_TYPES.TOKEN, label: parseTokenAddress(chainId, token) },

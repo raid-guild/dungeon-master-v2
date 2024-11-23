@@ -46,11 +46,11 @@ const useDashboardList = ({
     };
   };
 
-  const { data, error, status, isLoading } = useQuery(
-    ['dashboard', address],
-    dashboardQueryResult,
-    { enabled: !!token && !!address && role === 'member' }
-  );
+  const { data, error, status, isLoading } = useQuery({
+    queryKey: ['dashboard', address],
+    queryFn: dashboardQueryResult,
+    enabled: !!token && !!address && role === 'member',
+  });
 
   return {
     data,

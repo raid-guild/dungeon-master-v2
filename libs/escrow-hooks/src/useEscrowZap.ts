@@ -2,9 +2,14 @@
 import { NETWORK_CONFIG, ProjectDetails } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { encodeAbiParameters, Hex, isAddress, parseUnits } from 'viem';
-import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
-import { WriteContractResult } from 'wagmi/dist/actions';
+import {
+  encodeAbiParameters,
+  Hex,
+  isAddress,
+  parseUnits,
+  WriteContractReturnType,
+} from 'viem';
+import { useChainId, useSimulateContract, useWriteContract } from 'wagmi';
 
 import ESCROW_ZAP_ABI from './contracts/EscrowZap.json';
 import useDetailsPin from './useDetailsPin';
@@ -179,11 +184,11 @@ const useEscrowZap = ({
       enabled
   );
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
     status,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     chainId,
     address: NETWORK_CONFIG[chainId].ZAP_ADDRESS,
     abi: ESCROW_ZAP_ABI,
@@ -209,19 +214,20 @@ const useEscrowZap = ({
   console.log('prepareError', prepareError, status);
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: async (tx) => {
-      onSuccess?.(tx);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: async (tx) => {
+        onSuccess?.(tx);
+      },
     },
   });
   // console.log(writeAsync);
 
   return {
-    writeAsync,
+    writeAsync: () => writeContractAsync(data.request),
     isLoading: prepareLoading || writeLoading || detailsLoading,
     prepareError,
     writeError,
@@ -241,7 +247,7 @@ interface UseEscrowZapProps {
   safetyValveDate: Date;
   detailsData: ProjectDetails;
   enabled?: boolean;
-  onSuccess?: (tx: WriteContractResult) => void;
+  onSuccess?: (tx: WriteContractReturnType) => void;
 }
 
 export default useEscrowZap;
