@@ -100,21 +100,22 @@ insert_permissions:
     permission:
       check: {}
       columns:
-        - is_raiding
-        - membership_date
-        - application_v1
-        - eth_address
-        - legacy_id
-        - member_type_key
-        - name
-        - primary_class_key
-        - v1_id
-        - created_at
-        - updated_at
         - application_id
+        - application_v1
         - championed_by_id
         - contact_info_id
+        - created_at
+        - description
+        - eth_address
         - id
+        - is_raiding
+        - legacy_id
+        - member_type_key
+        - membership_date
+        - name
+        - primary_class_key
+        - updated_at
+        - v1_id
 select_permissions:
   - role: cohort
     permission:
@@ -139,21 +140,22 @@ select_permissions:
   - role: member
     permission:
       columns:
-        - is_raiding
-        - membership_date
-        - application_v1
-        - eth_address
-        - legacy_id
-        - member_type_key
-        - name
-        - primary_class_key
-        - v1_id
-        - created_at
-        - updated_at
         - application_id
+        - application_v1
         - championed_by_id
         - contact_info_id
+        - created_at
+        - description
+        - eth_address
         - id
+        - is_raiding
+        - legacy_id
+        - member_type_key
+        - membership_date
+        - name
+        - primary_class_key
+        - updated_at
+        - v1_id
       filter: {}
       allow_aggregations: true
 update_permissions:
@@ -171,20 +173,21 @@ update_permissions:
   - role: member
     permission:
       columns:
-        - is_raiding
-        - membership_date
-        - application_v1
-        - eth_address
-        - legacy_id
-        - member_type_key
-        - name
-        - primary_class_key
-        - v1_id
-        - created_at
-        - updated_at
         - application_id
+        - application_v1
         - championed_by_id
         - contact_info_id
+        - created_at
+        - description
+        - eth_address
         - id
+        - is_raiding
+        - legacy_id
+        - member_type_key
+        - membership_date
+        - name
+        - primary_class_key
+        - updated_at
+        - v1_id
       filter: {}
       check: null
