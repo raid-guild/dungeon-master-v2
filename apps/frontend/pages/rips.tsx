@@ -131,7 +131,7 @@ const RipList = () => {
       <NextSeo title='RIPs List' />
 
       <SiteLayout
-        isLoading={status === 'loading'}
+        isLoading={status === 'pending'}
         data={rips}
         emptyDataPhrase='No RIPs found.'
         subheader={
