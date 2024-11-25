@@ -210,9 +210,8 @@ const MemberCard = ({ application, member }: MemberProps) => {
           <Stack spacing={4}>
             <Divider paddingTop={2} width='100%' alignSelf='center' />
             <Text size='md' maxW='900px'>
-              {_.gte(_.size(_.get(application, 'introduction')), 250)
-                ? `${_.get(application, 'introduction').slice(0, 250)}...`
-                : _.get(application, 'introduction')}
+              {_.truncate(_.get(application, 'description'), { length: 250 }) ??
+                _.truncate(_.get(application, 'introduction'), { length: 250 })}
             </Text>
           </Stack>
           <Flex wrap='wrap' width='100%' maxWidth='100%'>
