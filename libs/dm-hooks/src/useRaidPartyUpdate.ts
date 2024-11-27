@@ -13,8 +13,12 @@ export const useRaidPartyAdd = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, memberId, raiderClassKey }: IRaidPartyInsert) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({
+      raidId,
+      memberId,
+      raiderClassKey,
+    }: IRaidPartyInsert) => {
       if (!raidId || !token) return null;
       return client({ token }).request(RAID_PARTY_INSERT_MUTATION, {
         raid_parties: {
@@ -24,44 +28,47 @@ export const useRaidPartyAdd = ({ token }: { token: string }) => {
         },
       });
     },
-    {
-      onSuccess: (data) => {
-        const raid = camelize(
-          _.get(
-            data,
-            'insert_raid_parties.returning.0.raid',
-            _.get(data, 'update_raids_by_pk.returning.0.raid')
-          )
-        );
-        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
-        queryClient.invalidateQueries(['raidList']);
-        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
+    onSuccess: (data) => {
+      const raid = camelize(
+        _.get(
+          data,
+          'insert_raid_parties.returning.0.raid',
+          _.get(data, 'update_raids_by_pk.returning.0.raid')
+        )
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(raid, 'id')],
+      }); // invalidate raidDetail with id from the successful mutation response
+      queryClient.invalidateQueries({ queryKey: ['raidList'] });
+      queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
 
-        toast.success({
-          title: 'Raid Party Updated',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: () => {
-        toast.error({
-          title: 'Unable to Update Raid',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
+      toast.success({
+        title: 'Raid Party Updated',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: () => {
+      toast.error({
+        title: 'Unable to Update Raid',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export const useRaidPartyRemove = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ raidId, memberId }: Omit<IRaidPartyInsert, 'raiderClassKey'>) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({
+      raidId,
+      memberId,
+    }: Omit<IRaidPartyInsert, 'raiderClassKey'>) => {
       if (!raidId || !token) return null;
 
       return client({ token }).request(RAID_PARTY_DELETE_MUTATION, {
@@ -73,31 +80,30 @@ export const useRaidPartyRemove = ({ token }: { token: string }) => {
         },
       });
     },
+    onSuccess: (data) => {
+      const raid = camelize(
+        _.get(data, 'delete_raid_parties.returning.0.raid')
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(raid, 'id')],
+      }); // invalidate raidDetail with id from the successful mutation response
+      queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
+      toast.success({
+        title: 'Raid Party Updated',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: () => {
+      toast.error({
+        title: 'Unable to Update Raid',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
 
-    {
-      onSuccess: (data) => {
-        const raid = camelize(
-          _.get(data, 'delete_raid_parties.returning.0.raid')
-        );
-        queryClient.invalidateQueries(['raidDetail', _.get(raid, 'id')]); // invalidate raidDetail with id from the successful mutation response
-        queryClient.setQueryData(['raidDetail', _.get(raid, 'id')], raid);
-        toast.success({
-          title: 'Raid Party Updated',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: () => {
-        toast.error({
-          title: 'Unable to Update Raid',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
-
-  return { mutateAsync, isLoading, isError, isSuccess };
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export default useRaidPartyAdd;

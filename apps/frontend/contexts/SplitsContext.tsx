@@ -1,14 +1,12 @@
 import { SplitsProvider } from '@0xsplits/splits-sdk-react';
-import { chainsMap } from '@raidguild/dm-utils';
+import {
+  chainsMap,
+  publicClient as wagmiPublicClient,
+} from '@raidguild/dm-utils';
 import { ReactNode, useMemo } from 'react';
-import { createPublicClient, http } from 'viem';
 
 export const publicClient = (chainId: number) =>
-  chainId &&
-  createPublicClient({
-    chain: chainsMap(chainId),
-    transport: http(),
-  });
+  chainId && wagmiPublicClient({ chainId });
 
 const SplitsContext = ({
   chainId = 100,

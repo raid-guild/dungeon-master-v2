@@ -18,7 +18,7 @@ export const siweCredentials = {
 };
 
 const parseCredentials = ({ credentials, req }: SiweAuthorizeParams) => {
-  const siwe = new SiweMessage(JSON.parse(_.get(credentials, 'message', '{}')));
+  const siwe = new SiweMessage(_.get(credentials, 'message', '{}'));
   return Promise.resolve({ siwe, credentials, req });
 };
 
@@ -36,6 +36,7 @@ const checkNonce = async ({
     })
     .catch((error: Error) => {
       console.error(error);
+      return Promise.reject(error);
     });
 
 const checkDomain = ({
@@ -71,9 +72,9 @@ export const authorizeSiweMessage = (
   data: SiweAuthorizeParams
 ): Promise<User | null> =>
   parseCredentials(data)
-    .then((d: any) => checkNonce(d))
-    .then((d: any) => checkDomain(d))
-    .then((d: any) => checkSignature(d))
+    .then((d: SiweMessageAuthorizeParams) => checkNonce(d))
+    .then((d: SiweMessageAuthorizeParams) => checkDomain(d))
+    .then((d: SiweCredentialParams) => checkSignature(d))
     .then(
       ({ siwe }) => ({ id: _.get(siwe, 'address') }) // TODO _.toLower
     )

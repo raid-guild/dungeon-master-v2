@@ -23,7 +23,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import { useForm } from 'react-hook-form';
-import { useChainId, useSwitchNetwork } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 import { optimism } from 'wagmi/chains';
 
 import SiteLayoutPublic from '../../components/SiteLayoutPublic';
@@ -73,7 +73,7 @@ export const Escrow = () => {
   const token = _.get(session, 'token');
 
   const chainId = useChainId();
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
   const localForm = useForm();
   const { watch } = localForm;
   const raidId = watch('raidId');
@@ -153,7 +153,7 @@ export const Escrow = () => {
 
               <CardFooter w='100%'>
                 <HStack justifyContent='center' w='100%'>
-                  <Button onClick={() => switchNetwork(100)}>
+                  <Button onClick={() => switchChain({ chainId: 100 })}>
                     <HStack spacing={2} align='center'>
                       <Image
                         alt={optimism.name ?? 'Chain icon'}
@@ -163,7 +163,7 @@ export const Escrow = () => {
                       <Text>Gnosis</Text>
                     </HStack>
                   </Button>
-                  <Button onClick={() => switchNetwork(10)}>
+                  <Button onClick={() => switchChain({ chainId: 10 })}>
                     <HStack spacing={2} align='center'>
                       <Image
                         alt={optimism.name ?? 'Chain icon'}
