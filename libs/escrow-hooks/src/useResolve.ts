@@ -1,4 +1,6 @@
 import { Invoice } from '@raidguild/escrow-utils';
+import { useCallback } from 'react';
+import { Hex } from 'viem';
 import { useBalance, useSimulateContract, useWriteContract } from 'wagmi';
 
 import INVOICE_ABI from './contracts/Invoice.json';
@@ -66,8 +68,21 @@ const useResolve = ({
     },
   });
 
+  const writeAsync = useCallback(async (): Promise<Hex | undefined> => {
+    try {
+      if (!data) {
+        throw new Error('simulation data is not available');
+      }
+      return writeContractAsync(data.request);
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('useResolve error', error);
+      return undefined;
+    }
+  }, [writeContractAsync, data]);
+
   return {
-    writeAsync: () => writeContractAsync(data.request),
+    writeAsync,
     isLoading: prepareLoading || writeLoading,
     prepareError,
     writeError,

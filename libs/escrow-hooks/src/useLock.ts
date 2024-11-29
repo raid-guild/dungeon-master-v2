@@ -2,7 +2,7 @@ import { wagmiConfig } from '@raidguild/dm-utils';
 import { Invoice } from '@raidguild/escrow-utils';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import _ from 'lodash';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Hex } from 'viem';
 import {
   useSimulateContract,
@@ -71,8 +71,21 @@ const useLock = ({
     },
   });
 
+  const writeAsync = useCallback(async (): Promise<Hex | undefined> => {
+    try {
+      if (!data) {
+        throw new Error('simulation data is not available');
+      }
+      return writeContractAsync(data.request);
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('useLock error', error);
+      return undefined;
+    }
+  }, [writeContractAsync, data]);
+
   return {
-    writeAsync: () => writeContractAsync(data.request),
+    writeAsync,
     isLoading: prepareLoading || writeLoading,
     txHash,
     writeLoading,

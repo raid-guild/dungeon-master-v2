@@ -1,5 +1,6 @@
 import { Invoice, PAYMENT_TYPES } from '@raidguild/escrow-utils';
-import { parseUnits, WriteContractReturnType } from 'viem';
+import { useCallback } from 'react';
+import { Hex, parseUnits, WriteContractReturnType } from 'viem';
 import {
   useChainId,
   useSendTransaction,
@@ -81,8 +82,21 @@ const useDeposit = ({
     return result;
   };
 
+  const writeAsync = useCallback(async (): Promise<Hex | undefined> => {
+    try {
+      if (!data) {
+        throw new Error('simulation data is not available');
+      }
+      return writeContractAsync(data.request);
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('useDeposit error', error);
+      return undefined;
+    }
+  }, [writeContractAsync, data]);
+
   return {
-    writeAsync: () => writeContractAsync(data.request),
+    writeAsync,
     handleDeposit,
     isReady: paymentType === PAYMENT_TYPES.NATIVE ? true : !!writeContractAsync,
     isLoading: prepareLoading || writeLoading || sendLoading,

@@ -4,7 +4,7 @@ import {
   updateRaidInvoice,
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { encodeAbiParameters, Hex, parseUnits, stringToHex } from 'viem';
 import { useChainId, useSimulateContract, useWriteContract } from 'wagmi';
@@ -157,8 +157,21 @@ const useRegister = ({
     },
   });
 
+  const writeAsync = useCallback(async (): Promise<Hex | undefined> => {
+    try {
+      if (!data) {
+        throw new Error('simulation data is not available');
+      }
+      return writeContractAsync(data.request);
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('useRegister error', error);
+      return undefined;
+    }
+  }, [writeContractAsync, data]);
+
   return {
-    writeAsync: () => writeContractAsync(data.request),
+    writeAsync,
     isLoading: prepareLoading || writeLoading,
     prepareError,
     writeError,
