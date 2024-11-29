@@ -5,6 +5,7 @@ import {
   Stack,
   Text,
   Tooltip,
+  useToast,
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { chainsMap, commify } from '@raidguild/dm-utils';
@@ -33,6 +34,7 @@ const EscrowConfirmation = ({
   backStep: () => void;
 }) => {
   const { watch } = escrowForm;
+  const toast = useToast();
   const {
     client,
     provider,
@@ -104,12 +106,31 @@ const EscrowConfirmation = ({
   const createInvoice = async () => {
     if (canRegisterDirectly) {
       await writeAsync?.();
+      // move to next step
+      updateStep();
     } else {
-      await writeEscrowZap?.();
+      try {
+        await writeEscrowZap?.();
+        // move to next step
+        updateStep();
+      } catch (error) {
+        if (error?.message?.match(/User rejected/)) {
+          /* eslint-disable no-console */
+          console.error('Transaction rejected by user', error);
+          toast.error({
+            title: 'Transaction Rejected',
+            description: 'Transaction was rejected. Please try again.',
+          });
+        } else {
+          /* eslint-disable no-console */
+          console.error('Transaction failed:', error);
+          toast.error({
+            title: 'Transaction Failed',
+            description: error.message,
+          });
+        }
+      }
     }
-
-    // move to next step
-    updateStep();
   };
 
   const total = _.sumBy(
