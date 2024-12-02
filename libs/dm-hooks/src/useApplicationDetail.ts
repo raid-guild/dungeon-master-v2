@@ -25,7 +25,9 @@ const useApplicationDetail = ({
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IApplication,
     Error
-  >(['applicationDetail', applicationId], applicationQueryResult, {
+  >({
+    queryKey: ['applicationDetail', applicationId],
+    queryFn: applicationQueryResult,
     enabled: Boolean(token) && Boolean(applicationId),
   });
 

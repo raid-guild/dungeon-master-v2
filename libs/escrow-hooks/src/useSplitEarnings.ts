@@ -1,7 +1,7 @@
 import { SplitsClient } from '@0xsplits/splits-sdk-react';
 import { chainsMap } from '@raidguild/dm-utils';
 import { useQuery } from '@tanstack/react-query';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, http, PublicClient } from 'viem';
 
 export const publicClient = (chainId: number) =>
   chainId &&
@@ -24,9 +24,10 @@ const fetchSplitEarnings = ({
 }) => {
   const client = new SplitsClient({
     chainId,
-    publicClient: publicClient(chainId),
+    publicClient: publicClient(chainId) as PublicClient,
   });
-  return client.getSplitEarnings({
+  return client.dataClient.getSplitEarnings({
+    chainId,
     splitAddress,
     erc20TokenList: DEFAULT_TOKEN_LIST[chainId],
   });

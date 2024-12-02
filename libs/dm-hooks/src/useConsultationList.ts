@@ -83,23 +83,23 @@ const useConsultationList = ({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<Array<Array<IConsultation>>, Error>(
-    [
+  } = useInfiniteQuery<Array<Array<IConsultation>>, Error>({
+    queryKey: [
       'consultationList',
       consultationTypeFilterKey,
       consultationBudgetFilterKey,
       consultationSubmissionFilterKey,
       consultationSortKey,
     ],
-    ({ pageParam = 0 }) => consultationQueryResult(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit),
-      enabled: Boolean(token),
-    }
-  );
+    queryFn: ({ pageParam }) =>
+      consultationQueryResult(pageParam as unknown as number),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit),
+    enabled: Boolean(token),
+  });
 
   return {
     status,

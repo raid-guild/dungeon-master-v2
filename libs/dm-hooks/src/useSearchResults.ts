@@ -53,11 +53,11 @@ const useSearchResults = ({
     );
   };
 
-  const { status, error, data, isLoading } = useQuery<any, Error>(
-    ['searchResults', search],
-    searchQueryResult,
-    { enabled: !!token && !!search }
-  );
+  const { status, error, data, isLoading } = useQuery<any, Error>({
+    queryKey: ['searchResults', search],
+    queryFn: searchQueryResult,
+    enabled: !!token && !!search,
+  });
 
   return { status, error, data, isLoading };
 };
