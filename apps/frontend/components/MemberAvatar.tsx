@@ -25,13 +25,15 @@ const MemberAvatar = ({
   const { data: ensName } = useEnsName({
     address,
     chainId: 1,
-    enabled: !!address,
+    query: { enabled: !!address },
   });
   const { data: ensAvatar } = useEnsAvatar({
     name: ensName,
     chainId: 1,
-    enabled: !!ensName,
-    cacheTime: 60000, // Cache time in milliseconds
+    query: {
+      enabled: !!ensName,
+      gcTime: 60000, // Cache time in milliseconds
+    },
   });
 
   // State for Blockies Avatar

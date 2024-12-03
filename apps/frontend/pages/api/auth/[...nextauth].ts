@@ -7,7 +7,8 @@ import {
   siweCredentials,
 } from '@raidguild/dm-utils';
 import { NextApiRequest, NextApiResponse } from 'next';
-import NextAuth from 'next-auth';
+import NextAuth, { Awaitable } from 'next-auth';
+import { JWT, JWTDecodeParams } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 const { NEXTAUTH_SECRET } = process.env;
@@ -28,7 +29,9 @@ export const authOptions: NextAuthOptions = {
     secret: NEXTAUTH_SECRET,
     encode: encodeAuth,
     // used any because not sure how to type this
-    decode: decodeAuth as any,
+    decode: decodeAuth as unknown as (
+      params: JWTDecodeParams
+    ) => Awaitable<JWT>,
   },
   callbacks: {
     jwt: async ({ token }) => {

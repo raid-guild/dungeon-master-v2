@@ -151,12 +151,15 @@ const useAccountingV3 = () => {
       raids: Array<IAccountingRaid>;
     },
     Error
-  >(['raidsV3'], () => raidsQueryResult(token), {
+  >({
+    queryKey: ['raidsV3'],
+    queryFn: () => raidsQueryResult(token),
     getNextPageParam: (lastPage, allPages) =>
       _.isEmpty(lastPage)
         ? undefined
         : _.divide(_.size(_.flatten(allPages)), 100),
     enabled: Boolean(token),
+    initialPageParam: 0,
   });
 
   const {
@@ -164,32 +167,40 @@ const useAccountingV3 = () => {
     error: tokenBalancesError,
     isLoading: tokenBalancesLoading,
     isError: tokenBalancesIsError,
-  } = useQuery(['tokenBalances', checksum], () =>
-    listTokenBalances({ safeAddress: checksum })
-  );
+  } = useQuery({
+    queryKey: ['tokenBalances', checksum],
+    queryFn: () => listTokenBalances({ safeAddress: checksum }),
+  });
 
   const {
     data: txResponse,
     error: txResponseError,
     isLoading: txResponseLoading,
     isError: txResponseIsError,
-  } = useQuery(['transactions', checksum], () =>
-    getSafeTransactionProposals({ safeAddress: checksum })
-  );
+  } = useQuery({
+    queryKey: ['transactions', checksum],
+    queryFn: () => getSafeTransactionProposals({ safeAddress: checksum }),
+  });
 
   const {
     data: rageQuitsData,
     error: rageQuitsError,
     isLoading: rageQuitsDataLoading,
     isError: rageQuitsIsError,
-  } = useQuery(['rageQuits'], () => getRageQuits(v3client));
+  } = useQuery({
+    queryKey: ['rageQuits'],
+    queryFn: () => getRageQuits(v3client),
+  });
 
   const {
     data: smartInvoiceData,
     error: smartInvoiceError,
     isLoading: smartInvoiceLoading,
     isError: smartInvoiceIsError,
-  } = useQuery(['smartInvoice'], () => getSmartInvoice(v3ClientInvoices));
+  } = useQuery({
+    queryKey: ['smartInvoice'],
+    queryFn: () => getSmartInvoice(v3ClientInvoices),
+  });
 
   const proposalQueries =
     _.map(txResponse?.txData, (tx) => {

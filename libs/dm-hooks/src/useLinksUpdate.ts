@@ -27,8 +27,8 @@ const useLinksUpdate = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async (args: Partial<ILink>[]) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (args: Partial<ILink>[]) => {
       const result = await client({ token }).request(
         retroLink ? UPDATE_RETRO_LINK : DELETE_AND_UPDATE_LINKS_BY_CONSULTATION,
         {
@@ -39,10 +39,10 @@ const useLinksUpdate = ({
 
       return result;
     },
-    { onSuccess: () => onSuccess(queryClient) }
-  );
+    onSuccess: () => onSuccess(queryClient),
+  });
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export default useLinksUpdate;

@@ -187,7 +187,8 @@ const useRaidList = ({
       raidSortKey,
       raidPortfolioStatusFilterKey,
     ],
-    queryFn: ({ pageParam = 0 }) => raidQueryResult(pageParam),
+    queryFn: ({ pageParam }) => raidQueryResult(pageParam as unknown as number),
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       _.isEmpty(lastPage)
         ? undefined

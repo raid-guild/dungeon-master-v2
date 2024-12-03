@@ -9,8 +9,8 @@ const useConsultationUpdate = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: IConsultationUpdate) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({ ...args }: IConsultationUpdate) => {
       if (!token) return null;
       const result = await client({ token }).request(
         CONSULTATION_UPDATE_MUTATION,
@@ -22,38 +22,36 @@ const useConsultationUpdate = ({ token }: { token: string }) => {
 
       return result;
     },
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries([
-          'consultationDetail',
-          _.get(data, 'id'),
-        ]);
-        queryClient.invalidateQueries(['consultationList']);
-        queryClient.setQueryData(
-          ['consultationDetail', _.get(data, 'id')],
-          camelize(data)
-        );
 
-        toast.success({
-          title: 'Consultation Cancelled',
-          iconName: 'crown',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: (error) => {
-        // eslint-disable-next-line no-console
-        console.log(error);
-        toast.error({
-          title: 'Unable to update Consultation',
-          iconName: 'alert',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
-  return { mutateAsync, isLoading, isError, isSuccess };
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['consultationDetail', _.get(data, 'id')],
+      });
+      queryClient.invalidateQueries({ queryKey: ['consultationList'] });
+      queryClient.setQueryData(
+        ['consultationDetail', _.get(data, 'id')],
+        camelize(data)
+      );
+
+      toast.success({
+        title: 'Consultation Cancelled',
+        iconName: 'crown',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      toast.error({
+        title: 'Unable to update Consultation',
+        iconName: 'alert',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export default useConsultationUpdate;

@@ -72,22 +72,22 @@ const useApplicationList = ({
     isLoading,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<Array<Array<IApplication>>, Error>(
-    [
+  } = useInfiniteQuery<Array<Array<IApplication>>, Error>({
+    queryKey: [
       'applicationList',
       applicationSkillTypeFilterKey,
       applicationSkillFilterKey,
       applicationSortKey,
     ],
-    ({ pageParam = 0 }) => applicationQueryResult(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit),
-      enabled: Boolean(token),
-    }
-  );
+    initialPageParam: 1,
+    queryFn: (pageParam) =>
+      applicationQueryResult(pageParam as unknown as number),
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit),
+    enabled: Boolean(token),
+  });
 
   return {
     status,

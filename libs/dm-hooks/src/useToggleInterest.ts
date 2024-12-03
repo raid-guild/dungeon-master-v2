@@ -1,8 +1,12 @@
 import { useToast } from '@raidguild/design-system';
-import { client, DELETE_INTEREST_SIGNAL,INSERT_INTEREST_SIGNAL } from '@raidguild/dm-graphql';
+import {
+  client,
+  DELETE_INTEREST_SIGNAL,
+  INSERT_INTEREST_SIGNAL,
+} from '@raidguild/dm-graphql';
 import { ISignalInterest } from '@raidguild/dm-types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import _, {  } from 'lodash';
+import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -20,14 +24,14 @@ const useToggleInterest = (props: UseToggleInterestProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const address = (session?.user as unknown as any)?.address;
 
-  const {token, memberId, consultationId, raidId} = props
-  const [action, setAction] = useState< string | null> (null)
+  const { token, memberId, consultationId, raidId } = props;
+  const [action, setAction] = useState<string | null>(null);
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async (args: Partial<ISignalInterest> & {action: string}) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (args: Partial<ISignalInterest> & { action: string }) => {
       if (!memberId || !token) return null;
-      
-      setAction(args.action)
+
+      setAction(args.action);
 
       if (args.action === 'insert') {
         const interestData = {
@@ -37,37 +41,34 @@ const useToggleInterest = (props: UseToggleInterestProps) => {
           member_id: memberId,
         };
 
-        
-
         return client({ token }).request(INSERT_INTEREST_SIGNAL, {
-          interest_data: {...interestData},
+          interest_data: { ...interestData },
         });
-      } 
+      }
 
-
-        return client({ token }).request(DELETE_INTEREST_SIGNAL, {
-          id: args?.id
-        });
-      
+      return client({ token }).request(DELETE_INTEREST_SIGNAL, {
+        id: args?.id,
+      });
     },
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(['raidDetail', raidId]);
-        queryClient.refetchQueries(['consultationDetail', consultationId]);
-        queryClient.invalidateQueries(['consultationList']);
-        queryClient.invalidateQueries(['raidList']); 
-        queryClient.invalidateQueries(['dashboard', address]);
-  
-        
-        toast.success({
-          title: action === 'insert' ? 'Interest Added' : 'Interest Removed',
-          description: `Your interest has been ${action === 'insert' ? 'added' : 'removed'}.`,
-        });
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ['raidDetail', raidId] });
+      queryClient.refetchQueries({
+        queryKey: ['consultationDetail', consultationId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['consultationList'] });
+      queryClient.invalidateQueries({ queryKey: ['raidList'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard', address] });
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+      toast.success({
+        title: action === 'insert' ? 'Interest Added' : 'Interest Removed',
+        description: `Your interest has been ${
+          action === 'insert' ? 'added' : 'removed'
+        }.`,
+      });
+    },
+  });
+
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export default useToggleInterest;

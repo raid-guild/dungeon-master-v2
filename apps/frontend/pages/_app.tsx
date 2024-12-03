@@ -4,7 +4,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import 'react-datepicker/dist/react-datepicker.css'; // trouble processing this css in the DS pkg currently
 
 import { RGThemeProvider } from '@raidguild/design-system';
-import { chains, wagmiConfig } from '@raidguild/dm-utils';
+import { wagmiConfig } from '@raidguild/dm-utils';
 import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import {
@@ -17,7 +17,7 @@ import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import { DefaultSeo } from 'next-seo';
 import React from 'react';
-import { WagmiConfig } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 
 import { OverlayContextProvider } from '../contexts/OverlayContext';
 
@@ -67,24 +67,24 @@ const App = ({ Component, pageProps }: AppProps) => {
         }}
       />
 
-      <WagmiConfig config={wagmiConfig}>
+      <WagmiProvider config={wagmiConfig}>
         <SessionProvider
           session={pageProps.session}
           refetchInterval={8 * 60 * 1000}
           refetchOnWindowFocus={false}
         >
-          <RainbowKitSiweNextAuthProvider>
-            <RainbowKitProvider chains={chains || []} theme={darkTheme()}>
-              <QueryClientProvider client={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitSiweNextAuthProvider>
+              <RainbowKitProvider theme={darkTheme()}>
                 <OverlayContextProvider>
                   <Component {...pageProps} />
                   <ReactQueryDevtools initialIsOpen={false} />
                 </OverlayContextProvider>
-              </QueryClientProvider>
-            </RainbowKitProvider>
-          </RainbowKitSiweNextAuthProvider>
+              </RainbowKitProvider>
+            </RainbowKitSiweNextAuthProvider>
+          </QueryClientProvider>
         </SessionProvider>
-      </WagmiConfig>
+      </WagmiProvider>
     </RGThemeProvider>
   );
 };

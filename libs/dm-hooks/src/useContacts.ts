@@ -4,13 +4,13 @@ import { camelize } from '@raidguild/dm-utils';
 import { useQuery } from '@tanstack/react-query';
 
 export const useContacts = ({ token }: { token: string }) => {
-  const { data, error, status, isLoading } = useQuery(
-    ['contacts'],
-    async () => {
+  const { data, error, status, isLoading } = useQuery({
+    queryKey: ['contacts'],
+    queryFn: async () => {
       const result = await client({ token }).request(ALL_CONTACTS_QUERY);
       return camelize(result);
-    }
-  );
+    },
+  });
 
   return {
     data,
