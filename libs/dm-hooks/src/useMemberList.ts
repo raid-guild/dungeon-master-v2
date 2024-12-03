@@ -65,17 +65,22 @@ const useMemberList = ({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<Array<Array<IMember>>, Error>(
-    ['memberList', memberRolesFilterKey, memberStatusFilterKey, memberSortKey],
-    ({ pageParam = 0 }) => memberQueryResult(pageParam),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        _.isEmpty(lastPage)
-          ? undefined
-          : _.divide(_.size(_.flatten(allPages)), limit),
-      enabled: !!token,
-    }
-  );
+  } = useInfiniteQuery<Array<Array<IMember>>, Error>({
+    queryKey: [
+      'memberList',
+      memberRolesFilterKey,
+      memberStatusFilterKey,
+      memberSortKey,
+    ],
+    queryFn: ({ pageParam }) =>
+      memberQueryResult(pageParam as unknown as number),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      _.isEmpty(lastPage)
+        ? undefined
+        : _.divide(_.size(_.flatten(allPages)), limit),
+    enabled: !!token,
+  });
 
   return {
     status,
@@ -107,7 +112,9 @@ export const useSlimMemberList = ({
   const { status, error, data, isLoading } = useQuery<
     Array<Partial<IMember>>,
     Error
-  >(['slimMemberList'], memberSlimListQueryResult, {
+  >({
+    queryKey: ['slimMemberList'],
+    queryFn: memberSlimListQueryResult,
     enabled:
       !!token &&
       (button === SIDEBAR_ACTION_STATES.select ||

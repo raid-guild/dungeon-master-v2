@@ -5,7 +5,7 @@ import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { useAccount, useConfig, useConnect, useNetwork } from 'wagmi';
+import { useAccount, useConfig, useConnect } from 'wagmi';
 
 import CommandPalette from './CommandPalette';
 import Footer from './Footer';
@@ -78,13 +78,12 @@ const SiteLayoutPublic = ({
   children,
   minHeight = '100vh',
 }: SiteLayoutPublicProps) => {
-  const { chain } = useNetwork();
   const { pathname } = useRouter();
 
   // Copied as it is from 'SiteLayout.tsx'
   // TODO handle autoconnect
   const [isAutoConnecting, setIsAutoConnecting] = useState(false);
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
   const { connectAsync, connectors } = useConnect();
   const client = useConfig();
 

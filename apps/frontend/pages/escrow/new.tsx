@@ -18,7 +18,7 @@ import { NextSeo } from 'next-seo';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Hex } from 'viem';
-import { useChainId, useSwitchNetwork } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 import { gnosis, optimism } from 'wagmi/chains';
 
 import Link from '../../components/ChakraNextLink';
@@ -39,7 +39,7 @@ const NewEscrow = () => {
   const { data: session } = useSession();
 
   const chainId = useChainId();
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchChain } = useSwitchChain();
 
   const [txHash, setTxHash] = useState<Hex>();
 
@@ -139,7 +139,7 @@ const NewEscrow = () => {
                   <Text
                     as='span'
                     color='red'
-                    onClick={() => switchNetwork(chainIdParam)}
+                    onClick={() => switchChain({ chainId: chainIdParam })}
                     _hover={{ cursor: 'pointer', textDecor: 'underline' }}
                   >
                     {chainsMap(chainIdParam).name}

@@ -51,7 +51,7 @@ const NestedSplit = ({
     const activeBalances = _.get(splitEarnings, 'activeBalances');
     if (!activeBalances || !activeBalances[WXDAI_ADDRESS]) return '0';
     return handleFormattedBalance(
-      formatUnits(activeBalances[WXDAI_ADDRESS], 18) || '0'
+      activeBalances[WXDAI_ADDRESS].formattedAmount || '0'
     );
   }, [splitEarnings]);
 
@@ -170,7 +170,7 @@ const ReceiverSplits = ({
     const activeBalances = _.get(splitEarnings, 'activeBalances');
     if (!activeBalances || !activeBalances[WXDAI_ADDRESS]) return '0';
     return handleFormattedBalance(
-      formatUnits(activeBalances[WXDAI_ADDRESS], 18)
+      activeBalances[WXDAI_ADDRESS].formattedAmount || '0'
     );
   }, [splitEarnings]);
 

@@ -33,7 +33,7 @@ const fetchSplit = ({
   chainId: number;
 }) => {
   const client = splitsClient(chainId);
-  return client.getSplitMetadata({ splitAddress });
+  return client.dataClient.getSplitMetadata({ chainId, splitAddress });
 };
 
 const useSplitsMetadata = ({

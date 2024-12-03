@@ -14,7 +14,7 @@ import { updateRaidInvoice } from '@raidguild/escrow-utils';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { decodeAbiParameters, Hex } from 'viem';
-import { useChainId, useWaitForTransaction } from 'wagmi';
+import { useChainId, useWaitForTransactionReceipt } from 'wagmi';
 
 import ChakraNextLink from '../ChakraNextLink';
 import ZapAddresses from './ZapAddresses';
@@ -23,7 +23,7 @@ const EscrowSuccess = ({ raidId, txHash }: { raidId: string; txHash: Hex }) => {
   const [addresses, setAddresses] = useState<Hex[]>(); // [safe, projectTeamSplit, daoSplit, escrow]
   const chainId = useChainId();
 
-  const { data: txData } = useWaitForTransaction({
+  const { data: txData } = useWaitForTransactionReceipt({
     hash: txHash,
   });
 
@@ -43,8 +43,8 @@ const EscrowSuccess = ({ raidId, txHash }: { raidId: string; txHash: Hex }) => {
         { name: 'escrow', type: 'address' },
       ] as { name: string; type: string }[],
       localAddresses
-    ) as Hex[];
-    setAddresses(decodedAddresses);
+    ) as unknown as Hex[];
+    setAddresses(decodedAddresses as Hex[]);
     // update raid record with new invoice address
     if (!raidId) return;
     updateRaidInvoice(chainId, raidId, _.nth(decodedAddresses, 3));
