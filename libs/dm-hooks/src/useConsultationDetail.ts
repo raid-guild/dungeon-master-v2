@@ -25,7 +25,9 @@ const useConsultationDetail = ({
   const { isLoading, isFetching, isError, error, data } = useQuery<
     IConsultation,
     Error
-  >(['consultationDetail', consultationId], consultationQueryResult, {
+  >({
+    queryKey: ['consultationDetail', consultationId],
+    queryFn: consultationQueryResult,
     enabled: Boolean(token) && Boolean(consultationId),
   });
 

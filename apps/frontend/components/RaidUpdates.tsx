@@ -17,43 +17,41 @@ const RaidUpdate: React.FC<RaidUpdateProps> = ({
   update,
   member,
   createdAt,
-}: RaidUpdateProps) => {
-  return (
-    <>
+}: RaidUpdateProps) => (
+  <>
+    <Flex
+      direction='row'
+      width='100%'
+      alignItems='space-between' /* Changed 'space-apart' to 'space-between' */
+      justifyContent='space-between'
+      marginY={2}
+    >
       <Flex
-        direction='row'
-        width='100%'
-        alignItems='space-between' /* Changed 'space-apart' to 'space-between' */
+        gap={4}
+        direction={['column', null, null, null]}
+        alignItems='flex-start'
         justifyContent='space-between'
-        marginY={2}
+        width='100%'
       >
-        <Flex
-          gap={4}
-          direction={['column', null, null, null]}
-          alignItems='flex-start'
-          justifyContent='space-between'
-          width='100%'
+        <Text
+          color='white'
+          as='p'
+          fontSize='md'
+          maxWidth={['95%', null, null, null]}
         >
-          <Text
-            color='white'
-            as='p'
-            fontSize='md'
-            maxWidth={['95%', null, null, null]}
-          >
-            {update}
+          {update}
+        </Text>
+        <HStack spacing={1} color='gray.100'>
+          <Text fontSize='sm'>{member.name} @</Text>{' '}
+          {/* Changed 'smaller' to 'sm' */}
+          <Text fontSize='sm'>
+            {createdAt && format(new Date(createdAt), 'Pp')}
           </Text>
-          <HStack spacing={1} color='gray.100'>
-            <Text fontSize='sm'>{member.name} @</Text>{' '}
-            {/* Changed 'smaller' to 'sm' */}
-            <Text fontSize='sm'>
-              {createdAt && format(new Date(createdAt), 'Pp')}
-            </Text>
-          </HStack>
-        </Flex>
+        </HStack>
       </Flex>
-      <Divider color='blackAlpha' size='sm' />
-    </>
-  );
-};
+    </Flex>
+    <Divider color='blackAlpha' size='sm' />
+  </>
+);
 
 export default RaidUpdate;

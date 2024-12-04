@@ -1,5 +1,7 @@
 import { Invoice } from '@raidguild/escrow-utils';
-import { useBalance, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useCallback } from 'react';
+import { Hex } from 'viem';
+import { useBalance, useSimulateContract, useWriteContract } from 'wagmi';
 
 import INVOICE_ABI from './contracts/Invoice.json';
 
@@ -34,10 +36,10 @@ const useResolve = ({
     balance.value === clientAward + providerAward + resolverAward;
 
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     address: invoice.address,
     functionName: 'resolve',
     abi: INVOICE_ABI,
@@ -51,19 +53,33 @@ const useResolve = ({
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: () => {
-      // TODO handle success
-    },
-    onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.log('error', error);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: () => {
+        // TODO handle success
+      },
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log('error', error);
+      },
     },
   });
+
+  const writeAsync = useCallback(async (): Promise<Hex | undefined> => {
+    try {
+      if (!data) {
+        throw new Error('simulation data is not available');
+      }
+      return writeContractAsync(data.request);
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('useResolve error', error);
+      return undefined;
+    }
+  }, [writeContractAsync, data]);
 
   return {
     writeAsync,

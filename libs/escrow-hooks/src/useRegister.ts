@@ -4,10 +4,10 @@ import {
   updateRaidInvoice,
 } from '@raidguild/escrow-utils';
 import _ from 'lodash';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { encodeAbiParameters, Hex, parseUnits, stringToHex } from 'viem';
-import { useChainId, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useChainId, useSimulateContract, useWriteContract } from 'wagmi';
 
 import INVOICE_FACTORY_ABI from './contracts/InvoiceFactory.json';
 import useDetailsPin from './useDetailsPin';
@@ -120,10 +120,10 @@ const useRegister = ({
   ]);
 
   const {
-    config,
+    data,
     isLoading: prepareLoading,
     error: prepareError,
-  } = usePrepareContractWrite({
+  } = useSimulateContract({
     address: factoryAddress,
     functionName: 'create',
     abi: INVOICE_FACTORY_ABI,
@@ -138,23 +138,37 @@ const useRegister = ({
   });
 
   const {
-    writeAsync,
-    isLoading: writeLoading,
+    writeContractAsync,
+    isPending: writeLoading,
     error: writeError,
-  } = useContractWrite({
-    ...config,
-    onSuccess: async (tx) => {
-      // eslint-disable-next-line no-console
-      console.log('success', tx);
-      // TODO parse invoice address
-      const smartInvoiceId = _.get(tx, 'events[0].args.invoice');
-      await updateRaidInvoice(chainId, raidId, smartInvoiceId);
-    },
-    onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.log('error', error);
+  } = useWriteContract({
+    mutation: {
+      onSuccess: async (tx) => {
+        // eslint-disable-next-line no-console
+        console.log('success', tx);
+        // TODO parse invoice address
+        const smartInvoiceId = _.get(tx, 'events[0].args.invoice');
+        await updateRaidInvoice(chainId, raidId, smartInvoiceId);
+      },
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.log('error', error);
+      },
     },
   });
+
+  const writeAsync = useCallback(async (): Promise<Hex | undefined> => {
+    try {
+      if (!data) {
+        throw new Error('simulation data is not available');
+      }
+      return writeContractAsync(data.request);
+    } catch (error) {
+      /* eslint-disable no-console */
+      console.error('useRegister error', error);
+      return undefined;
+    }
+  }, [writeContractAsync, data]);
 
   return {
     writeAsync,

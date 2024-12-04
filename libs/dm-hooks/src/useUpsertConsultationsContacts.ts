@@ -9,8 +9,8 @@ const useUpsertConsultationsContacts = ({ token }: { token: string }) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async (args: {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async (args: {
       updates: { consultation_id: string; contact_id: string }[];
     }) => {
       const { updates } = args;
@@ -24,30 +24,28 @@ const useUpsertConsultationsContacts = ({ token }: { token: string }) => {
 
       return result;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['raidDetail']);
-        toast.success({
-          title: 'Consultation Contacts Updated',
-          iconName: 'crown',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-      onError: (error) => {
-        // eslint-disable-next-line no-console
-        console.error(error);
-        toast.error({
-          title: 'Unable to update consultation contacts',
-          iconName: 'alert',
-          duration: 3000,
-          isClosable: true,
-        });
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['raidDetail'] });
+      toast.success({
+        title: 'Consultation Contacts Updated',
+        iconName: 'crown',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      toast.error({
+        title: 'Unable to update consultation contacts',
+        iconName: 'alert',
+        duration: 3000,
+        isClosable: true,
+      });
+    },
+  });
 
-  return { mutateAsync, isLoading, isError, isSuccess };
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 export default useUpsertConsultationsContacts;

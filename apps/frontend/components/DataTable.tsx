@@ -63,10 +63,7 @@ const DataTable = ({
   const [sorting, setSorting] = useState<SortingState>(sort);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState(
-    Object.assign(
-      {},
-      ...columns.map((c) => ({ [c.id]: !c.meta?.hidden ?? true }))
-    )
+    Object.assign({}, ...columns.map((c) => ({ [c.id]: !c.meta?.hidden })))
   );
 
   const table = useReactTable({

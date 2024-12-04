@@ -13,8 +13,8 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
   const queryClient = useQueryClient();
   const toast = useToast();
 
-  const { mutateAsync, isLoading, isError, isSuccess } = useMutation(
-    async ({ ...args }: Partial<IStatusUpdate>) => {
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: async ({ ...args }: Partial<IStatusUpdate>) => {
       if (!memberId || !token) return null;
       const result = await client({ token }).request(
         STATUS_UPDATE_CREATE_MUTATION,
@@ -30,27 +30,24 @@ const useUpdateCreate = ({ token, memberId }: useUpdateCreateProps) => {
 
       return result;
     },
-    {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries([
-          'raidDetail',
-          _.get(data, 'insert_updates_one.raid.id'),
-        ]); // invalidate raidDetail
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['raidDetail', _.get(data, 'insert_updates_one.raid.id')],
+      }); // invalidate raidDetail
 
-        toast.success({
-          title: 'Update added',
-        });
-      },
-      onError: (error) => {
-        // eslint-disable-next-line no-console
-        console.log(error);
-        toast.error({
-          title: 'Unable to add Update',
-        });
-      },
-    }
-  );
-  return { mutateAsync, isLoading, isError, isSuccess };
+      toast.success({
+        title: 'Update added',
+      });
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      toast.error({
+        title: 'Unable to add Update',
+      });
+    },
+  });
+  return { mutateAsync, isPending, isError, isSuccess };
 };
 
 // if ('update' in result) {
