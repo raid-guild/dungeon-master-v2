@@ -2,7 +2,7 @@ import { getInvoice } from '@raidguild/escrow-gql';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { Hex } from 'viem';
-import { useContractRead } from 'wagmi';
+import { useReadContract } from 'wagmi';
 
 import WRAPPED_INVOICE_ABI from './contracts/WrappedInvoice.json';
 
@@ -17,7 +17,7 @@ const useInvoiceDetails = ({
     data: invoiceAddress,
     isLoading: invoiceAddressLoading,
     error: invoiceAddressError,
-  } = useContractRead({
+  } = useReadContract({
     address: wrappedInvoiceAddress,
     abi: WRAPPED_INVOICE_ABI,
     functionName: 'invoice',

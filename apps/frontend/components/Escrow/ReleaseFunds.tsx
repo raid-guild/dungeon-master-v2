@@ -8,9 +8,10 @@ import {
   VStack,
 } from '@raidguild/design-system';
 import { getInvoice } from '@raidguild/escrow-gql';
-// import { getTxLink } from '@raidguild/dm-utils';
-import { usePollSubgraph, useRelease } from '@raidguild/escrow-hooks';
+import { usePollSubgraph } from '@raidguild/escrow-hooks';
 import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { useRelease } from '@smartinvoicexyz/hooks';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
@@ -48,8 +49,9 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
   };
 
   const { writeAsync: releaseFunds, isLoading } = useRelease({
-    invoice,
-    onSuccess,
+    invoice: { address: invoice.address },
+    onTxSuccess: onSuccess,
+    toast,
   });
 
   // const pollSubgraph = async () => {

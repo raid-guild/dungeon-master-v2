@@ -152,6 +152,29 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
       },
     },
   },
+  11155111: {
+    SUBGRAPH: 'smart-invoice-sepolia/v0.0.3',
+    WRAPPED_NATIVE_TOKEN: _.toLower(
+      '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14'
+    ) as Hex,
+    INVOICE_FACTORY: _.toLower(
+      '0x8227b9868e00B8eE951F17B480D369b84Cd17c20'
+    ) as Hex,
+    RESOLVERS: {
+      [_.toLower('0x153Fbf5da827903e030Dc317C4031755D74D508a')]: {
+        name: 'LexDAO',
+        logoUrl: LexDAOLogo,
+        termsUrl:
+          'https://github.com/lexDAO/Arbitration/blob/master/rules/ToU.md#lexdao-resolver',
+      },
+    },
+    TOKENS: {
+      ETH: {
+        decimals: 18,
+        address: _.toLower('0x2e5221B0f855Be4ea5Cefffb8311EED0563B6e87') as Hex,
+      },
+    },
+  },
 };
 
 export const nativeSymbols: { [key: number]: string } = {
