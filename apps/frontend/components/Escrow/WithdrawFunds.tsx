@@ -4,11 +4,12 @@ import {
   // Link,
   Spinner,
   Text,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
 // import { getTxLink } from '@raidguild/dm-utils';
-import { useWithdraw } from '@raidguild/escrow-hooks';
 import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import { useWithdraw } from '@smartinvoicexyz/hooks';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
@@ -20,13 +21,13 @@ const WithdrawFunds = ({
   balance: bigint;
 }) => {
   const chainId = useChainId();
+  const toast = useToast();
 
-  // const onSuccess = () => {
-  //   // toast
-  //   // close modal
-  // };
-
-  const { writeAsync: withdrawFunds, isLoading } = useWithdraw({ invoice });
+  const { writeAsync: withdrawFunds, isLoading } = useWithdraw({
+    invoice: { address: invoice.address },
+    onTxSuccess: () => {},
+    toast,
+  });
 
   return (
     <VStack w='100%' spacing='1rem'>
