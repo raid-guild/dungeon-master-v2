@@ -9,8 +9,9 @@ import {
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { chainsMap, commify } from '@raidguild/dm-utils';
-import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
+import { useRegister } from '@raidguild/escrow-hooks';
 import { GANGGANG_MULTISIG, NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import { useEscrowZap } from '@smartinvoicexyz/hooks';
 import { WriteContractReturnType } from '@wagmi/core';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
@@ -99,6 +100,7 @@ const EscrowConfirmation = ({
     detailsData,
     projectTeamSplit: raidPartySplit,
     daoSplit,
+    networkConfig: NETWORK_CONFIG,
     enabled: !canRegisterDirectly,
     onSuccess: (tx: WriteContractReturnType) => setTxHash(tx),
   });
