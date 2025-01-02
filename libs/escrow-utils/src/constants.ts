@@ -169,9 +169,9 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
       },
     },
     TOKENS: {
-      ETH: {
+      WETH: {
         decimals: 18,
-        address: _.toLower('0x2e5221B0f855Be4ea5Cefffb8311EED0563B6e87') as Hex,
+        address: _.toLower('0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14') as Hex,
       },
     },
   },
