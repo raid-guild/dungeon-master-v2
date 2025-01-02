@@ -13,6 +13,7 @@ import { useRegister } from '@raidguild/escrow-hooks';
 import { GANGGANG_MULTISIG, NETWORK_CONFIG } from '@raidguild/escrow-utils';
 import { useEscrowZap } from '@smartinvoicexyz/hooks';
 import { WriteContractReturnType } from '@wagmi/core';
+import useDetailsPin from 'libs/escrow-hooks/src/useDetailsPin';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
@@ -89,6 +90,10 @@ const EscrowConfirmation = ({
     enabled: canRegisterDirectly,
   });
 
+  const { data: details, isLoading: detailsLoading } = useDetailsPin({
+    ...detailsData,
+  });
+
   const { writeAsync: writeEscrowZap, isLoading: zapLoading } = useEscrowZap({
     ownersAndAllocations,
     threshold,
@@ -97,7 +102,7 @@ const EscrowConfirmation = ({
     provider: provider || zeroAddress,
     client,
     safetyValveDate,
-    detailsData,
+    details,
     projectTeamSplit: raidPartySplit,
     daoSplit,
     networkConfig: NETWORK_CONFIG,
@@ -234,7 +239,7 @@ const EscrowConfirmation = ({
             variant='outline'
             minW='25%'
             mr='.5rem'
-            isDisabled={zapLoading || registerLoading}
+            isDisabled={zapLoading || registerLoading || detailsLoading}
             onClick={backStep}
           >
             Back
@@ -243,7 +248,10 @@ const EscrowConfirmation = ({
             variant='solid'
             w='100%'
             isDisabled={
-              registerLoading || zapLoading || !(writeAsync || writeEscrowZap)
+              registerLoading ||
+              zapLoading ||
+              detailsLoading ||
+              !(writeAsync || writeEscrowZap)
             }
             isLoading={registerLoading || zapLoading}
             onClick={createInvoice}
