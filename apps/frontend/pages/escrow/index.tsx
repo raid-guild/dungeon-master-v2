@@ -40,7 +40,7 @@ import SiteLayoutPublic from '../../components/SiteLayoutPublic';
 
 const ActionButtons = ({ chainId, raid }: { chainId: number; raid: IRaid }) => (
   <HStack>
-    {!raid && chainId !== 10 ? (
+    {!raid ? (
       <Link href='/escrow/new'>
         <Button variant='outline'>I don&apos;t have one</Button>
       </Link>
@@ -53,7 +53,7 @@ const ActionButtons = ({ chainId, raid }: { chainId: number; raid: IRaid }) => (
         >
           <Button
             variant='outline'
-            isDisabled={!raid || !!raid?.invoice?.invoiceAddress}
+            isDisabled={!raid?.id || !!raid?.invoice?.invoiceAddress}
           >
             Register Escrow
           </Button>
@@ -195,8 +195,8 @@ export const Escrow = () => {
                   <Stack>
                     <ActionButtons chainId={chainId} raid={raid} />
                     {raidId && !isLoading && (
-                      <Text color={raid ? 'green.500' : 'red.500'} mb='2'>
-                        {raid ? 'Raid ID is valid!' : 'Raid not found'}
+                      <Text color={raid?.id ? 'green.500' : 'red.500'} mb='2'>
+                        {raid?.id ? 'Raid ID is valid!' : 'Raid not found'}
                       </Text>
                     )}
                   </Stack>
