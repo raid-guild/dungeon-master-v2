@@ -82,9 +82,13 @@ const NewEscrow = () => {
             </Text>
             <HStack justifyContent='center' w='100%'>
               <Button
-                onClick={() =>
-                  router.push(`/escrow/new?raidId=${raidId}&chainId=100`)
-                }
+                onClick={() => {
+                  if (raidId) {
+                    router.push(`/escrow/new?raidId=${raidId}&chainId=100`);
+                  } else {
+                    router.push(`/escrow/new?chainId=100`);
+                  }
+                }}
               >
                 <HStack spacing={2} align='center'>
                   <Image
@@ -96,9 +100,10 @@ const NewEscrow = () => {
                 </HStack>
               </Button>
               <Button
-                onClick={() =>
-                  router.push(`/escrow/new?raidId=${raidId}&chainId=10`)
-                }
+                onClick={() => {
+                  router.push(`/escrow/new?raidId=${raidId}&chainId=10`);
+                }}
+                isDisabled={!raidId}
               >
                 <HStack spacing={2} align='center'>
                   <Image
