@@ -26,10 +26,9 @@ const WithdrawFunds = ({
   const { writeAsync: withdrawFunds, isLoading } = useWithdraw({
     invoice: { address: invoice.address },
     onTxSuccess: () => {
-      toast({
+      toast.success({
         title: 'Withdrawal Successful',
         description: 'Funds have been successfully withdrawn from escrow',
-        status: 'success',
       });
     },
     toast,
