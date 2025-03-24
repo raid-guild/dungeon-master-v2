@@ -10,7 +10,7 @@ import {
   sepolia,
 } from 'viem/chains';
 
-const chains: Chain[] = [
+const chains: readonly Chain[] = [
   mainnet,
   gnosis,
   polygon,
@@ -18,9 +18,9 @@ const chains: Chain[] = [
   optimism,
   sepolia,
   goerli,
-];
+] as const;
 
-export const chainsList: { [key: number]: Chain } = {
+export const chainsList: Record<number, Chain> = {
   100: gnosis,
   137: polygon,
   42151: arbitrum,
@@ -35,7 +35,7 @@ export type SupportedChainId = (typeof SUPPORTED_CHAIN_IDS)[number];
 export type SupportedChain = (typeof chains)[number];
 export const SUPPORTED_CHAINS = chains as [SupportedChain, ...SupportedChain[]];
 
-export const infuraNetworkName: Partial<Record<SupportedChainId, string>> = {
+export const infuraNetworkName: Record<SupportedChainId, string | undefined> = {
   [mainnet.id]: 'mainnet',
   [polygon.id]: 'polygon-mainnet',
   [arbitrum.id]: 'arbitrum-mainnet',
@@ -43,20 +43,24 @@ export const infuraNetworkName: Partial<Record<SupportedChainId, string>> = {
   [sepolia.id]: 'sepolia',
 };
 
-export const alchemyNetworkName: Partial<Record<SupportedChainId, string>> = {
-  [mainnet.id]: 'eth-mainnet',
-  [polygon.id]: 'polygon-mainnet',
-  [arbitrum.id]: 'arb-mainnet',
-  [optimism.id]: 'opt-mainnet',
-  [sepolia.id]: 'eth-sepolia',
-  [gnosis.id]: 'gnosis-mainnet',
-};
+export const alchemyNetworkName: Record<SupportedChainId, string | undefined> =
+  {
+    [mainnet.id]: 'eth-mainnet',
+    [polygon.id]: 'polygon-mainnet',
+    [arbitrum.id]: 'arb-mainnet',
+    [optimism.id]: 'opt-mainnet',
+    [sepolia.id]: 'eth-sepolia',
+    [gnosis.id]: 'gnosis-mainnet',
+  };
 
 if (process.env.NODE_ENV === 'development') {
-  chains.push(hardhat);
+  (chains as Chain[]).push(hardhat);
 }
-export const chainsMap = (chainId: number) => chainsList[chainId];
-export const chainIdToIconMap = (chainId: number) => {
+
+export const chainsMap = (chainId: number): Chain | undefined =>
+  chainsList[chainId];
+
+export const chainIdToIconMap = (chainId: number): string => {
   switch (chainId) {
     case optimism.id:
       return '/icons/optimism.png';
@@ -66,7 +70,8 @@ export const chainIdToIconMap = (chainId: number) => {
       return '';
   }
 };
-export const networkToIdMap = (network: string) => {
+
+export const networkToIdMap = (network: string): number => {
   switch (network) {
     case 'optimism':
       return optimism.id;

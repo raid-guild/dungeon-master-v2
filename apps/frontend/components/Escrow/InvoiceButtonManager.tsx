@@ -180,7 +180,7 @@ const InvoiceButtonManager = ({ invoice }: { invoice: Invoice }) => {
             {modal && selected === 3 && (
               <ResolveFunds
                 invoice={invoice}
-                balance={balance}
+                balance={invoiceTokenBalance}
                 close={() => setModal(false)}
               />
             )}

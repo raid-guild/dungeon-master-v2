@@ -38,3 +38,30 @@ export type ProjectDetails = {
   startDate: number;
   endDate: number;
 };
+
+export type FormInvoice = {
+  title: string;
+  description: string;
+  document: string;
+  milestones: {
+    value: string;
+    title?: string | undefined;
+    description?: string | undefined;
+  }[];
+  startDate: string;
+  endDate: string;
+  resolverType: string;
+  resolverAddress?: string;
+  isResolverTermsChecked?: boolean;
+  klerosCourt?: number;
+  safetyValveDate?: Date;
+  deadline?: Date;
+  token: string;
+  client: string;
+  clientReceiver?: string;
+  provider: string;
+  providerReceiver?: string;
+  paymentDue?: string;
+  lateFee?: string;
+  lateFeeTimeInterval?: string;
+};
