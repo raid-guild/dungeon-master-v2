@@ -6,11 +6,10 @@ import {
   Spinner,
   Text,
   Textarea,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
 import { getTxLink } from '@raidguild/dm-utils';
-// import { getTxLink } from '@raidguild/dm-utils';
-import { useDebounce, useLock } from '@raidguild/escrow-hooks';
 import {
   getResolverInfo,
   getResolverString,
@@ -19,8 +18,11 @@ import {
   NETWORK_CONFIG,
   // uploadDisputeDetails,
 } from '@raidguild/escrow-utils';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { FormLock, useDebounce, useLock } from '@smartinvoicexyz/hooks';
 import _ from 'lodash';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { formatUnits, Hex } from 'viem';
 import { useChainId } from 'wagmi';
 
@@ -46,32 +48,29 @@ const LockFunds = ({
 }) => {
   const chainId = useChainId();
   const { resolver, token, resolutionRate } = invoice;
-
+  const toast = useToast();
   const localForm = useForm();
   const { watch, handleSubmit } = localForm;
-
+  const [txHash, setTxHash] = useState<Hex | undefined>(undefined);
   const fee = formatUnits(
     resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
     invoice.tokenMetadata.decimals
   );
   const feeDisplay = `${fee} ${parseTokenAddress(chainId, token)}`;
 
-  const disputeReason = useDebounce(watch('disputeReason'), 250);
-  const amount = formatUnits(BigInt(balance), invoice.tokenMetadata.decimals);
+  const disputeReason = useDebounce(watch('discription'), 250);
 
   // const onSuccess = () => {
   //   // handle tx success
   //   // mark locked
   // };
 
-  const {
-    writeAsync: lockFunds,
-    writeLoading,
-    txHash,
-  } = useLock({
-    invoice,
-    disputeReason,
-    amount,
+  const { writeAsync: lockFunds, isLoading: writeLoading } = useLock({
+    invoice: { address: invoice.address },
+    localForm: localForm as unknown as UseFormReturn<FormLock>,
+    toast,
+    details:
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
   });
 
   const resolverInfo = getResolverInfo(chainId, resolver);
@@ -79,6 +78,10 @@ const LockFunds = ({
     ? resolverInfo.name
     : resolver;
 
+  const onLockFunds = async () => {
+    const hash = await lockFunds();
+    setTxHash(hash);
+  };
   if (writeLoading) {
     return (
       <VStack w='100%' spacing='1rem'>
@@ -124,7 +127,7 @@ const LockFunds = ({
       w='100%'
       spacing='1rem'
       as='form'
-      onSubmit={handleSubmit(lockFunds)}
+      onSubmit={handleSubmit(onLockFunds)}
     >
       <Heading
         color='white'
@@ -152,7 +155,7 @@ const LockFunds = ({
       </Text>
 
       <Textarea
-        name='disputeReason'
+        name='discription'
         tooltip='Why do you want to lock these funds?'
         label='Dispute Reason'
         placeholder='Dispute Reason'

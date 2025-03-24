@@ -25,7 +25,7 @@ importers:
         version: 11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0)
       '@hookform/resolvers':
         specifier: ^3.3.2
-        version: 3.3.3(react-hook-form@7.49.2(react@18.2.0))
+        version: 3.3.3(react-hook-form@7.54.0(react@18.2.0))
       '@raidguild/design-system':
         specifier: ^0.5.8
         version: 0.5.8(mvw6ltzwna73frekysbi2oal5y)
@@ -36,8 +36,8 @@ importers:
         specifier: 0.5.0
         version: 0.5.0(@rainbow-me/rainbowkit@2.2.0(@tanstack/react-query@5.55.3(react@18.2.0))(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(viem@2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(wagmi@2.12.17(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))))(next-auth@4.24.10(next@13.5.6(@babel/core@7.23.6)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
       '@smartinvoicexyz/hooks':
-        specifier: 0.1.18
-        version: 0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)
+        specifier: 0.1.24
+        version: 0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@tanstack/match-sorter-utils':
         specifier: ^8.7.6
         version: 8.19.4
@@ -120,8 +120,8 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
       react-hook-form:
-        specifier: ^7.39.4
-        version: 7.49.2(react@18.2.0)
+        specifier: 7.54.0
+        version: 7.54.0(react@18.2.0)
       react-icons:
         specifier: ^4.7.1
         version: 4.12.0(react@18.2.0)
@@ -3431,28 +3431,28 @@ packages:
   '@sinonjs/fake-timers@9.1.2':
     resolution: {integrity: sha512-BPS4ynJW/o92PUR4wgriz2Ud5gpST5vz6GQfMixEDK0Z8ZCUv2M7SkBLykH56T++Xs+8ln9zTGbOvNGIe02/jw==}
 
-  '@smartinvoicexyz/constants@0.1.18':
-    resolution: {integrity: sha512-m0XQz9/CPOMiIeKJX11UNuSdoR1kHLUfuqqWUJaRe6iYmEwbDPbpyZyFqUWMcCqFvDaKeB5zb0zAvjip3pIvxA==}
+  '@smartinvoicexyz/constants@0.1.24':
+    resolution: {integrity: sha512-XFdZKeBCpjszKnJBS0HQBwc17GXKR4gjryjdPfnwz3rpBRR54WpIjoKqUVpLvq4wFI6omtfzLOfmY06AL+l5Ig==}
     engines: {node: '>=18'}
 
-  '@smartinvoicexyz/graphql@0.1.18':
-    resolution: {integrity: sha512-UBX/FEoLIUD4+nl4Hj6IeGBiFVIDujzCfhH9rkaJ+LaDdLkqo+KorIuYzstqrhGphCBjQmxYsUjevHBto6rB3A==}
+  '@smartinvoicexyz/graphql@0.1.24':
+    resolution: {integrity: sha512-+wAHniFqHmSQC++f9379vXHTb85SGhMaw4JvNWYHLlfLNNXr0QE7Oel3FQZQR970HIh61S8rBmAMi7JvUq8euA==}
     engines: {node: '>=18'}
 
-  '@smartinvoicexyz/hooks@0.1.18':
-    resolution: {integrity: sha512-XQZcLEaT7IUX3f3pesFGo8RfsYGG0Ig5cGtMrzWbAOjSqnr5XONExYbhgRwToOGHfkE6/1OHXeX4QpMKC0U7SA==}
+  '@smartinvoicexyz/hooks@0.1.24':
+    resolution: {integrity: sha512-3OmcColMKa5ncBqdPJLEKd39moUov0AWESvq4nqM1Tl2JjRnfLvOrxKiTeE1Kn2NMZFOAC7hpuZJ0CeGrQRv+w==}
     engines: {node: '>=18'}
 
-  '@smartinvoicexyz/shared@0.1.18':
-    resolution: {integrity: sha512-yyPpMrVEV2LDgK1wLgwZMbbmpsqNro8O+LVMEPOdQSgVhS0Cllfd+O3iFgp5A5xb2oPStruZsmDte9LiB+LKXw==}
+  '@smartinvoicexyz/shared@0.1.24':
+    resolution: {integrity: sha512-ycmQb5KDufDTDXcICldbSaoPmgISD/pSA9GuiwXVcGuV+6HFGLng3Kx0Qb9I9wT8h+C2Mms8x0MLfcq9K9kPQQ==}
     engines: {node: '>=18'}
 
-  '@smartinvoicexyz/types@0.1.18':
-    resolution: {integrity: sha512-+vg5Ba7jEHTIDqEvzBcq7Kz6PN0DlSmDClQx7vsXbHG3G1NjYhXUbHkp1p4UgjXeiXWUNxqyCUQKnAFOBdPzoQ==}
+  '@smartinvoicexyz/types@0.1.24':
+    resolution: {integrity: sha512-MVBvRCvUqqRr5ZpFt4krYVDzdW6cNMa/es+UjYf7CWIuVRsrzo+Q3XiEITzIKk3o1HpKX8s4l+N1/85X5xZHnw==}
     engines: {node: '>=18'}
 
-  '@smartinvoicexyz/utils@0.1.18':
-    resolution: {integrity: sha512-3u/wMAkhpBOgfjwXUR9/BL22G+OJkfs61HLiwiZy/WVwuRDhRfzB/NJFXs6VaEdDazPcpc2+o4F8WxT77CJQww==}
+  '@smartinvoicexyz/utils@0.1.24':
+    resolution: {integrity: sha512-yW+PjFC2QwnPKK0129iWGVe5pukXIKVitUzafRKIui7fkUB0WXj1zi7QfB6qvHYW6hwEfwzKapC9nPPXLRhy4A==}
     engines: {node: '>=18'}
 
   '@socket.io/component-emitter@3.1.2':
@@ -8549,12 +8549,6 @@ packages:
       '@types/react':
         optional: true
 
-  react-hook-form@7.49.2:
-    resolution: {integrity: sha512-TZcnSc17+LPPVpMRIDNVITY6w20deMdNi6iehTFLV1x8SqThXGwu93HjlUVU09pzFgZH7qZOvLMM7UYf2ShAHA==}
-    engines: {node: '>=18', pnpm: '8'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-
   react-hook-form@7.54.0:
     resolution: {integrity: sha512-PS05+UQy/IdSbJNojBypxAo9wllhHgGmyr8/dyGQcPoiMf3e7Dfb9PWYVRco55bLbxH9S+1yDDJeTdlYCSxO3A==}
     engines: {node: '>=18.0.0'}
@@ -8995,10 +8989,6 @@ packages:
   set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
 
-  set-function-length@1.1.1:
-    resolution: {integrity: sha512-VoaqjbBJKiWtg4yRcKBQ7g7wnGnLV3M8oLvVWwOk2PdYY6PEFegR1vezXR0tw6fZGF9csVakIRjrJiy2veSBFQ==}
-    engines: {node: '>= 0.4'}
-
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
     engines: {node: '>= 0.4'}
@@ -9324,6 +9314,11 @@ packages:
     resolution: {integrity: sha512-njiZ/4RiIhoOlAaLYDqwz5qH/KZXVilRLvomrx83HjzCWTfa+InyfAjv05PSFxnmLzZkNO9ZfvgoqzAaEI4sGQ==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
+
+  swr@2.3.3:
+    resolution: {integrity: sha512-dshNvs3ExOqtZ6kJBaAsabhPdHyeY4P2cKwRCniDVifBMoG/SVI7tfLWqPXriVspf2Rg4tPzXJTnwaihIeFw2A==}
+    peerDependencies:
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   symbol-observable@4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
@@ -9824,6 +9819,11 @@ packages:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  use-sync-external-store@1.4.0:
+    resolution: {integrity: sha512-9WXSPC5fMv61vaupRkCKCxsPxBocVnwakBEkMIHHpkTTg6icbJtg6jzgtLDm4bl3cSHAca52rYWih0k4K3PfHw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   utf-8-validate@5.0.10:
     resolution: {integrity: sha512-Z6czzLq4u8fPOyx7TU6X3dvUZVvoJmxSQ+IcrlmagKhilxlhZgxPK6C5Jqbkw1IDUmFTM+cz9QDnnLTwDz/2gQ==}
@@ -12893,9 +12893,9 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@hookform/resolvers@3.3.3(react-hook-form@7.49.2(react@18.2.0))':
+  '@hookform/resolvers@3.3.3(react-hook-form@7.54.0(react@18.2.0))':
     dependencies:
-      react-hook-form: 7.49.2(react@18.2.0)
+      react-hook-form: 7.54.0(react@18.2.0)
 
   '@humanwhocodes/config-array@0.11.13':
     dependencies:
@@ -14299,7 +14299,7 @@ snapshots:
       react: 18.2.0
       react-datepicker: 4.25.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dom: 18.2.0(react@18.2.0)
-      react-hook-form: 7.49.2(react@18.2.0)
+      react-hook-form: 7.54.0(react@18.2.0)
       react-icons: 4.12.0(react@18.2.0)
       tsconfig-paths-webpack-plugin: 4.1.0
     transitivePeerDependencies:
@@ -14585,7 +14585,7 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 1.8.6
 
-  '@smartinvoicexyz/constants@0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@smartinvoicexyz/constants@0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
       lodash: 4.17.21
       viem: 2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -14595,12 +14595,12 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@smartinvoicexyz/graphql@0.1.18(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@smartinvoicexyz/graphql@0.1.24(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@apollo/client': 3.11.10(@types/react@18.2.14)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.8.1)
-      '@smartinvoicexyz/constants': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/shared': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/constants': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/shared': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       graphql-request: 7.1.2(graphql@16.8.1)
       graphql-tag: 2.12.6(graphql@16.8.1)
       graphql-zeus: 6.0.0(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(bufferutil@4.0.8)(encoding@0.1.13)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -14623,16 +14623,17 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@smartinvoicexyz/hooks@0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@smartinvoicexyz/hooks@0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
-      '@smartinvoicexyz/constants': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/graphql': 0.1.18(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/types': 0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/utils': 0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/constants': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/graphql': 0.1.24(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/types': 0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/utils': 0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@tanstack/react-query': 5.55.3(react@18.2.0)
       lodash: 4.17.21
       react: 18.2.0
       react-hook-form: 7.54.0(react@18.2.0)
+      swr: 2.3.3(react@18.2.0)
       viem: 2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       wagmi: 2.12.17(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
     transitivePeerDependencies:
@@ -14671,21 +14672,21 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@smartinvoicexyz/shared@0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@smartinvoicexyz/shared@0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
-      '@smartinvoicexyz/constants': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/constants': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - typescript
       - utf-8-validate
       - zod
 
-  '@smartinvoicexyz/types@0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@smartinvoicexyz/types@0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@chakra-ui/react': 2.8.2(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@smartinvoicexyz/constants': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/graphql': 0.1.18(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/shared': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/constants': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/graphql': 0.1.24(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/shared': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       react: 18.2.0
       viem: 2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -14707,13 +14708,13 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@smartinvoicexyz/utils@0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@smartinvoicexyz/utils@0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@rainbow-me/rainbowkit': 2.2.0(@tanstack/react-query@5.55.3(react@18.2.0))(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(viem@2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(wagmi@2.12.17(@tanstack/query-core@5.55.3)(@tanstack/react-query@5.55.3(react@18.2.0))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)(viem@2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)))
-      '@smartinvoicexyz/constants': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/graphql': 0.1.18(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/shared': 0.1.18(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
-      '@smartinvoicexyz/types': 0.1.18(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/constants': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/graphql': 0.1.24(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/shared': 0.1.24(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/types': 0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@types/memory-cache': 0.2.6
       abitype: 0.10.3(typescript@5.4.5)
       base-58: 0.0.1
@@ -14934,7 +14935,7 @@ snapshots:
       dequal: 2.0.3
       lodash: 4.17.21
       memoizerific: 1.11.3
-      qs: 6.11.2
+      qs: 6.13.0
       synchronous-promise: 2.0.17
       ts-dedent: 2.2.0
       util-deprecate: 1.0.2
@@ -16755,7 +16756,7 @@ snapshots:
 
   builtins@5.0.1:
     dependencies:
-      semver: 7.5.3
+      semver: 7.5.4
 
   busboy@1.6.0:
     dependencies:
@@ -16770,8 +16771,8 @@ snapshots:
   call-bind@1.0.5:
     dependencies:
       function-bind: 1.1.2
-      get-intrinsic: 1.2.2
-      set-function-length: 1.1.1
+      get-intrinsic: 1.2.4
+      set-function-length: 1.2.2
 
   call-bind@1.0.7:
     dependencies:
@@ -17433,7 +17434,7 @@ snapshots:
       object-keys: 1.1.1
       object.assign: 4.1.5
       regexp.prototype.flags: 1.5.1
-      side-channel: 1.0.4
+      side-channel: 1.0.6
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.1
       which-typed-array: 1.1.13
@@ -17743,11 +17744,11 @@ snapshots:
       array-buffer-byte-length: 1.0.0
       arraybuffer.prototype.slice: 1.0.2
       available-typed-arrays: 1.0.5
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       es-set-tostringtag: 2.0.2
       es-to-primitive: 1.2.1
       function.prototype.name: 1.1.6
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       get-symbol-description: 1.0.0
       globalthis: 1.0.3
       gopd: 1.0.1
@@ -19157,9 +19158,9 @@ snapshots:
 
   internal-slot@1.0.6:
     dependencies:
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.2.4
       hasown: 2.0.0
-      side-channel: 1.0.4
+      side-channel: 1.0.6
 
   invariant@2.2.4:
     dependencies:
@@ -21229,7 +21230,7 @@ snapshots:
   postcss@8.4.31:
     dependencies:
       nanoid: 3.3.7
-      picocolors: 1.0.0
+      picocolors: 1.1.1
       source-map-js: 1.0.2
 
   postcss@8.4.32:
@@ -21366,11 +21367,11 @@ snapshots:
 
   qs@6.10.4:
     dependencies:
-      side-channel: 1.0.4
+      side-channel: 1.0.6
 
   qs@6.11.2:
     dependencies:
-      side-channel: 1.0.4
+      side-channel: 1.0.6
 
   qs@6.13.0:
     dependencies:
@@ -21472,10 +21473,6 @@ snapshots:
       use-sidecar: 1.1.2(@types/react@18.2.14)(react@18.2.0)
     optionalDependencies:
       '@types/react': 18.2.14
-
-  react-hook-form@7.49.2(react@18.2.0):
-    dependencies:
-      react: 18.2.0
 
   react-hook-form@7.54.0(react@18.2.0):
     dependencies:
@@ -21733,7 +21730,7 @@ snapshots:
 
   regexp.prototype.flags@1.5.1:
     dependencies:
-      call-bind: 1.0.5
+      call-bind: 1.0.7
       define-properties: 1.2.1
       set-function-name: 2.0.1
 
@@ -22000,13 +21997,6 @@ snapshots:
 
   set-blocking@2.0.0: {}
 
-  set-function-length@1.1.1:
-    dependencies:
-      define-data-property: 1.1.4
-      get-intrinsic: 1.2.4
-      gopd: 1.0.1
-      has-property-descriptors: 1.0.2
-
   set-function-length@1.2.2:
     dependencies:
       define-data-property: 1.1.4
@@ -22075,8 +22065,8 @@ snapshots:
 
   side-channel@1.0.4:
     dependencies:
-      call-bind: 1.0.5
-      get-intrinsic: 1.2.2
+      call-bind: 1.0.7
+      get-intrinsic: 1.2.4
       object-inspect: 1.13.1
 
   side-channel@1.0.6:
@@ -22380,6 +22370,12 @@ snapshots:
       client-only: 0.0.1
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
+
+  swr@2.3.3(react@18.2.0):
+    dependencies:
+      dequal: 2.0.3
+      react: 18.2.0
+      use-sync-external-store: 1.4.0(react@18.2.0)
 
   symbol-observable@4.0.0: {}
 
@@ -22865,6 +22861,10 @@ snapshots:
       '@types/react': 18.2.14
 
   use-sync-external-store@1.2.0(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+
+  use-sync-external-store@1.4.0(react@18.2.0):
     dependencies:
       react: 18.2.0
 

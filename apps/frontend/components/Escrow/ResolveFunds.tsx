@@ -10,12 +10,13 @@ import {
   VStack,
 } from '@raidguild/design-system';
 // import { getTxLink } from '@raidguild/dm-utils';
-import { useDebounce, useResolve } from '@raidguild/escrow-hooks';
 import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import { FormResolve, useDebounce, useResolve } from '@smartinvoicexyz/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { useForm, UseFormReturn } from 'react-hook-form';
+import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
 // TODO handle onChange for award amounts
@@ -26,56 +27,65 @@ const ResolveFunds = ({
   close,
 }: {
   invoice: Invoice;
-  balance: bigint;
+  balance: {
+    decimals: number;
+    formatted: string;
+    symbol: string;
+    value: bigint;
+  };
   close: () => void;
 }) => {
   const { resolutionRate, token } = invoice;
   const chainId = useChainId();
 
   const isLocked = true;
-
   const localForm = useForm({});
   const { watch, handleSubmit, setValue } = localForm;
 
   const resolverAward = useMemo(() => {
-    if (resolutionRate === 0 || balance === BigInt(0)) {
+    if (resolutionRate === 0 || balance.value === BigInt(0)) {
       return 0;
     }
     return _.toNumber(
       formatUnits(
-        balance / BigInt(resolutionRate),
+        balance.value / BigInt(resolutionRate),
         invoice.tokenMetadata.decimals
       )
     );
   }, [balance, invoice, resolutionRate]);
 
   const availableFunds =
-    _.toNumber(formatUnits(balance, invoice.tokenMetadata.decimals)) -
+    _.toNumber(formatUnits(balance.value, invoice.tokenMetadata.decimals)) -
     resolverAward;
 
-  const clientAward = watch('clientAward');
-  const providerAward = watch('providerAward');
-  const comments = useDebounce(watch('comments'), 250);
+  const description = useDebounce(watch('description'), 250);
 
-  const awards = useMemo(
-    () => ({
-      client: clientAward
-        ? parseUnits(_.toString(clientAward), invoice.tokenMetadata.decimals)
-        : BigInt(0),
-      provider: providerAward
-        ? parseUnits(_.toString(providerAward), invoice.tokenMetadata.decimals)
-        : BigInt(0),
-      resolver: resolverAward
-        ? parseUnits(_.toString(resolverAward), invoice.tokenMetadata.decimals)
-        : BigInt(0),
-    }),
-    [clientAward, invoice, providerAward, resolverAward]
-  );
+  const queryClient = useQueryClient();
+
+  const onTxSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['invoiceDetails'],
+    });
+  };
 
   const { writeAsync: resolve, isLoading } = useResolve({
-    invoice,
-    awards,
-    comments,
+    invoice: {
+      tokenBalance: balance,
+      tokenMetadata: {
+        decimals: invoice.tokenMetadata.decimals,
+        address: invoice.token,
+        name: '',
+        symbol: '',
+        totalSupply: BigInt(0),
+      },
+      isLocked: invoice.isLocked,
+      address: invoice.address,
+      metadata: { title: '' },
+    },
+    details:
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+    localForm: localForm as unknown as UseFormReturn<FormResolve>,
+    onTxSuccess,
   });
 
   const onSubmit = async () => {
@@ -112,7 +122,7 @@ const ResolveFunds = ({
         <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
           {isLocked
             ? `You’ll need to distribute the total balance of ${formatUnits(
-                balance,
+                balance.value,
                 invoice.tokenMetadata.decimals
               )} ${parseTokenAddress(
                 chainId,
@@ -148,7 +158,7 @@ const ResolveFunds = ({
       </Heading>
       <Text textAlign='center' fontSize='sm' mb='1rem' fontFamily='texturina'>
         {`You’ll need to distribute the total balance of ${formatUnits(
-          balance,
+          balance.value,
           invoice.tokenMetadata.decimals
         )} ${parseTokenAddress(
           chainId,
@@ -159,7 +169,7 @@ const ResolveFunds = ({
       </Text>
 
       <Textarea
-        name='comments'
+        name='description'
         tooltip='Here you may explain your reasoning behind the resolution'
         label='Resolution Comments'
         placeholder='Resolution Comments'
@@ -224,7 +234,7 @@ const ResolveFunds = ({
       {true && (
         <Button
           type='submit'
-          isDisabled={resolverAward <= BigInt(0) || !comments || !resolve}
+          isDisabled={resolverAward <= BigInt(0) || !description || !resolve}
           textTransform='uppercase'
           variant='solid'
         >
