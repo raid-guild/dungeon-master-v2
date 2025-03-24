@@ -58,7 +58,7 @@ const LockFunds = ({
   );
   const feeDisplay = `${fee} ${parseTokenAddress(chainId, token)}`;
 
-  const disputeReason = useDebounce(watch('discription'), 250);
+  const disputeReason = useDebounce(watch('description'), 250);
 
   // const onSuccess = () => {
   //   // handle tx success
@@ -155,7 +155,7 @@ const LockFunds = ({
       </Text>
 
       <Textarea
-        name='discription'
+        name='description'
         tooltip='Why do you want to lock these funds?'
         label='Dispute Reason'
         placeholder='Dispute Reason'

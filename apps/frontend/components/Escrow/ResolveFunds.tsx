@@ -234,7 +234,7 @@ const ResolveFunds = ({
       {true && (
         <Button
           type='submit'
-          isDisabled={resolverAward <= BigInt(0) || !description || !resolve}
+          isDisabled={resolverAward <= 0 || !description || !resolve}
           textTransform='uppercase'
           variant='solid'
         >
