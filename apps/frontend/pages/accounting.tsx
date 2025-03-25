@@ -3,11 +3,13 @@ import {
   Button,
   Flex,
   Heading,
+  Link,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from '@raidguild/design-system';
 import {
   useMemberList,
@@ -19,8 +21,8 @@ import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
 import Papa from 'papaparse';
 import { useCallback } from 'react';
-
 import _ from 'lodash';
+
 import BalancesTable from '../components/BalancesTable';
 import SiteLayout from '../components/SiteLayout';
 import SpoilsTable from '../components/SpoilsTable';
@@ -139,6 +141,22 @@ export const Accounting = () => {
         emptyDataPhrase='No transactions'
         error={error && isError}
       >
+        <Text>
+          View Dune Dashboard metrics{' '}
+          <Link
+            color='red.500'
+            href='https://dune.com/sunsakis/raidguild'
+            rel='noreferrer noopener'
+            target='_blank'
+            _hover={{
+              color: 'red.300',
+              textDecoration: 'underline',
+            }}
+          >
+            here
+          </Link>
+          .
+        </Text>
         <Tabs align='center' colorScheme='whiteAlpha' variant='soft-rounded'>
           <TabList>
             <Tab>
