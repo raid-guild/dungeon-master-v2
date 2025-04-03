@@ -25,8 +25,8 @@ export const GANGGANG_MULTISIG = {
 };
 
 export const PAYMENT_TYPES = {
-  NATIVE: 'NATIVE',
-  TOKEN: 'TOKEN',
+  NATIVE: 'native',
+  TOKEN: 'token',
 };
 
 interface Tokens {
@@ -153,12 +153,16 @@ export const NETWORK_CONFIG: { [key: number]: NetworkConfig } = {
     },
   },
   11155111: {
-    SUBGRAPH: 'smart-invoice-sepolia/v0.0.3',
+    SUBGRAPH: 'smart-invoice-sepolia/v0.0.7',
     WRAPPED_NATIVE_TOKEN: _.toLower(
       '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14'
     ) as Hex,
     INVOICE_FACTORY: _.toLower(
       '0x8227b9868e00B8eE951F17B480D369b84Cd17c20'
+    ) as Hex,
+    ZAP_ADDRESS: _.toLower('0x1b12589bf3a11294eeef22020d8003e07686dc23') as Hex,
+    DAO_ADDRESS: _.toLower(
+      '0x67e428101F4c688f228fb453659c5d7952075919 '
     ) as Hex,
     RESOLVERS: {
       [_.toLower('0x153Fbf5da827903e030Dc317C4031755D74D508a')]: {

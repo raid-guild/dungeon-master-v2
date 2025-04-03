@@ -85,7 +85,7 @@ const DepositFunds = ({
     paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
   const hasAmount = balance >= parseUnits(amount, decimals);
 
-  const { handleDeposit, isLoading } = useDeposit({
+  const { handleDeposit, isLoading, prepareError } = useDeposit({
     invoice: {
       tokenMetadata: {
         address: invoice.token, // only address is needed
@@ -291,7 +291,7 @@ const DepositFunds = ({
 
       <Button
         onClick={depositHandler}
-        isDisabled={amount <= 0 || isLoading || !hasAmount}
+        isDisabled={amount <= 0 || isLoading || !hasAmount || !!prepareError}
         isLoading={isLoading}
         textTransform='uppercase'
         variant='solid'
