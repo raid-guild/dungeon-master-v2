@@ -54,6 +54,11 @@ const ResolveFunds = ({
     );
   }, [balance, invoice, resolutionRate]);
 
+  const roundToDecimal = (value) => {
+    const multiplier = 10 ** balance.decimals;
+    return Math.round(value * multiplier) / multiplier;
+  };
+
   const availableFunds =
     _.toNumber(formatUnits(balance.value, invoice.tokenMetadata.decimals)) -
     resolverAward;
@@ -184,12 +189,17 @@ const ResolveFunds = ({
           localForm={localForm}
           placeholder='Client Award'
           registerOptions={{
-            onChange: (value) => {
+            onChange: (e) => {
+              const value = parseFloat(e.target.value) || 0;
               if (value > availableFunds) {
                 setValue('clientAward', availableFunds);
                 setValue('providerAward', 0);
+              } else {
+                setValue(
+                  'providerAward',
+                  roundToDecimal(availableFunds - value)
+                );
               }
-              setValue('providerAward', availableFunds - value);
             },
           }}
         />
@@ -204,12 +214,14 @@ const ResolveFunds = ({
           localForm={localForm}
           placeholder='Provider Award'
           registerOptions={{
-            onChange: (value) => {
+            onChange: (e) => {
+              const value = parseFloat(e.target.value) || 0;
               if (value > availableFunds) {
                 setValue('providerAward', availableFunds);
                 setValue('clientAward', 0);
+              } else {
+                setValue('clientAward', roundToDecimal(availableFunds - value));
               }
-              setValue('clientAward', availableFunds - value);
             },
           }}
         />
@@ -234,7 +246,9 @@ const ResolveFunds = ({
       {true && (
         <Button
           type='submit'
-          isDisabled={resolverAward <= 0 || !description || !resolve}
+          isDisabled={
+            resolverAward <= 0 || !description || !resolve || isLoading
+          }
           textTransform='uppercase'
           variant='solid'
         >
