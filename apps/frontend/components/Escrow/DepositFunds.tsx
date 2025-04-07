@@ -28,6 +28,7 @@ import {
   PAYMENT_TYPES,
 } from '@raidguild/escrow-utils';
 import { useDeposit } from '@smartinvoicexyz/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -85,6 +86,14 @@ const DepositFunds = ({
     paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
   const hasAmount = balance >= parseUnits(amount, decimals);
 
+  const queryClient = useQueryClient();
+
+  const onTxSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['invoiceDetails'],
+    });
+  };
+
   const { handleDeposit, isLoading, prepareError } = useDeposit({
     invoice: {
       tokenMetadata: {
@@ -100,6 +109,7 @@ const DepositFunds = ({
     hasAmount, // (+ gas)
     paymentType: paymentType?.value,
     toast,
+    onTxSuccess,
   });
 
   const depositHandler = async () => {

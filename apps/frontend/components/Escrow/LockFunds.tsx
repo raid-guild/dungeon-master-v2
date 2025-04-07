@@ -20,6 +20,7 @@ import {
 } from '@raidguild/escrow-utils';
 // import { getTxLink } from '@raidguild/dm-utils';
 import { FormLock, useDebounce, useLock } from '@smartinvoicexyz/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useState } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -51,7 +52,6 @@ const LockFunds = ({
   const toast = useToast();
   const localForm = useForm();
   const { watch, handleSubmit } = localForm;
-  const [txHash, setTxHash] = useState<Hex | undefined>(undefined);
   const fee = formatUnits(
     resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
     invoice.tokenMetadata.decimals
@@ -60,15 +60,26 @@ const LockFunds = ({
 
   const disputeReason = useDebounce(watch('description'), 250);
 
+  const [txHash, setTxHash] = useState<Hex | undefined>(undefined);
+
   // const onSuccess = () => {
   //   // handle tx success
   //   // mark locked
   // };
 
+  const queryClient = useQueryClient();
+
+  const onTxSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['invoiceDetails'],
+    });
+  };
+
   const { writeAsync: lockFunds, isLoading: writeLoading } = useLock({
-    invoice: { address: invoice.address },
+    invoice: { address: invoice.address, chainId },
     localForm: localForm as unknown as UseFormReturn<FormLock>,
     toast,
+    onTxSuccess,
     details:
       '0x0000000000000000000000000000000000000000000000000000000000000000',
   });
@@ -82,6 +93,7 @@ const LockFunds = ({
     const hash = await lockFunds();
     setTxHash(hash);
   };
+
   if (writeLoading) {
     return (
       <VStack w='100%' spacing='1rem'>
@@ -94,19 +106,6 @@ const LockFunds = ({
         >
           Locking Funds
         </Heading>
-        {txHash && (
-          <Text color='white' textAlign='center' fontSize='sm'>
-            Follow your transaction{' '}
-            <Link
-              href={getTxLink(chainId, txHash)}
-              isExternal
-              color='primary.300'
-              textDecoration='underline'
-            >
-              here
-            </Link>
-          </Text>
-        )}
         <Flex
           w='100%'
           justify='center'
@@ -191,6 +190,19 @@ const LockFunds = ({
           Learn about {getResolverString(chainId, resolver)} dispute process &
           terms
         </Link>
+      )}
+      {txHash && (
+        <Text color='white' textAlign='center' fontSize='sm'>
+          Follow your transaction{' '}
+          <Link
+            href={getTxLink(chainId, txHash)}
+            isExternal
+            color='primary.300'
+            textDecoration='underline'
+          >
+            here
+          </Link>
+        </Text>
       )}
     </VStack>
   );
