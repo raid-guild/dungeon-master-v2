@@ -38,6 +38,9 @@ importers:
       '@smartinvoicexyz/hooks':
         specifier: 0.1.24
         version: 0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@tanstack/query-core@5.60.5)(@types/node@18.19.3)(@types/react@18.2.14)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(react-native@0.76.2(@babel/core@7.23.6)(@babel/preset-env@7.23.6(@babel/core@7.23.6))(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(react@18.2.0)(utf-8-validate@5.0.10))(rollup@4.9.1)(typescript@5.4.5)(utf-8-validate@5.0.10)
+      '@smartinvoicexyz/types':
+        specifier: 0.1.24
+        version: 0.1.24(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@emotion/styled@11.11.0(@emotion/react@11.11.1(@types/react@18.2.14)(react@18.2.0))(@types/react@18.2.14)(react@18.2.0))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(@types/react@18.2.14)(bufferutil@4.0.8)(encoding@0.1.13)(framer-motion@10.16.16(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(graphql@16.8.1)(react-dom@18.2.0(react@18.2.0))(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@tanstack/match-sorter-utils':
         specifier: ^8.7.6
         version: 8.8.4
@@ -56,9 +59,6 @@ importers:
       '@wagmi/core':
         specifier: 2.13.8
         version: 2.13.8(@tanstack/query-core@5.60.5)(@types/react@18.2.14)(react@18.2.0)(typescript@5.4.5)(viem@2.17.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
-      add:
-        specifier: ^2.0.6
-        version: 2.0.6
       axios:
         specifier: ^1.4.0
         version: 1.6.3
@@ -4401,9 +4401,6 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  add@2.0.6:
-    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
-
   address@1.2.2:
     resolution: {integrity: sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA==}
     engines: {node: '>= 10.0.0'}
@@ -7932,6 +7929,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch-native@1.6.1:
     resolution: {integrity: sha512-bW9T/uJDPAJB2YNYEpWzE54U5O3MQidXsOyTfnbKYtTtFexRvGzb1waphBN4ZwP6EcIvYYEOwW0b72BpAqydTw==}
@@ -13561,7 +13559,7 @@ snapshots:
       '@ethereumjs/tx': 4.2.0
       '@types/debug': 4.1.12
       debug: 4.3.4(supports-color@8.1.1)
-      semver: 7.5.4
+      semver: 7.7.1
       superstruct: 1.0.3
     transitivePeerDependencies:
       - supports-color
@@ -13575,7 +13573,7 @@ snapshots:
       '@types/debug': 4.1.12
       debug: 4.3.4(supports-color@8.1.1)
       pony-cause: 2.1.11
-      semver: 7.5.4
+      semver: 7.7.1
       uuid: 9.0.1
     transitivePeerDependencies:
       - supports-color
@@ -13589,7 +13587,7 @@ snapshots:
       '@types/debug': 4.1.12
       debug: 4.3.4(supports-color@8.1.1)
       pony-cause: 2.1.11
-      semver: 7.5.4
+      semver: 7.7.1
       uuid: 9.0.1
     transitivePeerDependencies:
       - supports-color
@@ -13790,21 +13788,6 @@ snapshots:
       - nx
       - supports-color
       - ts-node
-      - typescript
-      - verdaccio
-
-  '@nrwl/js@17.2.8(@babel/traverse@7.25.9)(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(nx@17.2.8(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3)))(typescript@5.2.2)':
-    dependencies:
-      '@nx/js': 17.2.8(@babel/traverse@7.25.9)(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(nx@17.2.8(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3)))(typescript@5.2.2)
-    transitivePeerDependencies:
-      - '@babel/traverse'
-      - '@swc-node/register'
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - debug
-      - nx
-      - supports-color
       - typescript
       - verdaccio
 
@@ -14036,7 +14019,7 @@ snapshots:
       '@babel/preset-env': 7.23.6(@babel/core@7.23.6)
       '@babel/preset-typescript': 7.23.3(@babel/core@7.23.6)
       '@babel/runtime': 7.23.6
-      '@nrwl/js': 17.2.8(@babel/traverse@7.25.9)(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(nx@17.2.8(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3)))(typescript@5.2.2)
+      '@nrwl/js': 17.2.8(@babel/traverse@7.25.9)(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(nx@17.2.8(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3)))(typescript@5.4.5)
       '@nx/devkit': 17.2.8(nx@17.2.8(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3)))
       '@nx/workspace': 17.2.8(@swc-node/register@1.6.8(@swc/core@1.3.101(@swc/helpers@0.5.3))(typescript@5.4.5))(@swc/core@1.3.101(@swc/helpers@0.5.3))
       '@phenomnomnominal/tsquery': 5.0.1(typescript@5.2.2)
@@ -14538,7 +14521,7 @@ snapshots:
       metro-core: 0.81.0
       node-fetch: 2.7.0(encoding@0.1.13)
       readline: 1.3.0
-      semver: 7.5.4
+      semver: 7.7.1
     transitivePeerDependencies:
       - '@babel/core'
       - '@babel/preset-env'
@@ -14970,7 +14953,7 @@ snapshots:
       '@storybook/client-logger': 7.6.6
       '@storybook/core-events': 7.6.6
       '@storybook/global': 5.0.0
-      qs: 6.11.2
+      qs: 6.13.0
       telejson: 7.2.0
       tiny-invariant: 1.3.1
 
@@ -16301,8 +16284,6 @@ snapshots:
 
   acorn@8.11.2: {}
 
-  add@2.0.6: {}
-
   address@1.2.2: {}
 
   adm-zip@0.5.16: {}
@@ -17193,7 +17174,7 @@ snapshots:
       json-schema-typed: 7.0.3
       onetime: 5.1.2
       pkg-up: 3.1.0
-      semver: 7.5.4
+      semver: 7.7.1
 
   config-maker@0.0.6(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10):
     dependencies:
@@ -17214,7 +17195,7 @@ snapshots:
       ora: 6.3.1
       picocolors: 1.1.1
       pkg-install: 1.0.0
-      qs: 6.11.2
+      qs: 6.13.0
       run-async: 2.4.1
       ts-node: 10.9.2(@swc/core@1.3.101(@swc/helpers@0.5.3))(@types/node@18.19.3)(typescript@5.4.5)
       ts-patch: 3.3.0
@@ -19543,7 +19524,7 @@ snapshots:
 
   is-symbol@1.0.4:
     dependencies:
-      has-symbols: 1.0.3
+      has-symbols: 1.1.0
 
   is-typed-array@1.1.12:
     dependencies:
@@ -19564,7 +19545,7 @@ snapshots:
   is-weakset@2.0.2:
     dependencies:
       call-bind: 1.0.5
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.3.0
 
   is-wsl@2.2.0:
     dependencies:
@@ -21684,7 +21665,7 @@ snapshots:
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.7
       scheduler: 0.24.0-canary-efb381bbf-20230505
-      semver: 7.5.4
+      semver: 7.7.1
       stacktrace-parser: 0.1.10
       whatwg-fetch: 3.6.20
       ws: 6.2.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -21867,7 +21848,7 @@ snapshots:
       call-bind: 1.0.5
       define-properties: 1.2.1
       es-abstract: 1.22.3
-      get-intrinsic: 1.2.2
+      get-intrinsic: 1.3.0
       globalthis: 1.0.3
       which-builtin-type: 1.1.3
 
@@ -22974,7 +22955,7 @@ snapshots:
   update-browserslist-db@1.0.13(browserslist@4.22.2):
     dependencies:
       browserslist: 4.22.2
-      escalade: 3.1.1
+      escalade: 3.2.0
       picocolors: 1.1.1
 
   update-browserslist-db@1.1.1(browserslist@4.24.2):

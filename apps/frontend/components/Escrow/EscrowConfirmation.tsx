@@ -11,12 +11,12 @@ import { IRaid } from '@raidguild/dm-types';
 import { chainsMap, commify } from '@raidguild/dm-utils';
 import { useDetailsPin } from '@raidguild/escrow-hooks';
 import {
-  FormInvoice,
   GANGGANG_MULTISIG,
   NETWORK_CONFIG,
   updateRaidInvoice,
 } from '@raidguild/escrow-utils';
 import { useEscrowZap, useInvoiceCreate } from '@smartinvoicexyz/hooks';
+import { FormInvoice } from '@smartinvoicexyz/types';
 import { WriteContractReturnType } from '@wagmi/core';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
