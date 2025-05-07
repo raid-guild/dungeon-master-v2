@@ -9,14 +9,18 @@ import {
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { chainsMap, commify } from '@raidguild/dm-utils';
-import { useDetailsPin } from '@raidguild/escrow-hooks';
 import {
   GANGGANG_MULTISIG,
+  INVOICE_VERSION,
   NETWORK_CONFIG,
   updateRaidInvoice,
 } from '@raidguild/escrow-utils';
-import { useEscrowZap, useInvoiceCreate } from '@smartinvoicexyz/hooks';
-import { FormInvoice } from '@smartinvoicexyz/types';
+import {
+  useDetailsPin,
+  useEscrowZap,
+  useInvoiceCreate,
+} from '@smartinvoicexyz/hooks';
+import { FormInvoice, InvoiceMetadata } from '@smartinvoicexyz/types';
 import { WriteContractReturnType } from '@wagmi/core';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
@@ -59,22 +63,31 @@ const EscrowConfirmation = ({
   } = watch();
   const chainId = useChainId();
 
-  const detailsData = useMemo(() => {
+  const detailsData = useMemo<InvoiceMetadata>(() => {
+    const now = Math.floor(Date.now() / 1000);
     if (raid) {
       return {
-        projectName: raid?.id,
-        projectDescription: '',
-        projectAgreement: [],
-        startDate: Math.floor(Date.now() / 1000),
-        endDate: Math.floor(Date.now() / 1000),
+        version: INVOICE_VERSION,
+        id: _.join([raid?.id, now, INVOICE_VERSION], '-'),
+        title: raid?.id,
+        description: '',
+        documents: [],
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        milestones: [],
       };
     }
     return {
-      projectName,
-      projectDescription,
-      projectAgreement,
+      version: INVOICE_VERSION,
+      id: _.join([projectName, Date.now() / 1000, INVOICE_VERSION], '-'),
+      title: projectName,
+      description: projectDescription,
+      milestones: [],
+      documents: projectAgreement,
       startDate: Math.floor(Date.parse(startDate) / 1000),
       endDate: Math.floor(Date.parse(endDate) / 1000),
+      createdAt: Math.floor(Date.now() / 1000),
     };
   }, [
     raid,

@@ -11,6 +11,7 @@ import {
   Textarea,
 } from '@raidguild/design-system';
 import { ProjectDetails } from '@raidguild/escrow-utils';
+import { uriToDocument } from '@smartinvoicexyz/utils';
 import { useEffect } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -29,7 +30,7 @@ interface ProjectDetailsForm extends ProjectDetails {
   agreement?: string;
 }
 
-const ProjectDetailsForm = ({
+const   ProjectDetailsForm = ({
   escrowForm,
   updateStep,
 }: {
@@ -52,11 +53,7 @@ const ProjectDetailsForm = ({
     const projectAgreement = [];
     if (values.agreement) {
       // TODO handle ipfs agreement link
-      projectAgreement.push({
-        type: 'https',
-        src: values.agreement,
-        createdAt: Math.floor(Date.now() / 1000),
-      });
+      projectAgreement.push(uriToDocument(values.agreement));
     }
 
     setValue('projectName', values.projectName);
