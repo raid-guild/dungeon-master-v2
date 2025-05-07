@@ -24,7 +24,9 @@
       "@raidguild/dm-utils": ["libs/dm-utils/src/index.ts"],
       "@raidguild/escrow-gql": ["libs/escrow-gql/src/index.ts"],
       "@raidguild/escrow-hooks": ["libs/escrow-hooks/src/index.ts"],
-      "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"]
+      "@raidguild/escrow-utils": ["libs/escrow-utils/src/index.ts"],
+      "@raidguild/ui": ["libs/ui/src/index.ts"],
+      "@raidguild/utils": ["libs/utils/src/index.ts"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "**/*.json"],

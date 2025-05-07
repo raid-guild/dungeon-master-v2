@@ -1,18 +1,3 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  HStack,
-  RoleBadge,
-  Spacer,
-  Stack,
-  Tooltip,
-  useBreakpointValue,
-} from '@raidguild/design-system';
 import { useToggleInterest } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
@@ -95,9 +80,9 @@ const DashboardRaidCard = ({
 
   const action = interestExists ? 'delete' : 'insert';
 
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  // const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const signalLabel = isMobile ? 'Signal' : 'Signal Interest';
+  // const signalLabel = isMobile ? 'Signal' : 'Signal Interest';
 
   return (
     <Card variant='outline' width='100%' minH='100px'>
@@ -138,7 +123,7 @@ const DashboardRaidCard = ({
             gap={2}
           >
             {interestExists && <FaCheck />}
-            {interestExists ? 'Interested' : signalLabel}
+            {interestExists ? 'Interested' : 'Signal Interest'}
           </Button>
         </Tooltip>
       </Flex>
