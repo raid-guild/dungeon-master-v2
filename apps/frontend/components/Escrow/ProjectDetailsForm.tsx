@@ -30,7 +30,7 @@ interface ProjectDetailsForm extends ProjectDetails {
   agreement?: string;
 }
 
-const   ProjectDetailsForm = ({
+const ProjectDetailsForm = ({
   escrowForm,
   updateStep,
 }: {
