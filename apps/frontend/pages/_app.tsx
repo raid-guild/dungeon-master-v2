@@ -3,8 +3,8 @@ import '@rainbow-me/rainbowkit/styles.css';
 // eslint-disable-next-line import/no-unresolved
 import 'react-datepicker/dist/react-datepicker.css'; // trouble processing this css in the DS pkg currently
 
-import { RGThemeProvider } from '@raidguild/design-system';
 import { wagmiConfig } from '@raidguild/dm-utils';
+import { Toaster, TooltipProvider } from '@raidguild/ui';
 import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import {
@@ -42,7 +42,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   });
 
   return (
-    <RGThemeProvider>
+    <>
       <DefaultSeo
         titleTemplate='%s | Dungeon Master'
         title='Dungeon Master'
@@ -77,7 +77,10 @@ const App = ({ Component, pageProps }: AppProps) => {
             <RainbowKitSiweNextAuthProvider>
               <RainbowKitProvider theme={darkTheme()}>
                 <OverlayContextProvider>
-                  <Component {...pageProps} />
+                  <TooltipProvider>
+                    <Component {...pageProps} />
+                    <Toaster richColors />
+                  </TooltipProvider>
                   <ReactQueryDevtools initialIsOpen={false} />
                 </OverlayContextProvider>
               </RainbowKitProvider>
@@ -85,7 +88,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           </QueryClientProvider>
         </SessionProvider>
       </WagmiProvider>
-    </RGThemeProvider>
+    </>
   );
 };
 export default App;
