@@ -1,4 +1,3 @@
-export { default as useDetailsPin } from './useDetailsPin';
 export { default as useEscrowEvents } from './useEscrowEvents';
 export { default as useInvoiceDetails } from './useInvoiceDetails';
 export { default as useSplitEarnings } from './useSplitEarnings';
