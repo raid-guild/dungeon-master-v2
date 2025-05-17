@@ -15,7 +15,7 @@ const chains: readonly Chain[] = [
   gnosis,
   polygon,
   arbitrum,
-  optimism,
+  optimism as Chain,
   sepolia,
   goerli,
 ] as const;
@@ -24,7 +24,7 @@ export const chainsList: Record<number, Chain> = {
   100: gnosis,
   137: polygon,
   42151: arbitrum,
-  10: optimism,
+  10: optimism as Chain,
   1: mainnet,
   11155111: sepolia,
   5: goerli,
