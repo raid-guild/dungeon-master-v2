@@ -1,7 +1,6 @@
-import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
-
-import { cn } from "@/libs/utils/src/index"
+import { cn } from "@raidguild/utils"
+import * as React from "react"
 
 function Avatar({
   className,
@@ -48,4 +47,4 @@ function AvatarFallback({
   )
 }
 
-export { Avatar, AvatarImage, AvatarFallback }
+export { Avatar, AvatarFallback,AvatarImage }

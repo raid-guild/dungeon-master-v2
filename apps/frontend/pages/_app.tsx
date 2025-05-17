@@ -2,6 +2,7 @@
 import '@rainbow-me/rainbowkit/styles.css';
 // eslint-disable-next-line import/no-unresolved
 import 'react-datepicker/dist/react-datepicker.css'; // trouble processing this css in the DS pkg currently
+import '../styles/globals.css';
 
 import { wagmiConfig } from '@raidguild/dm-utils';
 import { Toaster, TooltipProvider } from '@raidguild/ui';

@@ -1,7 +1,6 @@
-import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
-
-import { cn } from "@/libs/utils/src/index"
+import { cn } from "@raidguild/utils"
+import * as React from "react"
 
 function TooltipProvider({
   delayDuration = 0,
@@ -56,4 +55,4 @@ function TooltipContent({
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export { Tooltip, TooltipContent, TooltipProvider,TooltipTrigger }
