@@ -9,6 +9,8 @@
       "next",
       "@nx/next/typings/image.d.ts"
     ],
+    "module": "ESNext",
+    "moduleResolution": "node",
     "declaration": true,
     "composite": true,
     "rootDir": "../../"

@@ -12,6 +12,8 @@ const nextConfig = {
     '@raidguild/dm-utils',
     '@raidguild/escrow-utils',
     '@raidguild/escrow-gql',
+    '@raidguild/ui',
+    '@raidguild/utils'
   ],
 };
 

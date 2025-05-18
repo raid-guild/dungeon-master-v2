@@ -12,17 +12,27 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Tooltip,
   useDisclosure,
 } from '@raidguild/design-system';
-import { Button } from '@raidguild/ui';
+import {
+  Button,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@raidguild/ui';
 import _ from 'lodash';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { BsCaretDown } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { HiSearch } from 'react-icons/hi';
 
 import { useOverlay } from '../contexts/OverlayContext';
 import ConnectWallet from './ConnectWallet';
@@ -56,48 +66,49 @@ const Navbar = () => {
 
   return (
     <>
-      <div className='flex justify-between p-8'>
+      <div className='flex justify-between p-8 font-texturina'>
         <div className='flex items-center'>
-          <Link className='mr-6' href='/'>
-            <h1>🏰</h1>
+          <Link className='mr-6 text-xl' href='/'>
+            🏰
           </Link>
           <div className='hidden md:flex'>
             <DesktopNav role={role} />
           </div>
         </div>
 
-        <div className='flex items-center'>
-          <Button
-            type='button'
-            className='cursor-pointer mx-6 hidden md:flex'
-            onClick={() => setOpen(true)}
-            onKeyDown={(e) => e.key === 'Enter' && setOpen(true)}
-          >
-            <Tooltip
-              label='press CMD + K to search'
-              placement='bottom'
-              hasArrow
-            >
-              <span>
-                <Icon as={HiSearch} boxSize={6} />
-              </span>
-            </Tooltip>
-          </Button>
+        <div className='flex items-center gap-6'>
+          <Tooltip>
+            <TooltipTrigger aria-label='Search Button'>
+              <Button
+                size='icon'
+                variant='ghost'
+                type='button'
+                onClick={() => setOpen(true)}
+              >
+                <Search className='h-6 w-6' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                Press <kbd>CMD</kbd> + <kbd>K</kbd> to search
+              </p>
+            </TooltipContent>
+          </Tooltip>
           <div className='hidden md:flex'>
             <ConnectWallet />
           </div>
           <div className='flex flex-1 md:hidden -ml-2'>
-            <IconButton
+            <Button
+              size='icon'
+              variant='ghost'
               onClick={onToggle}
-              icon={
-                isOpen ? (
-                  <AiOutlineClose width={3} height={3} />
-                ) : (
-                  <GiHamburgerMenu width={5} height={5} />
-                )
-              }
               aria-label='Toggle Navigation'
-            />
+            >
+              isOpen ? (
+              <AiOutlineClose width={3} height={3} />
+              ) : (
+              <GiHamburgerMenu width={5} height={5} />)
+            </Button>
           </div>
         </div>
       </div>
@@ -123,33 +134,32 @@ const DesktopNav = ({ role }: { role: string }) => (
       );
     })}
     {role === 'member' && (
-      <Menu>
-        <MenuButton
-          as={Button}
-          bg='transparent'
-          _hover={{ bg: 'whiteAlpha.300' }}
-          _active={{ bg: 'whiteAlpha.200' }}
-          textTransform='capitalize'
-        >
-          <HStack>
-            <Heading size='sm'>More</Heading>
-            <Icon as={BsCaretDown} />
-          </HStack>
-        </MenuButton>
-        <MenuList>
-          {_.map(links, ({ href, label, primary }) => {
-            if (primary && href !== '/escrow') return null;
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>
+              More
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className='w-[120px]'>
+                {_.map(links, ({ href, label, primary }) => {
+                  if (primary && href !== '/escrow') return null;
 
-            return (
-              <Link href={href} key={href}>
-                <MenuItem>
-                  <Heading size='sm'>{label}</Heading>
-                </MenuItem>
-              </Link>
-            );
-          })}
-        </MenuList>
-      </Menu>
+                  return (
+                    <NavigationMenuLink
+                      className='select-none hover:bg-gray-600'
+                      href={href}
+                      key={href}
+                    >
+                      <h3 className='text-sm'>{label}</h3>
+                    </NavigationMenuLink>
+                  );
+                })}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     )}
   </div>
 );
