@@ -1,17 +1,9 @@
-import {
-  Box,
-  Card,
-  Flex,
-  Heading,
-  HStack,
-  Stack,
-  Text,
-} from '@raidguild/design-system';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import { displayDate } from '@raidguild/dm-utils';
+import { Card } from '@raidguild/ui';
 import _ from 'lodash';
+import Link from 'next/link';
 
-import ChakraNextLink from './ChakraNextLink';
 import LinkExternal from './LinkExternal';
 import RaidStatusBadge from './RaidStatusBadge';
 
@@ -40,42 +32,38 @@ const MiniRaidCard = ({
       .head()
       .value() ?? consultation?.link;
   return (
-    <ChakraNextLink
+    <Link
       href={
         raid
           ? `/raids/${_.get(raid, 'id')}`
           : `/consultations/${_.get(consultation, 'id')}`
       }
     >
-      <Card variant='outline' width='100%' minH='100px'>
-        <Flex width='100%' h='100%'>
-          <Stack spacing={2} w='100%' gap={4}>
-            <Heading
-              color='white'
-              size={smallHeader ? 'sm' : 'md'}
-              noOfLines={1}
-            >
+      <Card className='w-full min-h-[100px]'>
+        <div className='flex items-center w-full h-full'>
+          <div className='flex flex-col items-center space-x-2 w-full gap-4'>
+            <h1 className='text-white text-sm md:text-md line-clamp-1'>
               {_.get(raid, 'name', _.get(consultation, 'name'))}
-            </Heading>
-            <Flex justify='space-between' w='100%'>
-              <HStack gap={3}>
+            </h1>
+            <div className='flex items-center justify-between w-full'>
+              <div className='flex items-center gap-3'>
                 {_.get(raid, 'raidStatus.raidStatus') && (
                   <RaidStatusBadge
                     status={_.get(raid, 'raidStatus.raidStatus')}
                   />
                 )}
-                <Box zIndex={100}>
+                <div className='z-50'>
                   {specLink && <LinkExternal href={specLink} label='Specs' />}
-                </Box>
-              </HStack>
-              <Text size='sm' color='whiteAlpha.700'>
+                </div>
+              </div>
+              <p className='text-sm text-gray-700'>
                 Updated: {displayDate(_.get(raid, 'updatedAt'))}
-              </Text>
-            </Flex>
-          </Stack>
-        </Flex>
+              </p>
+            </div>
+          </div>
+        </div>
       </Card>
-    </ChakraNextLink>
+    </Link>
   );
 };
 

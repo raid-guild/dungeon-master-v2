@@ -5,41 +5,57 @@ import 'react-cmdk/dist/cmdk.css';
 
 import { Flex, Spinner } from '@raidguild/design-system';
 import { useSearchResults } from '@raidguild/dm-hooks';
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@raidguild/ui';
+import { filterItems, JsonStructure } from '@raidguild/utils';
 import _ from 'lodash';
+import { House, ScrollText, Star, UserPlus, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import CmdkCommandPalette, {
-  filterItems,
-  getItemIndex,
-  JsonStructure,
-  useHandleOpenCommandPalette,
-} from 'react-cmdk';
 
 import { useOverlay } from '../contexts/OverlayContext';
-import ChakraNextLink from './ChakraNextLink';
 
-const CommandPaletteInternalLink = ({
-  href,
-  children,
-}: {
-  href: string;
-  children: ReactNode;
-}) => (
-  <ChakraNextLink href={href}>
-    <Flex w='100%' justify='space-between' p={2}>
-      {children}
-    </Flex>
-  </ChakraNextLink>
-);
+export interface CommandPaletteProps {
+  items: Array<{
+    id: string;
+    children: string;
+    icon: ReactNode;
+    href: string;
+  }>;
+  heading?: string | undefined;
+  id: string;
+}
+
+// const CommandPaletteInternalLink = ({
+//   href,
+//   children,
+// }: {
+//   href: string;
+//   children: ReactNode;
+// }) => (
+//   <Link href={href}>
+//     <div className='flex justify-between p-2 w-full'>{children}</div>
+//   </Link>
+// );
 
 let timeout = null;
 
 const CommandPalette = () => {
   const [page] = useState<'root' | 'projects'>('root');
+  const router = useRouter();
   const { commandPallet: isOpen, setCommandPallet: setOpen } = useOverlay();
   const [search, setSearch] = useState('');
   const [serverSearch, setServerSearch] = useState<string | null>(null);
-  const [localResults, setLocalResults] = useState<JsonStructure>(null);
+  const [localResults, setLocalResults] = useState<CommandPaletteProps | null>(
+    null
+  );
   const { data: session } = useSession();
   const token = _.get(session, 'token');
   const { data: searchData } = useSearchResults({
@@ -77,8 +93,6 @@ const CommandPalette = () => {
     }
   }, [isOpen]);
 
-  useHandleOpenCommandPalette(setOpen);
-
   const searchResults: JsonStructure = filterItems(
     [
       {
@@ -114,31 +128,31 @@ const CommandPalette = () => {
           {
             id: 'dashboard',
             children: 'Dashboard',
-            icon: 'HomeIcon',
+            icon: <House />,
             href: '/',
           },
           {
             id: 'raids',
             children: 'Raids',
-            icon: 'StarIcon',
+            icon: <Star />,
             href: '/raids',
           },
           {
             id: 'members',
             children: 'Members',
-            icon: 'UserGroupIcon',
+            icon: <Users />,
             href: '/members',
           },
           {
             id: 'consultations',
             children: 'Consultations',
-            icon: 'QueueListIcon',
+            icon: <ScrollText />,
             href: '/consultations',
           },
           {
             id: 'applications',
             children: 'Applications',
-            icon: 'UserPlusIcon',
+            icon: <UserPlus />,
             href: '/applications',
           },
         ],
@@ -149,59 +163,62 @@ const CommandPalette = () => {
   );
 
   return (
-    <CmdkCommandPalette
-      onChangeSearch={setSearchTimeout}
-      onChangeOpen={handleClose}
-      search={search}
-      isOpen={isOpen}
-      page={page}
-    >
-      <CmdkCommandPalette.Page id='root'>
-        {filteredItems.length ? (
-          filteredItems.map((list) => (
-            <CmdkCommandPalette.List key={list.id} heading={list.heading}>
-              {list.items.map(({ id, ...rest }) => (
-                <CmdkCommandPalette.ListItem
-                  key={id}
-                  index={getItemIndex(filteredItems, id)}
-                  renderLink={({ href, children }) => (
-                    <CommandPaletteInternalLink href={href}>
-                      {children}
-                    </CommandPaletteInternalLink>
-                  )}
-                  {...rest}
-                />
-              ))}
-            </CmdkCommandPalette.List>
-          ))
-        ) : localResults ? (
-          _.map(searchResults, (group) => (
-            <CmdkCommandPalette.List key={group.id} heading={group.heading}>
-              {_.map(_.get(group, 'items'), ({ id, ...rest }) => (
-                <CmdkCommandPalette.ListItem
-                  key={id}
-                  index={getItemIndex(searchResults, id)}
-                  renderLink={({ href, children }) => (
-                    <CommandPaletteInternalLink href={href}>
-                      {children}
-                    </CommandPaletteInternalLink>
-                  )}
-                  {...rest}
-                />
-              ))}
-            </CmdkCommandPalette.List>
-          ))
-        ) : (
-          <Flex justify='center' p={4}>
-            <Spinner />
-          </Flex>
-        )}
-      </CmdkCommandPalette.Page>
-
+    <CommandDialog onOpenChange={handleClose} open={isOpen}>
+      <CommandInput
+        placeholder='Search'
+        onValueChange={setSearchTimeout}
+        value={search}
+      />
+      <CommandList>
+        <CommandEmpty>No results found</CommandEmpty>
+        {filteredItems.length
+          ? filteredItems.map((list) => (
+              <CommandGroup key={list.id} heading={list.heading}>
+                {list.items.map(({ id, ...rest }) => (
+                  <CommandItem
+                    key={id}
+                    className='cursor-pointer'
+                    onSelect={() => router.push(_.get(rest, 'href')!)}
+                    // index={getItemIndex(filteredItems, id)}
+                    // renderLink={({ href, children }) => (
+                    //   <CommandPaletteInternalLink href={href}>
+                    //     {children}
+                    //   </CommandPaletteInternalLink>
+                    // )}
+                    // {...rest}
+                  >
+                    {_.get(rest, 'icon')}
+                    {_.get(rest, 'children')}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))
+          : _.map(searchResults, (group) => (
+              <CommandGroup key={group.id} heading={group.heading}>
+                {_.map(_.get(group, 'items'), ({ id, ...rest }) => (
+                  <CommandItem
+                    key={id}
+                    onSelect={() => router.push(_.get(rest, 'href')!)}
+                    // index={getItemIndex(searchResults, id)}
+                    //   renderLink={({ href, children }) => (
+                    //     <CommandPaletteInternalLink href={href}>
+                    //       {children}
+                    //     </CommandPaletteInternalLink>
+                    //   )}
+                    //   {...rest}
+                    // />
+                  >
+                    {_.get(rest, 'icon')}
+                    {_.get(rest, 'children')}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))}
+      </CommandList>
       {/* <CmdkCommandPalette.Page id='projects'> */}
       {/* Projects page */}
       {/* </CmdkCommandPalette.Page> */}
-    </CmdkCommandPalette>
+    </CommandDialog>
   );
 };
 

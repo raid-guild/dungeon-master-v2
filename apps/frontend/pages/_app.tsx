@@ -2,9 +2,11 @@
 import '@rainbow-me/rainbowkit/styles.css';
 // eslint-disable-next-line import/no-unresolved
 import 'react-datepicker/dist/react-datepicker.css'; // trouble processing this css in the DS pkg currently
+import '../styles/globals.css';
 
-import { RGThemeProvider } from '@raidguild/design-system';
 import { wagmiConfig } from '@raidguild/dm-utils';
+import { Toaster, TooltipProvider } from '@raidguild/ui';
+import { cn } from '@raidguild/utils';
 import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import {
@@ -14,12 +16,28 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AppProps } from 'next/app';
+// eslint-disable-next-line camelcase
+import { Texturina, Uncial_Antiqua } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { DefaultSeo } from 'next-seo';
 import React from 'react';
 import { WagmiProvider } from 'wagmi';
 
 import { OverlayContextProvider } from '../contexts/OverlayContext';
+
+const uncial = Uncial_Antiqua({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-uncial',
+});
+
+const texturina = Texturina({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-texturina',
+});
 
 const App = ({ Component, pageProps }: AppProps) => {
   // const toast = useToast();
@@ -42,7 +60,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   });
 
   return (
-    <RGThemeProvider>
+    <>
       <DefaultSeo
         titleTemplate='%s | Dungeon Master'
         title='Dungeon Master'
@@ -77,7 +95,12 @@ const App = ({ Component, pageProps }: AppProps) => {
             <RainbowKitSiweNextAuthProvider>
               <RainbowKitProvider theme={darkTheme()}>
                 <OverlayContextProvider>
-                  <Component {...pageProps} />
+                  <TooltipProvider>
+                    <main className={cn(uncial.variable, texturina.variable)}>
+                      <Component {...pageProps} />
+                    </main>
+                    <Toaster richColors />
+                  </TooltipProvider>
                   <ReactQueryDevtools initialIsOpen={false} />
                 </OverlayContextProvider>
               </RainbowKitProvider>
@@ -85,7 +108,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           </QueryClientProvider>
         </SessionProvider>
       </WagmiProvider>
-    </RGThemeProvider>
+    </>
   );
 };
 export default App;

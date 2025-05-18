@@ -128,9 +128,9 @@ const SiteLayout = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex justify='center' align='center' minH='70vh'>
-          <Heading size='md'>Connect your wallet & Sign in</Heading>
-        </Flex>
+        <div className='flex items-center justify-center min-h-[70vh]'>
+          <h1 className='text-xl font-uncial'>Connect your wallet & Sign in</h1>
+        </div>
       </GeneralLayout>
     );
   }

@@ -1,18 +1,12 @@
 /* eslint-disable no-nested-ternary */
-import {
-  HStack,
-  Icon,
-  Stack,
-  Text,
-  Tooltip,
-  useClipboard,
-  useToast,
-} from '@raidguild/design-system';
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@raidguild/ui';
 import _, { isString } from 'lodash';
+import Link from 'next/link';
 import { ReactElement } from 'react';
 import { FaExternalLinkAlt, FaInfoCircle } from 'react-icons/fa';
+import { toast } from 'sonner';
 
-import ChakraNextLink from './ChakraNextLink';
+import useClipboard from '../hooks/useClipboard';
 
 interface InfoStackProps {
   label: string;
@@ -33,15 +27,13 @@ const InfoStack = ({
   copy,
   truncate = false,
 }: InfoStackProps) => {
-  const copyText = useClipboard(_.isString(details) ? details : '');
-  const toast = useToast();
+  const [copyText, onCopy] = useClipboard();
 
   const handleCopy = () => {
     if (link || !isString(details)) return;
 
-    copyText.onCopy();
-    toast.info({
-      title: 'Copied to clipboard!',
+    onCopy(_.isString(details) ? details : '');
+    toast.info('Copied to clipboard!', {
       // description: details,
       duration: 2000,
     });
@@ -50,52 +42,64 @@ const InfoStack = ({
   const isExternal = link && link.startsWith('http');
 
   return (
-    <Stack justify='center' minWidth='0.5' gap={0.5}>
-      <HStack>
-        <Text fontSize='xs' color='purple.200' textTransform='capitalize'>
-          {label}
-        </Text>
+    <div className='flex items-center min-w-px gap-px'>
+      <div className='flex flex-col items-center gap-1'>
+        <p className='text-sm text-purple-200 capitalize'>{label}</p>
         {tooltip && (
-          <Tooltip label={tooltip}>
-            <span>
-              <Icon as={FaInfoCircle} color='whiteAlpha.400' />
-            </span>
+          <Tooltip>
+            <TooltipTrigger aria-label={tooltip}>
+              <span>
+                <FaInfoCircle className='text-gray-400' />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{tooltip}</p>
+            </TooltipContent>
           </Tooltip>
         )}
-      </HStack>
-      <Tooltip
-        label={
-          link || typeof fullDetails === 'string'
+      </div>
+      <Tooltip>
+        <TooltipTrigger
+          aria-label={
+            link || typeof fullDetails === 'string'
+              ? fullDetails
+              : typeof details === 'string'
+              ? details
+              : ''
+          }
+        >
+          {link && isString(details) ? (
+            <Link href={link} hidden={!link}>
+              <div className='flex items-center gap-1'>
+                <p className='font-mono'>
+                  {details.replace(/https?:\/\//g, '')}
+                </p>
+                {isExternal && <FaExternalLinkAlt className='text-gray-400' />}
+              </div>
+            </Link>
+          ) : (
+            <Button
+              type='button'
+              className={`${
+                copy ? 'cursor-pointer' : ''
+              } line-clamp-1 font-mono text-left`}
+              onClick={() => copy && handleCopy()}
+              onKeyDown={(e) => copy && e.key === 'Enter' && handleCopy()}
+              disabled={!copy}
+            >
+              {details || '-'}
+            </Button>
+          )}
+        </TooltipTrigger>
+        <TooltipContent>
+          {link || typeof fullDetails === 'string'
             ? fullDetails
             : typeof details === 'string'
             ? details
-            : ''
-        }
-        shouldWrapChildren
-      >
-        {link && isString(details) ? (
-          <ChakraNextLink href={link} hidden={!link}>
-            <HStack>
-              <Text fontFamily='spaceMono'>
-                {details.replace(/https?:\/\//g, '')}
-              </Text>
-              {isExternal && (
-                <Icon as={FaExternalLinkAlt} color='whiteAlpha.400' />
-              )}
-            </HStack>
-          </ChakraNextLink>
-        ) : (
-          <Text
-            onClick={copy && handleCopy}
-            _hover={{ cursor: copy ? 'pointer' : 'default' }}
-            noOfLines={1}
-            fontFamily='spaceMono'
-          >
-            {details || '-'}
-          </Text>
-        )}
+            : ''}
+        </TooltipContent>
       </Tooltip>
-    </Stack>
+    </div>
   );
 };
 

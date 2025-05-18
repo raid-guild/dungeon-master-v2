@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import {
   Box,
-  Button,
   Flex,
   HStack,
   Icon,
@@ -13,6 +12,18 @@ import {
   Text,
 } from '@raidguild/design-system';
 import { truncateAddress } from '@raidguild/dm-utils';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@raidguild/ui';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import _ from 'lodash';
 import { CgProfile } from 'react-icons/cg';
@@ -53,22 +64,19 @@ const ConnectWallet = () => {
                 userSelect: 'none',
               },
             })}
+            className='font-texturina'
           >
             {(() => {
               if (!connected) {
                 return (
                   <Button
+                    className='transition-all duration-100 ease-in-out'
                     variant='outline'
-                    transition='all 100ms ease-in-out'
-                    leftIcon={
-                      <Icon as={FiKey} color='primary.500' w='20px' h='20px' />
-                    }
                     onClick={openConnectModal}
                     data-cy='connect-wallet'
                   >
-                    <Text color='whiteAlpha.900' fontFamily='texturina'>
-                      Connect
-                    </Text>
+                    <FiKey className='w-5 h-5 text-primary' />
+                    Connect
                   </Button>
                 );
               }
@@ -82,74 +90,59 @@ const ConnectWallet = () => {
               }
 
               return (
-                <Flex gap={3}>
-                  <Menu
-                    offset={[0, 4]}
-                    placement='bottom-end'
-                    autoSelect={false}
-                  >
-                    <Button
-                      variant='outline'
-                      width='fit'
-                      onClick={openChainModal}
-                    >
-                      <HStack spacing={1} align='center'>
-                        <Image
-                          alt={chain.name ?? 'Chain icon'}
-                          src={chain.iconUrl}
-                          boxSize={chain?.id === 100 ? '20px' : '25px'}
-                        />
-                        <Text
-                          color='whiteAlpha.700'
-                          fontFamily='texturina'
-                          display={{ base: 'none', lg: 'inline-block' }}
-                        >
-                          {chain.name}
-                        </Text>
-                      </HStack>
-                    </Button>
-
-                    <MenuButton as={Button} variant='outline' width='fit'>
-                      <HStack spacing={3}>
-                        <Text color='whiteAlpha.700'>
+                <div className='flex items-center gap-3'>
+                  <Button variant='outline' onClick={openChainModal}>
+                    <Image
+                      alt={chain.name ?? 'Chain icon'}
+                      src={chain.iconUrl}
+                      boxSize={chain?.id === 100 ? '20px' : '25px'}
+                    />
+                    {chain.name}
+                  </Button>
+                  <NavigationMenu>
+                    <NavigationMenuList>
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger>
                           {account.ensName
                             ? account.ensName
                             : truncateAddress(account.address)}
-                        </Text>
-                        <Icon as={FiChevronDown} color='primary.500' />
-                      </HStack>
-                    </MenuButton>
-                    <MenuList minWidth='none'>
-                      <Link href={`/members/${_.toLower(address)}`}>
-                        <MenuItem _hover={{ backgroundColor: 'gray.600' }}>
-                          <HStack>
-                            <Icon as={CgProfile} color='white' />
-                            <Box color='white'>Profile</Box>
-                          </HStack>
-                        </MenuItem>
-                      </Link>
+                        </NavigationMenuTrigger>
 
-                      <MenuItem
-                        onClick={() => openAccountModal()}
-                        _hover={{ backgroundColor: 'gray.600' }}
-                      >
-                        <HStack>
-                          <Icon as={FiKey} color='white' />
-                          <Box color='white'>Wallet</Box>
-                        </HStack>
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() => disconnect()}
-                        _hover={{ backgroundColor: 'gray.600' }}
-                      >
-                        <HStack spacing={2}>
-                          <Icon as={FiXCircle} color='primary.500' />
-                          <Box color='primary.500'>Sign Out</Box>
-                        </HStack>
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Flex>
+                        <NavigationMenuContent>
+                          <ul className='w-[120px]'>
+                            <NavigationMenuLink
+                              className='select-none hover:bg-gray-600'
+                              href={`/members/${_.toLower(address)}`}
+                            >
+                              <div className='flex items-center gap-2'>
+                                <CgProfile className='text-white' />
+                                <p className='text-white'>Profile</p>
+                              </div>
+                            </NavigationMenuLink>
+                            <NavigationMenuLink
+                              className='select-none hover:bg-gray-600'
+                              onClick={() => openAccountModal()}
+                            >
+                              <div className='flex items-center gap-2'>
+                                <FiKey className='text-white' />
+                                <p className='text-white'>Wallet</p>
+                              </div>
+                            </NavigationMenuLink>
+                            <NavigationMenuLink
+                              className='select-none hover:bg-gray-600'
+                              onClick={() => disconnect()}
+                            >
+                              <div className='flex items-center gap-2 text-primary'>
+                                <FiXCircle className='text-white' />
+                                <p className='text-white'>Sign Out</p>
+                              </div>
+                            </NavigationMenuLink>
+                          </ul>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    </NavigationMenuList>
+                  </NavigationMenu>
+                </div>
               );
             })()}
           </div>

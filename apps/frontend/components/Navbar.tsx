@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 import {
   Box,
-  Button,
   Collapse,
   Flex,
   Heading,
@@ -13,18 +12,29 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Tooltip,
   useDisclosure,
 } from '@raidguild/design-system';
+import {
+  Button,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@raidguild/ui';
 import _ from 'lodash';
+import { Search } from 'lucide-react';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { BsCaretDown } from 'react-icons/bs';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { HiSearch } from 'react-icons/hi';
 
 import { useOverlay } from '../contexts/OverlayContext';
-import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
 
 const links = [
@@ -55,65 +65,62 @@ const Navbar = () => {
   const role = _.get(session, 'data.user.role');
 
   return (
-    <Box>
-      <Flex justify='space-between' p={8}>
-        <HStack>
-          <Link href='/' mr={6}>
-            <Heading>🏰</Heading>
+    <>
+      <div className='flex justify-between p-8 font-texturina'>
+        <div className='flex items-center'>
+          <Link className='mr-6 text-xl' href='/'>
+            🏰
           </Link>
-          <Flex display={{ base: 'none', md: 'flex' }}>
+          <div className='hidden md:flex'>
             <DesktopNav role={role} />
-          </Flex>
-        </HStack>
+          </div>
+        </div>
 
-        <Flex align='center'>
-          <Flex
-            cursor='pointer'
-            mx={6}
-            display={{ base: 'none', md: 'flex' }}
-            onClick={() => setOpen(true)}
-          >
-            <Tooltip
-              label='press CMD + K to search'
-              placement='bottom'
-              hasArrow
-            >
-              <span>
-                <Icon as={HiSearch} boxSize={6} />
-              </span>
-            </Tooltip>
-          </Flex>
-          <Flex display={{ base: 'none', md: 'flex' }}>
+        <div className='flex items-center gap-6'>
+          <Tooltip>
+            <TooltipTrigger aria-label='Search Button'>
+              <Button
+                size='icon'
+                variant='ghost'
+                type='button'
+                onClick={() => setOpen(true)}
+              >
+                <Search className='h-6 w-6' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                Press <kbd>CMD</kbd> + <kbd>K</kbd> to search
+              </p>
+            </TooltipContent>
+          </Tooltip>
+          <div className='hidden md:flex'>
             <ConnectWallet />
-          </Flex>
-          <Flex
-            flex={{ base: 1, md: 'auto' }}
-            ml={{ base: -2 }}
-            display={{ base: 'flex', md: 'none' }}
-          >
-            <IconButton
+          </div>
+          <div className='flex flex-1 md:hidden -ml-2'>
+            <Button
+              size='icon'
+              variant='ghost'
               onClick={onToggle}
-              icon={
-                isOpen ? (
-                  <AiOutlineClose width={3} height={3} />
-                ) : (
-                  <GiHamburgerMenu width={5} height={5} />
-                )
-              }
               aria-label='Toggle Navigation'
-            />
-          </Flex>
-        </Flex>
-      </Flex>
+            >
+              isOpen ? (
+              <AiOutlineClose width={3} height={3} />
+              ) : (
+              <GiHamburgerMenu width={5} height={5} />)
+            </Button>
+          </div>
+        </div>
+      </div>
       <Collapse in={isOpen} animateOpacity>
         <MobileNav role={role} />
       </Collapse>
-    </Box>
+    </>
   );
 };
 
 const DesktopNav = ({ role }: { role: string }) => (
-  <HStack align='center' spacing={4}>
+  <div className='flex items-center gap-4'>
     {_.map(links, ({ href, label, role: linkRole, primary }) => {
       if (!role || !primary) return null;
       if (linkRole === 'member' && role !== 'member') return null;
@@ -122,44 +129,43 @@ const DesktopNav = ({ role }: { role: string }) => (
 
       return (
         <Link key={href} href={href}>
-          <Heading size='sm'>{label}</Heading>
+          <h3 className='text-sm'>{label}</h3>
         </Link>
       );
     })}
     {role === 'member' && (
-      <Menu>
-        <MenuButton
-          as={Button}
-          bg='transparent'
-          _hover={{ bg: 'whiteAlpha.300' }}
-          _active={{ bg: 'whiteAlpha.200' }}
-          textTransform='capitalize'
-        >
-          <HStack>
-            <Heading size='sm'>More</Heading>
-            <Icon as={BsCaretDown} />
-          </HStack>
-        </MenuButton>
-        <MenuList>
-          {_.map(links, ({ href, label, primary }) => {
-            if (primary && href !== '/escrow') return null;
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>
+              More
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className='w-[120px]'>
+                {_.map(links, ({ href, label, primary }) => {
+                  if (primary && href !== '/escrow') return null;
 
-            return (
-              <Link href={href} key={href}>
-                <MenuItem>
-                  <Heading size='sm'>{label}</Heading>
-                </MenuItem>
-              </Link>
-            );
-          })}
-        </MenuList>
-      </Menu>
+                  return (
+                    <NavigationMenuLink
+                      className='select-none hover:bg-gray-600'
+                      href={href}
+                      key={href}
+                    >
+                      <h3 className='text-sm'>{label}</h3>
+                    </NavigationMenuLink>
+                  );
+                })}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     )}
-  </HStack>
+  </div>
 );
 
 const MobileNav = ({ role }: { role: string }) => (
-  <Stack p={4} display={{ md: 'none' }} bg='whiteAlpha.200' mb={5}>
+  <div className='p-4 flex flex-col md:hidden bg-white mb-5'>
     {_.map(links, ({ href, label, role: linkRole }) => {
       if (!role) return null;
       if (linkRole === 'member' && role !== 'member') return null;
@@ -168,15 +174,15 @@ const MobileNav = ({ role }: { role: string }) => (
       return <MobileNavItem key={href} href={href} label={label} />;
     })}
     <ConnectWallet />
-  </Stack>
+  </div>
 );
 
 const MobileNavItem = ({ href, label }: NavItem) => (
-  <Stack spacing={4}>
-    <Link key={href} href={href} py={2}>
-      <Heading size='sm'>{label}</Heading>
+  <div className='flex flex-col gap-4'>
+    <Link className='py-2' key={href} href={href}>
+      <h3 className='text-sm'>{label}</h3>
     </Link>
-  </Stack>
+  </div>
 );
 
 export default Navbar;

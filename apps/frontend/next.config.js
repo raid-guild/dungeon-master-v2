@@ -6,13 +6,14 @@ const withNx = require('@nx/next/plugins/with-nx');
  */
 const nextConfig = {
   transpilePackages: [
-    '@raidguild/design-system',
     '@raidguild/dm-graphql',
     '@raidguild/dm-hooks',
     '@raidguild/dm-types',
     '@raidguild/dm-utils',
     '@raidguild/escrow-utils',
     '@raidguild/escrow-gql',
+    '@raidguild/ui',
+    '@raidguild/utils'
   ],
 };
 
