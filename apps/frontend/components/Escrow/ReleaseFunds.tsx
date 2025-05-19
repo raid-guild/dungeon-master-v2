@@ -7,10 +7,8 @@ import {
   useToast,
   VStack,
 } from '@raidguild/design-system';
-import { getInvoice } from '@raidguild/escrow-gql';
-// import { getTxLink } from '@raidguild/dm-utils';
-import { usePollSubgraph, useRelease } from '@raidguild/escrow-hooks';
 import { Invoice, parseTokenAddress } from '@raidguild/escrow-utils';
+import { useRelease } from '@smartinvoicexyz/hooks';
 import { formatUnits } from 'viem';
 import { useChainId } from 'wagmi';
 
@@ -36,41 +34,15 @@ const ReleaseFunds = ({ invoice, balance }: ReleaseFundsProp) => {
 
   const { address, currentMilestone, amounts, token } = invoice;
 
-  const waitForRelease = usePollSubgraph({
-    label: 'waiting for funds to be released',
-    fetchHelper: () => getInvoice(chainId, address),
-    checkResult: (updatedInvoice) => updatedInvoice.released > invoice.released,
-  });
-
   const onSuccess = async () => {
-    await waitForRelease();
     toast.success({ title: 'Funds released successfully' });
   };
 
   const { writeAsync: releaseFunds, isLoading } = useRelease({
-    invoice,
-    onSuccess,
+    invoice: { address },
+    onTxSuccess: onSuccess,
+    toast,
   });
-
-  // const pollSubgraph = async () => {
-  //   let isSubscribed = true;
-
-  //   const interval = setInterval(async () => {
-  //     let inv = await getInvoice(parseInt(chainId), invoice_id);
-
-  //     if (isSubscribed && !!inv) {
-  //       if (
-  //         utils.formatUnits(inv.released, invoice.tokenMetadata.decimals) >
-  //         utils.formatUnits(invoice.released, invoice.tokenMetadata.decimals)
-  //       ) {
-  //         isSubscribed = false;
-  //         clearInterval(interval);
-
-  //         window.location.reload();
-  //       }
-  //     }
-  //   }, 5000);
-  // };
 
   return (
     <VStack w='100%' spacing='1rem'>

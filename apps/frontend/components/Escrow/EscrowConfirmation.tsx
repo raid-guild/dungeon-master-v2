@@ -9,8 +9,18 @@ import {
 } from '@raidguild/design-system';
 import { IRaid } from '@raidguild/dm-types';
 import { chainsMap, commify } from '@raidguild/dm-utils';
-import { useEscrowZap, useRegister } from '@raidguild/escrow-hooks';
-import { GANGGANG_MULTISIG, NETWORK_CONFIG } from '@raidguild/escrow-utils';
+import {
+  GANGGANG_MULTISIG,
+  INVOICE_VERSION,
+  NETWORK_CONFIG,
+  updateRaidInvoice,
+} from '@raidguild/escrow-utils';
+import {
+  useDetailsPin,
+  useEscrowZap,
+  useInvoiceCreate,
+} from '@smartinvoicexyz/hooks';
+import { FormInvoice, InvoiceMetadata } from '@smartinvoicexyz/types';
 import { WriteContractReturnType } from '@wagmi/core';
 import _ from 'lodash';
 import { Dispatch, SetStateAction, useMemo } from 'react';
@@ -53,22 +63,31 @@ const EscrowConfirmation = ({
   } = watch();
   const chainId = useChainId();
 
-  const detailsData = useMemo(() => {
+  const detailsData = useMemo<InvoiceMetadata>(() => {
+    const now = Math.floor(Date.now() / 1000);
     if (raid) {
       return {
-        projectName: raid?.id,
-        projectDescription: '',
-        projectAgreement: [],
-        startDate: Math.floor(Date.now() / 1000),
-        endDate: Math.floor(Date.now() / 1000),
+        version: INVOICE_VERSION,
+        id: _.join([raid?.id, now, INVOICE_VERSION], '-'),
+        title: raid?.id,
+        description: '',
+        documents: [],
+        startDate: now,
+        endDate: now,
+        createdAt: now,
+        milestones: [],
       };
     }
     return {
-      projectName,
-      projectDescription,
-      projectAgreement,
+      version: INVOICE_VERSION,
+      id: _.join([projectName, Date.now() / 1000, INVOICE_VERSION], '-'),
+      title: projectName,
+      description: projectDescription,
+      milestones: [],
+      documents: projectAgreement,
       startDate: Math.floor(Date.parse(startDate) / 1000),
       endDate: Math.floor(Date.parse(endDate) / 1000),
+      createdAt: Math.floor(Date.now() / 1000),
     };
   }, [
     raid,
@@ -81,11 +100,27 @@ const EscrowConfirmation = ({
 
   const canRegisterDirectly = !raidPartySplit && !daoSplit;
 
-  const { writeAsync, isLoading: registerLoading } = useRegister({
-    raidId: _.get(raid, 'id'),
-    escrowForm,
-    detailsData,
+  const { data: details, isLoading: detailsLoading } = useDetailsPin({
+    ...detailsData,
+  });
+
+  const onRegisterSuccess = async (smartInvoiceId: Hex) => {
+    const raidId = _.get(raid, 'id');
+    await updateRaidInvoice(chainId, raidId, smartInvoiceId);
+  };
+  const { writeAsync, isLoading: registerLoading } = useInvoiceCreate({
+    toast,
+    invoiceForm: escrowForm as UseFormReturn<Partial<FormInvoice>>,
+    details,
     enabled: canRegisterDirectly,
+    onTxSuccess: (smartInvoiceId) => onRegisterSuccess(smartInvoiceId),
+    networkConfig: {
+      resolver: _.first(
+        _.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))
+      ) as Hex,
+      token: _.get(NETWORK_CONFIG[chainId], `TOKENS.${token}.address`),
+      tokenDecimals: _.get(NETWORK_CONFIG[chainId], `TOKENS.${token}.decimals`),
+    },
   });
 
   const { writeAsync: writeEscrowZap, isLoading: zapLoading } = useEscrowZap({
@@ -96,9 +131,18 @@ const EscrowConfirmation = ({
     provider: provider || zeroAddress,
     client,
     safetyValveDate,
-    detailsData,
+    details,
     projectTeamSplit: raidPartySplit,
     daoSplit,
+    networkConfig: {
+      tokenAddress: _.get(NETWORK_CONFIG[chainId], `TOKENS.${token}.address`),
+      tokenDecimals: _.get(NETWORK_CONFIG[chainId], `TOKENS.${token}.decimals`),
+      zapAddress: _.get(NETWORK_CONFIG[chainId], 'ZAP_ADDRESS'),
+      resolver: _.first(
+        _.keys(_.get(NETWORK_CONFIG[chainId], 'RESOLVERS'))
+      ) as Hex,
+      daoAddress: _.get(NETWORK_CONFIG[chainId], 'DAO_ADDRESS'),
+    },
     enabled: !canRegisterDirectly,
     onSuccess: (tx: WriteContractReturnType) => setTxHash(tx),
   });
@@ -232,7 +276,7 @@ const EscrowConfirmation = ({
             variant='outline'
             minW='25%'
             mr='.5rem'
-            isDisabled={zapLoading || registerLoading}
+            isDisabled={zapLoading || registerLoading || detailsLoading}
             onClick={backStep}
           >
             Back
@@ -241,7 +285,10 @@ const EscrowConfirmation = ({
             variant='solid'
             w='100%'
             isDisabled={
-              registerLoading || zapLoading || !(writeAsync || writeEscrowZap)
+              registerLoading ||
+              zapLoading ||
+              detailsLoading ||
+              !(writeAsync || writeEscrowZap)
             }
             isLoading={registerLoading || zapLoading}
             onClick={createInvoice}

@@ -6,11 +6,10 @@ import {
   Spinner,
   Text,
   Textarea,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
 import { getTxLink } from '@raidguild/dm-utils';
-// import { getTxLink } from '@raidguild/dm-utils';
-import { useDebounce, useLock } from '@raidguild/escrow-hooks';
 import {
   getResolverInfo,
   getResolverString,
@@ -19,8 +18,12 @@ import {
   NETWORK_CONFIG,
   // uploadDisputeDetails,
 } from '@raidguild/escrow-utils';
+// import { getTxLink } from '@raidguild/dm-utils';
+import { FormLock, useDebounce, useLock } from '@smartinvoicexyz/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { formatUnits, Hex } from 'viem';
 import { useChainId } from 'wagmi';
 
@@ -46,38 +49,50 @@ const LockFunds = ({
 }) => {
   const chainId = useChainId();
   const { resolver, token, resolutionRate } = invoice;
-
+  const toast = useToast();
   const localForm = useForm();
   const { watch, handleSubmit } = localForm;
-
   const fee = formatUnits(
     resolutionRate === 0 ? BigInt(0) : BigInt(balance) / BigInt(resolutionRate),
     invoice.tokenMetadata.decimals
   );
   const feeDisplay = `${fee} ${parseTokenAddress(chainId, token)}`;
 
-  const disputeReason = useDebounce(watch('disputeReason'), 250);
-  const amount = formatUnits(BigInt(balance), invoice.tokenMetadata.decimals);
+  const disputeReason = useDebounce(watch('description'), 250);
+
+  const [txHash, setTxHash] = useState<Hex | undefined>(undefined);
 
   // const onSuccess = () => {
   //   // handle tx success
   //   // mark locked
   // };
 
-  const {
-    writeAsync: lockFunds,
-    writeLoading,
-    txHash,
-  } = useLock({
-    invoice,
-    disputeReason,
-    amount,
+  const queryClient = useQueryClient();
+
+  const onTxSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['invoiceDetails'],
+    });
+  };
+
+  const { writeAsync: lockFunds, isLoading: writeLoading } = useLock({
+    invoice: { address: invoice.address, chainId },
+    localForm: localForm as unknown as UseFormReturn<FormLock>,
+    toast,
+    onTxSuccess,
+    details:
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
   });
 
   const resolverInfo = getResolverInfo(chainId, resolver);
   const resolverDisplayName = isKnownResolver(chainId, resolver)
     ? resolverInfo.name
     : resolver;
+
+  const onLockFunds = async () => {
+    const hash = await lockFunds();
+    setTxHash(hash);
+  };
 
   if (writeLoading) {
     return (
@@ -91,19 +106,6 @@ const LockFunds = ({
         >
           Locking Funds
         </Heading>
-        {txHash && (
-          <Text color='white' textAlign='center' fontSize='sm'>
-            Follow your transaction{' '}
-            <Link
-              href={getTxLink(chainId, txHash)}
-              isExternal
-              color='primary.300'
-              textDecoration='underline'
-            >
-              here
-            </Link>
-          </Text>
-        )}
         <Flex
           w='100%'
           justify='center'
@@ -124,7 +126,7 @@ const LockFunds = ({
       w='100%'
       spacing='1rem'
       as='form'
-      onSubmit={handleSubmit(lockFunds)}
+      onSubmit={handleSubmit(onLockFunds)}
     >
       <Heading
         color='white'
@@ -152,7 +154,7 @@ const LockFunds = ({
       </Text>
 
       <Textarea
-        name='disputeReason'
+        name='description'
         tooltip='Why do you want to lock these funds?'
         label='Dispute Reason'
         placeholder='Dispute Reason'
@@ -188,6 +190,19 @@ const LockFunds = ({
           Learn about {getResolverString(chainId, resolver)} dispute process &
           terms
         </Link>
+      )}
+      {txHash && (
+        <Text color='white' textAlign='center' fontSize='sm'>
+          Follow your transaction{' '}
+          <Link
+            href={getTxLink(chainId, txHash)}
+            isExternal
+            color='primary.300'
+            textDecoration='underline'
+          >
+            here
+          </Link>
+        </Text>
       )}
     </VStack>
   );

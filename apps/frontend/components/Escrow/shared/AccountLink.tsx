@@ -4,7 +4,7 @@ import { NETWORK_CONFIG, safeUrl, splitsLink } from '@raidguild/escrow-utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
 import { Hex } from 'viem';
-import { useChainId, useContractRead, useEnsName } from 'wagmi';
+import { useChainId, useReadContract, useEnsName } from 'wagmi';
 
 type AccountLinkProps = {
   name?: string;
@@ -32,7 +32,7 @@ const AccountLink = ({
 
   const imageUrl = blockies.create({ seed: address }).toDataURL();
 
-  const { data: isSafe } = useContractRead({
+  const { data: isSafe } = useReadContract({
     address,
     abi: [
       {
