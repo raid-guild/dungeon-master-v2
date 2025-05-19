@@ -14,10 +14,10 @@ import {
   Stack,
   Text,
   Tooltip,
+  useToast,
   VStack,
 } from '@raidguild/design-system';
 import { commify, getTxLink } from '@raidguild/dm-utils';
-import { useDeposit } from '@raidguild/escrow-hooks';
 import {
   checkedAtIndex,
   depositedMilestones,
@@ -27,6 +27,8 @@ import {
   parseTokenAddress,
   PAYMENT_TYPES,
 } from '@raidguild/escrow-utils';
+import { useDeposit } from '@smartinvoicexyz/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -47,6 +49,7 @@ const DepositFunds = ({
   const { token, amounts, currentMilestone } = invoice;
   const chainId = useChainId();
   const { address } = useAccount();
+  const toast = useToast();
 
   const TOKEN_DATA = useMemo(
     () => ({
@@ -83,12 +86,30 @@ const DepositFunds = ({
     paymentType?.value === PAYMENT_TYPES.NATIVE ? 18 : tokenBalance?.decimals;
   const hasAmount = balance >= parseUnits(amount, decimals);
 
-  const { handleDeposit, isLoading, isReady } = useDeposit({
-    invoice,
-    amount,
-    decimals,
+  const queryClient = useQueryClient();
+
+  const onTxSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['invoiceDetails'],
+    });
+  };
+
+  const { handleDeposit, isLoading, prepareError } = useDeposit({
+    invoice: {
+      tokenMetadata: {
+        address: invoice.token, // only address is needed
+        name: '',
+        symbol: '',
+        decimals,
+        totalSupply: BigInt(0),
+      },
+      address: invoice.address,
+    },
+    amount: amount && parseUnits(amount, decimals),
     hasAmount, // (+ gas)
     paymentType: paymentType?.value,
+    toast,
+    onTxSuccess,
   });
 
   const depositHandler = async () => {
@@ -280,7 +301,7 @@ const DepositFunds = ({
 
       <Button
         onClick={depositHandler}
-        isDisabled={amount <= 0 || !isReady || !hasAmount}
+        isDisabled={amount <= 0 || isLoading || !hasAmount || !!prepareError}
         isLoading={isLoading}
         textTransform='uppercase'
         variant='solid'

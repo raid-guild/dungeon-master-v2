@@ -22,7 +22,7 @@ import {
   SupportedChainId,
 } from './chains';
 
-const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID || '';
 
 type _transports = Record<SupportedChainId, Transport>;
 
@@ -41,9 +41,9 @@ const transports: _transports = SUPPORTED_CHAINS.reduce(
 
     const alchemyNetwork = alchemyNetworkName[chain.id];
     const alchemyUrl =
-      alchemyNetwork && process.env.NEXT_PUBLIC_RPC_KEY
+      alchemyNetwork && process.env.NEXT_PUBLIC_ALCHEMY_ID
         ? `https://${alchemyNetwork}.g.alchemy.com/v2/${
-            process.env.NEXT_PUBLIC_ALCHEMY_KEY as string
+            process.env.NEXT_PUBLIC_ALCHEMY_ID as string
           }`
         : undefined;
     if (alchemyUrl) list.push(http(alchemyUrl));
