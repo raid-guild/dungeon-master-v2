@@ -1,21 +1,10 @@
-/* eslint-disable no-use-before-define */
-import {
-  Box,
-  Collapse,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Stack,
-  useDisclosure,
-} from '@raidguild/design-system';
 import {
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -27,12 +16,10 @@ import {
   TooltipTrigger,
 } from '@raidguild/ui';
 import _ from 'lodash';
-import { Search } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { AiOutlineClose } from 'react-icons/ai';
-import { BsCaretDown } from 'react-icons/bs';
-import { GiHamburgerMenu } from 'react-icons/gi';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { useOverlay } from '../contexts/OverlayContext';
 import ConnectWallet from './ConnectWallet';
@@ -52,70 +39,64 @@ const links = [
   { href: '/escrow', label: 'Escrow', role: 'client', primary: true },
 ];
 
-interface NavItem {
-  label: string;
-  href: string;
-}
-
 const Navbar = () => {
-  const { isOpen, onToggle } = useDisclosure();
+  const [open, onOpen] = useState(false);
   const { setCommandPallet: setOpen } = useOverlay();
   const session = useSession();
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
 
   const role = _.get(session, 'data.user.role');
 
   return (
-    <>
-      <div className='flex justify-between p-8 font-texturina'>
-        <div className='flex items-center'>
-          <Link className='mr-6 text-xl' href='/'>
-            🏰
-          </Link>
-          <div className='hidden md:flex'>
-            <DesktopNav role={role} />
-          </div>
-        </div>
-
-        <div className='flex items-center gap-6'>
-          <Tooltip>
-            <TooltipTrigger aria-label='Search Button'>
-              <Button
-                size='icon'
-                variant='ghost'
-                type='button'
-                onClick={() => setOpen(true)}
-              >
-                <Search className='h-6 w-6' />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                Press <kbd>CMD</kbd> + <kbd>K</kbd> to search
-              </p>
-            </TooltipContent>
-          </Tooltip>
-          <div className='hidden md:flex'>
-            <ConnectWallet />
-          </div>
-          <div className='flex flex-1 md:hidden -ml-2'>
-            <Button
-              size='icon'
-              variant='ghost'
-              onClick={onToggle}
-              aria-label='Toggle Navigation'
-            >
-              isOpen ? (
-              <AiOutlineClose width={3} height={3} />
-              ) : (
-              <GiHamburgerMenu width={5} height={5} />)
-            </Button>
-          </div>
-        </div>
+    <div className='flex flex-wrap md:flex-nowrap justify-between gap-6 p-8 font-texturina'>
+      <Link className='mr-6 text-xl' href='/'>
+        🏰
+      </Link>
+      <div className='hidden md:flex'>
+        <DesktopNav role={role} />
       </div>
-      <Collapse in={isOpen} animateOpacity>
-        <MobileNav role={role} />
-      </Collapse>
-    </>
+
+      <Tooltip>
+        <TooltipTrigger aria-label='Search Button'>
+          <Button
+            size='icon'
+            variant='ghost'
+            type='button'
+            onClick={() => setOpen(true)}
+          >
+            <Search className='h-6 w-6' />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            Press{' '}
+            <kbd className='pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100'>
+              CMD
+            </kbd>{' '}
+            +{' '}
+            <kbd className='pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100'>
+              K
+            </kbd>{' '}
+            to search
+          </p>
+        </TooltipContent>
+      </Tooltip>
+      <div className='flex md:hidden'>
+        <MobileNav open={open} onOpen={onOpen} role={role} />
+      </div>
+      <ConnectWallet />
+    </div>
   );
 };
 
@@ -137,9 +118,7 @@ const DesktopNav = ({ role }: { role: string }) => (
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>
-              More
-            </NavigationMenuTrigger>
+            <NavigationMenuTrigger>More</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className='w-[120px]'>
                 {_.map(links, ({ href, label, primary }) => {
@@ -164,25 +143,40 @@ const DesktopNav = ({ role }: { role: string }) => (
   </div>
 );
 
-const MobileNav = ({ role }: { role: string }) => (
-  <div className='p-4 flex flex-col md:hidden bg-white mb-5'>
-    {_.map(links, ({ href, label, role: linkRole }) => {
-      if (!role) return null;
-      if (linkRole === 'member' && role !== 'member') return null;
-      // TODO handle user?
+const MobileNav = ({
+  open,
+  onOpen,
+  role,
+}: {
+  open: boolean;
+  onOpen: Dispatch<SetStateAction<boolean>>;
+  role: string;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <Button
+        size='icon'
+        variant='ghost'
+        onClick={() => onOpen(!open)}
+        aria-label='Toggle Navigation'
+      >
+        {open ? <X /> : <Menu />}
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      {_.map(links, ({ href, label, role: linkRole }) => {
+        if (!role) return null;
+        if (linkRole === 'member' && role !== 'member') return null;
+        // TODO handle user?
 
-      return <MobileNavItem key={href} href={href} label={label} />;
-    })}
-    <ConnectWallet />
-  </div>
-);
-
-const MobileNavItem = ({ href, label }: NavItem) => (
-  <div className='flex flex-col gap-4'>
-    <Link className='py-2' key={href} href={href}>
-      <h3 className='text-sm'>{label}</h3>
-    </Link>
-  </div>
+        return (
+          <DropdownMenuItem key={href} asChild>
+            <Link href={href}>{label}</Link>
+          </DropdownMenuItem>
+        );
+      })}
+    </DropdownMenuContent>
+  </DropdownMenu>
 );
 
 export default Navbar;

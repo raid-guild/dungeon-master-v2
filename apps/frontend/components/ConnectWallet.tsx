@@ -1,22 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import {
-  Box,
-  Flex,
-  HStack,
-  Icon,
-  Image,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
-} from '@raidguild/design-system';
 import { truncateAddress } from '@raidguild/dm-utils';
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -26,11 +11,10 @@ import {
 } from '@raidguild/ui';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import _ from 'lodash';
+import Image from 'next/image';
 import { CgProfile } from 'react-icons/cg';
-import { FiChevronDown, FiKey, FiXCircle } from 'react-icons/fi';
+import { FiKey, FiXCircle } from 'react-icons/fi';
 import { useAccount, useDisconnect } from 'wagmi';
-
-import Link from './ChakraNextLink';
 
 const ConnectWallet = () => {
   const { address } = useAccount();
@@ -94,8 +78,10 @@ const ConnectWallet = () => {
                   <Button variant='outline' onClick={openChainModal}>
                     <Image
                       alt={chain.name ?? 'Chain icon'}
-                      src={chain.iconUrl}
-                      boxSize={chain?.id === 100 ? '20px' : '25px'}
+                      src={chain.iconUrl!}
+                      width={chain?.id === 100 ? 20 : 25}
+                      height={chain?.id === 100 ? 20 : 25}
+                      className='rounded-full'
                     />
                     {chain.name}
                   </Button>

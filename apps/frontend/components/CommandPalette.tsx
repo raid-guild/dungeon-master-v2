@@ -1,9 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-nested-ternary */
-// TODO fix
-import 'react-cmdk/dist/cmdk.css';
-
-import { Flex, Spinner } from '@raidguild/design-system';
 import { useSearchResults } from '@raidguild/dm-hooks';
 import {
   CommandDialog,
