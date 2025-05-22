@@ -1,6 +1,6 @@
-import { Box, IconButton } from '@raidguild/design-system';
+import { Button } from '@raidguild/ui';
+import { ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { FiChevronUp } from 'react-icons/fi';
 
 const handleScroll = () => {
   if (window !== null) {
@@ -23,27 +23,18 @@ const ScrollToTopButton = () => {
   }, []);
 
   return (
-    <Box
-      position='fixed'
-      bottom='100px'
-      right={['16px', '84px']}
-      zIndex={1}
-      display={visible ? 'block' : 'none'}
+    <div
+      className={`fixed bottom-20 right-4 z-10 ${visible ? 'block' : 'hidden'}`}
     >
-      <IconButton
+      <Button
         aria-label='Scroll to Top of Page Button'
-        size='lg'
-        fontSize={{ base: 'xl', lg: '2xl' }}
-        borderRadius='9999px'
-        boxShadow='xl'
-        transition='all 100ms ease-in-out transform 250ms ease-in-out'
-        _hover={{
-          transform: 'translateY(-4px)',
-        }}
-        icon={<FiChevronUp />}
+        size='icon'
+        className='text-xl lg:text-2xl rounded-full shadow-xl transition-all duration-250 ease-in-out transform hover:translate-y-[-4px]'
         onClick={handleScroll}
-      />
-    </Box>
+      >
+        <ChevronUp />
+      </Button>
+    </div>
   );
 };
 

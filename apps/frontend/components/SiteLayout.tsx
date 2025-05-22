@@ -1,7 +1,6 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -12,6 +11,7 @@ import CommandPalette from './CommandPalette';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import ScrollToTopButton from './ScrollToTopButton';
+import Spinner from './Spinner';
 
 interface SiteLayoutProps {
   children: ReactNode;
@@ -37,37 +37,18 @@ const GeneralLayout = ({
   showScrollToTopButton,
   children,
 }: GeneralLayoutProps) => (
-  <Flex
-    direction='column'
-    overflowX='hidden'
-    margin='0 auto'
-    minHeight={minHeight || '100vh'}
-    minWidth={['100%', null, null, '100vw']}
-    position='relative'
-    background='gray.700'
-  >
+  <div className='flex flex-col overflow-x-hidden min-h-[100vh] min-w-[100%] relative bg-gray-700'>
     <Navbar />
     <CommandPalette />
-    <Flex
-      direction='column'
-      justify='flex-start'
-      flex='1'
-      align='center'
-      minHeight={['100vh', '100vh', '0', '600px']}
-    >
-      <Stack
-        spacing={8}
-        align='center'
-        w={['90%', null, null, '80%']}
-        mx='auto'
-      >
+    <div className='flex flex-1 flex-col justify-start items-center min-h-[100vh] min-w-[100%]'>
+      <div className='flex flex-col space-y-8 w-[90%] md:w-[80%] mx-auto'>
         {subheader}
         {children}
-      </Stack>
-    </Flex>
+      </div>
+    </div>
     {showScrollToTopButton && <ScrollToTopButton />}
     <Footer />
-  </Flex>
+  </div>
 );
 
 const SiteLayout = ({
@@ -142,9 +123,9 @@ const SiteLayout = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex w='100%' justify='center' alignItems='center' py={60}>
-          <Spinner size='xl' />
-        </Flex>
+        <div className='flex w-full justify-center items-center py-15'>
+          <Spinner />
+        </div>
       </GeneralLayout>
     );
   }
@@ -156,12 +137,12 @@ const SiteLayout = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex w='100%' justify='center' pt={40}>
-          <Heading size='md'>
+        <div className='flex w-full justify-center items-center py-10'>
+          <h1 className='text-xl font-uncial'>
             Error loading data
             {typeof error === 'object' && `: ${error.message}`}
-          </Heading>
-        </Flex>
+          </h1>
+        </div>
       </GeneralLayout>
     );
   }
@@ -172,9 +153,11 @@ const SiteLayout = ({
       subheader={subheader}
       minHeight={minHeight}
     >
-      <Flex justify='center' align='center' minH='50vh'>
-        <Heading size='md'>{emptyDataPhrase || 'No raids found!'}</Heading>
-      </Flex>
+      <div className='flex justify-center items-center min-h-[50vh]'>
+        <h1 className='text-xl font-uncial'>
+          {emptyDataPhrase || 'No raids found!'}
+        </h1>
+      </div>
     </GeneralLayout>
   ) : (
     <GeneralLayout

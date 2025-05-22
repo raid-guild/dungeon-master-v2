@@ -1,15 +1,9 @@
 import {
   Button,
-  Card,
   Flex,
   Heading,
   HStack,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   Text,
 } from '@raidguild/design-system';
 import {
@@ -18,6 +12,14 @@ import {
   usePagination,
 } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
+import {
+  Card,
+  CardContent,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@raidguild/ui';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -82,50 +84,34 @@ const Home = () => {
       <NextSeo title='Dashboard' />
 
       <SiteLayout isLoading={!data}>
-        <Stack
-          gap={10}
-          maxW='1440px'
-          w='100%'
-          alignItems='center'
-          justifyContent='center'
-        >
-          <Flex
-            direction={['column', null, null, 'row']}
-            justify='space-between'
-            w='100%'
-            gap={4}
-          >
-            <Card variant='filled' w='full' h='650px' p={2}>
-              <Tabs w='full' variant='default' h='full'>
-                <TabList>
-                  <Tab>
-                    <Text fontSize='xl'>Active Raids</Text>
-                  </Tab>
+        <div className='flex flex-col gap-10 w-full max-w-1440 items-center justify-center'>
+          <div className='flex items-center gap-4 justify-between w-full'>
+            <Card className='w-full h-[650px]'>
+              <CardContent>
+                <Tabs className='w-full h-full' defaultValue='active'>
+                  <TabsList className='grid w-full grid-cols-2'>
+                    <TabsTrigger value='active'>Active Raids</TabsTrigger>
+                    <TabsTrigger value='past'>Past Raids</TabsTrigger>
+                  </TabsList>
 
-                  <Tab>
-                    <Text fontSize='xl'>Past Raids</Text>
-                  </Tab>
-                </TabList>
-
-                <TabPanels h='full'>
-                  <TabPanel h='95%'>
-                    <Flex direction='column' justify='space-between'>
-                      <Stack>
+                  <TabsContent value='active'>
+                    <div className='flex flex-col justify-between'>
+                      <div className='flex flex-col gap-4'>
                         {!_.isEmpty(_.get(data, 'myRaids.active')) ? (
                           _.map(currentActiveRaids, (raid: IRaid) => (
                             <MiniRaidCard key={raid.id} raid={raid} />
                           ))
                         ) : (
-                          <Flex pt={10} justify='center'>
-                            <Heading fontFamily='spaceMono' size='sm'>
+                          <div className='flex pt-10 justify-center '>
+                            <h1 className='font-mono text-sm'>
                               No Active Raids
-                            </Heading>
-                          </Flex>
+                            </h1>
+                          </div>
                         )}
-                      </Stack>
+                      </div>
 
                       {totalActiveRaidsPages > 1 && (
-                        <HStack>
+                        <div className='flex items-center gap-2'>
                           {[...Array(totalActiveRaidsPages).keys()].map(
                             (page) => (
                               <Button
@@ -141,24 +127,24 @@ const Home = () => {
                               </Button>
                             )
                           )}
-                        </HStack>
+                        </div>
                       )}
-                    </Flex>
-                  </TabPanel>
+                    </div>
+                  </TabsContent>
 
-                  <TabPanel h='95%'>
-                    <Flex direction='column' justify='space-between' h='full'>
-                      <Stack>
+                  <TabsContent value='past'>
+                    <div className='flex flex-col justify-between h-full'>
+                      <div className='flex flex-col gap-4'>
                         {!_.isEmpty(_.get(data, 'myRaids.past')) ? (
                           _.map(currentPastRaids, (raid: IRaid) => (
                             <MiniRaidCard key={raid.id} raid={raid} />
                           ))
                         ) : (
-                          <Heading>No Past Raids</Heading>
+                          <h1>No Past Raids</h1>
                         )}
-                      </Stack>
+                      </div>
                       {totalPastRaidsPages > 1 && (
-                        <HStack>
+                        <div className='flex items-center gap-2'>
                           {[...Array(totalPastRaidsPages).keys()].map(
                             (page) => (
                               <Button
@@ -174,12 +160,12 @@ const Home = () => {
                               </Button>
                             )
                           )}
-                        </HStack>
+                        </div>
                       )}
-                    </Flex>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
             </Card>
 
             <MemberDetailsCard
@@ -189,22 +175,20 @@ const Home = () => {
               minHeight='650px'
               showHeader
             />
-          </Flex>
+          </div>
 
-          <Card variant='filled' w='100%' p={2}>
-            <Tabs w='100%' variant='default'>
-              <TabList>
-                <Tab>
-                  <Text fontSize='xl'>Pending Consultations</Text>
-                </Tab>
-                <Tab>
-                  <Text fontSize='xl'>Recent Raids</Text>
-                </Tab>
-              </TabList>
+          <Card className='w-full'>
+            <CardContent>
+              <Tabs className='w-full' defaultValue='pending'>
+                <TabsList className='grid w-full grid-cols-2'>
+                  <TabsTrigger value='pending'>
+                    Pending Consultations
+                  </TabsTrigger>
+                  <TabsTrigger value='recent'>Recent Raids</TabsTrigger>
+                </TabsList>
 
-              <TabPanels>
-                <TabPanel>
-                  <Stack spacing={4}>
+                <TabsContent value='pending'>
+                  <div className='flex flex-col space-y-4'>
                     {!_.isEmpty(_.get(data, 'newConsultations')) ? (
                       _.map(
                         currentNewConsultations,
@@ -217,15 +201,15 @@ const Home = () => {
                         )
                       )
                     ) : (
-                      <Flex justify='center' pt={10}>
-                        <Heading fontFamily='spaceMono' size='sm'>
+                      <div className='flex justify-center pt-10'>
+                        <h1 className='font-mono text-sm'>
                           No pending consultations
-                        </Heading>
-                      </Flex>
+                        </h1>
+                      </div>
                     )}
 
                     {totalNewconsutlationsPages > 1 && (
-                      <HStack>
+                      <div className='flex items-center gap-2'>
                         {[...Array(totalNewconsutlationsPages).keys()].map(
                           (page) => (
                             <Button
@@ -241,18 +225,18 @@ const Home = () => {
                             </Button>
                           )
                         )}
-                      </HStack>
+                      </div>
                     )}
-                  </Stack>
-                </TabPanel>
-                <TabPanel>
-                  <Stack spacing={4}>
+                  </div>
+                </TabsContent>
+                <TabsContent value='recent'>
+                  <div className='flex flex-col space-y-4'>
                     {_.map(currentNewRaids, (raid: IRaid) => (
                       <DashboardRaidCard key={raid.id} raid={raid} newRaid />
                     ))}
 
                     {totalNewRaidsPages > 1 && (
-                      <HStack>
+                      <div className='flex items-center gap-2'>
                         {[...Array(totalNewRaidsPages).keys()].map((page) => (
                           <Button
                             key={page}
@@ -264,14 +248,14 @@ const Home = () => {
                             {page + 1}
                           </Button>
                         ))}
-                      </HStack>
+                      </div>
                     )}
-                  </Stack>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
           </Card>
-        </Stack>
+        </div>
       </SiteLayout>
     </>
   );

@@ -1,13 +1,9 @@
-import {
-  BuiltByRaidGuild,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  useMediaQuery,
-} from '@raidguild/design-system';
 import _ from 'lodash';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+
+import useMediaQuery from '../hooks/useMediaQuery';
+import RaidGuild from './icons/RaidGuild';
 
 const links = [
   // { label: 'Consultation Queue', link: 'https://www.raidguild.org/hire/1' },
@@ -22,22 +18,43 @@ const links = [
 ];
 
 const Footer = () => {
-  const [upTo780] = useMediaQuery('(max-width: 780px)');
+  const matches = useMediaQuery('(max-width: 780px)');
   const { data: session } = useSession();
 
   const filteredLinks = !session ? _.reject(links, ['type', 'member']) : links;
 
   return (
-    <Flex justify='space-around' mb='50px' mt='200px'>
-      {!upTo780 ? <BuiltByRaidGuild /> : <Heading size='sm'>RaidGuild</Heading>}
-      <Stack>
+    <div className='flex w-full items-center justify-around mb-20 mt-40'>
+      {!matches ? (
+        <div className='my-6 mr-48'>
+          <Link
+            className='flex flex-col items-center justify-center gap-1.5'
+            href='https://raidguild.org'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <h1 className='font-uncial text-xl font-semibold text-white'>
+              Brought to you by:
+            </h1>
+            <RaidGuild className='text-primary h-14 w-50' />
+          </Link>
+        </div>
+      ) : (
+        <h1 className='text-sm'>RaidGuild</h1>
+      )}
+      <div className='flex flex-col'>
         {_.map(filteredLinks, (link) => (
-          <Link href={link.link} isExternal key={link.link}>
+          <Link
+            className='text-sm text-white hover:underline'
+            href={link.link}
+            target='_blank'
+            key={link.link}
+          >
             {link.label}
           </Link>
         ))}
-      </Stack>
-    </Flex>
+      </div>
+    </div>
   );
 };
 

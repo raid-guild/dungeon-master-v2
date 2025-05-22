@@ -3,7 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
   NavigationMenu,
   NavigationMenuContent,
@@ -59,14 +58,14 @@ const Navbar = () => {
   const role = _.get(session, 'data.user.role');
 
   return (
-    <div className='flex flex-wrap md:flex-nowrap justify-between gap-6 p-8 font-texturina'>
+    <div className='flex flex-wrap md:flex-nowrap gap-6 p-8 font-texturina'>
       <Link className='mr-6 text-xl' href='/'>
         🏰
       </Link>
       <div className='hidden md:flex'>
         <DesktopNav role={role} />
       </div>
-
+      <div className='flex flex-1' />
       <Tooltip>
         <TooltipTrigger aria-label='Search Button'>
           <Button
