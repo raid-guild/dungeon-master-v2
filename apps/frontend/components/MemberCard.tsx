@@ -1,18 +1,13 @@
 import {
-  Badge,
-  Button,
-  Card,
   Divider,
   Flex,
   Heading,
   HStack,
-  Link as ChakraLink,
   LinkBox,
   LinkOverlay,
   RoleBadge,
   Stack,
   Text,
-  Tooltip,
   useClipboard,
   VStack,
 } from '@raidguild/design-system';
@@ -22,6 +17,17 @@ import {
   GUILD_CLASS_ICON,
   truncateAddress,
 } from '@raidguild/dm-utils';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Separator,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@raidguild/ui';
 import _ from 'lodash';
 import { ReactElement, useEffect } from 'react';
 import {
@@ -53,23 +59,24 @@ const SocialButton = ({
   tooltip: string;
   onClick?: () => void;
 }) => (
-  <Tooltip label={tooltip} size='sm' hasArrow>
-    <Button
-      as={ChakraLink}
-      variant='ghost'
-      size='xs'
-      marginX={1}
-      marginTop={1}
-      zIndex={2}
-      leftIcon={icon}
-      target='_blank'
-      rel='noreferrer noopener'
-      href={href}
-      onClick={onClick}
-      color='primary.300'
-    >
-      {label}
-    </Button>
+  <Tooltip>
+    <TooltipTrigger>
+      <Button
+        className='text-primary-300 hover:text-primary-400'
+        asChild
+        variant='link'
+        size='sm'
+        onClick={onClick}
+      >
+        <Link href={href} target='_blank' rel='noreferrer noopener'>
+          {icon}
+          {label}
+        </Link>
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{tooltip}</p>
+    </TooltipContent>
   </Tooltip>
 );
 
@@ -158,79 +165,56 @@ const MemberCard = ({ application, member }: MemberProps) => {
 
   return (
     <LinkBox h='100%'>
-      <Card
-        variant='withHeader'
-        minH='350px'
-        h='100%'
-        heading={
-          <LinkOverlay as={Link} href={link}>
-            <HStack
-              spacing={4}
-              alignItems='center'
-              justifyContent='space-between'
-              width='100%'
-            >
-              <Heading
-                color='white'
-                as='h3'
-                fontSize='2xl'
-                transition='all ease-in-out .25s'
-                _hover={{ cursor: 'pointer', color: 'raid' }}
-              >
+      <Card className='min-h-[350px] h-full w-full'>
+        <CardHeader>
+          <Link href={link}>
+            <div className='flex justify-between items-center w-full'>
+              <h3 className='text-white text-2xl transition-all ease-in-out .25s hover:cursor-pointer hover:text-raid'>
                 {_.get(member, 'name', _.get(application, 'name'))}
-              </Heading>
-              <VStack align='end'>
+              </h3>
+              <div className='flex flex-col justify-end'>
                 {_.get(member, 'name') && (
-                  <Badge background='blackAlpha' fontSize='sm'>
+                  <Badge className='text-sm'>
                     {isRaiding === true ? '⚔️ Raiding' : ' ⛺️ Not Raiding'}
                   </Badge>
                 )}
-                <Badge
-                  marginX={1}
-                  marginBottom={1}
-                  color='raid'
-                  bgColor='gray.700'
-                >
-                  {memberType}
-                </Badge>
-              </VStack>
-            </HStack>
-          </LinkOverlay>
-        }
-        width='100%'
-      >
-        <Flex
-          height='100%'
-          align='stretch'
-          width='100%'
-          direction='column'
-          justify='space-between'
-        >
-          <RoleListDivider member={member} />
-          <Stack spacing={4}>
-            <Divider paddingTop={2} width='100%' alignSelf='center' />
-            <Text size='md' maxW='900px'>
-              {_.truncate(_.get(application, 'description'), { length: 250 }) ||
-                _.truncate(_.get(application, 'introduction'), { length: 250 })}
-            </Text>
-          </Stack>
-          <Flex wrap='wrap' width='100%' maxWidth='100%'>
-            {_.map(
-              clearNonObjects(socials),
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ({ href, icon, label, tooltip, onClick }: any, i: number) => (
-                <SocialButton
-                  key={`${label}-${href}-${i}`}
-                  href={href}
-                  icon={icon}
-                  label={label}
-                  tooltip={tooltip}
-                  onClick={onClick}
-                />
-              )
-            )}
-          </Flex>
-        </Flex>
+                <Badge className='mx-1 mb-1 bg-gray-700'>{memberType}</Badge>
+              </div>
+            </div>
+          </Link>
+        </CardHeader>
+        <CardContent>
+          <div className='h-full w-full flex flex-col justify-between'>
+            <RoleListDivider member={member} />
+            <div className='flex flex-col gap-4'>
+              <Separator className='mt-2 w-full self-center' />
+              <p className='text-md max-w-[900px]'>
+                {_.truncate(_.get(application, 'description'), {
+                  length: 250,
+                }) ||
+                  _.truncate(_.get(application, 'introduction'), {
+                    length: 250,
+                  })}
+              </p>
+            </div>
+            <div className='flex flex-wrap w-full max-w-full'>
+              {_.map(
+                clearNonObjects(socials),
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ({ href, icon, label, tooltip, onClick }: any, i: number) => (
+                  <SocialButton
+                    key={`${label}-${href}-${i}`}
+                    href={href}
+                    icon={icon}
+                    label={label}
+                    tooltip={tooltip}
+                    onClick={onClick}
+                  />
+                )
+              )}
+            </div>
+          </div>
+        </CardContent>
       </Card>
     </LinkBox>
   );

@@ -8,6 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@raidguild/ui';
+import { cn } from '@raidguild/utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -15,13 +16,13 @@ import { useEnsAvatar, useEnsName } from 'wagmi';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
-  size?: 'sm' | 'md' | 'lg' | number;
+  classNames?: string;
   outlineColor?: string;
 };
 
 const MemberAvatar = ({
   member,
-  size = 8,
+  classNames = '',
   outlineColor,
 }: MemberAvatarProps) => {
   const address = member?.ethAddress;
@@ -75,7 +76,7 @@ const MemberAvatar = ({
   return (
     <Tooltip>
       <TooltipTrigger>
-        <Avatar className={`size-${size}`}>
+        <Avatar className={cn(classNames)}>
           <AvatarImage src={finalAvatar || blockiesAvatar} />
           <AvatarFallback>{name.charAt(0)}</AvatarFallback>
         </Avatar>

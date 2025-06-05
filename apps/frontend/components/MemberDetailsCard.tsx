@@ -1,16 +1,3 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  Link as ChakraLink,
-  Stack,
-  Text,
-  useClipboard,
-  VStack,
-} from '@raidguild/design-system';
 import { IApplication, IMember } from '@raidguild/dm-types';
 import { SKILLS_DISPLAY, truncateAddress } from '@raidguild/dm-utils';
 import {
@@ -19,18 +6,21 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Separator,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@raidguild/ui';
 import { cn } from '@raidguild/utils';
 import _ from 'lodash';
+import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { FaDiscord, FaEthereum, FaGithub, FaTwitter } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 import { useOverlay } from '../contexts/OverlayContext';
+import useClipboard from '../hooks/useClipboard';
 import Description from './Description';
 import MemberAvatar from './MemberAvatar';
 import UpdateMemberForm from './MemberUpdateForm';
@@ -53,36 +43,32 @@ const MemberDetailsCard = ({
   width,
   minHeight,
 }: MemberProps) => {
-  const copyDiscord = useClipboard(
-    _.get(
-      member,
-      'contactInfo.discord',
-      _.get(application, 'contactInfo.discord')
-    )
-  );
-  const copyEth = useClipboard(
-    _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
-  );
+  const [discordCopy, onDiscordCopy] = useClipboard();
+  const [ethCopy, onEthCopy] = useClipboard();
 
   const copyAndNotify = (value: string) => {
     if (value === 'discord') {
-      copyDiscord.onCopy();
+      onDiscordCopy(
+        _.get(
+          member,
+          'contactInfo.discord',
+          _.get(application, 'contactInfo.discord')
+        )
+      );
       toast.success('Copied Discord username to clipboard');
     } else if (value === 'eth') {
-      copyEth.onCopy();
+      onEthCopy(_.get(member, 'ethAddress', _.get(application, 'ethAddress')));
       toast.success('Copied ETH address to clipboard');
     }
   };
 
   useEffect(() => {
-    copyDiscord.setValue(
+    onDiscordCopy(
       _.get(member, 'contactInfo.discord') ??
         _.get(application, 'contactInfo.discord')
     );
 
-    copyEth.setValue(
-      _.get(member, 'ethAddress') ?? _.get(application, 'ethAddress')
-    );
+    onEthCopy(_.get(member, 'ethAddress') ?? _.get(application, 'ethAddress'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [member, application]);
 
@@ -107,7 +93,7 @@ const MemberDetailsCard = ({
         'contactInfo.github',
         _.get(application, 'contactInfo.github')
       ),
-      icon: FaGithub,
+      icon: <FaGithub />,
     },
     _.get(
       member,
@@ -129,7 +115,7 @@ const MemberDetailsCard = ({
         'contactInfo.twitter',
         _.get(application, 'contactInfo.twitter')
       ),
-      icon: FaTwitter,
+      icon: <FaTwitter />,
     },
     _.get(
       member,
@@ -146,7 +132,7 @@ const MemberDetailsCard = ({
         'contactInfo.discord',
         _.get(application, 'contactInfo.discord')
       ),
-      icon: FaDiscord,
+      icon: <FaDiscord />,
       onClick: () => copyAndNotify('discord'),
     },
     ((_.get(member, 'ethAddress', _.get(application, 'ethAddress')) !== '0x' &&
@@ -158,7 +144,7 @@ const MemberDetailsCard = ({
         truncateAddress(
           _.get(member, 'ethAddress', _.get(application, 'ethAddress'))
         ),
-      icon: FaEthereum,
+      icon: <FaEthereum />,
       onClick: () => copyAndNotify('eth'),
     },
   ].filter((x) => x);
@@ -224,19 +210,19 @@ const MemberDetailsCard = ({
       >
         {showHeader && (
           <CardHeader>
-            <div className='flex w-full space-between'>
-              <MemberAvatar
-                member={member}
-                size={16}
-                outlineColor='primary.500'
-              />
-              <div className='flex flex-col self-end'>
+            <div className='flex w-full justify-between'>
+              <MemberAvatar classNames='w-12 h-12' member={member} />
+              <div className='flex flex-col items-center justify-center'>
                 <h1 className='text-lg text-white'>
                   {_.get(member, 'name', _.get(application, 'name'))}
                 </h1>
                 <Tooltip>
                   <TooltipTrigger>
-                    <Button type='button' onClick={() => copyAndNotify('eth')}>
+                    <Button
+                      variant='link'
+                      type='button'
+                      onClick={() => copyAndNotify('eth')}
+                    >
                       {truncateAddress(
                         _.get(
                           member,
@@ -254,8 +240,8 @@ const MemberDetailsCard = ({
               </div>
             </div>
 
-            <div className='flex full items-center'>
-              <Button className='w-full'>
+            <div className='flex w-full items-center justify-evenly gap-2'>
+              <Button type='button' className='flex-1'>
                 {_.get(member, 'isRaiding') === true
                   ? 'RAIDING'
                   : 'NOT RAIDING'}
@@ -271,7 +257,7 @@ const MemberDetailsCard = ({
           </CardHeader>
         )}
         <CardContent>
-          <div className='flex flex-col w-full items-center justify-start space-y-6'>
+          <div className='flex flex-col w-full items-start space-y-6'>
             {_.map(skillBlocks, (block) => (
               <div className='flex flex-col flex-1 gap-2' key={block.label}>
                 <p className='text-purple-400 font-texturina uppercase text-xs'>
@@ -293,7 +279,7 @@ const MemberDetailsCard = ({
             {(_.get(member, 'description') ||
               _.get(application, 'introduction')) && (
               <>
-                <Divider color='gray.200' />
+                <Separator className='my-2' />
                 <Description
                   description={
                     _.get(member, 'description') ||
@@ -303,34 +289,39 @@ const MemberDetailsCard = ({
               </>
             )}
 
-            <Divider my={2} />
+            <Separator className='my-2' />
 
-            <Flex gap={4} direction='row' wrap='wrap'>
+            <div className='flex flex-wrap gap-4'>
               {_.map(memberLinks, (link) => (
-                <Tooltip
-                  label={_.get(link, 'tooltip')}
-                  size='sm'
-                  key={`${_.get(link, 'href')}-${_.get(link, 'label')}`}
-                >
-                  <Button
-                    as={ChakraLink}
-                    variant='outline'
-                    size='xs'
-                    color='white'
-                    p={3}
-                    leftIcon={<Icon as={_.get(link, 'icon')} />}
-                    target='_blank'
-                    rel='noreferrer noopener'
-                    href={_.get(link, 'href')}
-                    onClick={_.get(link, 'onClick')}
-                  >
-                    <Text fontFamily='texturina'>
-                      {_.capitalize(_.get(link, 'label'))}
-                    </Text>
-                  </Button>
+                <Tooltip key={`${_.get(link, 'href')}-${_.get(link, 'label')}`}>
+                  <TooltipTrigger>
+                    <Button
+                      asChild
+                      variant='outline'
+                      size='sm'
+                      onClick={_.get(link, 'onClick')}
+                    >
+                      {_.get(link, 'href') ? (
+                        <Link
+                          href={_.get(link, 'href')}
+                          target='_blank'
+                          rel='noreferrer noopener'
+                        >
+                          {_.get(link, 'icon')}
+                          {_.capitalize(_.get(link, 'label'))}
+                        </Link>
+                      ) : (
+                        <div className='flex items-center gap-2'>
+                          {_.get(link, 'icon')}
+                          {_.capitalize(_.get(link, 'label'))}
+                        </div>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{_.get(link, 'tooltip')}</TooltipContent>
                 </Tooltip>
               ))}
-            </Flex>
+            </div>
           </div>
         </CardContent>
       </Card>

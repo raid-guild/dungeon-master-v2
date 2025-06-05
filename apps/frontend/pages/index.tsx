@@ -88,13 +88,13 @@ const Home = () => {
           <div className='flex items-center gap-4 justify-between w-full'>
             <Card className='w-full h-[650px]'>
               <CardContent>
-                <Tabs className='w-full h-full' defaultValue='active'>
+                <Tabs defaultValue='active'>
                   <TabsList className='grid w-full grid-cols-2'>
                     <TabsTrigger value='active'>Active Raids</TabsTrigger>
                     <TabsTrigger value='past'>Past Raids</TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value='active'>
+                  <TabsContent className='pt-3' value='active'>
                     <div className='flex flex-col justify-between'>
                       <div className='flex flex-col gap-4'>
                         {!_.isEmpty(_.get(data, 'myRaids.active')) ? (
@@ -171,8 +171,7 @@ const Home = () => {
             <MemberDetailsCard
               member={member}
               application={_.get(member, 'application')}
-              width='500px'
-              minHeight='650px'
+              height='650px'
               showHeader
             />
           </div>

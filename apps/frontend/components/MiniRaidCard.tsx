@@ -1,6 +1,6 @@
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import { displayDate } from '@raidguild/dm-utils';
-import { Card } from '@raidguild/ui';
+import { Card, CardContent } from '@raidguild/ui';
 import _ from 'lodash';
 import Link from 'next/link';
 
@@ -40,9 +40,9 @@ const MiniRaidCard = ({
       }
     >
       <Card className='w-full min-h-[100px]'>
-        <div className='flex items-center w-full h-full'>
-          <div className='flex flex-col items-center space-x-2 w-full gap-4'>
-            <h1 className='text-white text-sm md:text-md line-clamp-1'>
+        <CardContent className='font-texturina'>
+          <div className='flex flex-col items-start space-x-2 w-full gap-4'>
+            <h1 className='text-white text-sm md:text-md lg:text-lg line-clamp-1'>
               {_.get(raid, 'name', _.get(consultation, 'name'))}
             </h1>
             <div className='flex items-center justify-between w-full'>
@@ -56,12 +56,12 @@ const MiniRaidCard = ({
                   {specLink && <LinkExternal href={specLink} label='Specs' />}
                 </div>
               </div>
-              <p className='text-sm text-gray-700'>
+              <p className='text-sm text-gray-500'>
                 Updated: {displayDate(_.get(raid, 'updatedAt'))}
               </p>
             </div>
           </div>
-        </div>
+        </CardContent>
       </Card>
     </Link>
   );
