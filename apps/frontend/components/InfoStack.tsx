@@ -1,5 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@raidguild/ui';
+import { cn } from '@raidguild/utils';
 import _, { isString } from 'lodash';
 import Link from 'next/link';
 import { ReactElement } from 'react';
@@ -43,7 +44,7 @@ const InfoStack = ({
 
   return (
     <div className='flex items-center min-w-px gap-px'>
-      <div className='flex flex-col items-center gap-1'>
+      <div className='flex flex-col items-start gap-1'>
         <p className='text-sm text-purple-200 capitalize'>{label}</p>
         {tooltip && (
           <Tooltip>
@@ -57,48 +58,52 @@ const InfoStack = ({
             </TooltipContent>
           </Tooltip>
         )}
-      </div>
-      <Tooltip>
-        <TooltipTrigger
-          aria-label={
-            link || typeof fullDetails === 'string'
+        <Tooltip>
+          <TooltipTrigger
+            aria-label={
+              link || typeof fullDetails === 'string'
+                ? fullDetails
+                : typeof details === 'string'
+                ? details
+                : ''
+            }
+          >
+            {link && isString(details) ? (
+              <Link href={link} hidden={!link}>
+                <div className='flex items-center gap-1'>
+                  <p className='font-mono'>
+                    {details.replace(/https?:\/\//g, '')}
+                  </p>
+                  {isExternal && (
+                    <FaExternalLinkAlt className='text-gray-400' />
+                  )}
+                </div>
+              </Link>
+            ) : (
+              <Button
+                type='button'
+                variant='link'
+                className={cn(
+                  copy ? 'cursor-pointer' : '',
+                  'line-clamp-1 font-mono text-left p-0'
+                )}
+                onClick={() => copy && handleCopy()}
+                onKeyDown={(e) => copy && e.key === 'Enter' && handleCopy()}
+                disabled={!copy}
+              >
+                {details || '-'}
+              </Button>
+            )}
+          </TooltipTrigger>
+          <TooltipContent>
+            {link || typeof fullDetails === 'string'
               ? fullDetails
               : typeof details === 'string'
               ? details
-              : ''
-          }
-        >
-          {link && isString(details) ? (
-            <Link href={link} hidden={!link}>
-              <div className='flex items-center gap-1'>
-                <p className='font-mono'>
-                  {details.replace(/https?:\/\//g, '')}
-                </p>
-                {isExternal && <FaExternalLinkAlt className='text-gray-400' />}
-              </div>
-            </Link>
-          ) : (
-            <Button
-              type='button'
-              className={`${
-                copy ? 'cursor-pointer' : ''
-              } line-clamp-1 font-mono text-left`}
-              onClick={() => copy && handleCopy()}
-              onKeyDown={(e) => copy && e.key === 'Enter' && handleCopy()}
-              disabled={!copy}
-            >
-              {details || '-'}
-            </Button>
-          )}
-        </TooltipTrigger>
-        <TooltipContent>
-          {link || typeof fullDetails === 'string'
-            ? fullDetails
-            : typeof details === 'string'
-            ? details
-            : ''}
-        </TooltipContent>
-      </Tooltip>
+              : ''}
+          </TooltipContent>
+        </Tooltip>
+      </div>
     </div>
   );
 };

@@ -12,6 +12,7 @@ import {
   Avatar,
   Button,
   Card,
+  CardContent,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -94,78 +95,78 @@ const DashboardRaidCard = ({
 
   return (
     <Card className='w-full min-h-[100px]'>
-      <div className='flex items-center w-full h-full'>
-        <Link
-          href={
-            raid
-              ? `/raids/${_.get(raid, 'id')}`
-              : `/consultations/${_.get(consultation, 'id')}`
-          }
-        >
-          <div className='flex flex-col gap-4 w-full space-y-2'>
-            <h1 className={`${smallHeader ? 'text-sm' : 'text-md'}`}>
-              {_.get(raid, 'name', _.get(consultation, 'name'))}
-            </h1>
-            <div className='flex items-center gap-3'>
-              {_.get(raid, 'raidStatus.raidStatus') && (
-                <RaidStatusBadge
-                  status={_.get(raid, 'raidStatus.raidStatus')}
-                />
-              )}
-              <div className='z-50'>
-                {specLink && <LinkExternal href={specLink} label='Specs' />}
+      <CardContent>
+        <div className='flex items-center justify-between w-full h-full'>
+          <Link
+            href={
+              raid
+                ? `/raids/${_.get(raid, 'id')}`
+                : `/consultations/${_.get(consultation, 'id')}`
+            }
+          >
+            <div className='flex flex-col gap-2'>
+              <h1 className={`${smallHeader ? 'text-sm' : 'text-md'}`}>
+                {_.get(raid, 'name', _.get(consultation, 'name'))}
+              </h1>
+              <div className='flex items-center gap-3'>
+                {_.get(raid, 'raidStatus.raidStatus') && (
+                  <RaidStatusBadge
+                    status={_.get(raid, 'raidStatus.raidStatus')}
+                  />
+                )}
+                <div className='z-50'>
+                  {specLink && <LinkExternal href={specLink} label='Specs' />}
+                </div>
               </div>
             </div>
-          </div>
-        </Link>
-        <Tooltip>
-          <TooltipTrigger aria-label='Interest Button'>
-            <Button
-              className='gap-2'
-              onClick={() => {
-                toggleSignal({ action, id: interestExists?.id });
-              }}
-              variant='outline'
-            >
-              {interestExists && <FaCheck />}
-              {interestExists ? 'Interested' : 'Signal Interest'}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{interestExists ? 'Remove Interest' : 'Add Interest'}</p>
-          </TooltipContent>
-        </Tooltip>
-      </div>
-      <div className='flex space-x-px w-full gap-14'>
-        <InfoStack label='Budget' details={budget || '-'} />
-        {_.get(raid, 'raidCategory.raidCategory') && (
-          <InfoStack
-            label='Category'
-            details={
-              RAID_CATEGORY_DISPLAY[
-                _.get(raid, 'raidCategory.raidCategory', '-')
-              ]
-            }
-          />
-        )}
+          </Link>
+          <Tooltip>
+            <TooltipTrigger aria-label='Interest Button'>
+              <Button
+                onClick={() => {
+                  toggleSignal({ action, id: interestExists?.id });
+                }}
+                variant='outline'
+              >
+                {interestExists && <FaCheck />}
+                {interestExists ? 'Interested' : 'Signal Interest'}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{interestExists ? 'Remove Interest' : 'Add Interest'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <div className='flex items-center gap-14 mt-5'>
+          <InfoStack label='Budget' details={budget || '-'} />
+          {_.get(raid, 'raidCategory.raidCategory') && (
+            <InfoStack
+              label='Category'
+              details={
+                RAID_CATEGORY_DISPLAY[
+                  _.get(raid, 'raidCategory.raidCategory', '-')
+                ]
+              }
+            />
+          )}
 
-        {!_.isEmpty(raid) && (
-          <InfoStack
-            label='Roles Required'
-            details={
-              !_.isEmpty(rolesRequired) ? (
-                <div className='flex items-center mb-4 md:mb-0 mr-4'>
-                  <div>
-                    {_.map(rolesRequired, (role: string) => (
-                      <div key={role}>
-                        <Tooltip>
-                          <TooltipTrigger
-                            aria-label={GUILD_CLASS_DISPLAY[role]}
-                          >
-                            <div className='flex items-center justify-center border-2 rounded-full w-10 h-10'>
-                              {GUILD_CLASS_ICON[role]}
-                            </div>
-                            {/* <Avatar
+          {!_.isEmpty(raid) && (
+            <InfoStack
+              label='Roles Required'
+              details={
+                !_.isEmpty(rolesRequired) ? (
+                  <div className='flex items-center mb-4 md:mb-0 mr-4'>
+                    <div>
+                      {_.map(rolesRequired, (role: string) => (
+                        <div key={role}>
+                          <Tooltip>
+                            <TooltipTrigger
+                              aria-label={GUILD_CLASS_DISPLAY[role]}
+                            >
+                              <div className='flex items-center justify-center border-2 rounded-full w-10 h-10'>
+                                {GUILD_CLASS_ICON[role]}
+                              </div>
+                              {/* <Avatar
                             <RoleBadge
                               roleName={GUILD_CLASS_ICON[role]}
                               width='44px'
@@ -173,35 +174,36 @@ const DashboardRaidCard = ({
                               border='2px solid'
                             />
                             /> */}
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{GUILD_CLASS_DISPLAY[role]}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
-                    ))}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{GUILD_CLASS_DISPLAY[role]}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                '-'
-              )
+                ) : (
+                  '-'
+                )
+              }
+            />
+          )}
+
+          <InfoStack
+            label='Submitted By'
+            details={
+              _.get(raidContact, 'contact.contactInfo.twitter') ||
+              _.get(raidContact, 'contact.contactInfo.github') ||
+              _.get(raidContact, 'contact.contactInfo.discord') ||
+              _.get(raidContact, 'contact.name') ||
+              _.get(raidContact, 'contact.contactInfo.email') ||
+              '-'
             }
           />
-        )}
-
-        <InfoStack
-          label='Submitted By'
-          details={
-            _.get(raidContact, 'contact.contactInfo.twitter') ||
-            _.get(raidContact, 'contact.contactInfo.github') ||
-            _.get(raidContact, 'contact.contactInfo.discord') ||
-            _.get(raidContact, 'contact.name') ||
-            _.get(raidContact, 'contact.contactInfo.email') ||
-            '-'
-          }
-        />
-        <InfoStack label='Project Type' details={projectType || '-'} />
-      </div>
+          <InfoStack label='Project Type' details={projectType || '-'} />
+        </div>
+      </CardContent>
     </Card>
   );
 };

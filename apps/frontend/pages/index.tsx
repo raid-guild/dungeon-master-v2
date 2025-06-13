@@ -1,18 +1,11 @@
 import {
-  Button,
-  Flex,
-  Heading,
-  HStack,
-  Stack,
-  Text,
-} from '@raidguild/design-system';
-import {
   useDashboardList,
   useMemberDetail,
   usePagination,
 } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
+  Button,
   Card,
   CardContent,
   Tabs,
@@ -117,7 +110,7 @@ const Home = () => {
                               <Button
                                 variant={
                                   activeRaidsPage === page + 1
-                                    ? 'solid'
+                                    ? 'default'
                                     : 'outline'
                                 }
                                 key={page}
@@ -132,7 +125,7 @@ const Home = () => {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value='past'>
+                  <TabsContent className='pt-3' value='past'>
                     <div className='flex flex-col justify-between h-full'>
                       <div className='flex flex-col gap-4'>
                         {!_.isEmpty(_.get(data, 'myRaids.past')) ? (
@@ -151,7 +144,7 @@ const Home = () => {
                                 key={page}
                                 variant={
                                   pastRaidsPage === page + 1
-                                    ? 'solid'
+                                    ? 'default'
                                     : 'outline'
                                 }
                                 onClick={() => setPastRaidsPage(page + 1)}
@@ -186,7 +179,7 @@ const Home = () => {
                   <TabsTrigger value='recent'>Recent Raids</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value='pending'>
+                <TabsContent value='pending' className='pt-3'>
                   <div className='flex flex-col space-y-4'>
                     {!_.isEmpty(_.get(data, 'newConsultations')) ? (
                       _.map(
@@ -215,7 +208,7 @@ const Home = () => {
                               key={page}
                               variant={
                                 newConsultationsPage === page + 1
-                                  ? 'solid'
+                                  ? 'default'
                                   : 'outline'
                               }
                               onClick={() => setNewconsutlationsPage(page + 1)}
@@ -228,7 +221,7 @@ const Home = () => {
                     )}
                   </div>
                 </TabsContent>
-                <TabsContent value='recent'>
+                <TabsContent value='recent' className='pt-3'>
                   <div className='flex flex-col space-y-4'>
                     {_.map(currentNewRaids, (raid: IRaid) => (
                       <DashboardRaidCard key={raid.id} raid={raid} newRaid />
@@ -240,7 +233,7 @@ const Home = () => {
                           <Button
                             key={page}
                             variant={
-                              newRaidsPage === page + 1 ? 'solid' : 'outline'
+                              newRaidsPage === page + 1 ? 'default' : 'outline'
                             }
                             onClick={() => setNewRaidsPage(page + 1)}
                           >
