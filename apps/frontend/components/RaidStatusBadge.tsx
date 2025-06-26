@@ -1,23 +1,20 @@
-import { Badge } from '@raidguild/design-system';
+import { Badge } from '@raidguild/ui';
+import { cn } from '@raidguild/utils';
 
 const statusColorScheme = {
-  PREPARING: 'yellow',
-  RAIDING: 'green',
-  SHIPPED: 'blue',
-  LOST: 'orange',
-  AWAITING: 'red',
-};
+  PREPARING: 'bg-yellow-500 text-yellow-800',
+  RAIDING: 'bg-green-500 text-green-800',
+  SHIPPED: 'bg-blue-500 text-blue-800',
+  LOST: 'bg-orange-500 text-orange-800',
+  AWAITING: 'bg-red-500 text-red-800',
+} as const;
 
 const RaidStatusBadge = ({ status }: { status: any }) => (
   <Badge
-    colorScheme={statusColorScheme[status]}
-    px={1.5}
-    py={1}
-    fontFamily='texturina'
-    textTransform='initial'
-    fill='transparent'
-    border='1px'
-    borderRadius='4px'
+    className={cn(
+      statusColorScheme[status],
+      `font-texturina font-semibold rounded-sm fill-transparent`
+    )}
   >
     {status}
   </Badge>

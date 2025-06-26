@@ -1,7 +1,6 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { Flex, Heading, Spinner, Stack } from '@raidguild/design-system';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -11,6 +10,7 @@ import CommandPalette from './CommandPalette';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import ScrollToTopButton from './ScrollToTopButton';
+import Spinner from './Spinner';
 
 interface SiteLayoutPublicProps {
   children: ReactNode;
@@ -36,37 +36,22 @@ const GeneralLayout = ({
   showScrollToTopButton,
   children,
 }: GeneralLayoutProps) => (
-  <Flex
-    direction='column'
-    overflowX='hidden'
-    margin='0 auto'
-    minHeight={minHeight || ['100%', null, '100vh']}
-    minWidth={['100%', null, null, '100vw']}
-    position='relative'
-    background='gray.700'
+  <div
+    className={`flex flex-col overflow-hidden m-auto min-h-[${
+      minHeight || '100%'
+    }] min-w-full relative bg-gray-700`}
   >
     <Navbar />
     <CommandPalette />
-    <Flex
-      direction='column'
-      justify='flex-start'
-      flex='1'
-      align='center'
-      minHeight={['50vh', '100vh', '0', '0']}
-    >
-      <Stack
-        spacing={8}
-        align='center'
-        w={['90%', null, null, '80%']}
-        mx='auto'
-      >
+    <div className='flex flex-1 flex-col justify-start items-center min-h-[50vh] lg:min-h-[100vh]'>
+      <div className='flex flex-col space-y-8 items-center w-[90%] lg:w-[80%] mx-auto'>
         {subheader}
         {children}
-      </Stack>
-    </Flex>
+      </div>
+    </div>
     {showScrollToTopButton && <ScrollToTopButton />}
     <Footer />
-  </Flex>
+  </div>
 );
 
 const SiteLayoutPublic = ({
@@ -127,16 +112,9 @@ const SiteLayoutPublic = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex
-          justify='center'
-          align='center'
-          minH='70vh'
-          maxW={['70%', 'none']}
-        >
-          <Heading size='md' textAlign='center'>
-            Connect your wallet & Sign in
-          </Heading>
-        </Flex>
+        <div className='flex items-center justify-center min-h-[70vh] max-w-[70%] lg:max-w-full'>
+          <h1 className='text-md text-center'>Connect your wallet & Sign in</h1>
+        </div>
       </GeneralLayout>
     );
   }
@@ -148,9 +126,9 @@ const SiteLayoutPublic = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex w='100%' justify='center' alignItems='center' py={60}>
-          <Spinner size='xl' />
-        </Flex>
+        <div className='flex w-full h-full justify-center items-center py-[60px]'>
+          <Spinner />
+        </div>
       </GeneralLayout>
     );
   }
@@ -162,9 +140,9 @@ const SiteLayoutPublic = ({
         subheader={subheader}
         minHeight={minHeight}
       >
-        <Flex w='100%' justify='center' pt={40}>
-          <Heading size='md'>Error loading data: {error.message}</Heading>
-        </Flex>
+        <div className='w-full flex justify-center pt-[40px]'>
+          <h1 className='text-md'>Error loading data: {error.message}</h1>
+        </div>
       </GeneralLayout>
     );
   }
@@ -175,9 +153,9 @@ const SiteLayoutPublic = ({
       subheader={subheader}
       minHeight={minHeight}
     >
-      <Flex justify='center' align='center' minH='50vh'>
-        <Heading size='md'>{emptyDataPhrase || 'No raids found!'}</Heading>
-      </Flex>
+      <div className='flex justify-center items-center min-h-[50vh]'>
+        <h1 className='text-md'>{emptyDataPhrase || 'No raids found!'}</h1>
+      </div>
     </GeneralLayout>
   ) : (
     <GeneralLayout

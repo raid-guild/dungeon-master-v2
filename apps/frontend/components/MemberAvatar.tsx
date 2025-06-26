@@ -1,6 +1,14 @@
-import { Avatar, Tooltip } from '@raidguild/design-system';
 import { IMember } from '@raidguild/dm-types';
 import { memberDisplayName } from '@raidguild/dm-utils';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@raidguild/ui';
+import { cn } from '@raidguild/utils';
 import blockies from 'blockies-ts';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -8,13 +16,13 @@ import { useEnsAvatar, useEnsName } from 'wagmi';
 
 type MemberAvatarProps = {
   member: Partial<IMember>;
-  size?: 'sm' | 'md' | 'lg' | number;
+  classNames?: string;
   outlineColor?: string;
 };
 
 const MemberAvatar = ({
   member,
-  size = 8,
+  classNames = '',
   outlineColor,
 }: MemberAvatarProps) => {
   const address = member?.ethAddress;
@@ -66,14 +74,16 @@ const MemberAvatar = ({
     ensAvatar || githubAvatar || guessedEnsAvatar || blockiesAvatar; // || guessedEnsAvatar;
 
   return (
-    <Tooltip label={name} placement={address ? 'left' : 'top'} hasArrow>
-      <Avatar
-        src={finalAvatar || blockiesAvatar}
-        boxSize={size}
-        ringInset='inset'
-        ringColor='blue' // {outlineColor ?? 'none'}
-        // ringOffset={2}
-      />
+    <Tooltip>
+      <TooltipTrigger>
+        <Avatar className={cn(classNames)}>
+          <AvatarImage src={finalAvatar || blockiesAvatar} />
+          <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+        </Avatar>
+      </TooltipTrigger>
+      <TooltipContent side={address ? 'left' : 'top'}>
+        <p>{name}</p>
+      </TooltipContent>
     </Tooltip>
   );
 };

@@ -1,30 +1,26 @@
-/* eslint-disable no-use-before-define */
 import {
-  Box,
   Button,
-  Collapse,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Stack,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
   Tooltip,
-  useDisclosure,
-} from '@raidguild/design-system';
+  TooltipContent,
+  TooltipTrigger,
+} from '@raidguild/ui';
 import _ from 'lodash';
+import { Menu, Search, X } from 'lucide-react';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { AiOutlineClose } from 'react-icons/ai';
-import { BsCaretDown } from 'react-icons/bs';
-import { GiHamburgerMenu } from 'react-icons/gi';
-import { HiSearch } from 'react-icons/hi';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { useOverlay } from '../contexts/OverlayContext';
-import Link from './ChakraNextLink';
 import ConnectWallet from './ConnectWallet';
 
 const links = [
@@ -42,78 +38,69 @@ const links = [
   { href: '/escrow', label: 'Escrow', role: 'client', primary: true },
 ];
 
-interface NavItem {
-  label: string;
-  href: string;
-}
-
 const Navbar = () => {
-  const { isOpen, onToggle } = useDisclosure();
+  const [open, onOpen] = useState(false);
   const { setCommandPallet: setOpen } = useOverlay();
   const session = useSession();
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        onOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
 
   const role = _.get(session, 'data.user.role');
 
   return (
-    <Box>
-      <Flex justify='space-between' p={8}>
-        <HStack>
-          <Link href='/' mr={6}>
-            <Heading>🏰</Heading>
-          </Link>
-          <Flex display={{ base: 'none', md: 'flex' }}>
-            <DesktopNav role={role} />
-          </Flex>
-        </HStack>
-
-        <Flex align='center'>
-          <Flex
-            cursor='pointer'
-            mx={6}
-            display={{ base: 'none', md: 'flex' }}
+    <div className='flex flex-wrap md:flex-nowrap gap-6 p-8 font-texturina'>
+      <Link className='mr-6 text-xl' href='/'>
+        🏰
+      </Link>
+      <div className='hidden md:flex'>
+        <DesktopNav role={role} />
+      </div>
+      <div className='flex flex-1' />
+      <Tooltip>
+        <TooltipTrigger aria-label='Search Button'>
+          <Button
+            size='icon'
+            variant='ghost'
+            type='button'
             onClick={() => setOpen(true)}
           >
-            <Tooltip
-              label='press CMD + K to search'
-              placement='bottom'
-              hasArrow
-            >
-              <span>
-                <Icon as={HiSearch} boxSize={6} />
-              </span>
-            </Tooltip>
-          </Flex>
-          <Flex display={{ base: 'none', md: 'flex' }}>
-            <ConnectWallet />
-          </Flex>
-          <Flex
-            flex={{ base: 1, md: 'auto' }}
-            ml={{ base: -2 }}
-            display={{ base: 'flex', md: 'none' }}
-          >
-            <IconButton
-              onClick={onToggle}
-              icon={
-                isOpen ? (
-                  <AiOutlineClose width={3} height={3} />
-                ) : (
-                  <GiHamburgerMenu width={5} height={5} />
-                )
-              }
-              aria-label='Toggle Navigation'
-            />
-          </Flex>
-        </Flex>
-      </Flex>
-      <Collapse in={isOpen} animateOpacity>
-        <MobileNav role={role} />
-      </Collapse>
-    </Box>
+            <Search className='h-6 w-6' />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            Press{' '}
+            <kbd className='pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100'>
+              CMD
+            </kbd>{' '}
+            +{' '}
+            <kbd className='pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100'>
+              K
+            </kbd>{' '}
+            to search
+          </p>
+        </TooltipContent>
+      </Tooltip>
+      <div className='flex md:hidden'>
+        <MobileNav open={open} onOpen={onOpen} role={role} />
+      </div>
+      <ConnectWallet />
+    </div>
   );
 };
 
 const DesktopNav = ({ role }: { role: string }) => (
-  <HStack align='center' spacing={4}>
+  <div className='flex items-center gap-4'>
     {_.map(links, ({ href, label, role: linkRole, primary }) => {
       if (!role || !primary) return null;
       if (linkRole === 'member' && role !== 'member') return null;
@@ -122,61 +109,73 @@ const DesktopNav = ({ role }: { role: string }) => (
 
       return (
         <Link key={href} href={href}>
-          <Heading size='sm'>{label}</Heading>
+          <h3 className='text-sm'>{label}</h3>
         </Link>
       );
     })}
     {role === 'member' && (
-      <Menu>
-        <MenuButton
-          as={Button}
-          bg='transparent'
-          _hover={{ bg: 'whiteAlpha.300' }}
-          _active={{ bg: 'whiteAlpha.200' }}
-          textTransform='capitalize'
-        >
-          <HStack>
-            <Heading size='sm'>More</Heading>
-            <Icon as={BsCaretDown} />
-          </HStack>
-        </MenuButton>
-        <MenuList>
-          {_.map(links, ({ href, label, primary }) => {
-            if (primary && href !== '/escrow') return null;
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>More</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className='w-[120px]'>
+                {_.map(links, ({ href, label, primary }) => {
+                  if (primary && href !== '/escrow') return null;
 
-            return (
-              <Link href={href} key={href}>
-                <MenuItem>
-                  <Heading size='sm'>{label}</Heading>
-                </MenuItem>
-              </Link>
-            );
-          })}
-        </MenuList>
-      </Menu>
+                  return (
+                    <NavigationMenuLink
+                      className='select-none hover:bg-gray-600'
+                      href={href}
+                      key={href}
+                    >
+                      <h3 className='text-sm'>{label}</h3>
+                    </NavigationMenuLink>
+                  );
+                })}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     )}
-  </HStack>
+  </div>
 );
 
-const MobileNav = ({ role }: { role: string }) => (
-  <Stack p={4} display={{ md: 'none' }} bg='whiteAlpha.200' mb={5}>
-    {_.map(links, ({ href, label, role: linkRole }) => {
-      if (!role) return null;
-      if (linkRole === 'member' && role !== 'member') return null;
-      // TODO handle user?
+const MobileNav = ({
+  open,
+  onOpen,
+  role,
+}: {
+  open: boolean;
+  onOpen: Dispatch<SetStateAction<boolean>>;
+  role: string;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <Button
+        size='icon'
+        variant='ghost'
+        onClick={() => onOpen(!open)}
+        aria-label='Toggle Navigation'
+      >
+        {open ? <X /> : <Menu />}
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      {_.map(links, ({ href, label, role: linkRole }) => {
+        if (!role) return null;
+        if (linkRole === 'member' && role !== 'member') return null;
+        // TODO handle user?
 
-      return <MobileNavItem key={href} href={href} label={label} />;
-    })}
-    <ConnectWallet />
-  </Stack>
-);
-
-const MobileNavItem = ({ href, label }: NavItem) => (
-  <Stack spacing={4}>
-    <Link key={href} href={href} py={2}>
-      <Heading size='sm'>{label}</Heading>
-    </Link>
-  </Stack>
+        return (
+          <DropdownMenuItem key={href} asChild>
+            <Link href={href}>{label}</Link>
+          </DropdownMenuItem>
+        );
+      })}
+    </DropdownMenuContent>
+  </DropdownMenu>
 );
 
 export default Navbar;

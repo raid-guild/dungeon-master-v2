@@ -1,18 +1,3 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  HStack,
-  RoleBadge,
-  Spacer,
-  Stack,
-  Tooltip,
-  useBreakpointValue,
-} from '@raidguild/design-system';
 import { useToggleInterest } from '@raidguild/dm-hooks';
 import { IConsultation, IRaid } from '@raidguild/dm-types';
 import {
@@ -23,11 +8,20 @@ import {
   ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@raidguild/ui';
 import _ from 'lodash';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { FaCheck } from 'react-icons/fa';
 
-import ChakraNextLink from './ChakraNextLink';
 import InfoStack from './InfoStack';
 import LinkExternal from './LinkExternal';
 import RaidStatusBadge from './RaidStatusBadge';
@@ -95,115 +89,121 @@ const DashboardRaidCard = ({
 
   const action = interestExists ? 'delete' : 'insert';
 
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  // const isMobile = useBreakpointValue({ base: true, md: false });
 
-  const signalLabel = isMobile ? 'Signal' : 'Signal Interest';
+  // const signalLabel = isMobile ? 'Signal' : 'Signal Interest';
 
   return (
-    <Card variant='outline' width='100%' minH='100px'>
-      <Flex alignItems='center' width='100%' h='100%'>
-        <ChakraNextLink
-          href={
-            raid
-              ? `/raids/${_.get(raid, 'id')}`
-              : `/consultations/${_.get(consultation, 'id')}`
-          }
-        >
-          <Stack spacing={2} width='100%' gap={4}>
-            <Heading size={smallHeader ? 'sm' : 'md'}>
-              {_.get(raid, 'name', _.get(consultation, 'name'))}
-            </Heading>
-            <HStack gap={3}>
-              {_.get(raid, 'raidStatus.raidStatus') && (
-                <RaidStatusBadge
-                  status={_.get(raid, 'raidStatus.raidStatus')}
-                />
-              )}
-              <Box zIndex={100}>
-                {specLink && <LinkExternal href={specLink} label='Specs' />}
-              </Box>
-            </HStack>
-          </Stack>
-        </ChakraNextLink>
-        <Spacer />
-        <Tooltip
-          label={interestExists ? 'Remove Interest' : 'Add Interest'}
-          aria-label='Interest Button'
-        >
-          <Button
-            onClick={() => {
-              toggleSignal({ action, id: interestExists?.id });
-            }}
-            variant='outline'
-            gap={2}
+    <Card className='w-full min-h-[100px]'>
+      <CardContent>
+        <div className='flex items-center justify-between w-full h-full'>
+          <Link
+            href={
+              raid
+                ? `/raids/${_.get(raid, 'id')}`
+                : `/consultations/${_.get(consultation, 'id')}`
+            }
           >
-            {interestExists && <FaCheck />}
-            {interestExists ? 'Interested' : signalLabel}
-          </Button>
-        </Tooltip>
-      </Flex>
-      <HStack spacing={1} width='100%' gap={14}>
-        <InfoStack label='Budget' details={budget || '-'} />
-        {_.get(raid, 'raidCategory.raidCategory') && (
+            <div className='flex flex-col gap-2'>
+              <h1 className={`${smallHeader ? 'text-sm' : 'text-md'}`}>
+                {_.get(raid, 'name', _.get(consultation, 'name'))}
+              </h1>
+              <div className='flex items-center gap-3'>
+                {_.get(raid, 'raidStatus.raidStatus') && (
+                  <RaidStatusBadge
+                    status={_.get(raid, 'raidStatus.raidStatus')}
+                  />
+                )}
+                <div className='z-50'>
+                  {specLink && <LinkExternal href={specLink} label='Specs' />}
+                </div>
+              </div>
+            </div>
+          </Link>
+          <Tooltip>
+            <TooltipTrigger aria-label='Interest Button'>
+              <Button
+                onClick={() => {
+                  toggleSignal({ action, id: interestExists?.id });
+                }}
+                variant='outline'
+              >
+                {interestExists && <FaCheck />}
+                {interestExists ? 'Interested' : 'Signal Interest'}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{interestExists ? 'Remove Interest' : 'Add Interest'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <div className='flex items-center gap-14 mt-5'>
+          <InfoStack label='Budget' details={budget || '-'} />
+          {_.get(raid, 'raidCategory.raidCategory') && (
+            <InfoStack
+              label='Category'
+              details={
+                RAID_CATEGORY_DISPLAY[
+                  _.get(raid, 'raidCategory.raidCategory', '-')
+                ]
+              }
+            />
+          )}
+
+          {!_.isEmpty(raid) && (
+            <InfoStack
+              label='Roles Required'
+              details={
+                !_.isEmpty(rolesRequired) ? (
+                  <div className='flex items-center mb-4 md:mb-0 mr-4'>
+                    <div>
+                      {_.map(rolesRequired, (role: string) => (
+                        <div key={role}>
+                          <Tooltip>
+                            <TooltipTrigger
+                              aria-label={GUILD_CLASS_DISPLAY[role]}
+                            >
+                              <div className='flex items-center justify-center border-2 rounded-full w-10 h-10'>
+                                {GUILD_CLASS_ICON[role]}
+                              </div>
+                              {/* <Avatar
+                            <RoleBadge
+                              roleName={GUILD_CLASS_ICON[role]}
+                              width='44px'
+                              height='44px'
+                              border='2px solid'
+                            />
+                            /> */}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{GUILD_CLASS_DISPLAY[role]}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  '-'
+                )
+              }
+            />
+          )}
+
           <InfoStack
-            label='Category'
+            label='Submitted By'
             details={
-              RAID_CATEGORY_DISPLAY[
-                _.get(raid, 'raidCategory.raidCategory', '-')
-              ]
+              _.get(raidContact, 'contact.contactInfo.twitter') ||
+              _.get(raidContact, 'contact.contactInfo.github') ||
+              _.get(raidContact, 'contact.contactInfo.discord') ||
+              _.get(raidContact, 'contact.name') ||
+              _.get(raidContact, 'contact.contactInfo.email') ||
+              '-'
             }
           />
-        )}
-
-        {!_.isEmpty(raid) && (
-          <InfoStack
-            label='Roles Required'
-            details={
-              !_.isEmpty(rolesRequired) ? (
-                <HStack mb={{ base: 4, md: 0 }} mr={4}>
-                  <AvatarGroup>
-                    {_.map(rolesRequired, (role: string) => (
-                      <Box key={role}>
-                        <Tooltip
-                          label={GUILD_CLASS_DISPLAY[role]}
-                          aria-label={GUILD_CLASS_DISPLAY[role]}
-                        >
-                          <Avatar
-                            bgColor='transparent'
-                            icon={
-                              <RoleBadge
-                                roleName={GUILD_CLASS_ICON[role]}
-                                width='44px'
-                                height='44px'
-                                border='2px solid'
-                              />
-                            }
-                          />
-                        </Tooltip>
-                      </Box>
-                    ))}
-                  </AvatarGroup>
-                </HStack>
-              ) : (
-                '-'
-              )
-            }
-          />
-        )}
-
-        <InfoStack
-          label='Submitted By'
-          details={
-            _.get(raidContact, 'contact.contactInfo.twitter') ||
-            _.get(raidContact, 'contact.contactInfo.github') ||
-            _.get(raidContact, 'contact.contactInfo.discord') ||
-            _.get(raidContact, 'contact.name') ||
-            _.get(raidContact, 'contact.contactInfo.email') ||
-            '-'
-          }
-        />
-        <InfoStack label='Project Type' details={projectType || '-'} />
-      </HStack>
+          <InfoStack label='Project Type' details={projectType || '-'} />
+        </div>
+      </CardContent>
     </Card>
   );
 };

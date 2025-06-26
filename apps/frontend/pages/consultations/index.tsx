@@ -1,16 +1,6 @@
 /* eslint-disable dot-notation */
 /* eslint-disable react/no-unstable-nested-components */
-import {
-  ChakraSelect,
-  Flex,
-  FormLabel,
-  Heading,
-  HStack,
-  Spacer,
-  Spinner,
-  Stack,
-  Text,
-} from '@raidguild/design-system';
+import { ChakraSelect, Flex, FormLabel, Stack } from '@raidguild/design-system';
 import {
   useConsultationList,
   useConsultationsCount,
@@ -21,6 +11,7 @@ import {
   BUDGET_DISPLAY_OPTIONS,
   SUBMISSION_TYPE_DISPLAY_OPTIONS,
 } from '@raidguild/dm-utils';
+import Spinner from 'apps/frontend/components/Spinner';
 import _ from 'lodash';
 import { useSession } from 'next-auth/react';
 import { NextSeo } from 'next-seo';
@@ -236,20 +227,15 @@ const ConsultationList = () => {
         data={consultations}
         subheader={
           <>
-            <Flex w='100%' align='center'>
-              <Heading>{title} List</Heading>
-              <Spacer />
+            <div className='w-full flex items-center'>
+              <h1 className='mb-4'>{title} List</h1>
               {count > 0 && (
-                <HStack alignItems='baseline' gap={1}>
-                  <Text fontSize='3xl' fontWeight={800}>
-                    {count}
-                  </Text>
-                  <Text fontSize='sm' fontWeight='normal'>
-                    consultation{count > 1 ? 's' : ''}
-                  </Text>
-                </HStack>
+                <div className='flex items-baseline gap-1'>
+                  <h3 className='text-3xl font-extrabold'>{count}</h3>
+                  <p className='text-sm'>consultation{count > 1 ? 's' : ''}</p>
+                </div>
               )}
-            </Flex>
+            </div>
             <ConsultationControls />
           </>
         }
@@ -262,19 +248,19 @@ const ConsultationList = () => {
           loadMore={fetchNextPage}
           hasMore={hasNextPage}
           loader={
-            <Flex my={25} w='100%' justify='center'>
-              <Spinner size='xl' />
-            </Flex>
+            <div className='flex my-24 w-full justify-center'>
+              <Spinner />
+            </div>
           }
         >
-          <Stack spacing={4}>
+          <div className='flex flex-col gap-4 items-center justify-center'>
             {_.map(consultations, (consultation: IConsultation) => (
               <RaidCard
                 consultation={consultation}
                 key={_.get(consultation, 'id')}
               />
             ))}
-          </Stack>
+          </div>
         </InfiniteScroll>
       </SiteLayout>
     </>
