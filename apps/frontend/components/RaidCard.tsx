@@ -2,12 +2,10 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Card,
   Flex,
   Heading,
   HStack,
   Icon,
-  LinkBox,
   LinkOverlay,
   RoleBadge,
   SimpleGrid,
@@ -15,7 +13,6 @@ import {
   Stack,
   Text,
   Tooltip,
-  useMediaQuery,
 } from '@raidguild/design-system';
 import { contactToURL, IConsultation, IRaid } from '@raidguild/dm-types';
 import {
@@ -27,9 +24,11 @@ import {
   ProjectTypeKey,
   RAID_CATEGORY_DISPLAY,
 } from '@raidguild/dm-utils';
+import { Card, CardContent } from '@raidguild/ui';
 import _ from 'lodash';
 import { AiOutlineDollarCircle } from 'react-icons/ai';
 
+import useMediaQuery from '../hooks/useMediaQuery';
 import Link from './ChakraNextLink';
 import InfoStack from './InfoStack';
 import LinkExternal from './LinkExternal';
@@ -66,7 +65,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
   const updates = _.get(raid, 'updates');
   const latestUpdate = updates ? updates[0] : null;
 
-  const [upTo780] = useMediaQuery('(max-width: 780px)');
+  const matches = useMediaQuery('(max-width: 780px)');
 
   const specLink =
     _.chain(consultation?.links)
@@ -81,8 +80,8 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
     '';
 
   return (
-    <LinkBox h='100%'>
-      <Card variant='filled' p={3} w={['100%', null, null, '100%']}>
+    <Card className='w-full h-full'>
+      <CardContent>
         <Flex
           w='100%'
           direction={{ base: 'column', md: 'row' }}
@@ -269,7 +268,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </HStack>
           </Stack>
 
-          {!_.isEmpty(raidParty) && !upTo780 && (
+          {!_.isEmpty(raidParty) && !matches && (
             <Stack spacing={4} minW='150px'>
               <Heading
                 size='sm'
@@ -285,7 +284,7 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
           )}
         </Flex>
 
-        {!_.isEmpty(raidParty) && upTo780 && (
+        {!_.isEmpty(raidParty) && matches && (
           <Stack spacing={4} width='full'>
             <Heading size='sm' color='white'>
               Raid Party
@@ -320,8 +319,8 @@ const RaidCard = ({ raid, consultation }: RaidProps) => {
             </Flex>
           </Flex>
         )}
-      </Card>
-    </LinkBox>
+      </CardContent>
+    </Card>
   );
 };
 
