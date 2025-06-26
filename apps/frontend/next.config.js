@@ -13,7 +13,10 @@ const nextConfig = {
     '@raidguild/escrow-utils',
     '@raidguild/escrow-gql',
     '@raidguild/ui',
-    '@raidguild/utils'
+    '@raidguild/utils',
+    '@smartinvoicexyz/hooks',
+    '@smartinvoicexyz/types',
+    '@smartinvoicexyz/utils',
   ],
 };
 
